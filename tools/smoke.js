@@ -82,7 +82,7 @@ const out = process.argv[2] || ".";
     for (const id of await page.evaluate(() => ROOMS.map(r => r.id))) {
       await page.evaluate(id => { closeModal(); enterRoom(id); R.incidents = 99; }, id);
     }
-    if (tag === "desktop") for (const id of ["t2s3", "t2s1", "t6s1", "t2s2", "t1s2", "t1s1", "t4s2", "t4s3"]) {
+    if (tag === "desktop") for (const id of ["t14s2", "t16s4", "t19s3", "t10s1", "t15s1", "t9s1"]) {
       await page.evaluate(id => { closeModal(); enterRoom(id); R.incidents = 99; }, id); await page.waitForTimeout(250);
       await (await page.$("#scene")).screenshot({ path: `${out}/scene-${id}.png` });
     }

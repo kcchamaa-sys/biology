@@ -94,21 +94,24 @@ function save(flash) {
   if (flash) { savedFlash = Date.now(); renderTools(); }
 }
 
-/* Save code: 8 characters of Crockford base32 (no I, L, O, U), shown as ABCD-EFGH.
-   Packs, for each topic, stages escaped (0–n) and their average stars (1–3) in a mixed radix (3n + 1 per topic);
-   plus the stage in progress and its locks solved (0–4), streak (1–31) and shields (0–3).
-   Multiplied by a constant (mod M) so codes look random and typos rarely decode. */
-const B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
-const RADIX = TOPICS.map((_, ti) => BigInt(3 * ROOMS.filter(r => r.t === ti).length + 1));
+/* Save code: 12 characters of Crockford base32 (no I, L, O, U), shown as ABCD-EFGH-JKLM.
+   Packs, for each topic, stages escaped (0–n) in a mixed radix (n + 1 per topic); the average star rating (1–3);
+   the stage in progress and its locks solved (0–4); streak (1–31) and shields (0–3).
+   The packed number n (< CODE_M) is multiplied by a constant modulo a large prime P, so codes look random,
+   and a typo almost always decodes to a number ≥ CODE_M, which is rejected. */
+const B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ", CODE_LEN = 12;
+const RADIX = TOPICS.map((_, ti) => BigInt(ROOMS.filter(r => r.t === ti).length + 1));
 const TOPIC_M = RADIX.reduce((a, b) => a * b, 1n);
-const CODE_M = TOPIC_M * 32n * 4n * 40n;     // < 32^8
-const CODE_K = 7919n;                          // prime, coprime with CODE_M
+const CUR_N = BigInt(TOPICS.length * 5);
+const CODE_M = TOPIC_M * 3n * 32n * 4n * CUR_N;   // about 1.6e16
+const CODE_P = 1152921504606846883n;               // largest prime below 2^60 = 32^12
+const CODE_K = 734690243128773251n;                // any multiplier 1 < K < P
 function modInvBig(a, m) {
   let [r0, r1, s0, s1] = [a % m, m, 1n, 0n];
   while (r1 !== 0n) { const q = r0 / r1; [r0, r1] = [r1, r0 - q * r1]; [s0, s1] = [s1, s0 - q * s1]; }
   return ((s0 % m) + m) % m;
 }
-const CODE_KINV = modInvBig(CODE_K, CODE_M);
+const CODE_KINV = modInvBig(CODE_K, CODE_P);
 function roomStars(r) {
   if (!S.completed_rooms.includes(r.id)) return 0;
   return S.room_stars[r.id] || 1;
@@ -118,34 +121,37 @@ function topicStars(ti) {
   const done = topicRooms(ti).filter(r => S.completed_rooms.includes(r.id));
   return done.length ? Math.round(done.reduce((a, r) => a + roomStars(r), 0) / done.length) : 0;
 }
-const fmtCode = c => `${c.slice(0, 4)}-${c.slice(4)}`;
+const fmtCode = c => c.match(/.{1,4}/g).join("-");
 function makeCode() {
   let n = 0n, mul = 1n;
-  TOPICS.forEach((_, ti) => { const d = stagesDone(ti), v = d ? 1 + (d - 1) * 3 + (Math.max(1, topicStars(ti)) - 1) : 0; n += BigInt(v) * mul; mul *= RADIX[ti]; });
+  TOPICS.forEach((_, ti) => { n += BigInt(stagesDone(ti)) * mul; mul *= RADIX[ti]; });
+  const done = ROOMS.filter(r => S.completed_rooms.includes(r.id)), avg = done.length ? Math.round(done.reduce((a, r) => a + roomStars(r), 0) / done.length) : 1;
   const cur = ROOMS[roomIndex(S.current_room)];
   const lock = cur && !S.completed_rooms.includes(cur.id) && isUnlocked(roomIndex(cur.id)) ? Math.min(4, (S.room_progress[cur.id] || []).length) : 0;
   const streak = Math.max(1, Math.min(31, S.current_streak)), shields = Math.max(0, Math.min(3, S.streak_shields));
-  n += TOPIC_M * BigInt(streak + 32 * (shields + 4 * ((cur ? cur.t : 0) * 5 + lock)));
-  let x = (n * CODE_K) % CODE_M, out = "";
-  for (let i = 0; i < 8; i++) { out = B32[Number(x % 32n)] + out; x /= 32n; }
+  n += TOPIC_M * BigInt((avg - 1) + 3 * (streak + 32 * (shields + 4 * ((cur ? cur.t : 0) * 5 + lock))));
+  let x = (n * CODE_K) % CODE_P, out = "";
+  for (let i = 0; i < CODE_LEN; i++) { out = B32[Number(x % 32n)] + out; x /= 32n; }
   return out;
 }
 function decodeCode(raw) {
   const c = String(raw || "").toUpperCase().replace(/[^0-9A-Z]/g, "").replace(/O/g, "0").replace(/[IL]/g, "1");
-  if (c.length !== 8) return null;
+  if (c.length !== CODE_LEN) return null;
   let x = 0n;
   for (const ch of c) { const v = B32.indexOf(ch); if (v < 0) return null; x = x * 32n + BigInt(v); }
-  if (x >= CODE_M) return null;
-  let n = (x * CODE_KINV) % CODE_M, t = n % TOPIC_M;
-  const tv = RADIX.map(rdx => { const v = Number(t % rdx); t /= rdx; return v; });
+  if (x >= CODE_P) return null;
+  let n = (x * CODE_KINV) % CODE_P;
+  if (n >= CODE_M) return null;
+  let t = n % TOPIC_M;
+  const done = RADIX.map(rdx => { const v = Number(t % rdx); t /= rdx; return v; });
   n /= TOPIC_M;
+  const avg = Number(n % 3n) + 1; n /= 3n;
   const streak = Number(n % 32n); n /= 32n;
   const shields = Number(n % 4n); n /= 4n;
   const curT = Math.floor(Number(n) / 5), lock = Number(n) % 5;
   if (streak === 0 || curT >= TOPICS.length) return null;
-  const done = tv.map(v => (v ? Math.floor((v - 1) / 3) + 1 : 0)), stars = tv.map(v => (v ? ((v - 1) % 3) + 1 : 0));
   if (lock > 0 && done[curT] === topicRooms(curT).length) return null; // locks in progress can't belong to a finished topic
-  return { code: c, done, stars, curT, lock, streak, shields, escaped: done.reduce((a, b) => a + b, 0) };
+  return { code: c, done, stars: done.map(d => (d ? avg : 0)), avg, curT, lock, streak, shields, escaped: done.reduce((a, b) => a + b, 0) };
 }
 function stateFromCode(d, name) {
   const s = freshState();
@@ -272,7 +278,7 @@ const TROPHIES = [
   { id: "sharp", name: "Sharpshooter", rar: "gold", who: "momonga", desc: "15 first-try answers in a row (no hints, no mistakes)", prog: () => [S.stats.bestRun, 15] },
   { id: "hunter", name: "Knowledge Hunter", rar: "gold", who: "kurimanju", desc: "Open 100 locks in total", prog: () => [S.stats.correct, 100] },
   { id: "escaper", name: "Master Escaper", rar: "gold", who: "chiikawa", desc: `Escape all ${ROOMS.length} stages (every topic)`, prog: () => [S.completed_rooms.length, ROOMS.length] },
-  { id: "stars", name: "Star Collector", rar: "legend", who: "hachiware", desc: "Collect 70 stars across the stages (3★ = 3 stars)", prog: () => [ROOMS.reduce((a, r) => a + roomStars(r), 0), 70] },
+  { id: "stars", name: "Star Collector", rar: "legend", who: "hachiware", desc: "Collect 120 stars across the stages (3★ = 3 stars)", prog: () => [ROOMS.reduce((a, r) => a + roomStars(r), 0), 120] },
   { id: "clock", name: "Beat the Clock", rar: "silver", who: "usagi", desc: "5 escapes before time runs out, with 0 guess strikes", prog: () => [S.stats.cleanEscapes, 5] },
   { id: "brain", name: "Brain Power", rar: "silver", who: "momonga", desc: "5 escapes without using any hint", prog: () => [S.stats.noHintEscapes, 5] },
   { id: "practice", name: "Practice Makes Perfect", rar: "bronze", who: "kurimanju", desc: "Replay escaped stages 10 times", prog: () => [S.stats.replays, 10] }
@@ -530,7 +536,7 @@ function startRush() {
   RU = { score: 0, combo: 0, correct: 0, total: 0, end: Date.now() + RUSH_SECONDS * 1000, lock: false, last: -1 };
   $app.innerHTML = `
     <section class="rushhead">
-      <div class="status"><div class="av ${frameCls()}" id="rushAv">${avatar("chiikawa", "normal")}</div><div><div class="rtopic" style="color:var(--yellow)">⚡ ${"Cell Rush · HKDSE S4 Biology"}</div><div class="big" id="rScore">0 ${"pts"}</div></div></div>
+      <div class="status"><div class="av ${frameCls()}" id="rushAv">${avatar("chiikawa", "normal")}</div><div><div class="rtopic" style="color:var(--yellow)">⚡ ${"Cell Rush · HKDSE Biology"}</div><div class="big" id="rScore">0 ${"pts"}</div></div></div>
       <div style="display:grid;justify-items:end;gap:6px"><div class="timer" id="rTimer">01:00</div><span class="combo" id="rCombo">${"Combo"} ×1</span></div>
     </section>
     <section class="card rq"><span class="rtype" id="rType"></span><p class="q" id="rPrompt"></p><div id="rBody"></div><div id="rFb"></div></section>
@@ -610,7 +616,7 @@ function renderTools() {
     ${S ? `<button class="iconbtn" id="tTrophy" aria-label="${"Open the Trophy Cabinet"}">🏆<span class="lbl">${"Trophies"}</span></button>` : ""}
     <button class="iconbtn" id="tJournal" aria-label="${"Open the Study Journal"}">📓<span class="lbl">${"Journal"}</span></button>
     ${S ? `<button class="iconbtn" id="tSave" aria-label="${"Save and share code"}">🔑<span class="lbl">${"Save code"}</span></button>` : ""}
-    <button class="iconbtn" id="tMus" aria-label="${MUSIC.on ? "Turn music off" : "Turn music on"}" title="${"Background music"}" aria-pressed="${MUSIC.on}" style="${MUSIC.on ? "" : "opacity:.5;text-decoration:line-through"}">🎵<span class="lbl">${MUSIC.on ? "Music on" : "Music off"}</span></button>
+    <button class="iconbtn" id="tMus" aria-label="${MUSIC.on ? "Turn music off" : "Turn music on"}" title="Background music: ${esc((SONGS[MUSIC.mode] || SONGS.map).title)}" aria-pressed="${MUSIC.on}" style="${MUSIC.on ? "" : "opacity:.5;text-decoration:line-through"}">🎵<span class="lbl">${MUSIC.on ? "Music on" : "Music off"}</span></button>
     <button class="iconbtn" id="tSnd" aria-label="${SFX.on ? "Turn sound effects off" : "Turn sound effects on"}" title="${"Sound effects"}">${SFX.on ? "🔊" : "🔇"}</button>`;
   document.getElementById("tJournal").onclick = () => { SFX.init(); SFX.tap(); openJournal(); };
   const tc = document.getElementById("tCoins"); if (tc) tc.onclick = () => { SFX.init(); SFX.tap(); openShop(); };
@@ -659,7 +665,7 @@ function openJournal(roomId, highlight = []) {
     const r = ROOMS[roomIndex(rid)], T = TOPICS[r.t];
     $journal.innerHTML = `<div class="overlay top" id="jov"><div class="modal wide" role="dialog" aria-modal="true" aria-label="Study Journal">
       <button class="iconbtn x" id="jx" aria-label="Close journal">✕</button>
-      <span class="kicker">📓 Study Journal · HKDSE S4 Biology · ${esc(T.part)}</span>
+      <span class="kicker">📓 Study Journal · HKDSE Biology · Part ${esc(T.part)}</span>
       <h2>${T.icon} Topic ${T.no}: ${esc(T.name)}</h2>
       <div class="tabs" role="tablist" aria-label="Topics">${TOPICS.map((x, ti) => `<button class="tab" role="tab" aria-selected="${ti === r.t}" data-t="${topicRooms(ti)[0].id}">${x.icon} T${x.no}</button>`).join("")}</div>
       <div class="tabs" role="tablist" aria-label="Stages">${topicRooms(r.t).map(x => `<button class="tab" role="tab" aria-selected="${x.id === rid}" data-t="${x.id}">${x.boss ? "⚔️ Boss" : `Stage ${x.s}`}: ${esc(x.focus)}</button>`).join("")}</div>
@@ -679,9 +685,9 @@ function openJournal(roomId, highlight = []) {
 
 /* ----- Save & Share Code ----- */
 function codePreview(d) {
-  const rows = TOPICS.map((T, ti) => d.done[ti] ? `<li>${T.icon} ${esc(T.name)}: <b>${d.done[ti]}/${topicRooms(ti).length}</b> stages ${starStr(d.stars[ti])}</li>` : "").join("");
+  const rows = TOPICS.map((T, ti) => d.done[ti] ? `<li>${T.icon} ${esc(T.name)}: <b>${d.done[ti]}/${topicRooms(ti).length}</b> stages</li>` : "").join("");
   const nextR = topicRooms(d.curT)[Math.min(2, d.done[d.curT])];
-  return `<div class="preview small"><b>This code contains:</b> ${d.escaped} stage${d.escaped === 1 ? "" : "s"} escaped${rows ? `<ul style="margin:4px 0;padding-left:20px">${rows}</ul>` : ". "}${d.lock ? `${d.lock}/5 locks open in <b>${esc(nextR.name)}</b>, ` : ""}🔥 ${d.streak}-day streak, 🛡️ ${d.shields} shield${d.shields === 1 ? "" : "s"}.</div>`;
+  return `<div class="preview small"><b>This code contains:</b> ${d.escaped} stage${d.escaped === 1 ? "" : "s"} escaped${d.escaped ? ` (about ${starStr(d.avg)} on average)` : ""}${rows ? `<ul style="margin:4px 0;padding-left:20px">${rows}</ul>` : ". "}${d.lock ? `${d.lock}/5 locks open in <b>${esc(nextR.name)}</b>, ` : ""}🔥 ${d.streak}-day streak, 🛡️ ${d.shields} shield${d.shields === 1 ? "" : "s"}.</div>`;
 }
 function openSaveModal() {
   const code = makeCode(), link = `${shareBase()}#${code}`;
@@ -699,7 +705,7 @@ function openSaveModal() {
     <div class="linkbox" id="linkbox">${esc(link)}</div>
     <hr style="border:0;border-top:2px dashed var(--ink);width:100%;margin:4px 0">
     <h3>${"Have a code from another device?"}</h3>
-    <div class="row"><input class="codein" id="codeIn" maxlength="9" placeholder="ABCD-EFGH" autocomplete="off" autocapitalize="characters" aria-label="${"Enter save code"}"><button class="btn" id="codeGo">${"Load"}</button></div>
+    <div class="row"><input class="codein" id="codeIn" maxlength="14" placeholder="ABCD-EFGH-JKLM" autocomplete="off" autocapitalize="characters" aria-label="${"Enter save code"}"><button class="btn" id="codeGo">${"Load"}</button></div>
     <div id="codeMsg" style="display:grid;gap:10px"></div>`);
   const copy = async (text, el, ok) => {
     try { await navigator.clipboard.writeText(text); toast(ok); }
@@ -710,7 +716,7 @@ function openSaveModal() {
   const go = () => {
     const d = decodeCode(document.getElementById("codeIn").value);
     const msg = document.getElementById("codeMsg");
-    if (!d) { SFX.wrong(); msg.innerHTML = say("chiikawa", "Wah... that code doesn't work. Check each letter and try again. (Codes have 8 letters or numbers, like ABCD-EFGH.)", "cry"); return; }
+    if (!d) { SFX.wrong(); msg.innerHTML = say("chiikawa", "Wah... that code doesn't work. Check each letter and try again. (Codes have 12 letters or numbers, like ABCD-EFGH-JKLM.)", "cry"); return; }
     msg.innerHTML = `${codePreview(d)}${say("hachiware", "Load this progress? It will replace the progress on this device.", "normal", "hint")}
       <div class="row"><button class="btn" id="codeYes">${"Yes, load it"}</button><button class="btn plain" id="codeNo">${"Cancel"}</button></div>`;
     document.getElementById("codeYes").onclick = () => applyCode(d);
@@ -771,7 +777,7 @@ function showCodeFromLink(d) {
    ============================================================ */
 const castHtml = moods => `<div class="cast">${["usagi", "hachiware", "chiikawa", "momonga", "kurimanju"].map(w => `<div class="fig">${figure(w, (moods && moods[w]) || "normal")}</div>`).join("")}</div>`;
 const starsBg = () => `<div class="stars" aria-hidden="true">${[[6, 14], [18, 40], [30, 10], [52, 22], [70, 8], [84, 30], [94, 12], [62, 44]].map(([x, y], i) => `<span style="left:${x}%;top:${y}%;animation-delay:${-i * .4}s">✦</span>`).join("")}</div>`;
-const HERO_KICKER = "HKDSE · Secondary 4 Biology";
+const HERO_KICKER = "HKDSE Biology · S4–S6 compulsory part";
 
 function renderWelcome() {
   stopRush(); MUSIC.setMode("map"); stopTimer(); R = null; renderTools();
@@ -779,17 +785,17 @@ function renderWelcome() {
     <section class="hero">${starsBg()}
       <span class="kicker" style="color:#fff">${HERO_KICKER}</span>
       <h1>Chiikawa Bio Escape</h1>
-      <p class="sub">8 topics · ${ROOMS.length} stages · 1 stage a day · about 15–20 minutes</p>
+      <p class="sub">${TOPICS.length} topics · ${ROOMS.length} stages · 1 stage a day · about 15–20 minutes</p>
       ${castHtml({ chiikawa: "cry", usagi: "happy", momonga: "shock" })}
     </section>
     <section class="card">
       ${say("chiikawa", "Ya...!! 😭 We fell asleep in the biology lab... and woke up TINY, inside a giant cell world!", "cry")}
-      ${say("hachiware", "Every door is locked with an S4 Biology puzzle. Each topic is a series of stages (Photosynthesis has 6!), and the last one is a <b>boss stage</b> guarded by Rakko. Each lock needs <b>3 questions</b> in a row to open. Nantoka naare~! Will you help us escape? ✨", "normal", "hint")}
+      ${say("hachiware", "Every door is locked with an HKDSE Biology puzzle, from S4 cells all the way to S6 ecosystems and health. Each topic is a series of stages (Photosynthesis has 6!), and the last one is a <b>boss stage</b> guarded by Rakko. Each lock needs <b>3 questions</b> in a row to open. Nantoka naare~! Will you help us escape? ✨", "normal", "hint")}
       ${say("usagi", "YAHA! Let's GO! 🐰💥", "happy")}
       <label for="nm"><b>What should we call you?</b></label>
       <input id="nm" class="name" maxlength="24" placeholder="Your name or nickname" autocomplete="off">
       <label for="tp"><b>Which topic is your class on?</b></label>
-      <select id="tp" class="name">${TOPICS.map((T, ti) => `<option value="${ti}">${T.icon} Topic ${T.no}: ${esc(T.name)}</option>`).join("")}</select>
+      <select id="tp" class="name">${PARTS.map((P, pi) => `<optgroup label="Part ${esc(P)}">${TOPICS.map((T, ti) => T.p === pi ? `<option value="${ti}">${T.icon} Topic ${T.no}: ${esc(T.name)}</option>` : "").join("")}</optgroup>`).join("")}</select>
       <div class="row">
         <button class="btn big" id="go">Start the adventure →</button>
         <button class="btn plain" id="haveCode">🔑 I have a save code</button>
@@ -807,10 +813,10 @@ function renderWelcome() {
   document.getElementById("haveCode").onclick = () => {
     SFX.init(); SFX.tap();
     const w = document.getElementById("wCode");
-    w.innerHTML = `<div class="row"><input class="codein" id="wIn" maxlength="9" placeholder="ABCD-EFGH" autocomplete="off" autocapitalize="characters" aria-label="Enter save code"><button class="btn" id="wGo">Load</button></div><div id="wMsg"></div>`;
+    w.innerHTML = `<div class="row"><input class="codein" id="wIn" maxlength="14" placeholder="ABCD-EFGH-JKLM" autocomplete="off" autocapitalize="characters" aria-label="Enter save code"><button class="btn" id="wGo">Load</button></div><div id="wMsg"></div>`;
     const loadIt = () => {
       const d = decodeCode(document.getElementById("wIn").value);
-      if (!d) { SFX.wrong(); document.getElementById("wMsg").innerHTML = say("chiikawa", "Wah... that code doesn't work. Check each letter and try again. (Codes look like ABCD-EFGH.)", "cry"); return; }
+      if (!d) { SFX.wrong(); document.getElementById("wMsg").innerHTML = say("chiikawa", "Wah... that code doesn't work. Check each letter and try again. (Codes look like ABCD-EFGH-JKLM.)", "cry"); return; }
       document.getElementById("wMsg").innerHTML = `${codePreview(d)}<div class="row"><button class="btn" id="wYes">Yes, load it</button></div>`;
       document.getElementById("wYes").onclick = () => applyCode(d, document.getElementById("nm").value.trim());
     };
@@ -828,10 +834,12 @@ function stageBtn(r, i, ni) {
     <span class="sstar">${done ? starStr(roomStars(r)) : open ? `🔑 ${n}/5` : ""}</span>
   </button>`;
 }
+let mapPart = null;
 function renderMap() {
   stopRush(); MUSIC.setMode("map"); stopTimer(); lbSubmit(); if (R) clearTimeout(R.introT); R = null; recomputeMastery(); save(); renderTools();
   const ni = nextRoomIndex(), allDone = ni === -1, chestReady = S.last_chest_date !== today(), nr = allDone ? null : ROOMS[ni];
   const totalStars = ROOMS.reduce((a, r) => a + roomStars(r), 0);
+  if (mapPart === null) mapPart = nr ? TOPICS[nr.t].p : 0;
   $app.innerHTML = `
     <section class="hero">${starsBg()}
       <span class="kicker" style="color:#fff">${HERO_KICKER}</span>
@@ -850,7 +858,9 @@ function renderMap() {
     <section class="card">
       <div class="row" style="justify-content:space-between"><h2>🗺️ Topic map</h2><span class="pill">⭐ ${totalStars} / ${ROOMS.length * 3} · 🚪 ${S.completed_rooms.length} / ${ROOMS.length}</span></div>
       <p class="small muted">Every topic is open. Inside a topic, clear the stages in order; the last one is a ⚔️ boss stage. Each stage is a different room: labs, gardens, even inside a cell!</p>
-      <div class="tgrid">${TOPICS.map((T, ti) => {
+      <div class="tabs" role="tablist" aria-label="Curriculum parts">${PARTS.map((P, pi) => { const n = TOPICS.filter(T => T.p === pi).length, d = TOPICS.filter((T, ti) => T.p === pi && stagesDone(ti) === topicRooms(ti).length).length;
+        return `<button class="tab" role="tab" aria-selected="${pi === mapPart}" data-part="${pi}">Part ${esc(P)} <span class="small">${d}/${n}</span></button>`; }).join("")}</div>
+      <div class="tgrid">${TOPICS.map((T, ti) => { if (T.p !== mapPart) return "";
         const rs = topicRooms(ti), d = stagesDone(ti), cur = nr && nr.t === ti;
         const nT = rs.length;
         return `<div class="tcard ${d === nT ? "done" : ""} ${cur ? "next" : ""}">
@@ -871,7 +881,7 @@ function renderMap() {
     <section class="card">
       <h2>📈 Biology mastery</h2>
       <p class="small muted">Each stage has 15–20 core questions (Bloom levels 1–6) including graph reading, plus spelling practice for its key terms. Mastery goes up when you answer one right on the first try without a hint. Replay cleared stages to master them all! The first replay each day earns a 📚 revision bonus.</p>
-      ${TOPICS.map(T => { const v = S.bio_mastery[T.id]; return `<div><div class="row" style="justify-content:space-between"><b class="small">${TOPIC_LABELS[T.id]}</b><b class="small">${v}%</b></div>
+      ${TOPICS.map((T, ti) => { const v = S.bio_mastery[T.id]; return `${!ti || TOPICS[ti - 1].p !== T.p ? `<h3 class="small" style="margin-top:6px">Part ${esc(T.part)}</h3>` : ""}<div><div class="row" style="justify-content:space-between"><b class="small">${TOPIC_LABELS[T.id]}</b><b class="small">${v}%</b></div>
         <div class="tprog"><i style="width:${v}%"></i></div></div>`; }).join("")}
     </section>
     <section class="card cream cabinet" id="cabinet">${cabinetHtml()}</section>
@@ -881,6 +891,7 @@ function renderMap() {
       <p class="small muted">🔥 Longest streak: ${S.longest_streak} days · 🛡️ Shields: ${S.streak_shields} (a shield saves your streak if you miss a day)</p>
     </section>`;
   $app.querySelectorAll("[data-room]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); streakNote = ""; enterRoom(b.dataset.room); });
+  $app.querySelectorAll("[data-part]").forEach(b => b.onclick = () => { SFX.tap(); mapPart = Number(b.dataset.part); const y = window.scrollY; renderMap(); window.scrollTo({ top: y }); });
   document.getElementById("mRush").onclick = () => { SFX.init(); SFX.tap(); rushIntro(); };
   document.getElementById("mShop").onclick = () => { SFX.init(); SFX.tap(); openShop(); };
   document.getElementById("mNote").onclick = () => { SFX.init(); SFX.tap(); renderNotebook(); };
@@ -897,7 +908,7 @@ function renderMap() {
 /* ----- 📕 Mistake Notebook: revise the questions you got wrong ----- */
 const shortQ = t => (t.length > 110 ? t.slice(0, 107) + "…" : t);
 function renderNotebook() {
-  stopRush(); MUSIC.setMode("map"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; renderTools();
+  stopRush(); MUSIC.setMode("calm"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; renderTools();
   const all = mistakeKeys(), cleared = S.mistakes_cleared || 0;
   const rows = all.map(k => ({ k, ...mistakeQ(k), m: S.mistakes[k] })).sort((a, b) => a.r.t - b.r.t || b.m.n - a.m.n);
   $app.innerHTML = `
@@ -965,7 +976,7 @@ function startRevision(ti) {
     });
     window.scrollTo({ top: 0 });
   };
-  MUSIC.setMode("room"); next();
+  MUSIC.setMode("calm"); next();
 }
 // A self-contained answer widget (multiple choice, dials or spelling) used outside escape rooms
 function miniQuiz(el, p, done) {
@@ -1018,6 +1029,29 @@ function specialSvg(kind) {
     case "limewater": return `<path d="M422 180 V224 L396 290 Q392 300 404 300 H476 Q488 300 484 290 L458 224 V180" fill="rgba(255,255,255,.7)" ${o}/><path d="M408 264 H472 L482 292 Q484 298 476 298 H404 Q396 298 398 292 Z" fill="#E9E4DA"/><path d="M418 178 h44" ${o}/>`;
     case "bento": return `<rect x="388" y="236" width="104" height="64" rx="10" fill="#E0567E" ${o}/><rect x="396" y="244" width="46" height="48" rx="6" fill="#FFFDF0" ${o3}/><rect x="448" y="244" width="36" height="22" rx="4" fill="#7BC96F" ${o3}/><rect x="448" y="270" width="36" height="22" rx="4" fill="#FDD66B" ${o3}/><path d="M408 262 l10 -12 l10 12 v18 h-20z" fill="#fff" ${o3}/><rect x="410" y="270" width="16" height="10" fill="${INK}"/>`;
     case "slide": return `<path d="M400 300 Q380 260 420 240 Q470 220 440 200 Q410 180 460 168" fill="none" stroke="${INK}" stroke-width="22" stroke-linecap="round"/><path d="M400 300 Q380 260 420 240 Q470 220 440 200 Q410 180 460 168" fill="none" stroke="#FFB7C5" stroke-width="15" stroke-linecap="round"/>`;
+    case "peapod": return `<path d="M388 280 Q440 196 500 250 Q470 296 388 280Z" fill="#9CCB6B" ${o}/>${[410, 432, 454, 474].map((x, k) => `<circle cx="${x}" cy="${266 - k * 5}" r="10" fill="${k === 2 ? "#DDEB9A" : "#7BC96F"}" ${o3}/>`).join("")}<path d="M500 250 q14 -10 10 -26" fill="none" ${o3}/>`;
+    case "family": return `<rect x="392" y="190" width="96" height="110" rx="8" fill="#FFFDF0" ${o}/><path d="M418 222 H462 M440 222 V246 M418 246 H462 M418 246 V262 M462 246 V262" fill="none" ${o3}/><rect x="404" y="210" width="16" height="16" fill="#A0C4FF" ${o3}/><circle cx="470" cy="218" r="9" fill="#FFB7C5" ${o3}/><rect x="410" y="262" width="16" height="16" fill="#5B8FE0" ${o3}/><circle cx="462" cy="272" r="9" fill="#FFFDF0" ${o3}/>`;
+    case "heightchart": return `<rect x="410" y="160" width="60" height="140" rx="4" fill="#FFFDF0" ${o}/>${Array.from({ length: 7 }, (_, k) => `<path d="M410 ${176 + k * 18} h${k % 2 ? 14 : 24}" stroke="${INK}" stroke-width="2.4"/>`).join("")}<path d="M448 196 h18 M448 226 h18 M448 254 h18" stroke="#E0567E" stroke-width="4" stroke-linecap="round"/>`;
+    case "dna": return `${Array.from({ length: 7 }, (_, k) => { const y = 180 + k * 18, dx = 30 * Math.sin(k * .9); return `<path d="M${(440 - dx).toFixed(0)} ${y} H${(440 + dx).toFixed(0)}" stroke="${["#FFB7C5", "#A0C4FF", "#B9F3C9", "#FDFFB6"][k % 4]}" stroke-width="6" stroke-linecap="round"/>`; }).join("")}<path d="M440 170 ${Array.from({ length: 8 }, (_, k) => `L${(440 + 32 * Math.sin(k * .9)).toFixed(0)} ${180 + k * 18}`).join(" ")} M440 170 ${Array.from({ length: 8 }, (_, k) => `L${(440 - 32 * Math.sin(k * .9)).toFixed(0)} ${180 + k * 18}`).join(" ")}" fill="none" ${o3}/><rect x="412" y="296" width="56" height="8" rx="3" fill="#C98F6B" ${o3}/>`;
+    case "petri": return `<ellipse cx="440" cy="284" rx="62" ry="18" fill="rgba(211,228,255,.7)" ${o}/><ellipse cx="440" cy="280" rx="54" ry="13" fill="#FDFFB6" ${o3}/>${[[420, 278], [446, 284], [462, 276], [432, 272]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#B9F3C9" stroke="#3E8E3A" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="10" fill="rgba(185,243,201,.35)"/>`).join("")}`;
+    case "butterfly": return `<rect x="392" y="196" width="96" height="104" rx="6" fill="rgba(255,255,255,.55)" ${o}/><path d="M440 230 q-40 -30 -34 6 q4 22 34 10 q30 12 34 -10 q6 -36 -34 -6Z" fill="#FFB7C5" ${o3}/><path d="M440 244 q-26 10 -18 24 q10 8 18 -14 q8 22 18 14 q8 -14 -18 -24Z" fill="#C9C3F0" ${o3}/><path d="M440 226 V266" ${o3}/>`;
+    case "globe": return `<circle cx="440" cy="236" r="46" fill="#A0C4FF" ${o}/><path d="M412 216 q14 -10 26 4 q-6 16 -24 12Z M446 250 q18 -8 24 8 q-10 16 -26 6Z" fill="#7BC96F" ${o3}/><path d="M440 282 V300 M414 300 H466" ${o}/><path d="M384 236 a56 56 0 0 1 20 -44" fill="none" stroke="#E0567E" stroke-width="3" stroke-linecap="round"/><path d="M404 192 l2 12 l-12 -2" fill="none" stroke="#E0567E" stroke-width="3"/>`;
+    case "fossil": return `<path d="M392 300 Q380 240 440 214 Q500 240 488 300Z" fill="#B8B2A6" ${o}/><path d="M440 262 m-4 0 a4 4 0 1 1 8 0 a10 10 0 1 1 -18 -2 a16 16 0 1 1 30 6 a22 22 0 1 1 -40 -8" fill="none" stroke="#6B5E4E" stroke-width="3.5" stroke-linecap="round"/>`;
+    case "potometer": return `<path d="M400 190 q-30 20 -8 50 M400 190 q30 10 20 40 M400 200 q-6 -26 12 -34" fill="#7BC96F" ${o3}/><path d="M400 230 V270 H500" fill="none" stroke="${INK}" stroke-width="8" stroke-linecap="round"/><path d="M400 230 V270 H500" fill="none" stroke="#D3E4FF" stroke-width="4"/><circle cx="462" cy="270" r="4" fill="#fff" stroke="${INK}" stroke-width="1.5"/>${[420, 440, 460, 480].map(x => `<path d="M${x} 282 v8" stroke="${INK}" stroke-width="2"/>`).join("")}`;
+    case "lungs": return `<path d="M440 180 V222" ${o}/><path d="M434 220 Q400 208 392 250 Q388 292 424 294 Q436 290 436 262Z" fill="#FFB7C5" ${o}/><path d="M446 220 Q480 208 488 250 Q492 292 456 294 Q444 290 444 262Z" fill="#FFB7C5" ${o}/><path d="M440 222 l-18 18 M440 222 l18 18" ${o3}/>`;
+    case "belljar": return `<path d="M398 300 V214 Q398 180 440 180 Q482 180 482 214 V300" fill="rgba(211,228,255,.5)" ${o}/><path d="M440 170 V212 M440 212 l-14 12 M440 212 l14 12" ${o3}/><circle cx="424" cy="236" r="13" fill="#FFB7C5" ${o3}/><circle cx="456" cy="236" r="13" fill="#FFB7C5" ${o3}/><path d="M398 300 Q440 316 482 300" fill="none" stroke="#E0567E" stroke-width="5"/><path d="M440 308 v14" ${o3}/>`;
+    case "bloodbag": return `<path d="M470 160 V300" ${o}/><path d="M458 160 h24" ${o}/><rect x="400" y="176" width="58" height="80" rx="14" fill="#D64545" ${o}/><path d="M412 196 h34" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M429 256 V300" stroke="#D64545" stroke-width="4"/><path d="M429 256 V300" fill="none" stroke="${INK}" stroke-width="1.5" stroke-dasharray="3 5"/>`;
+    case "heart": return `<path d="M440 300 L394 246 Q376 216 404 202 Q428 194 440 220 Q452 194 476 202 Q504 216 486 246 Z" fill="#E0567E" ${o}/><path d="M440 220 V290" stroke="#FFB7C5" stroke-width="3" stroke-dasharray="6 5"/><path d="M420 206 q-10 -22 4 -34 M458 206 q8 -24 -4 -38" fill="none" stroke="#5B8FE0" stroke-width="7" stroke-linecap="round"/>`;
+    case "flower": return `<path d="M440 300 V230" stroke="#3E8E3A" stroke-width="6"/><path d="M440 266 q-26 -8 -30 8 q18 6 30 -8" fill="#7BC96F" ${o3}/>${[0, 72, 144, 216, 288].map(a => `<ellipse cx="${(440 + 24 * Math.sin(a * Math.PI / 180)).toFixed(1)}" cy="${(210 - 24 * Math.cos(a * Math.PI / 180)).toFixed(1)}" rx="16" ry="20" transform="rotate(${a} ${(440 + 24 * Math.sin(a * Math.PI / 180)).toFixed(1)} ${(210 - 24 * Math.cos(a * Math.PI / 180)).toFixed(1)})" fill="#FFB7C5" ${o3}/>`).join("")}<circle cx="440" cy="210" r="13" fill="#FDD66B" ${o3}/>`;
+    case "egg": return `<ellipse cx="440" cy="252" rx="50" ry="48" fill="rgba(253,255,182,.35)"/><circle cx="440" cy="252" r="36" fill="#FFF1C9" ${o}/><circle cx="440" cy="252" r="30" fill="none" stroke="#F2A36B" stroke-width="2" stroke-dasharray="4 4"/><circle cx="448" cy="244" r="11" fill="#C9C3F0" ${o3}/><path d="M440 288 V300" ${o}/>`;
+    case "eye": return `<ellipse cx="440" cy="240" rx="56" ry="36" fill="#FFFDF0" ${o}/><circle cx="440" cy="240" r="24" fill="#5B8FE0" ${o3}/><circle cx="440" cy="240" r="11" fill="${INK}"/><circle cx="446" cy="232" r="4" fill="#fff"/><path d="M440 276 V300 M420 300 H460" ${o}/>`;
+    case "brain": return `<path d="M398 260 Q386 212 430 204 Q446 184 470 202 Q498 208 490 244 Q496 272 468 274 Q450 290 428 278 Q398 284 398 260Z" fill="#FFB7C5" ${o}/><path d="M420 228 q12 -10 22 2 q10 -12 22 0 M414 254 q14 -8 26 2 q12 -10 26 2" fill="none" stroke="${INK}" stroke-width="2.4"/><path d="M448 276 v24" ${o}/>`;
+    case "bone": return `<path d="M404 300 L470 186" stroke="${INK}" stroke-width="16" stroke-linecap="round"/><path d="M404 300 L470 186" stroke="#FFFDF0" stroke-width="11" stroke-linecap="round"/><path d="M470 186 L500 250" stroke="${INK}" stroke-width="14" stroke-linecap="round"/><path d="M470 186 L500 250" stroke="#FFFDF0" stroke-width="9" stroke-linecap="round"/><path d="M418 270 Q450 220 474 200" fill="none" stroke="#E0567E" stroke-width="10" stroke-linecap="round" opacity=".85"/><circle cx="470" cy="186" r="9" fill="#FDFFB6" ${o3}/>`;
+    case "scale": return `<path d="M440 300 V200 M396 210 H484" ${o}/><path d="M396 210 l-18 40 h36 z M484 210 l-18 40 h36 z" fill="#FDFFB6" ${o3}/><circle cx="484" cy="238" r="7" fill="#fff" ${o3}/><rect x="386" y="232" width="20" height="12" rx="2" fill="#FFB7C5" stroke="${INK}" stroke-width="2"/><path d="M420 300 H460" ${o}/>`;
+    case "quadrat": return `<path d="M390 296 L420 250 H500 L470 296Z" fill="rgba(185,243,201,.6)" ${o}/><path d="M410 273 H485 M430 250 L445 296 M460 250 L475 296" stroke="${INK}" stroke-width="1.8"/>${[[425, 280], [452, 262], [470, 285]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4" fill="#fff" stroke="${INK}" stroke-width="1.2"/><circle cx="${x}" cy="${y}" r="1.6" fill="#FDD66B"/>`).join("")}`;
+    case "virus": return `<rect x="396" y="190" width="88" height="110" rx="8" fill="rgba(255,255,255,.4)" ${o}/><circle cx="440" cy="244" r="26" fill="#B9F3C9" ${o3}/>${Array.from({ length: 10 }, (_, k) => { const a = k * Math.PI / 5; return `<path d="M${(440 + 26 * Math.cos(a)).toFixed(0)} ${(244 + 26 * Math.sin(a)).toFixed(0)} L${(440 + 38 * Math.cos(a)).toFixed(0)} ${(244 + 38 * Math.sin(a)).toFixed(0)}" stroke="${INK}" stroke-width="2.4"/><circle cx="${(440 + 40 * Math.cos(a)).toFixed(0)}" cy="${(244 + 40 * Math.sin(a)).toFixed(0)}" r="4" fill="#FFB7C5" stroke="${INK}" stroke-width="1.5"/>`; }).join("")}`;
+    case "shield": return `<path d="M440 180 L490 196 Q490 268 440 300 Q390 268 390 196Z" fill="#A0C4FF" ${o}/>${[[424, 226], [456, 226], [440, 258]].map(([x, y]) => `<path d="M${x} ${y + 12} V${y} M${x} ${y} l-8 -10 M${x} ${y} l8 -10" fill="none" stroke="#FDFFB6" stroke-width="4" stroke-linecap="round"/>`).join("")}`;
+    case "prism": return `<path d="M440 196 L486 300 H394 Z" fill="#D3E4FF" ${o}/><path d="M360 250 L426 240" stroke="#fff" stroke-width="5" stroke-linecap="round"/>${["#e0473d", "#f28c28", "#f2c230", "#4caf50", "#3b7de0", "#8e44c8"].map((c, i) => `<path d="M462 250 L530 ${216 + i * 10}" stroke="${c}" stroke-width="4"/>`).join("")}`;
     case "villi": return `${[400, 424, 448, 472].map((x, k) => `<path d="M${x} 300 V${236 + (k % 2) * 16} q10 -16 20 0 V300" fill="#FFB7C5" ${o3}/><path d="M${x + 10} 298 V${240 + (k % 2) * 16}" stroke="#FFFDF0" stroke-width="3"/>`).join("")}`;
   }
   return "";
@@ -1073,7 +1107,7 @@ function enterRoom(id) {
   HOTSPOTS = (SCENES[room.scene] || SCENES.library).hs; DOOR = (SCENES[room.scene] || SCENES.library).door;
   if (replay) { S.room_progress[room.id] = []; S.room_timer[room.id] = ROOM_SECONDS; }
   if (S.room_timer[room.id] == null) S.room_timer[room.id] = ROOM_SECONDS;
-  S.current_room = room.id; save(); MUSIC.setMode("room");
+  S.current_room = room.id; save(); MUSIC.setMode(room.boss ? "boss" : SCENE_SONG[room.scene] || "room");
   if (R) clearTimeout(R.introT);
   if (R) clearTimeout(R.incT);
   R = { room, replay, mood: "normal", att: {}, hinted: {}, jam: {}, lastWrongAt: 0, qs: runQs(room), incidents: 0, used: [], stolen: null, hiddenHs: null };
@@ -1517,7 +1551,7 @@ function escapeRoom() {
       ${room.boss && first ? say("rakko", "...Hmph. Not bad. You have the heart of a true biologist. ⚔️", "happy") : ""}
       ${topicDone ? say("momonga", `TOPIC ${T.no} CLEARED! You earned <b>${esc(T.badge)}</b>! Everyone is crying happy tears! 💜🥹`, "sparkle") : first ? say("momonga", `You earned <b>${esc(room.item)}</b>! 💜`, "happy") : say("kurimanju", "Replay complete. Practice makes the brain strong. 🍵", "happy")}
       <section class="card cream jsec"><h3>📖 Textbook recap: ${esc(room.focus)}</h3><ul>${room.notes.map(x => `<li>${x}</li>`).join("")}</ul></section>
-      ${say("hachiware", !nxt ? "That was the final stage of every topic. You've mastered S4 Biology! 🌟" : `That's today's mission done! 🌱 Rest your brain, or keep going if you feel great. Next: <b>${esc(stageLabel(nxt))}: ${esc(nxt.name)}</b>.`, "happy", "hint")}
+      ${say("hachiware", !nxt ? "That was the final stage of every topic. You've conquered the whole HKDSE Biology compulsory part! 🌟" : `That's today's mission done! 🌱 Rest your brain, or keep going if you feel great. Next: <b>${esc(stageLabel(nxt))}: ${esc(nxt.name)}</b>.`, "happy", "hint")}
       <div class="row"><button class="btn big" id="eMap">Back to the map</button>${nxt ? `<button class="btn blue" id="eNext">▶ Next stage</button>` : ""}<button class="btn yellow" id="eCode">🔑 Get my save code</button></div>`, { onClose: renderMap });
     document.getElementById("eMap").onclick = () => { SFX.tap(); closeModal(); renderMap(); };
     if (nxt) document.getElementById("eNext").onclick = () => { SFX.tap(); closeModal(); enterRoom(nxt.id); };

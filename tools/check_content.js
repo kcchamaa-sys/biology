@@ -1,7 +1,7 @@
 // Content sanity checks: node tools/check_content.js
 const fs = require("fs"), vm = require("vm");
-const src = ["chars.js", "diagrams.js", "graphs.js", "stages.js", "scenes.js", ...[1,2,3,4,5,6,7,8].map(i => `q_t${i}.js`), "q_graphs.js", "rush.js"].map(f => fs.readFileSync(`src/${f}`, "utf8")).join("\n").replace("<script>", "");
-const ctx = { outfitSvg: () => "", console, subseq: (a) => a, specialSvg: () => "" };
+const src = ["chars.js", "diagrams.js", "graphs.js", "stages.js", "stages2.js", "scenes.js", ...[1,2,3,4,5,6,7,8,9,11,13,15,17].map(i => `q_t${i}.js`), "q_graphs.js", "q_graphs2.js", "rush.js"].map(f => fs.readFileSync(`src/${f}`, "utf8")).join("\n").replace("<script>", "");
+const ctx = { outfitSvg: () => "", console, subseq: (a) => a, specialSvg: () => "", SFX: {} };
 vm.createContext(ctx); vm.runInContext(src + "\nthis.ROOMS=ROOMS;this.SCENES=SCENES;this.QB=QB;this.DIAGRAMS=DIAGRAMS;this.TOPICS=TOPICS;", ctx);
 const { ROOMS, QB, DIAGRAMS } = ctx; let bad = 0, total = 0;
 const err = m => { bad++; console.log("✗", m); };
@@ -20,7 +20,7 @@ ROOMS.forEach(r => {
     if (!(o.b >= 1 && o.b <= 6)) err(`${id}: bloom ${o.b}`);
     if (!o.q || !o.hint || !o.explain) err(`${id}: missing q/hint/explain`);
     if (o.svg && !DIAGRAMS[o.svg]) err(`${id}: unknown svg ${o.svg}`);
-    if (/diagram|\bgraph\b|bar chart/i.test(o.q) && !o.svg) err(`${id}: mentions diagram/graph but has no svg`);
+    if (/\b(the|this|a) (diagram|graph|bar chart|histogram|trace)\b(?! type)/i.test(o.q) && !/sketch|draw|design/i.test(o.q) && !o.svg) err(`${id}: mentions diagram/graph but has no svg`);
     if (o.type === "mc") {
       if (!Array.isArray(o.choices) || o.choices.length !== 4) err(`${id}: needs 4 choices`);
       else if (!(o.answer >= 0 && o.answer < 4)) err(`${id}: bad answer`);

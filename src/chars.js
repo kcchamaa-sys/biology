@@ -80,11 +80,14 @@ function figure(who, mood = "normal") {
   const c = CHAR[who].color;
   const extra = who === "rakko" ? `<path d="M56 86 L62 44" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M56 86 L62 44" stroke="#D3E4FF" stroke-width="2.4" stroke-linecap="round"/><path d="M52 72 h10" stroke="${INK}" stroke-width="3.4" stroke-linecap="round"/>`
     : who === "usagi" && mood !== "cry" ? `<path d="M6 56 l-4 -6 M10 52 l-2 -8 M58 56 l4 -6" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>` : "";
+  // Soft, chubby oval body (mochi-like) that tucks under the head, with little nub arms and feet
+  const up = mood === "sparkle" || mood === "happy";
   return `<svg viewBox="-4 -4 72 100" aria-hidden="true"><g filter="url(#sketch)">
-    <ellipse cx="32" cy="76" rx="19" ry="15" fill="${c}" ${OUT}/>
-    <ellipse cx="13" cy="70" rx="5" ry="7" fill="${c}" ${OUT} transform="rotate(${mood === "sparkle" ? 150 : 30} 13 70)"/>
-    <ellipse cx="51" cy="70" rx="5" ry="7" fill="${c}" ${OUT} transform="rotate(${mood === "sparkle" ? -150 : -30} 51 70)"/>
-    <ellipse cx="24" cy="90" rx="6" ry="3.5" fill="${c}" ${OUT}/><ellipse cx="40" cy="90" rx="6" ry="3.5" fill="${c}" ${OUT}/>
+    <ellipse cx="24" cy="89" rx="7" ry="4.5" fill="${c}" ${OUT}/><ellipse cx="40" cy="89" rx="7" ry="4.5" fill="${c}" ${OUT}/>
+    <ellipse cx="32" cy="68" rx="23.5" ry="23" fill="${c}" ${OUT}/>
+    <ellipse cx="9.5" cy="${up ? 60 : 68}" rx="5" ry="6.5" fill="${c}" ${OUT} transform="rotate(${up ? 140 : 25} 9.5 ${up ? 60 : 68})"/>
+    <ellipse cx="54.5" cy="${up ? 60 : 68}" rx="5" ry="6.5" fill="${c}" ${OUT} transform="rotate(${up ? -140 : -25} 54.5 ${up ? 60 : 68})"/>
+    <path d="M24 76 q8 5 16 0" fill="none" stroke="${INK}" stroke-width="1.2" opacity=".25" stroke-linecap="round"/>
     ${extra}<g>${CHAR[who].head(mood)}${who === "chiikawa" ? outfitSvg() : ""}</g></g></svg>`;
 }
 /* Short emotional reactions: Chiikawa and friends react out loud to what happens */
@@ -131,59 +134,125 @@ const SFX = {
 };
 
 /* ============================================================
-   2b. Background music: soft, generated live (no audio files).
-   Map: gentle music-box tune in C major. Rooms: slower, mysterious A-minor tune.
+   2b. Background music: 8 ORIGINAL cute tunes in a cheerful Chiikawa-like mood,
+   generated live with Web Audio (no audio files, no official soundtrack).
+   Each song: 8 bars × 8 eighth-notes. melody/bass are MIDI numbers (0 = rest),
+   chords are held pads, drums are 8-step strings (k kick, s snare, h hat, . rest).
    ============================================================ */
 const MUSIC_KEY = "escapeGame_biology_music";
+const CH = { C: [48, 52, 55], Dm: [50, 53, 57], Em: [52, 55, 59], F: [53, 57, 60], G: [55, 59, 62], Am: [57, 60, 64], Bb: [46, 50, 53], Bm: [47, 50, 54], D: [50, 54, 57], A: [45, 49, 52], E: [52, 56, 59], Gm: [55, 58, 62], Cl: [48, 52, 55] };
+const bassBar = (roots, pat) => roots.map(r => pat.map(o => (o === null ? 0 : r + o)));
 const SONGS = {
-  map: { bpm: 84,
-    chords: [[48, 52, 55], [45, 48, 52], [41, 45, 48], [43, 47, 50]],
-    melody: [[76, 0, 79, 0, 81, 79, 76, 0], [72, 0, 76, 0, 74, 0, 0, 0], [81, 0, 79, 0, 76, 0, 74, 0], [74, 0, 76, 0, 79, 0, 0, 0],
-             [79, 0, 81, 0, 84, 81, 79, 0], [76, 0, 79, 0, 76, 74, 72, 0], [74, 0, 76, 0, 81, 0, 79, 0], [76, 0, 74, 0, 72, 0, 0, 0]] },
-  room: { bpm: 66,
-    chords: [[45, 48, 52], [41, 45, 48], [48, 52, 55], [43, 47, 50]],
-    melody: [[76, 0, 0, 0, 74, 0, 72, 0], [69, 0, 0, 0, 0, 0, 0, 0], [72, 0, 74, 0, 76, 0, 0, 0], [79, 0, 76, 0, 74, 0, 0, 0],
-             [81, 0, 79, 0, 76, 0, 0, 0], [74, 0, 72, 0, 69, 0, 0, 0], [72, 0, 0, 74, 76, 0, 0, 0], [74, 0, 0, 0, 0, 0, 0, 0]] }
+  // Map: "Picnic Parade" (C major marimba march)
+  map: { title: "Picnic Parade", bpm: 108, swing: .12, lead: "marimba", drums: "k.h.s.hh",
+    chords: ["C", "F", "G", "C", "Am", "F", "G", "C"],
+    melody: [[72, 0, 76, 79, 76, 0, 72, 0], [77, 0, 76, 74, 72, 0, 69, 0], [71, 0, 74, 79, 77, 76, 74, 0], [76, 0, 72, 0, 72, 0, 0, 0],
+             [76, 0, 79, 81, 79, 0, 76, 0], [77, 76, 74, 72, 74, 0, 77, 0], [79, 0, 77, 76, 74, 0, 71, 0], [72, 0, 76, 0, 72, 0, 0, 0]],
+    bass: bassBar([36, 41, 43, 36, 45, 41, 43, 36], [0, null, null, null, 7, null, 12, null]) },
+  // Library & lab: "Curious Steps" (A minor pizzicato tiptoe)
+  room: { title: "Curious Steps", bpm: 84, swing: .08, lead: "pluck", drums: "k...s...",
+    chords: ["Am", "Dm", "E", "Am", "F", "G", "E", "Am"],
+    melody: [[69, 0, 72, 0, 76, 0, 72, 0], [74, 0, 77, 0, 74, 0, 72, 0], [71, 0, 68, 0, 71, 0, 74, 0], [72, 0, 69, 0, 0, 0, 0, 0],
+             [72, 0, 74, 76, 77, 0, 76, 0], [74, 0, 71, 0, 79, 0, 77, 0], [76, 0, 74, 0, 71, 0, 68, 0], [69, 0, 0, 0, 0, 0, 0, 0]],
+    bass: bassBar([45, 38, 40, 45, 41, 43, 40, 45], [0, null, 7, null, 0, null, 7, null]) },
+  // Garden & greenhouse: "Sunny Sprout" (F major flute stroll)
+  garden: { title: "Sunny Sprout", bpm: 96, swing: .1, lead: "flute", drums: "k.h.k.h.",
+    chords: ["F", "C", "Dm", "Bb", "F", "Gm", "C", "F"],
+    melody: [[77, 0, 0, 76, 77, 0, 72, 0], [76, 0, 74, 72, 74, 0, 0, 0], [74, 0, 77, 0, 81, 0, 79, 77], [74, 0, 0, 0, 70, 0, 0, 0],
+             [72, 0, 77, 0, 79, 81, 79, 77], [79, 0, 0, 77, 74, 0, 70, 0], [72, 0, 74, 0, 76, 0, 79, 0], [77, 0, 0, 0, 0, 0, 0, 0]],
+    bass: bassBar([41, 36, 38, 34, 41, 43, 36, 41], [0, null, null, 7, 12, null, 7, null]) },
+  // Pond & inside a cell: "Bubble Float" (dreamy D major music box)
+  float: { title: "Bubble Float", bpm: 70, swing: 0, lead: "bell", drums: "........",
+    chords: ["D", "Bm", "G", "A", "D", "Bm", "G", "D"],
+    melody: [[78, 0, 0, 0, 81, 0, 78, 0], [76, 0, 0, 0, 74, 0, 0, 0], [74, 0, 76, 0, 78, 0, 79, 0], [81, 0, 0, 0, 76, 0, 0, 0],
+             [78, 0, 0, 81, 83, 0, 81, 0], [78, 0, 0, 0, 76, 0, 74, 0], [71, 0, 74, 0, 79, 0, 78, 0], [74, 0, 0, 0, 0, 0, 0, 0]],
+    bass: bassBar([38, 35, 43, 45, 38, 35, 43, 38], [0, null, null, null, 7, null, null, null]) },
+  // Kitchen & clinic: "Snack Time" (G major bouncy marimba)
+  snack: { title: "Snack Time", bpm: 100, swing: .14, lead: "marimba", drums: "k.h.s.h.",
+    chords: ["G", "Em", "C", "D", "G", "Em", "C", "D"],
+    melody: [[79, 0, 79, 81, 83, 0, 79, 0], [76, 0, 79, 0, 76, 0, 74, 0], [72, 0, 76, 0, 79, 0, 76, 0], [74, 0, 78, 0, 81, 0, 0, 0],
+             [83, 0, 81, 79, 81, 0, 79, 76], [79, 0, 76, 0, 74, 0, 71, 0], [72, 0, 74, 76, 79, 0, 76, 0], [74, 0, 78, 0, 79, 0, 0, 0]],
+    bass: bassBar([43, 40, 36, 38, 43, 40, 36, 38], [0, null, 7, null, 0, 12, 7, null]) },
+  // Boss stages: "Rakko's Trial" (D minor, brave and driving)
+  boss: { title: "Rakko's Trial", bpm: 118, swing: 0, lead: "pluck", drums: "k.hsk.hs",
+    chords: ["Dm", "Bb", "C", "A", "Dm", "Bb", "C", "A"],
+    melody: [[74, 0, 74, 77, 76, 0, 74, 0], [70, 0, 74, 0, 77, 0, 74, 0], [72, 0, 76, 0, 79, 77, 76, 0], [73, 0, 76, 0, 81, 0, 0, 0],
+             [81, 0, 79, 77, 76, 0, 74, 0], [77, 0, 74, 0, 70, 0, 74, 0], [76, 0, 72, 0, 79, 0, 76, 0], [73, 0, 69, 0, 74, 0, 0, 0]],
+    bass: bassBar([38, 34, 36, 33, 38, 34, 36, 33], [0, 0, 12, 0, 0, 12, 0, 7]) },
+  // Cell Rush: "Yaha Dash" (fast C major)
+  rush: { title: "Yaha Dash", bpm: 150, swing: 0, lead: "marimba", drums: "k.hsk.hs",
+    chords: ["C", "G", "Am", "F", "C", "G", "F", "C"],
+    melody: [[72, 76, 79, 76, 72, 76, 79, 84], [83, 79, 74, 79, 83, 0, 79, 0], [81, 76, 72, 76, 81, 84, 81, 76], [77, 0, 81, 0, 77, 0, 74, 0],
+             [72, 76, 79, 84, 83, 79, 76, 79], [74, 79, 83, 86, 84, 0, 83, 0], [81, 84, 81, 76, 77, 81, 77, 74], [72, 0, 79, 0, 72, 0, 0, 0]],
+    bass: bassBar([36, 43, 45, 41, 36, 43, 41, 36], [0, 12, 0, 12, 0, 12, 7, 12]) },
+  // Mistake Notebook: "Study Tea" (slow F major lullaby)
+  calm: { title: "Study Tea", bpm: 64, swing: 0, lead: "bell", drums: "........",
+    chords: ["F", "Dm", "Bb", "C", "F", "Dm", "Bb", "F"],
+    melody: [[72, 0, 0, 0, 69, 0, 72, 0], [74, 0, 0, 0, 69, 0, 0, 0], [70, 0, 74, 0, 77, 0, 74, 0], [72, 0, 0, 0, 0, 0, 0, 0],
+             [77, 0, 0, 76, 74, 0, 72, 0], [74, 0, 0, 0, 77, 0, 0, 0], [70, 0, 72, 0, 74, 0, 72, 0], [69, 0, 0, 0, 65, 0, 0, 0]],
+    bass: bassBar([41, 38, 34, 36, 41, 38, 34, 41], [0, null, null, null, 7, null, null, null]) }
 };
-SONGS.rush = { bpm: 112, chords: SONGS.map.chords, melody: SONGS.map.melody };
+const SCENE_SONG = { library: "room", lab: "room", greenhouse: "garden", garden: "garden", pond: "float", cellworld: "float", kitchen: "snack", clinic: "snack" };
 const MUSIC = {
-  on: true, mode: "map", step: 0, next: 0, timer: null, out: null,
+  on: true, mode: "map", step: 0, next: 0, timer: null, out: null, noise: null,
   midi: m => 440 * Math.pow(2, (m - 69) / 12),
   bus() {
     const ctx = SFX.ctx; if (!ctx) return null;
     if (!this.out) {
       this.out = ctx.createGain(); this.out.gain.value = 0;
-      const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2600;
+      const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 3200;
       this.out.connect(lp).connect(ctx.destination);
+      const n = ctx.createBuffer(1, ctx.sampleRate * .5, ctx.sampleRate), d = n.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      this.noise = n;
     }
     return this.out;
   },
-  bell(freq, t, vol) {
-    const ctx = SFX.ctx, o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain();
-    o.type = "sine"; o.frequency.value = freq; o2.type = "triangle"; o2.frequency.value = freq * 2;
-    const g2 = ctx.createGain(); g2.gain.value = .15;
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .02); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.6);
-    o.connect(g); o2.connect(g2).connect(g); g.connect(this.out);
-    o.start(t); o2.start(t); o.stop(t + 1.7); o2.stop(t + 1.7);
+  env(g, t, vol, a, dec) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + dec); },
+  osc(type, freq, t, dur, vol, a = .01, detune = 0) {
+    const ctx = SFX.ctx, o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.value = freq; o.detune.value = detune; this.env(g, t, vol, a, dur);
+    o.connect(g).connect(this.out); o.start(t); o.stop(t + dur + .05); return o;
   },
+  // Instruments
+  bell(f, t, v) { this.osc("sine", f, t, 1.6, v, .02); this.osc("triangle", f * 2, t, .9, v * .15, .02); },
+  marimba(f, t, v) { this.osc("sine", f, t, .5, v * 1.1, .005); this.osc("sine", f * 4, t, .12, v * .25, .003); },
+  pluck(f, t, v) { const o = this.osc("triangle", f, t, .35, v * 1.1, .004); o.frequency.setValueAtTime(f * 1.01, t); o.frequency.exponentialRampToValueAtTime(f, t + .05); this.osc("sine", f * 2, t, .15, v * .2, .004); },
+  flute(f, t, v, len) {
+    const ctx = SFX.ctx, o = this.osc("sine", f, t, len, v * .9, .06), lfo = ctx.createOscillator(), lg = ctx.createGain();
+    lfo.frequency.value = 5.2; lg.gain.value = f * .006; lfo.connect(lg).connect(o.frequency); lfo.start(t + .1); lfo.stop(t + len + .05);
+    this.osc("triangle", f * 2, t, len * .8, v * .08, .08);
+  },
+  bassNote(f, t) { this.osc("triangle", f, t, .45, .11, .01); this.osc("sine", f, t, .3, .06, .01); },
   pad(notes, t, dur) {
     const ctx = SFX.ctx;
-    notes.forEach(m => [0, 4].forEach(det => {
+    notes.forEach(m => [0, 5].forEach(det => {
       const o = ctx.createOscillator(), g = ctx.createGain();
       o.type = "sine"; o.frequency.value = this.midi(m); o.detune.value = det;
-      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.05, t + .9); g.gain.setValueAtTime(.05, t + dur - .6); g.gain.exponentialRampToValueAtTime(0.0001, t + dur + .4);
-      o.connect(g).connect(this.out); o.start(t); o.stop(t + dur + .5);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.025, t + .5); g.gain.setValueAtTime(.025, t + dur - .4); g.gain.exponentialRampToValueAtTime(0.0001, t + dur + .3);
+      o.connect(g).connect(this.out); o.start(t); o.stop(t + dur + .4);
     }));
+  },
+  drum(k, t) {
+    const ctx = SFX.ctx;
+    if (k === "k") { const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(45, t + .14); this.env(g, t, .22, .003, .18); o.connect(g).connect(this.out); o.start(t); o.stop(t + .2); return; }
+    const src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+    src.buffer = this.noise; f.type = k === "s" ? "bandpass" : "highpass"; f.frequency.value = k === "s" ? 1800 : 7000;
+    this.env(g, t, k === "s" ? .09 : .03, .002, k === "s" ? .14 : .05);
+    src.connect(f).connect(g).connect(this.out); src.start(t); src.stop(t + .2);
   },
   schedule() {
     const ctx = SFX.ctx; if (!ctx || document.hidden) return;
-    const song = SONGS[this.mode], eighth = 30 / song.bpm;
+    const song = SONGS[this.mode] || SONGS.map, eighth = 30 / song.bpm;
     if (this.next < ctx.currentTime) this.next = ctx.currentTime + .1;
     while (this.next < ctx.currentTime + .6) {
       const bar = Math.floor(this.step / 8) % song.melody.length, pos = this.step % 8;
-      if (pos === 0) this.pad(song.chords[bar % song.chords.length], this.next, eighth * 8);
+      const t = this.next + (pos % 2 ? song.swing * eighth : 0);
+      if (pos === 0) this.pad(CH[song.chords[bar]], this.next, eighth * 8);
       const m = song.melody[bar][pos];
-      if (m) this.bell(this.midi(m), this.next, this.mode === "room" ? .07 : .08);
+      if (m) { const f = this.midi(m), v = .075; if (song.lead === "flute") this.flute(f, t, v, eighth * 1.8); else this[song.lead](f, t, v); }
+      const b = song.bass[bar][pos]; if (b) this.bassNote(this.midi(b), t);
+      const d = song.drums[pos]; if (d && d !== ".") this.drum(d, t);
       this.next += eighth; this.step++;
     }
   },
@@ -191,14 +260,14 @@ const MUSIC = {
     if (!this.on) return;
     SFX.init(); const out = this.bus(); if (!out || this.timer) return;
     const ctx = SFX.ctx;
-    out.gain.cancelScheduledValues(ctx.currentTime); out.gain.setTargetAtTime(.55, ctx.currentTime, .8);
+    out.gain.cancelScheduledValues(ctx.currentTime); out.gain.setTargetAtTime(.5, ctx.currentTime, .8);
     this.next = ctx.currentTime + .15; this.timer = setInterval(() => this.schedule(), 150);
   },
   stop() {
     if (this.out && SFX.ctx) this.out.gain.setTargetAtTime(0, SFX.ctx.currentTime, .3);
     clearInterval(this.timer); this.timer = null;
   },
-  setMode(m) { if (this.mode === m) return; this.mode = m; this.step = 0; }
+  setMode(m) { if (!SONGS[m]) m = "map"; if (this.mode === m) return; this.mode = m; this.step = 0; }
 };
 try { MUSIC.on = localStorage.getItem(MUSIC_KEY) !== "off"; } catch (e) {}
 

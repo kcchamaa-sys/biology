@@ -1,19 +1,33 @@
 
 /* ============================================================
-   4. HKDSE S4 Biology: 8 topics, each a series of stages (27 escape rooms; Photosynthesis has 6).
+   4. HKDSE Biology compulsory part (S4–S6): 19 topics, each a series of stages.
    The last stage of every topic is a boss stage guarded by Rakko.
    Each stage uses one of 8 room scenes: 5 locks (3 questions each) + an exit door.
    ============================================================ */
+// Topics in HKDSE curriculum order (Parts I–IV of the compulsory part). "no" is the number shown to students.
+const PARTS = ["I. Cells and Molecules of Life", "II. Genetics and Evolution", "III. Organisms and Environment", "IV. Health and Diseases"];
 const TOPICS = [
-  { id: "t1", no: 1, icon: "🧪", name: "Molecules of Life", badge: "🧪 Molecule Master Badge", part: "Cells and Molecules of Life" },
-  { id: "t2", no: 2, icon: "🔬", name: "Cellular Organisation", badge: "🔬 Cell Explorer Badge", part: "Cells and Molecules of Life" },
-  { id: "t3", no: 3, icon: "🫧", name: "Movement of Substances Across Membranes", badge: "🫧 Membrane Gatekeeper Badge", part: "Cells and Molecules of Life" },
-  { id: "t4", no: 4, icon: "🧬", name: "Cell Cycle and Division", badge: "🧬 Division Champion Badge", part: "Cells and Molecules of Life" },
-  { id: "t5", no: 5, icon: "🔑", name: "Enzymes and Metabolism", badge: "🔑 Enzyme Key Badge", part: "Cells and Molecules of Life" },
-  { id: "t6", no: 6, icon: "🌿", name: "Photosynthesis", badge: "🌿 Sunlight Leaf Badge", part: "Cellular Energetics" },
-  { id: "t7", no: 7, icon: "⚡", name: "Cellular Respiration", badge: "⚡ Energy Spark Badge", part: "Cellular Energetics" },
-  { id: "t8", no: 8, icon: "🍙", name: "Nutrition in Humans", badge: "🍙 Healthy Tummy Badge", part: "Organisms and Environment" }
+  { id: "t1", icon: "🧪", name: "Molecules of Life", badge: "🧪 Molecule Master Badge", p: 0 },
+  { id: "t2", icon: "🔬", name: "Cellular Organisation", badge: "🔬 Cell Explorer Badge", p: 0 },
+  { id: "t3", icon: "🫧", name: "Movement of Substances Across Membranes", badge: "🫧 Membrane Gatekeeper Badge", p: 0 },
+  { id: "t4", icon: "🧬", name: "Cell Cycle and Division", badge: "🧬 Division Champion Badge", p: 0 },
+  { id: "t5", icon: "🔑", name: "Enzymes and Metabolism", badge: "🔑 Enzyme Key Badge", p: 0 },
+  { id: "t6", icon: "🌿", name: "Photosynthesis", badge: "🌿 Sunlight Leaf Badge", p: 0 },
+  { id: "t7", icon: "⚡", name: "Cellular Respiration", badge: "⚡ Energy Spark Badge", p: 0 },
+  { id: "t9", icon: "🫛", name: "Basic Genetics", badge: "🫛 Pea-Pod Genius Badge", p: 1 },
+  { id: "t10", icon: "🧫", name: "Molecular Genetics and Biotechnology", badge: "🧫 DNA Detective Badge", p: 1 },
+  { id: "t11", icon: "🦋", name: "Biodiversity and Evolution", badge: "🦋 Evolution Explorer Badge", p: 1 },
+  { id: "t12", icon: "🌱", name: "Life Processes in Plants", badge: "🌱 Green Pipe Badge", p: 2 },
+  { id: "t8", icon: "🍙", name: "Nutrition in Humans", badge: "🍙 Healthy Tummy Badge", p: 2 },
+  { id: "t13", icon: "🫁", name: "Gas Exchange in Humans", badge: "🫁 Deep Breath Badge", p: 2 },
+  { id: "t14", icon: "❤️", name: "Transport in Humans", badge: "❤️ Heartbeat Badge", p: 2 },
+  { id: "t15", icon: "🌸", name: "Reproduction, Growth and Development", badge: "🌸 New Life Badge", p: 2 },
+  { id: "t16", icon: "🧠", name: "Coordination and Response", badge: "🧠 Quick Reflex Badge", p: 2 },
+  { id: "t17", icon: "⚖️", name: "Homeostasis", badge: "⚖️ Balance Keeper Badge", p: 2 },
+  { id: "t18", icon: "🌍", name: "Ecosystems", badge: "🌍 Eco Guardian Badge", p: 2 },
+  { id: "t19", icon: "🩺", name: "Health and Diseases", badge: "🩺 Body Defender Badge", p: 3 }
 ];
+TOPICS.forEach((T, i) => { T.no = i + 1; T.part = PARTS[T.p]; });
 
 const ROOMS = [
   /* ---------------- Topic 1: Molecules of Life ---------------- */
@@ -414,4 +428,3 @@ const ROOMS = [
     rules: ["Villi + microvilli → large surface area · thin wall · rich blood supply · lacteal", "Glucose & amino acids → capillaries → hepatic portal vein → liver", "Fatty acids & glycerol → lacteal · large intestine → absorbs water"],
     terms: [["villus", "finger-like fold of the small intestine wall (plural: villi)"], ["microvilli", "tiny folds on epithelial cells that increase surface area"], ["lacteal", "lymph vessel in a villus that absorbs fats"], ["hepatic portal vein", "blood vessel carrying absorbed food from the intestine to the liver"], ["assimilation", "use of absorbed food by body cells"], ["deamination", "removal of the amino group from excess amino acids in the liver"], ["egestion", "removal of undigested food (faeces) from the body"]] }
 ];
-ROOMS.forEach(r => { const T = TOPICS[r.t]; r.topicNo = T.no; r.topic = T.name; r.boss = r.s === ROOMS.filter(x => x.t === r.t).length; });

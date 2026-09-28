@@ -1,32 +1,32 @@
 # 🧬 Chiikawa Bio Escape
 
-A Chiikawa-style escape-room game for **HKDSE Secondary 4 Biology**. English only. One file (`index.html`), no install, no build step for players.
+A Chiikawa-style escape-room game covering the **whole HKDSE Biology compulsory part (S4–S6)**. English only. One file (`index.html`), no install, no build step for players.
 
 - **Play:** open `index.html` in any browser (or the GitHub Pages link).
-- **Session length:** one stage ≈ 10–15 minutes. One stage a day is the whole goal.
+- **Session length:** one stage ≈ 15–20 minutes. One stage a day is the whole goal.
 
-## 8 topics, 27 stages (escape rooms)
+## 19 topics, 60 stages (escape rooms)
 
-Every topic is open, so students can jump to the one their class is on. Inside a topic, stages unlock in order; the last stage is a ⚔️ **Boss stage** (guarded by Rakko). Photosynthesis is split into 6 stages.
+Every topic is open, so students can jump to the one their class is on (the map has Part I–IV tabs). Inside a topic, stages unlock in order; the last stage is a ⚔️ **boss stage** guarded by Rakko.
 
-| # | Topic | Stage 1 | Stage 2 | ⚔️ Boss stage |
-|---|-------|---------|---------|---------------|
-| 1 | Molecules of Life | Water and inorganic ions | Carbohydrates and lipids | Proteins, nucleic acids, food tests |
-| 2 | Cellular Organisation | Microscopes and cell theory | Organelles; plant vs animal cells | Membrane; prokaryotes vs eukaryotes |
-| 3 | Movement Across Membranes | Diffusion | Osmosis | Active transport and phagocytosis |
-| 4 | Cell Cycle and Division | Cell cycle and mitosis | Meiosis and variation | Mitosis vs meiosis |
-| 5 | Enzymes and Metabolism | How enzymes work | Temperature, pH, substrate | Inhibitors and applications |
-| 6 | Photosynthesis (6 stages) | Leaf structure · Pigments and spectra · Light-dependent reactions · Calvin cycle · Limiting factors | | Investigating photosynthesis |
-| 7 | Cellular Respiration | Aerobic respiration | Anaerobic respiration | Comparing processes; experiments |
-| 8 | Nutrition in Humans | Balanced diet | Digestion | Absorption and assimilation |
+| Part | Topics (stages) |
+|------|-----------------|
+| I. Cells and Molecules of Life | 1 Molecules of Life (3) · 2 Cellular Organisation (3) · 3 Movement Across Membranes (3) · 4 Cell Cycle and Division (3) · 5 Enzymes and Metabolism (3) · 6 Photosynthesis (6) · 7 Cellular Respiration (3) |
+| II. Genetics and Evolution | 8 Basic Genetics (3) · 9 Molecular Genetics and Biotechnology (3) · 10 Biodiversity and Evolution (3) |
+| III. Organisms and Environment | 11 Life Processes in Plants (3) · 12 Nutrition in Humans (3) · 13 Gas Exchange in Humans (3) · 14 Transport in Humans (3) · 15 Reproduction, Growth and Development (3) · 16 Coordination and Response (4) · 17 Homeostasis (2) · 18 Ecosystems (3) |
+| IV. Health and Diseases | 19 Health and Diseases (3) |
 
 ## Rooms and questions
 
 - **8 room scenes** (library, science lab, greenhouse, inside a cell, kitchen, underwater pond, secret garden, clinic), so stages feel different.
 - **Each lock needs 3 questions in a row** (15 per visit), climbing Bloom's levels 1–6. Progress on a half-open lock is saved.
-- **470 core questions** (15–20 per stage) including **62 graph-reading questions** (drawn to scale: potato-strip osmosis, enzyme curves, absorption spectra, GP/RuBP, lactic acid, and more).
+- **981 core questions** (15–20 per stage) including **78 graph-reading questions** (drawn to scale: potato-strip osmosis, enzyme curves, absorption spectra, GP/RuBP, lactic acid, and more).
 - **Spelling practice**: every stage's key terms become "type the word" locks and "which spelling is correct?" checks (British/HKDSE spelling). Up to 3 per visit; also a Spelling bee round in Cell Rush.
 - 📓 **Study Journal:** summary, key rules and key terms for every stage.
+
+## 🎵 Music
+
+Eight **original** tunes composed for this game in a cheerful Chiikawa-like mood (marimba, toy-piano bells, flute, plucked strings, soft drums), generated live in the browser. The tune changes with the room type, with special tracks for boss stages, Cell Rush and the Mistake Notebook. The official Chiikawa soundtrack is not used (copyright).
 
 ## 📕 Mistake Notebook
 
@@ -43,7 +43,7 @@ Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, ant
 ## Saving
 
 - Auto-save to `localStorage` key `escapeGame_biology` (separate from the physics game), with a Resume prompt.
-- 🔑 **8-character save code** (e.g. `ABCD-EFGH`) or a link ending `#ABCDEFGH`. It stores stages escaped and stars per topic, locks open in the current stage, streak (up to 31) and shields. The Mistake Notebook, trophies and chestnuts stay on the device.
+- 🔑 **12-character save code** (e.g. `ABCD-EFGH-JKLM`) or a link ending `#ABCDEFGHJKLM`. It stores stages escaped per topic, the average star rating, locks open in the current stage, streak (up to 31) and shields. The Mistake Notebook, trophies and chestnuts stay on the device.
 
 ## Leaderboard
 
@@ -51,6 +51,6 @@ Needs a free Google Sheet: see [`leaderboard/SETUP.md`](leaderboard/SETUP.md), t
 
 ## Editing
 
-The page is assembled from `src/` by `python3 tools/build.py`. Content lives in `src/stages.js` (notes, rules, terms), `src/scenes.js` (rooms), `src/q_t1.js` … `src/q_t8.js` and `src/q_graphs.js` (questions), `src/graphs.js` (graph data) and `src/rush.js`. Check content with `node tools/check_content.js`.
+The page is assembled from `src/` by `python3 tools/build.py`. Content lives in `src/stages.js` and `src/stages2.js` (notes, rules, terms), `src/scenes.js` (rooms), `src/q_t*.js`, `src/q_graphs.js` and `src/q_graphs2.js` (questions), `src/graphs.js` (graph data) and `src/rush.js`. Check content with `node tools/check_content.js`.
 
 *Fan-made educational project. Not affiliated with the official Chiikawa brand; Chiikawa belongs to Nagano.*

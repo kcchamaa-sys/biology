@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#2b2433">
 <title>Chiikawa Bio Escape</title>
-<meta name="description" content="A Chiikawa-style escape room game for HKDSE S4 Biology: 8 topics, 24 stages.">
+<meta name="description" content="A Chiikawa-style escape room game for the HKDSE Biology compulsory part (S4–S6).">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
@@ -227,11 +227,12 @@ main { max-width: 1000px; margin: 0 auto; padding: 16px 16px 40px; display: grid
 .tterms tr.hl td { background: var(--yellow); font-weight: 800; }
 
 /* Save code */
-.codebox { display: flex; gap: 8px; justify-content: center; }
-.codebox span { width: 52px; height: 64px; display: grid; place-items: center; border: var(--line); border-radius: 12px; background: #fff; box-shadow: var(--shadow-sm); font-size: 1.9rem; font-weight: 800; }
-.codein { font: inherit; font-size: 1.5rem; font-weight: 800; letter-spacing: .3em; text-transform: uppercase; text-align: center; width: 220px; max-width: 100%; border: var(--line); border-radius: 14px; padding: 8px; background: #fff; color: var(--ink); }
+.codebox { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
+.codebox span { width: 34px; height: 48px; display: grid; place-items: center; border: var(--line); border-radius: 12px; background: #fff; box-shadow: var(--shadow-sm); font-size: 1.35rem; font-weight: 800; }
+.codein { font: inherit; font-size: 1.2rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; text-align: center; width: 300px; max-width: 100%; border: var(--line); border-radius: 14px; padding: 8px; background: #fff; color: var(--ink); }
 .linkbox { font-size: .82rem; word-break: break-all; background: #fff; border: 2px solid var(--ink); border-radius: 10px; padding: 6px 10px; user-select: all; }
 input.name { font: inherit; font-size: 16px; border: var(--line); border-radius: 14px; padding: 10px 12px; width: 100%; max-width: 320px; background: #fff; color: var(--ink); min-height: 48px; }
+select.name { font: inherit; font-size: 16px; border: var(--line); border-radius: 14px; padding: 8px 10px; width: 100%; max-width: 420px; background: #fff; color: var(--ink); min-height: 48px; }
 .preview { background: #fff; border: 2px solid var(--ink); border-radius: 12px; padding: 8px 12px; }
 
 /* Celebration */
@@ -377,7 +378,7 @@ footer { text-align: center; font-size: .78rem; color: var(--ink-soft); padding:
 .sboxes i { width: 28px; height: 36px; border: 2px solid var(--ink); border-radius: 8px; background: #fff; display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 1.05rem; text-transform: lowercase; color: var(--ink-soft); }
 .sboxes i.f { background: var(--yellow); color: var(--ink); }
 .sboxes i.gap { width: 12px; border: 0; background: none; }
-@media (max-width: 480px) { .sboxes i { width: 22px; height: 30px; font-size: .92rem; } }
+@media (max-width: 480px) { .codebox span { width: 24px; height: 38px; font-size: 1.05rem; } .sboxes i { width: 22px; height: 30px; font-size: .92rem; } }
 /* ---------- Mistake notebook ---------- */
 .nb-hero { background: #6B2E3E; background-image: radial-gradient(circle at 85% 0, rgba(255,183,197,.35), transparent 55%); }
 .mode.note { background: #FFF0F0; }
@@ -432,7 +433,7 @@ footer { text-align: center; font-size: .78rem; color: var(--ink-soft); padding:
   <div class="tools" id="tools"></div>
 </header>
 <main id="app"></main>
-<footer id="footText">Fan-made study game for HKDSE S4 Biology. Not affiliated with the official Chiikawa brand; Chiikawa belongs to Nagano. Characters are original Chiikawa-style drawings, not official artwork.</footer>
+<footer id="footText">Fan-made study game for HKDSE Biology (S4–S6). Not affiliated with the official Chiikawa brand; Chiikawa belongs to Nagano. Characters are original Chiikawa-style drawings, not official artwork.</footer>
 <div id="modal"></div>
 <div id="journal"></div>
 <div id="toast" class="toast" hidden></div>
