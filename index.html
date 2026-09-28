@@ -1771,7 +1771,7 @@ const SAVE_KEY = "escapeGame_biology";
 const SOUND_KEY = "escapeGame_biology_sound";
 // Inside the claude.ai viewer the page runs in a frame, so share the published artifact link;
 // when the file is hosted on its own (e.g. GitHub Pages), share the page's own address.
-const ARTIFACT_URL = "";
+const ARTIFACT_URL = "https://claude.ai/artifact/GKWNyuWWhN2pt4ZLFnSDdf";
 const shareBase = () => (window.top !== window.self && ARTIFACT_URL ? ARTIFACT_URL : location.href.split("#")[0]);
 
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
