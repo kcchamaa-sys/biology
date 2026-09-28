@@ -1,0 +1,106 @@
+
+/* ============================================================
+   3b. Graphs: one scaled plotting helper + graph data used by graph-reading questions
+   ============================================================ */
+const G_BLUE = "#3B6FC0", G_GREEN = "#3E8E3A", G_ORANGE = "#D8742F";
+// Smooth line through points (Catmull-Rom → cubic Bézier)
+function smoothPath(p) {
+  if (p.length < 3) return "M" + p.map(q => q.join(" ")).join(" L");
+  let d = `M${p[0][0]} ${p[0][1]}`;
+  for (let i = 0; i < p.length - 1; i++) {
+    const a = p[i - 1] || p[i], b = p[i], c = p[i + 1], e = p[i + 2] || c;
+    d += ` C${(b[0] + (c[0] - a[0]) / 6).toFixed(1)} ${(b[1] + (c[1] - a[1]) / 6).toFixed(1)} ${(c[0] - (e[0] - b[0]) / 6).toFixed(1)} ${(c[1] - (e[1] - b[1]) / 6).toFixed(1)} ${c[0].toFixed(1)} ${c[1].toFixed(1)}`;
+  }
+  return d;
+}
+/* plot({ x: [min, max, step, "label"], y: [min, max, step, "label"], series: [{ pts, c, lbl, lx, ly, smooth, dash }],
+          bars: { cats, vals, c }, marks: [[x, y, "P", dx, dy]], label }) */
+function plot(o) {
+  const W = 330, H = 220, Lf = 54, Rt = W - 16, T = 18, B = H - 48;
+  const [x0, x1, xs, xl] = o.x || [0, 1, 0, ""], [y0, y1, ys, yl] = o.y;
+  const X = v => Lf + (v - x0) / (x1 - x0) * (Rt - Lf), Y = v => B - (v - y0) / (y1 - y0) * (B - T);
+  const fmtN = v => (Math.abs(v) < 1e-9 ? "0" : String(+v.toFixed(2)));
+  let g = "";
+  for (let v = y0; v <= y1 + 1e-9; v += ys) g += `<path d="M${Lf} ${Y(v).toFixed(1)} H${Rt}" stroke="#E5DCC9" stroke-width="1"/>${small(Lf - 6, Y(v), fmtN(v), "end", INK)}`;
+  if (!o.bars && xs) for (let v = x0; v <= x1 + 1e-9; v += xs) g += `<path d="M${X(v).toFixed(1)} ${B} v5" stroke="${INK}" stroke-width="1.6"/>${small(X(v), B + 13, fmtN(v), "middle", INK)}`;
+  if (y0 < 0) g += `<path d="M${Lf} ${Y(0)} H${Rt}" stroke="${INK}" stroke-width="1.6" stroke-dasharray="4 3"/>`;
+  let body = "";
+  if (o.bars) {
+    const n = o.bars.cats.length, slot = (Rt - Lf) / n, bw = Math.min(46, slot * .62);
+    o.bars.cats.forEach((c, i) => {
+      const v = o.bars.vals[i], cx = Lf + slot * (i + .5), top = Y(Math.max(v, y0)), base = Y(Math.max(0, y0));
+      body += `<rect x="${(cx - bw / 2).toFixed(1)}" y="${Math.min(top, base).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1, Math.abs(base - top)).toFixed(1)}" rx="3" fill="${(o.bars.colors && o.bars.colors[i]) || o.bars.c || "#A0C4FF"}" stroke="${INK}" stroke-width="1.6"/>`;
+      body += small(cx, Math.min(top, base) - 7, String(v), "middle", INK);
+      const words = String(c).split(" "), lines = words.length > 1 && c.length > 9 ? [words.slice(0, Math.ceil(words.length / 2)).join(" "), words.slice(Math.ceil(words.length / 2)).join(" ")] : [c];
+      lines.forEach((t, k) => { body += small(cx, B + 12 + k * 12, t, "middle", INK); });
+    });
+  }
+  (o.series || []).forEach(s => {
+    const pts = s.pts.map(([a, b]) => [X(a), Y(b)]);
+    body += `<path d="${s.smooth === false ? "M" + pts.map(q => q.map(n => n.toFixed(1)).join(" ")).join(" L") : smoothPath(pts)}" fill="none" stroke="${s.c || PINK}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" ${s.dash ? 'stroke-dasharray="7 5"' : ""}/>`;
+    if (s.dots) pts.forEach(([a, b]) => { body += `<circle cx="${a.toFixed(1)}" cy="${b.toFixed(1)}" r="3" fill="${s.c || PINK}" stroke="${INK}" stroke-width="1"/>`; });
+    if (s.lbl) body += small(X(s.lx), Y(s.ly), s.lbl, "start", s.c || PINK);
+  });
+  (o.marks || []).forEach(([a, b, t, dx = 8, dy = -10]) => { body += dot(X(a), Y(b), t, dx, dy); });
+  const xlab = o.bars ? (o.bars.xl || "") : xl;
+  return `${svgOpen(W, H, o.label)}${g}
+    <path d="M${Lf} ${T - 6} V${B} H${Rt + 6}" fill="none" stroke="${INK}" stroke-width="2.4"/>
+    ${body}${small((Lf + Rt) / 2, H - 8, xlab, "middle", INK)}
+    <text x="14" y="${(T + B) / 2}" fill="${INK}" font-size="11.5" font-weight="700" text-anchor="middle" transform="rotate(-90 14 ${(T + B) / 2})">${yl}</text></svg>`;
+}
+
+Object.assign(DIAGRAMS, {
+  /* Topic 1 */
+  gMinerals: plot({ y: [0, 30, 10, "mean height / cm"], bars: { cats: ["Complete", "No nitrate", "No magnesium", "No phosphate"], vals: [24, 8, 14, 11], c: "#B9F3C9", xl: "mineral solution" }, label: "Bar chart of mean seedling height after 4 weeks: complete solution 24 cm, no nitrate 8 cm, no magnesium 14 cm, no phosphate 11 cm" }),
+  gWater: plot({ y: [0, 100, 20, "water content / %"], bars: { cats: ["Jellyfish", "Lettuce", "Human body", "Dry seed"], vals: [95, 94, 65, 10], c: "#A0C4FF", xl: "tissue" }, label: "Bar chart of water content: jellyfish 95%, lettuce 94%, human body 65%, dry seed 10%" }),
+  gEnergy: plot({ y: [0, 40, 10, "energy / kJ per g"], bars: { cats: ["Carbohydrate", "Protein", "Lipid"], vals: [17, 17, 39], colors: ["#FDFFB6", "#FFB7C5", "#F2D7AE"], xl: "food substance" }, label: "Bar chart of energy per gram: carbohydrate 17 kJ, protein 17 kJ, lipid 39 kJ" }),
+  gBenedict: plot({ x: [0, 2, 0.5, "glucose concentration / %"], y: [0, 1, 0.2, "precipitate / g"], series: [{ pts: [[0, 0], [0.5, 0.25], [1, 0.5], [1.5, 0.75], [2, 1]], smooth: false, dots: true }], label: "Straight-line graph: mass of brick-red precipitate rises from 0 g at 0% glucose to 1 g at 2% glucose" }),
+  gHeatEnzyme: plot({ x: [20, 80, 10, "temperature enzyme was heated to / °C"], y: [0, 100, 20, "activity left / %"], series: [{ pts: [[20, 100], [30, 100], [40, 98], [50, 70], [60, 20], [70, 0], [80, 0]], dots: true, smooth: false }], label: "Graph: enzyme activity left after heating stays 100% up to 40 °C, then falls to 70% at 50 °C, 20% at 60 °C and 0% at 70 °C" }),
+  gProteinFood: plot({ y: [0, 40, 10, "protein / g per 100 g"], bars: { cats: ["Egg", "Soybean", "Rice", "Apple"], vals: [13, 36, 3, 0.3], c: "#FFB7C5", xl: "food" }, label: "Bar chart of protein per 100 g: egg 13 g, soybean 36 g, rice 3 g, apple 0.3 g" }),
+  /* Topic 2 */
+  gFieldCells: plot({ y: [0, 125, 25, "cells seen"], bars: { cats: ["×40", "×100", "×400"], vals: [120, 48, 3], c: "#B9F3C9", xl: "total magnification" }, label: "Bar chart of number of cells seen: 120 at ×40, 48 at ×100, 3 at ×400" }),
+  gMito: plot({ y: [0, 5000, 1000, "mitochondria per cell"], bars: { cats: ["Skin", "Fat", "Liver", "Heart muscle"], vals: [200, 150, 1500, 5000], c: "#F9C9A6", xl: "cell type" }, label: "Bar chart of mitochondria per cell: skin 200, fat 150, liver 1500, heart muscle 5000" }),
+  gUptake: plot({ x: [0, 10, 2, "outside concentration"], y: [0, 100, 20, "rate of uptake"], series: [{ pts: [[0, 0], [10, 92]], smooth: false, c: G_BLUE, lbl: "A", lx: 9.2, ly: 97 }, { pts: [[0, 0], [2, 40], [4, 62], [6, 72], [8, 76], [10, 78]], c: PINK, lbl: "B", lx: 9.3, ly: 70 }], label: "Graph of rate of uptake against outside concentration: substance A rises in a straight line; substance B rises then levels off" }),
+  /* Topic 3 */
+  gCubes: plot({ x: [1, 4, 1, "side length of agar cube / cm"], y: [0, 60, 15, "time for colour to reach centre / min"], series: [{ pts: [[1, 4], [2, 15], [3, 34], [4, 60]], dots: true }], label: "Graph: time for colour to reach the centre rises from 4 min for a 1 cm cube to 60 min for a 4 cm cube" }),
+  gSAV: plot({ y: [0, 6, 1, "surface area : volume"], bars: { cats: ["1 cm", "2 cm", "3 cm", "4 cm"], vals: [6, 3, 2, 1.5], c: "#C9C3F0", xl: "side length of cube" }, label: "Bar chart of surface area to volume ratio: 1 cm cube 6, 2 cm cube 3, 3 cm cube 2, 4 cm cube 1.5" }),
+  gPotato: plot({ x: [0, 0.6, 0.1, "sucrose concentration / M"], y: [-20, 20, 10, "change in mass / %"], series: [{ pts: [[0, 18], [0.1, 10], [0.2, 4], [0.3, -2], [0.4, -8], [0.5, -13], [0.6, -16]], dots: true }], label: "Graph of percentage change in mass of potato strips: +18% in water, crossing zero at about 0.27 M, down to −16% at 0.6 M sucrose" }),
+  gOxygenIons: plot({ x: [0, 25, 5, "oxygen concentration / %"], y: [0, 100, 20, "rate of ion uptake"], series: [{ pts: [[0, 5], [5, 40], [10, 65], [15, 78], [20, 82], [25, 83]], dots: true }], label: "Graph: rate of ion uptake by roots rises from 5 at 0% oxygen to about 83 at 25% oxygen, levelling off above 15%" }),
+  gRootIons: plot({ y: [0, 125, 25, "K⁺ concentration / mM"], bars: { cats: ["Soil water", "Root hair cell"], vals: [0.5, 120], colors: ["#F2D7AE", "#B9F3C9"], xl: "location" }, label: "Bar chart of potassium ion concentration: soil water 0.5 mM, root hair cell 120 mM" }),
+  /* Topic 4 */
+  gDNA: plot({ x: [0, 40, 10, "time / hours"], y: [0, 5, 1, "DNA per cell (units)"], series: [{ pts: [[0, 2], [8, 2], [12, 4], [20, 4], [20.01, 2], [28, 2], [32, 4], [40, 4]], smooth: false }], marks: [[10, 3, "P", -24, -4], [20, 3, "Q", 8, 0]], label: "Graph of DNA per cell against time: 2 units, rising to 4 between 8 and 12 hours (P), dropping back to 2 at 20 hours (Q), then rising again" }),
+  gStages: plot({ y: [0, 100, 20, "cells in stage / %"], bars: { cats: ["Interphase", "Prophase", "Metaphase", "Anaphase", "Telophase"], vals: [86, 7, 3, 2, 2], c: "#A0C4FF", xl: "stage" }, label: "Bar chart of percentage of root tip cells in each stage: interphase 86, prophase 7, metaphase 3, anaphase 2, telophase 2" }),
+  gMeioDNA: plot({ x: [0, 24, 4, "time / hours"], y: [0, 5, 1, "DNA per cell (units)"], series: [{ pts: [[0, 2], [4, 2], [7, 4], [12, 4], [12.01, 2], [18, 2], [18.01, 1], [24, 1]], smooth: false }], marks: [[15, 2, "Q", -4, -14], [22, 1, "R", -4, -14]], label: "Graph of DNA per cell during meiosis: 2 units, doubling to 4, halving to 2 at 12 hours (Q), then halving again to 1 at 18 hours (R)" }),
+  gChromNum: plot({ y: [0, 50, 10, "number of chromosomes"], bars: { cats: ["Skin cell", "Sperm", "Egg", "Zygote"], vals: [46, 23, 23, 46], c: "#FFB7C5", xl: "human cell" }, label: "Bar chart of chromosome number: skin cell 46, sperm 23, egg 23, zygote 46" }),
+  gTumour: plot({ x: [0, 30, 10, "time / days"], y: [0, 150, 50, "number of cells (thousands)"], series: [{ pts: [[0, 10], [10, 12], [20, 13], [30, 13]], c: G_BLUE, lbl: "A", lx: 26, ly: 26 }, { pts: [[0, 10], [10, 25], [20, 60], [30, 140]], c: PINK, lbl: "B", lx: 24, ly: 120 }], label: "Graph of cell number over 30 days: tissue A stays about 13 thousand; tissue B rises from 10 to 140 thousand" }),
+  /* Topic 5 */
+  gEnergyProfile: plot({ x: [0, 10, 0, "progress of reaction"], y: [0, 160, 40, "energy"], series: [{ pts: [[0, 60], [2, 62], [4, 150], [6, 60], [8, 22], [10, 20]], c: G_BLUE, lbl: "without enzyme", lx: 5.2, ly: 130 }, { pts: [[0, 60], [2, 62], [4, 96], [6, 42], [8, 21], [10, 20]], c: PINK, lbl: "with enzyme", lx: 0.4, ly: 105 }], label: "Energy profile: the reaction without an enzyme has a much higher peak than the reaction with an enzyme; both start at 60 and end at 20" }),
+  gProduct: plot({ x: [0, 8, 2, "time / min"], y: [0, 80, 20, "product formed / units"], series: [{ pts: [[0, 0], [1, 30], [2, 50], [3, 62], [4, 68], [6, 70], [8, 70]] }], label: "Graph of product formed against time: rises quickly, then levels off at 70 units after about 5 minutes" }),
+  gTwoTemps: plot({ x: [0, 12, 2, "time / min"], y: [0, 80, 20, "product formed / units"], series: [{ pts: [[0, 0], [2, 20], [4, 38], [6, 52], [8, 62], [10, 68], [12, 70]], c: G_BLUE, lbl: "35 °C", lx: 10, ly: 58 }, { pts: [[0, 0], [1, 18], [2, 26], [3, 30], [4, 32], [6, 33], [12, 33]], c: PINK, lbl: "60 °C", lx: 9.6, ly: 24 }], label: "Graph of product against time: at 35 °C product rises steadily to 70; at 60 °C it rises fast at first then levels off at 33" }),
+  gStarchTime: plot({ y: [0, 25, 5, "time for starch to disappear / min"], bars: { cats: ["pH 4", "pH 5", "pH 6", "pH 7", "pH 8"], vals: [20, 9, 4, 3, 7], c: "#FDFFB6", xl: "pH" }, label: "Bar chart of time for starch to disappear with amylase: pH 4 20 min, pH 5 9 min, pH 6 4 min, pH 7 3 min, pH 8 7 min" }),
+  gInhibitors: plot({ x: [0, 10, 2, "substrate concentration"], y: [0, 100, 20, "rate of reaction"], series: [{ pts: [[0, 0], [2, 50], [4, 72], [6, 82], [8, 86], [10, 88]], c: G_BLUE, lbl: "P", lx: 9.4, ly: 94 }, { pts: [[0, 0], [2, 25], [4, 48], [6, 64], [8, 76], [10, 83]], c: G_GREEN, lbl: "Q", lx: 9.4, ly: 72 }, { pts: [[0, 0], [2, 28], [4, 40], [6, 45], [8, 47], [10, 48]], c: PINK, lbl: "R", lx: 9.4, ly: 40 }], label: "Graph of rate against substrate concentration for P (no inhibitor, levels at 88), Q (rises more slowly but reaches 83) and R (levels off at 48)" }),
+  gStain: plot({ y: [0, 100, 20, "stain removed / %"], bars: { cats: ["20 °C", "40 °C", "60 °C", "80 °C"], vals: [35, 80, 45, 10], c: "#B9F3C9", xl: "washing temperature" }, label: "Bar chart of stain removed by biological washing powder: 20 °C 35%, 40 °C 80%, 60 °C 45%, 80 °C 10%" }),
+  /* Topic 6 */
+  gAbsorb: plot({ x: [400, 700, 50, "wavelength / nm (violet → red)"], y: [0, 100, 25, "light absorbed / %"], series: [{ pts: [[400, 60], [430, 92], [460, 70], [500, 20], [550, 8], [600, 18], [640, 50], [665, 88], [700, 15]], c: G_GREEN, lbl: "chlorophyll", lx: 555, ly: 30 }, { pts: [[400, 30], [450, 78], [480, 82], [510, 40], [540, 4], [600, 0], [700, 0]], c: G_ORANGE, lbl: "carotenoids", lx: 485, ly: 90 }], marks: [[550, 8, "X", -4, -16]], label: "Absorption spectra: chlorophyll peaks near 430 and 665 nm and absorbs little near 550 nm (X, green light); carotenoids absorb 450–490 nm" }),
+  gAction: plot({ x: [400, 700, 50, "wavelength / nm"], y: [0, 100, 25, "rate of photosynthesis (relative)"], series: [{ pts: [[400, 55], [440, 90], [480, 75], [520, 35], [560, 22], [600, 40], [650, 80], [675, 85], [700, 20]], c: PINK, lbl: "action spectrum", lx: 470, ly: 14 }], label: "Action spectrum: rate of photosynthesis is high at blue (about 440 nm) and red (about 670 nm) wavelengths and low at green (about 550 nm)" }),
+  gO2Light: plot({ x: [0, 20, 5, "time / min"], y: [0, 30, 10, "O₂ collected / cm³"], series: [{ pts: [[0, 0], [10, 25], [20, 25]], smooth: false }], marks: [[10, 25, "L", -4, -16]], label: "Graph of oxygen collected: rises steadily from 0 to 25 cm³ in 10 minutes with the lamp on, then stays flat after the lamp is switched off at L" }),
+  gGPRuBP: plot({ x: [0, 20, 5, "time / min"], y: [0, 100, 25, "concentration"], series: [{ pts: [[0, 50], [10, 50], [12, 70], [15, 80], [20, 82]], c: G_BLUE, lbl: "S", lx: 17, ly: 90 }, { pts: [[0, 50], [10, 50], [12, 30], [15, 18], [20, 15]], c: PINK, lbl: "T", lx: 17, ly: 23 }], marks: [[10, 50, "light off", 6, 14]], label: "Graph: two compounds S and T stay at 50; after the light is switched off at 10 minutes, S rises to about 82 and T falls to about 15" }),
+  gCO2drop: plot({ x: [0, 20, 5, "time / min"], y: [0, 100, 25, "concentration"], series: [{ pts: [[0, 50], [10, 50], [12, 72], [15, 82], [20, 85]], c: G_GREEN, lbl: "M", lx: 17, ly: 93 }, { pts: [[0, 50], [10, 50], [12, 28], [15, 17], [20, 14]], c: G_ORANGE, lbl: "N", lx: 17, ly: 22 }], marks: [[10, 50, "CO₂ lowered", 6, 14]], label: "Graph: after CO₂ is lowered at 10 minutes, compound M rises to about 85 and compound N falls to about 14" }),
+  gTempPS: plot({ x: [5, 45, 10, "temperature / °C"], y: [0, 100, 25, "rate of photosynthesis"], series: [{ pts: [[5, 10], [15, 35], [25, 75], [30, 90], [35, 80], [40, 40], [45, 8]] }], label: "Graph of rate of photosynthesis against temperature: rises to a peak of 90 at 30 °C then falls steeply to 8 at 45 °C" }),
+  gGreenhouse: plot({ y: [0, 12, 3, "tomato yield / kg per m²"], bars: { cats: ["Normal air", "Extra CO₂", "Extra CO₂ + light"], vals: [5, 8, 11], c: "#B9F3C9", xl: "greenhouse conditions (winter)" }, label: "Bar chart of winter tomato yield: normal air 5 kg, extra CO₂ 8 kg, extra CO₂ plus extra light 11 kg per square metre" }),
+  gCompensation: plot({ x: [0, 10, 2, "light intensity (units)"], y: [-10, 40, 10, "net CO₂ uptake"], series: [{ pts: [[0, -10], [1, -4], [2, 0], [4, 16], [6, 28], [8, 34], [10, 36]], dots: false }], marks: [[2, 0, "K", -4, -14]], label: "Graph of net CO₂ uptake: −10 in darkness, crossing zero at light intensity 2 (K), rising to 36 at intensity 10" }),
+  gBubbles: plot({ x: [10, 50, 10, "distance of lamp / cm"], y: [0, 60, 15, "bubbles per minute"], series: [{ pts: [[10, 60], [20, 28], [30, 14], [40, 8], [50, 5]], dots: true }], label: "Graph of bubbles per minute from pondweed: 60 at 10 cm, 28 at 20 cm, 14 at 30 cm, 8 at 40 cm, 5 at 50 cm" }),
+  /* Topic 7 */
+  gATP: plot({ y: [0, 40, 10, "ATP per glucose"], bars: { cats: ["Glycolysis", "Krebs cycle", "Oxidative phosphorylation"], vals: [2, 2, 34], c: "#F9C9A6", xl: "stage of aerobic respiration" }, label: "Bar chart of ATP per glucose: glycolysis 2, Krebs cycle 2, oxidative phosphorylation about 34" }),
+  gCyanide: plot({ x: [0, 10, 2, "time / min"], y: [0, 50, 10, "O₂ uptake / units per min"], series: [{ pts: [[0, 40], [5, 40], [6, 6], [7, 2], [10, 1]], smooth: false }], marks: [[5, 40, "C", -4, -14]], label: "Graph: oxygen uptake of cells steady at 40 until cyanide is added at 5 minutes (C), then falls to almost 0" }),
+  gLactate: plot({ x: [0, 40, 10, "time / min"], y: [0, 14, 2, "blood lactic acid / mM"], series: [{ pts: [[0, 1], [3, 3], [6, 7], [10, 12], [15, 9], [20, 6], [30, 3], [40, 1.2]] }], marks: [[10, 12, "E", 6, -4]], label: "Graph of blood lactic acid: rises from 1 to 12 mM during exercise until E at 10 minutes, then falls back to about 1 mM by 40 minutes" }),
+  gYeastTemp: plot({ y: [0, 30, 10, "CO₂ bubbles per min"], bars: { cats: ["10 °C", "20 °C", "30 °C", "40 °C", "50 °C", "60 °C"], vals: [2, 8, 18, 26, 12, 0], c: "#FDE7A6", xl: "temperature" }, label: "Bar chart of CO₂ bubbles per minute from yeast: 10 °C 2, 20 °C 8, 30 °C 18, 40 °C 26, 50 °C 12, 60 °C 0" }),
+  gRespirometer: plot({ x: [0, 10, 2, "time / min"], y: [0, 25, 5, "distance liquid moved / mm"], series: [{ pts: [[0, 0], [10, 12]], smooth: false, c: G_BLUE, lbl: "15 °C", lx: 7.5, ly: 5.5 }, { pts: [[0, 0], [10, 24]], smooth: false, c: PINK, lbl: "25 °C", lx: 5.2, ly: 17 }], label: "Graph of respirometer liquid movement: at 15 °C it moves 12 mm in 10 minutes; at 25 °C it moves 24 mm in 10 minutes" }),
+  /* Topic 8 */
+  gEnergyNeeds: plot({ y: [0, 16000, 4000, "energy need / kJ per day"], bars: { cats: ["Child (8)", "Teen boy", "Office worker", "Builder"], vals: [7000, 12000, 10000, 15000], c: "#FFD3B6", xl: "person" }, label: "Bar chart of daily energy needs: child 7000 kJ, teenage boy 12000 kJ, office worker 10000 kJ, builder 15000 kJ" }),
+  gVitC: plot({ y: [0, 250, 50, "vitamin C / mg per 100 g"], bars: { cats: ["Orange", "Guava", "Apple", "Rice"], vals: [53, 228, 5, 0], c: "#FDFFB6", xl: "food" }, label: "Bar chart of vitamin C per 100 g: orange 53 mg, guava 228 mg, apple 5 mg, rice 0 mg" }),
+  gGutpH: plot({ y: [0, 10, 2, "pH"], bars: { cats: ["Mouth", "Stomach", "Duodenum", "Ileum"], vals: [7, 2, 8, 7.5], colors: ["#B9F3C9", "#FFADAD", "#A0C4FF", "#C9C3F0"], xl: "part of gut" }, label: "Bar chart of pH along the gut: mouth 7, stomach 2, duodenum 8, ileum 7.5" }),
+  gStarchLeft: plot({ x: [0, 10, 2, "time / min"], y: [0, 100, 25, "starch left / %"], series: [{ pts: [[0, 100], [10, 100]], smooth: false, c: G_BLUE, lbl: "boiled amylase", lx: 5, ly: 90 }, { pts: [[0, 100], [2, 70], [4, 38], [6, 14], [8, 2], [10, 0]], c: PINK, lbl: "amylase at 37 °C", lx: 5.2, ly: 30 }], label: "Graph of starch left: with boiled amylase it stays at 100%; with amylase at 37 °C it falls to 0% by 10 minutes" }),
+  gGlucoseHPV: plot({ x: [0, 4, 1, "time after meal / h"], y: [0, 14, 2, "glucose / mM"], series: [{ pts: [[0, 5], [0.5, 9], [1, 12], [2, 9], [3, 6], [4, 5]], dots: true }], label: "Graph of glucose in the hepatic portal vein: 5 mM before the meal, peaking at 12 mM after 1 hour, back to 5 mM by 4 hours" }),
+  gSurface: plot({ y: [0, 600, 150, "relative surface area"], bars: { cats: ["Smooth tube", "With folds", "With villi", "With microvilli"], vals: [1, 3, 30, 600], c: "#FFB7C5", xl: "small intestine lining" }, label: "Bar chart of relative surface area of the small intestine: smooth tube 1, with folds 3, with villi 30, with microvilli 600" })
+});

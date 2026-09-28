@@ -365,6 +365,30 @@ footer { text-align: center; font-size: .78rem; color: var(--ink-soft); padding:
 @keyframes blink { to { opacity: .35; } }
 @keyframes spin { 0% { transform: translateY(-8px); opacity: .3; } 100% { transform: translateY(0); opacity: 1; } }
 @keyframes jump { 0% { transform: translateY(40px) scale(.6); opacity: 0; } 25% { transform: translateY(-20px) scale(1.05); opacity: 1; } 45% { transform: translateY(0) scale(1); } 80% { opacity: 1; } 100% { transform: translateY(-10px); opacity: 0; } }
+/* ---------- 3-question locks ---------- */
+.lockprog { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.lockprog i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--ink); background: #fff; display: inline-block; }
+.lockprog i.on { background: var(--green); }
+.lockprog i.cur { background: var(--yellow); box-shadow: 0 0 0 3px rgba(253,255,182,.9); }
+.hs small { font-size: .78rem; font-weight: 800; }
+/* ---------- Spelling ---------- */
+.spell { display: grid; gap: 8px; }
+.sboxes { display: flex; flex-wrap: wrap; gap: 4px; }
+.sboxes i { width: 28px; height: 36px; border: 2px solid var(--ink); border-radius: 8px; background: #fff; display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 1.05rem; text-transform: lowercase; color: var(--ink-soft); }
+.sboxes i.f { background: var(--yellow); color: var(--ink); }
+.sboxes i.gap { width: 12px; border: 0; background: none; }
+@media (max-width: 480px) { .sboxes i { width: 22px; height: 30px; font-size: .92rem; } }
+/* ---------- Mistake notebook ---------- */
+.nb-hero { background: #6B2E3E; background-image: radial-gradient(circle at 85% 0, rgba(255,183,197,.35), transparent 55%); }
+.mode.note { background: #FFF0F0; }
+.nbtopics { display: grid; gap: 8px; }
+.nbrow { display: grid; grid-template-columns: 44px 1fr auto auto; gap: 10px; align-items: center; border-bottom: 2px dashed #E5DCC9; padding-bottom: 8px; }
+.nbrow .ticon { font-size: 1.5rem; }
+.nbrow .btn { min-height: 44px; padding: 4px 12px; }
+@media (max-width: 480px) { .nbrow { grid-template-columns: 34px 1fr auto; } .nbrow .btn { grid-column: 2 / -1; } }
+.nblist { display: grid; gap: 8px; }
+.nbitem { display: grid; gap: 2px; background: var(--cream); border: 2px solid var(--ink); border-radius: 12px; padding: 8px 12px; }
+.bad { color: #C0392B; } .good { color: #2E8B57; }
 /* ---------- Topic → stage map ---------- */
 .tgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; }
 .tcard { background: #fff; border: var(--line); border-radius: var(--r); box-shadow: var(--shadow); padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }

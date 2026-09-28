@@ -1,14 +1,37 @@
 // Each stage's pool: its 15 questions (Bloom 1–6), converted to one shape
 const BLOOM = [null, "Remember", "Understand", "Apply", "Analyse", "Evaluate", "Create"];
+/* Spelling: every stage's key terms become "type the word" locks, and longer single words
+   also become "which spelling is correct?" checks with believable misspellings. */
+const normWord = w => String(w || "").toLowerCase().replace(/[^a-z]/g, "");
+const countLetters = w => normWord(w).length;
+function spellBoxes(word, typed) {
+  const t = normWord(typed); let k = 0;
+  return [...word].map((ch, j) => /[a-z]/i.test(ch) ? `<i class="${t[k] ? "f" : ""}">${esc(t[k] ? t[k++] : (j === 0 ? ch.toLowerCase() : ""))}</i>` : ch === " " ? `<i class="gap"></i>` : `<i class="gap">${esc(ch)}</i>`).join("");
+}
+function misspell(w) {
+  const out = new Set(), sw = (a, i) => a.slice(0, i) + a[i + 1] + a[i] + a.slice(i + 2);
+  const V = { a: "e", e: "i", i: "e", o: "u", u: "o", y: "i" };
+  for (let i = w.length - 3; i >= 2 && out.size < 2; i--) if (w[i] !== w[i + 1]) out.add(sw(w, i));
+  const dbl = w.search(/([a-z])\1/); if (dbl > 0) out.add(w.slice(0, dbl) + w.slice(dbl + 1)); else { const c = w.search(/[^aeiou][aeiou]/); if (c > 0) out.add(w.slice(0, c + 1) + w[c] + w.slice(c + 1)); }
+  for (let i = 1; i < w.length - 1 && out.size < 5; i++) if (V[w[i]]) out.add(w.slice(0, i) + V[w[i]] + w.slice(i + 1));
+  return [...out].filter(x => x !== w).slice(0, 3);
+}
 function buildPools() {
   ROOMS.forEach(r => {
     r.pool = (QB[r.id] || []).map((q, j) => Array.isArray(q)
       ? { id: "q" + j, b: q[0], type: "mc", q: q[1], choices: q[2], answer: 0, hint: q[3], explain: q[4], tip: q[5] }
       : Object.assign({ type: "mc", answer: 0 }, q, { id: "q" + j }));
+    r.terms.forEach(([t, m], j) => {
+      const core = normWord(t);
+      if (core.length < 5 || /[A-Z]{2}|\d/.test(t) || normWord(m).includes(core)) return;
+      r.pool.push({ id: "s" + j, b: 1, type: "spell", gen: "spell", q: `Spell the term: “${m}”`, answer: t, hint: `It starts with “${t.slice(0, 3)}…” and has ${core.length} letters.`, explain: `${t}: ${m}.` });
+      if (/^[a-z]+$/.test(t) && t.length >= 6) { const bad = misspell(t); if (bad.length === 3) r.pool.push({ id: "m" + j, b: 1, type: "mc", gen: "spellmc", fix: false, q: `Which spelling is correct? (${m})`, choices: [t, ...bad], answer: 0, hint: "Say it slowly, syllable by syllable.", explain: `The correct spelling is “${t}”.` }); }
+    });
+    r.pool.forEach(p => { p.rid = r.id; });
   });
 }
 buildPools();
-const ROOM_SECONDS = 15 * 60;
+const ROOM_SECONDS = 20 * 60;
 const CHEERS = ["Yaha!", "Ura!", "Puru puru!", "Waaai!", "Sugoi!"];
 const SNACKS = ["🍡 Chestnut bun", "🍘 Rice cracker", "🍮 Pudding", "🍙 Onigiri", "🍜 Ramen ticket", "🧋 Bubble tea", "🥚 Egg tart", "🧇 Egg waffle", "🍍 Pineapple bun", "🍓 Strawberry daifuku"];
 const TOPIC_LABELS = Object.fromEntries(TOPICS.map(t => [t.id, `${t.icon} ${t.name}`]));
@@ -30,7 +53,7 @@ const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(
 const dayNum = s => { const [y, m, d] = s.split("-").map(Number); return Math.round(Date.UTC(y, m - 1, d) / 86400000); };
 
 function freshStats() { return { days: 0, correct: 0, run: 0, bestRun: 0, replays: 0, cleanEscapes: 0, noHintEscapes: 0, rushRounds: 0 }; }
-function freshRun() { return { firsts: [], strikes: 0, hints: false, qids: null }; }
+function freshRun() { return { firsts: [], strikes: 0, hints: false, qids: null, steps: {} }; }
 function newId() { return "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 function freshMastery() { return Object.fromEntries(TOPICS.map(t => [t.id, 0])); }
 function freshState() {
@@ -41,7 +64,7 @@ function freshState() {
     room_progress: {}, mastered_puzzles: [], room_stars: {}, room_timer: {}, last_chest_date: null, seen: {}, last_revise_day: null,
     room_run: {}, trophies: {}, stats: freshStats(),
     coins: 0, owned: [], equip: { hat: null, face: null, ribbon: null, frame: null }, power: { torch: 1, crystal: 1, guard: 1 },
-    rush: { best: 0, lastDay: null }, player_id: newId(), lb_last: 0
+    rush: { best: 0, lastDay: null }, player_id: newId(), lb_last: 0, mistakes: {}, mistakes_cleared: 0
   };
 }
 function normalise(obj) {
@@ -51,6 +74,7 @@ function normalise(obj) {
   s.trophies = Object.assign({}, s.trophies); s.room_run = Object.assign({}, s.room_run); s.seen = Object.assign({}, s.seen);
   s.room_progress = Object.assign({}, s.room_progress); s.room_stars = Object.assign({}, s.room_stars); s.room_timer = Object.assign({}, s.room_timer);
   s.mastered_puzzles = [...new Set(s.mastered_puzzles || [])];
+  s.mistakes = Object.assign({}, s.mistakes);
   s.equip = Object.assign({ hat: null, face: null, ribbon: null, frame: null }, s.equip); s.power = Object.assign({ torch: 0, crystal: 0, guard: 0 }, s.power);
   s.rush = Object.assign({ best: 0, lastDay: null }, s.rush); s.owned = [...(s.owned || [])]; if (!s.player_id) s.player_id = newId();
   s.completed_rooms = [...new Set((s.completed_rooms || []).filter(id => ROOMS.some(r => r.id === id)))];
@@ -71,12 +95,14 @@ function save(flash) {
 }
 
 /* Save code: 8 characters of Crockford base32 (no I, L, O, U), shown as ABCD-EFGH.
-   Packs, for each of the 8 topics, stages escaped (0–3) and their average stars (1–3);
-   plus the stage in progress and its locks solved (0–4), streak (1–63) and shields (0–3).
+   Packs, for each topic, stages escaped (0–n) and their average stars (1–3) in a mixed radix (3n + 1 per topic);
+   plus the stage in progress and its locks solved (0–4), streak (1–31) and shields (0–3).
    Multiplied by a constant (mod M) so codes look random and typos rarely decode. */
 const B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
-const CODE_M = 100000000n * 64n * 4n * 40n; // 1.024e12 < 32^8
-const CODE_K = 7919n;                        // coprime with CODE_M (= 2^19 · 5^9)
+const RADIX = TOPICS.map((_, ti) => BigInt(3 * ROOMS.filter(r => r.t === ti).length + 1));
+const TOPIC_M = RADIX.reduce((a, b) => a * b, 1n);
+const CODE_M = TOPIC_M * 32n * 4n * 40n;     // < 32^8
+const CODE_K = 7919n;                          // prime, coprime with CODE_M
 function modInvBig(a, m) {
   let [r0, r1, s0, s1] = [a % m, m, 1n, 0n];
   while (r1 !== 0n) { const q = r0 / r1; [r0, r1] = [r1, r0 - q * r1]; [s0, s1] = [s1, s0 - q * s1]; }
@@ -94,12 +120,12 @@ function topicStars(ti) {
 }
 const fmtCode = c => `${c.slice(0, 4)}-${c.slice(4)}`;
 function makeCode() {
-  let n = 0n;
-  TOPICS.forEach((_, ti) => { const d = stagesDone(ti), v = d ? 1 + (d - 1) * 3 + (Math.max(1, topicStars(ti)) - 1) : 0; n += BigInt(v) * 10n ** BigInt(ti); });
+  let n = 0n, mul = 1n;
+  TOPICS.forEach((_, ti) => { const d = stagesDone(ti), v = d ? 1 + (d - 1) * 3 + (Math.max(1, topicStars(ti)) - 1) : 0; n += BigInt(v) * mul; mul *= RADIX[ti]; });
   const cur = ROOMS[roomIndex(S.current_room)];
   const lock = cur && !S.completed_rooms.includes(cur.id) && isUnlocked(roomIndex(cur.id)) ? Math.min(4, (S.room_progress[cur.id] || []).length) : 0;
-  const streak = Math.max(1, Math.min(63, S.current_streak)), shields = Math.max(0, Math.min(3, S.streak_shields));
-  n += 100000000n * BigInt(streak + 64 * (shields + 4 * ((cur ? cur.t : 0) * 5 + lock)));
+  const streak = Math.max(1, Math.min(31, S.current_streak)), shields = Math.max(0, Math.min(3, S.streak_shields));
+  n += TOPIC_M * BigInt(streak + 32 * (shields + 4 * ((cur ? cur.t : 0) * 5 + lock)));
   let x = (n * CODE_K) % CODE_M, out = "";
   for (let i = 0; i < 8; i++) { out = B32[Number(x % 32n)] + out; x /= 32n; }
   return out;
@@ -110,15 +136,15 @@ function decodeCode(raw) {
   let x = 0n;
   for (const ch of c) { const v = B32.indexOf(ch); if (v < 0) return null; x = x * 32n + BigInt(v); }
   if (x >= CODE_M) return null;
-  let n = (x * CODE_KINV) % CODE_M;
-  const tv = TOPICS.map((_, ti) => Number((n / 10n ** BigInt(ti)) % 10n));
-  n /= 100000000n;
-  const streak = Number(n % 64n); n /= 64n;
+  let n = (x * CODE_KINV) % CODE_M, t = n % TOPIC_M;
+  const tv = RADIX.map(rdx => { const v = Number(t % rdx); t /= rdx; return v; });
+  n /= TOPIC_M;
+  const streak = Number(n % 32n); n /= 32n;
   const shields = Number(n % 4n); n /= 4n;
   const curT = Math.floor(Number(n) / 5), lock = Number(n) % 5;
-  if (streak === 0) return null;
+  if (streak === 0 || curT >= TOPICS.length) return null;
   const done = tv.map(v => (v ? Math.floor((v - 1) / 3) + 1 : 0)), stars = tv.map(v => (v ? ((v - 1) % 3) + 1 : 0));
-  if (lock > 0 && done[curT] === 3) return null; // locks in progress can't belong to a finished topic
+  if (lock > 0 && done[curT] === topicRooms(curT).length) return null; // locks in progress can't belong to a finished topic
   return { code: c, done, stars, curT, lock, streak, shields, escaped: done.reduce((a, b) => a + b, 0) };
 }
 function stateFromCode(d, name) {
@@ -126,15 +152,31 @@ function stateFromCode(d, name) {
   s.player_name = name || (S && S.player_name) || "Student";
   TOPICS.forEach((T, ti) => {
     topicRooms(ti).slice(0, d.done[ti]).forEach(r => { s.completed_rooms.push(r.id); s.inventory.push(r.item); s.room_stars[r.id] = d.stars[ti]; });
-    if (d.done[ti] === 3) s.chiikawa_badges.push(T.badge);
+    if (d.done[ti] === topicRooms(ti).length) s.chiikawa_badges.push(T.badge);
   });
-  const nextR = topicRooms(d.curT)[Math.min(2, d.done[d.curT])];
+  const tr = topicRooms(d.curT), nextR = tr[Math.min(tr.length - 1, d.done[d.curT])];
   s.current_room = nextR.id;
   if (!s.completed_rooms.includes(nextR.id) && d.lock) s.room_progress[nextR.id] = Array.from({ length: d.lock }, (_, i) => i);
   s.current_streak = d.streak; s.longest_streak = d.streak; s.streak_shields = d.shields; s.last_login_date = today();
-  if (S) { s.trophies = S.trophies || {}; s.stats = Object.assign(freshStats(), S.stats); s.coins = S.coins || 0; s.owned = S.owned || []; s.equip = S.equip || s.equip; s.power = S.power || s.power; s.rush = S.rush || s.rush; s.player_id = S.player_id || s.player_id; s.last_chest_date = S.last_chest_date; s.inventory = s.inventory.concat((S.inventory || []).filter(x => SNACKS.includes(x))); }
+  if (S) { s.trophies = S.trophies || {}; s.stats = Object.assign(freshStats(), S.stats); s.coins = S.coins || 0; s.owned = S.owned || []; s.equip = S.equip || s.equip; s.power = S.power || s.power; s.rush = S.rush || s.rush; s.player_id = S.player_id || s.player_id; s.last_chest_date = S.last_chest_date; s.mistakes = S.mistakes || {}; s.inventory = s.inventory.concat((S.inventory || []).filter(x => SNACKS.includes(x))); }
   return s;
 }
+
+/* Mistake notebook: every wrong answer is saved; answering it right twice in a row clears it */
+function noteMistake(rid, qid) {
+  if (!S || !rid || !qid) return;
+  const k = `${rid}:${qid}`, m = S.mistakes[k] || { n: 0, ok: 0 };
+  m.n += 1; m.ok = 0; m.d = today(); S.mistakes[k] = m;
+}
+function noteRight(rid, qid, firstTry) {
+  const k = `${rid}:${qid}`, m = S.mistakes[k];
+  if (!m || !firstTry) return false;
+  m.ok += 1; m.d = today();
+  if (m.ok >= 2) { delete S.mistakes[k]; S.mistakes_cleared = (S.mistakes_cleared || 0) + 1; toast("📕 Cleared from your Mistake Notebook! 🎉"); return true; }
+  return false;
+}
+const mistakeQ = k => { const [rid, qid] = k.split(":"), r = ROOMS[roomIndex(rid)]; const p = r && r.pool.find(x => x.id === qid); return p ? { r, p } : null; };
+const mistakeKeys = ti => Object.keys(S.mistakes || {}).filter(k => { const m = mistakeQ(k); return m && (ti == null || m.r.t === ti); });
 
 let S = load();
 let streakNote = "";
@@ -229,8 +271,8 @@ const TROPHIES = [
   { id: "flame", name: "Eternal Flame", rar: "legend", who: "usagi", desc: "Reach a 30-day streak", prog: () => [S.longest_streak, 30] },
   { id: "sharp", name: "Sharpshooter", rar: "gold", who: "momonga", desc: "15 first-try answers in a row (no hints, no mistakes)", prog: () => [S.stats.bestRun, 15] },
   { id: "hunter", name: "Knowledge Hunter", rar: "gold", who: "kurimanju", desc: "Open 100 locks in total", prog: () => [S.stats.correct, 100] },
-  { id: "escaper", name: "Master Escaper", rar: "gold", who: "chiikawa", desc: "Escape all 24 stages (every topic)", prog: () => [S.completed_rooms.length, ROOMS.length] },
-  { id: "stars", name: "Star Collector", rar: "legend", who: "hachiware", desc: "Collect 60 stars across the stages (3★ = 3 stars)", prog: () => [ROOMS.reduce((a, r) => a + roomStars(r), 0), 60] },
+  { id: "escaper", name: "Master Escaper", rar: "gold", who: "chiikawa", desc: `Escape all ${ROOMS.length} stages (every topic)`, prog: () => [S.completed_rooms.length, ROOMS.length] },
+  { id: "stars", name: "Star Collector", rar: "legend", who: "hachiware", desc: "Collect 70 stars across the stages (3★ = 3 stars)", prog: () => [ROOMS.reduce((a, r) => a + roomStars(r), 0), 70] },
   { id: "clock", name: "Beat the Clock", rar: "silver", who: "usagi", desc: "5 escapes before time runs out, with 0 guess strikes", prog: () => [S.stats.cleanEscapes, 5] },
   { id: "brain", name: "Brain Power", rar: "silver", who: "momonga", desc: "5 escapes without using any hint", prog: () => [S.stats.noHintEscapes, 5] },
   { id: "practice", name: "Practice Makes Perfect", rar: "bronze", who: "kurimanju", desc: "Replay escaped stages 10 times", prog: () => [S.stats.replays, 10] }
@@ -425,12 +467,12 @@ const RUSH_SECONDS = 60;
 // Rush banks live in the content section (TF_BANK, PAIR_BANK, ODD_BANK, CLOZE_BANK, ORDER_BANK, TEST_BANK)
 function subseq(arr, n) { const idx = shuffle(arr.map((_, i) => i)).slice(0, n).sort((a, b) => a - b); return idx.map(i => arr[i]); }
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-const MC_POOL = () => ROOMS.flatMap(r => r.pool.filter(p => p.type === "mc" && !p.svg));
+const MC_POOL = () => ROOMS.flatMap(r => r.pool.filter(p => p.type === "mc" && !p.svg && !p.gen));
 
 const RUSH_MAKERS = [
   { w: 2, label: "Multiple choice", make() { const p = pick(MC_POOL()); const order = shuffle(p.choices.map((_, i) => i));
       return { prompt: p.q, render: (el, done) => { el.innerHTML = `<div class="rgrid two">${order.map(i => `<button class="rbtn" data-i="${i}">${esc(p.choices[i])}</button>`).join("")}</div>`;
-        el.querySelectorAll(".rbtn").forEach(b => b.onclick = () => { const ok = Number(b.dataset.i) === p.answer; b.classList.add(ok ? "ok" : "no"); if (!ok) el.querySelector(`[data-i="${p.answer}"]`).classList.add("ok"); el.querySelectorAll(".rbtn").forEach(x => x.disabled = true); done(ok, p.choices[p.answer]); }); } }; } },
+        el.querySelectorAll(".rbtn").forEach(b => b.onclick = () => { const ok = Number(b.dataset.i) === p.answer; b.classList.add(ok ? "ok" : "no"); if (!ok) { el.querySelector(`[data-i="${p.answer}"]`).classList.add("ok"); noteMistake(p.rid, p.id); } el.querySelectorAll(".rbtn").forEach(x => x.disabled = true); done(ok, p.choices[p.answer]); }); } }; } },
   { w: 3, label: "True or false", make() { const [t, v, why] = pick(TF_BANK);
       return { prompt: t, render: (el, done) => { el.innerHTML = `<div class="tf"><button class="rbtn" data-v="1">✅ ${"True"}</button><button class="rbtn" data-v="0">❌ ${"False"}</button></div>`;
         el.querySelectorAll(".rbtn").forEach(b => b.onclick = () => { const ok = (b.dataset.v === "1") === v; b.classList.add(ok ? "ok" : "no"); el.querySelectorAll(".rbtn").forEach(x => x.disabled = true); done(ok, `${v ? "True" : "False"}. ${why}`); }); } }; } },
@@ -457,6 +499,9 @@ const RUSH_MAKERS = [
   { w: 2, label: "Fill the gap", make() { const [t, opts, a] = pick(CLOZE_BANK); const order = shuffle(opts.map((_, i) => i));
       return { prompt: t.replace("___", "______"), render: (el, done) => { el.innerHTML = `<div class="rgrid two">${order.map(i => `<button class="rbtn" data-i="${i}">${esc(opts[i])}</button>`).join("")}</div>`;
         el.querySelectorAll(".rbtn").forEach(b => b.onclick = () => { const ok = Number(b.dataset.i) === a; b.classList.add(ok ? "ok" : "no"); el.querySelectorAll(".rbtn").forEach(x => x.disabled = true); done(ok, t.replace("___", opts[a])); }); } }; } },
+  { w: 2, label: "Spelling bee", make() { const p = pick(ROOMS.flatMap(r => r.pool.filter(x => x.gen === "spellmc"))); const order = shuffle(p.choices.map((_, i) => i));
+      return { prompt: p.q, render: (el, done) => { el.innerHTML = `<div class="rgrid two">${order.map(i => `<button class="rbtn" data-i="${i}">${esc(p.choices[i])}</button>`).join("")}</div>`;
+        el.querySelectorAll(".rbtn").forEach(b => b.onclick = () => { const ok = Number(b.dataset.i) === 0; b.classList.add(ok ? "ok" : "no"); if (!ok) { el.querySelector('[data-i="0"]').classList.add("ok"); noteMistake(p.rid, p.id); } el.querySelectorAll(".rbtn").forEach(x => x.disabled = true); done(ok, p.choices[0]); }); } }; } },
   { w: 1, label: "Test-tube colours", make() { const [q, a] = pick(TEST_BANK); const opts = shuffle([a, ...shuffle(Object.keys(TEST_COLOURS).filter(c => c !== a)).slice(0, 3)]);
       return { prompt: q, render: (el, done) => { el.innerHTML = `<div class="swatches">${opts.map(c => `<button class="rbtn sw" data-c="${c}"><i style="background:${TEST_COLOURS[c]}"></i>${c}</button>`).join("")}</div>`;
         el.querySelectorAll(".rbtn").forEach(b => b.onclick = () => { const ok = b.dataset.c === a; b.classList.add(ok ? "ok" : "no"); el.querySelectorAll(".rbtn").forEach(x => x.disabled = true); done(ok, `Answer: ${a}`); }); } }; } },
@@ -470,7 +515,7 @@ function rushIntro() {
   const bonus = S.rush.lastDay !== today();
   openModal(`<span class="kicker">⚡ ${"Cell Rush"}</span><h2>${"60-second question rush!"}</h2>
     ${say("usagi", "Yaha! Answer as many as you can before time runs out! 🐰", "happy")}
-    <div class="rules">${`<ul><li>Mixed questions: multiple choice, true/false, matching, ordering, odd one out, fill the gap, test-tube colours and organelle spotting.</li>
+    <div class="rules">${`<ul><li>Mixed questions: multiple choice, true/false, matching, ordering, odd one out, fill the gap, spelling bee, test-tube colours and organelle spotting.</li>
       <li>Correct = +10 points. 3 in a row = <b>×2 combo</b>, 6 in a row = <b>×3</b>.</li>
       <li>Wrong = <b>−3 seconds</b> and the combo resets.</li>
       <li>Every 10 points = 1 🌰 chestnut. ${bonus ? "<b>Today's first round pays double!</b>" : ""}</li></ul>`}</div>
@@ -634,7 +679,7 @@ function openJournal(roomId, highlight = []) {
 
 /* ----- Save & Share Code ----- */
 function codePreview(d) {
-  const rows = TOPICS.map((T, ti) => d.done[ti] ? `<li>${T.icon} ${esc(T.name)}: <b>${d.done[ti]}/3</b> stages ${starStr(d.stars[ti])}</li>` : "").join("");
+  const rows = TOPICS.map((T, ti) => d.done[ti] ? `<li>${T.icon} ${esc(T.name)}: <b>${d.done[ti]}/${topicRooms(ti).length}</b> stages ${starStr(d.stars[ti])}</li>` : "").join("");
   const nextR = topicRooms(d.curT)[Math.min(2, d.done[d.curT])];
   return `<div class="preview small"><b>This code contains:</b> ${d.escaped} stage${d.escaped === 1 ? "" : "s"} escaped${rows ? `<ul style="margin:4px 0;padding-left:20px">${rows}</ul>` : ". "}${d.lock ? `${d.lock}/5 locks open in <b>${esc(nextR.name)}</b>, ` : ""}🔥 ${d.streak}-day streak, 🛡️ ${d.shields} shield${d.shields === 1 ? "" : "s"}.</div>`;
 }
@@ -734,12 +779,12 @@ function renderWelcome() {
     <section class="hero">${starsBg()}
       <span class="kicker" style="color:#fff">${HERO_KICKER}</span>
       <h1>Chiikawa Bio Escape</h1>
-      <p class="sub">8 topics · 24 stages · 1 stage a day · 10–15 minutes</p>
+      <p class="sub">8 topics · ${ROOMS.length} stages · 1 stage a day · about 15–20 minutes</p>
       ${castHtml({ chiikawa: "cry", usagi: "happy", momonga: "shock" })}
     </section>
     <section class="card">
       ${say("chiikawa", "Ya...!! 😭 We fell asleep in the biology lab... and woke up TINY, inside a giant cell world!", "cry")}
-      ${say("hachiware", "Every door is locked with an S4 Biology puzzle. Each topic is a series of 3 stages, and the last one is a <b>boss stage</b> guarded by Rakko. Nantoka naare~! Will you help us escape? ✨", "normal", "hint")}
+      ${say("hachiware", "Every door is locked with an S4 Biology puzzle. Each topic is a series of stages (Photosynthesis has 6!), and the last one is a <b>boss stage</b> guarded by Rakko. Each lock needs <b>3 questions</b> in a row to open. Nantoka naare~! Will you help us escape? ✨", "normal", "hint")}
       ${say("usagi", "YAHA! Let's GO! 🐰💥", "happy")}
       <label for="nm"><b>What should we call you?</b></label>
       <input id="nm" class="name" maxlength="24" placeholder="Your name or nickname" autocomplete="off">
@@ -804,12 +849,13 @@ function renderMap() {
     </section>
     <section class="card">
       <div class="row" style="justify-content:space-between"><h2>🗺️ Topic map</h2><span class="pill">⭐ ${totalStars} / ${ROOMS.length * 3} · 🚪 ${S.completed_rooms.length} / ${ROOMS.length}</span></div>
-      <p class="small muted">Every topic is open. Inside a topic, clear the stages in order: Stage 1 → Stage 2 → ⚔️ Boss stage.</p>
+      <p class="small muted">Every topic is open. Inside a topic, clear the stages in order; the last one is a ⚔️ boss stage. Each stage is a different room: labs, gardens, even inside a cell!</p>
       <div class="tgrid">${TOPICS.map((T, ti) => {
         const rs = topicRooms(ti), d = stagesDone(ti), cur = nr && nr.t === ti;
-        return `<div class="tcard ${d === 3 ? "done" : ""} ${cur ? "next" : ""}">
-          <div class="thead"><span class="ticon" aria-hidden="true">${T.icon}</span><span style="min-width:0"><span class="tnum">Topic ${T.no}${d === 3 ? " · 🏅 cleared" : ""}</span><br><span class="tname">${esc(T.name)}</span></span></div>
-          <div class="tprog" aria-label="${d} of 3 stages escaped"><i style="width:${Math.round(100 * d / 3)}%"></i></div>
+        const nT = rs.length;
+        return `<div class="tcard ${d === nT ? "done" : ""} ${cur ? "next" : ""}">
+          <div class="thead"><span class="ticon" aria-hidden="true">${T.icon}</span><span style="min-width:0"><span class="tnum">Topic ${T.no}${d === nT ? " · 🏅 cleared" : ` · ${nT} stages`}</span><br><span class="tname">${esc(T.name)}</span></span></div>
+          <div class="tprog" aria-label="${d} of ${nT} stages escaped"><i style="width:${Math.round(100 * d / nT)}%"></i></div>
           <div class="stages">${rs.map(r => stageBtn(r, roomIndex(r.id), ni)).join("")}</div>
         </div>`; }).join("")}</div>
     </section>
@@ -817,13 +863,14 @@ function renderMap() {
       <h2>🎮 Game modes</h2>
       <div class="modes">
         <button class="mode rush" id="mRush"><h3>⚡ Cell Rush</h3><span class="muted small">60 seconds of mixed quick questions from every topic. Earn 🌰 chestnuts for outfits and power-ups.</span><span class="small">Best: <b>${S.rush.best}</b> pts ${S.rush.lastDay !== today() ? "· <b>×2 today!</b>" : ""}</span></button>
+        <button class="mode note" id="mNote"><h3>📕 Mistake Notebook</h3><span class="muted small">Every question you got wrong, saved for focused DSE revision. Get each right twice to clear it.</span><span class="small"><b>${mistakeKeys().length}</b> to fix · ${S.mistakes_cleared || 0} cleared</span></button>
         <button class="mode" id="mShop"><h3>👗 Shisa's Shop</h3><span class="muted small">Dress up Chiikawa and buy power-ups for the escape rooms.</span><span class="small">🌰 <b>${S.coins}</b> chestnuts</span></button>
         <button class="mode" id="mLb"><h3>🏅 Leaderboard</h3><span class="muted small">The 10 most dedicated players.</span><span class="small">Your points: <b>${dedication()}</b></span></button>
       </div>
     </section>
     <section class="card">
       <h2>📈 Biology mastery</h2>
-      <p class="small muted">Each stage has 15 questions (Bloom levels 1–6), so each topic has 45. Mastery goes up when you answer one right on the first try without a hint. Replay cleared stages to master them all! The first replay each day earns a 📚 revision bonus.</p>
+      <p class="small muted">Each stage has 15–20 core questions (Bloom levels 1–6) including graph reading, plus spelling practice for its key terms. Mastery goes up when you answer one right on the first try without a hint. Replay cleared stages to master them all! The first replay each day earns a 📚 revision bonus.</p>
       ${TOPICS.map(T => { const v = S.bio_mastery[T.id]; return `<div><div class="row" style="justify-content:space-between"><b class="small">${TOPIC_LABELS[T.id]}</b><b class="small">${v}%</b></div>
         <div class="tprog"><i style="width:${v}%"></i></div></div>`; }).join("")}
     </section>
@@ -836,6 +883,7 @@ function renderMap() {
   $app.querySelectorAll("[data-room]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); streakNote = ""; enterRoom(b.dataset.room); });
   document.getElementById("mRush").onclick = () => { SFX.init(); SFX.tap(); rushIntro(); };
   document.getElementById("mShop").onclick = () => { SFX.init(); SFX.tap(); openShop(); };
+  document.getElementById("mNote").onclick = () => { SFX.init(); SFX.tap(); renderNotebook(); };
   document.getElementById("mLb").onclick = () => { SFX.init(); SFX.tap(); openLeaderboard(); };
   const c = document.getElementById("chest");
   if (chestReady) c.onclick = () => {
@@ -844,6 +892,102 @@ function renderMap() {
     let extra = ""; if (Math.random() < .2 && S.streak_shields < 3) { S.streak_shields++; extra = " …and a 🛡️ shield!"; }
     S.last_chest_date = today(); streakNote = `🎁 Kuri-Manju opened the chest: ${snack}${extra}`; save(true); renderMap();
   };
+}
+
+/* ----- 📕 Mistake Notebook: revise the questions you got wrong ----- */
+const shortQ = t => (t.length > 110 ? t.slice(0, 107) + "…" : t);
+function renderNotebook() {
+  stopRush(); MUSIC.setMode("map"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; renderTools();
+  const all = mistakeKeys(), cleared = S.mistakes_cleared || 0;
+  const rows = all.map(k => ({ k, ...mistakeQ(k), m: S.mistakes[k] })).sort((a, b) => a.r.t - b.r.t || b.m.n - a.m.n);
+  $app.innerHTML = `
+    <section class="hero nb-hero">${starsBg()}
+      <span class="kicker" style="color:#fff">${HERO_KICKER} · Revision mode</span>
+      <h1>📕 Mistake Notebook</h1>
+      <p class="sub">${all.length ? `${all.length} question${all.length === 1 ? "" : "s"} to fix · ${cleared} cleared so far` : `Nothing to fix right now · ${cleared} cleared so far`}</p>
+    </section>
+    <section class="card">
+      ${say("hachiware", all.length ? "Every mistake you make in the escape rooms, Cell Rush and incidents is saved here. Answer one right <b>twice in a row</b> to clear it from the notebook. Mistakes are treasure maps to marks in the DSE! 🗺️" : "Your notebook is empty. Play escape rooms and Cell Rush; any question you miss will appear here for focused revision. 🌱", "normal", "hint")}
+      ${all.length ? say("chiikawa", "Uu... I don't like mistakes... but I'll fix them one by one! 💪", "brave") : ""}
+      <div class="row">${all.length ? `<button class="btn big" id="nbAll">▶ Revise ${Math.min(10, all.length)} mistake${all.length === 1 ? "" : "s"}</button>` : ""}<button class="btn plain" id="nbMap">← Topic map</button></div>
+    </section>
+    <section class="card">
+      <h2>By topic (HKDSE compulsory part)</h2>
+      <div class="nbtopics">${TOPICS.map((T, ti) => { const n = mistakeKeys(ti).length; return `<div class="nbrow"><span class="ticon" aria-hidden="true">${T.icon}</span>
+        <span style="min-width:0"><b>Topic ${T.no}: ${esc(T.name)}</b><br><span class="small muted">${esc(T.part)}</span></span>
+        <span class="pill ${n ? "" : "saved"}">${n ? `${n} to fix` : "✓ clear"}</span>
+        <button class="btn blue" data-nbt="${ti}" ${n ? "" : "disabled"}>Revise</button></div>`; }).join("")}</div>
+    </section>
+    ${rows.length ? `<section class="card"><h2>Questions to fix</h2><div class="nblist">${rows.slice(0, 60).map(x => `<div class="nbitem">
+        <span class="small muted">${TOPICS[x.r.t].icon} ${esc(stageLabel(x.r))} · ${esc(x.r.name)}${x.p.gen ? " · ✏️ spelling" : x.p.graph ? " · 📈 graph" : ""}</span>
+        <span>${esc(shortQ(x.p.q))}</span>
+        <span class="small"><b class="bad">✗ ${x.m.n}</b> wrong · <b class="good">✓ ${x.m.ok}/2</b> to clear</span></div>`).join("")}</div>
+        ${rows.length > 60 ? `<p class="small muted">…and ${rows.length - 60} more.</p>` : ""}</section>` : ""}`;
+  const a = document.getElementById("nbAll"); if (a) a.onclick = () => { SFX.init(); SFX.tap(); startRevision(null); };
+  document.getElementById("nbMap").onclick = () => { SFX.tap(); renderMap(); };
+  $app.querySelectorAll("[data-nbt]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); startRevision(Number(b.dataset.nbt)); });
+  window.scrollTo({ top: 0 });
+}
+function startRevision(ti) {
+  const keys = mistakeKeys(ti).sort((a, b) => S.mistakes[a].ok - S.mistakes[b].ok || S.mistakes[b].n - S.mistakes[a].n).slice(0, 10);
+  const RV = { keys, at: 0, right: 0, cleared: 0 };
+  const next = () => {
+    if (RV.at >= RV.keys.length) {
+      const coins = RV.cleared * 2 + RV.right; S.coins += coins; save(true); SFX.fanfare(); if (RV.right) confetti(100);
+      $app.innerHTML = `<section class="card"><span class="kicker">📕 Revision done</span><h2>${RV.right === RV.keys.length ? "Perfect revision! 🎉" : "Revision complete! 🌱"}</h2>
+        <div class="cast" style="margin:0">${["chiikawa", "hachiware", "usagi"].map(w => `<div class="fig" style="width:84px">${figure(w, RV.right ? (w === "chiikawa" ? "sparkle" : "happy") : "normal")}</div>`).join("")}</div>
+        <p style="text-align:center"><b>${RV.right}/${RV.keys.length}</b> right · <b>${RV.cleared}</b> cleared from the notebook · <span class="pill coinpill">+${coins} 🌰</span></p>
+        ${say(RV.cleared ? "momonga" : "hachiware", RV.cleared ? "You wiped mistakes out of the notebook! I'm... a little impressed. 💜" : "Getting them right once is a great start. Get each one right again next time to clear it! ✨", RV.cleared ? "sparkle" : "happy", RV.cleared ? "" : "hint")}
+        <div class="row"><button class="btn big" id="rvAgain">📕 Back to the notebook</button><button class="btn plain" id="rvMap">🗺️ Map</button></div></section>`;
+      document.getElementById("rvAgain").onclick = () => { SFX.tap(); renderNotebook(); };
+      document.getElementById("rvMap").onclick = () => { SFX.tap(); renderMap(); };
+      return;
+    }
+    const k = RV.keys[RV.at], { r, p } = mistakeQ(k), m = S.mistakes[k] || { n: 0, ok: 0 };
+    $app.innerHTML = `<section class="rushhead"><div class="status"><div class="av">${avatar("chiikawa", "brave")}</div><div><div class="rtopic" style="color:var(--yellow)">📕 Mistake Notebook${ti == null ? "" : ` · ${esc(TOPICS[ti].name)}`}</div><div class="big">Question ${RV.at + 1} of ${RV.keys.length}</div></div></div>
+        <span class="combo">✓ ${m.ok}/2 to clear</span></section>
+      <section class="card"><span class="kicker">${TOPICS[r.t].icon} ${esc(stageLabel(r))} · ${esc(r.focus)} · 🧠 Bloom ${p.b}</span>
+        <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
+        <div id="rvAns"></div><div class="row"><button class="btn blue" id="rvHint">💡 Hint</button><button class="btn plain" id="rvJ">📓 Notes</button><button class="btn plain" id="rvQuit">✕ Stop</button></div><div id="rvFb"></div></section>`;
+    document.getElementById("rvHint").onclick = () => { SFX.hint(); document.getElementById("rvFb").innerHTML = say("hachiware", `💡 ${esc(p.hint)}`, "normal", "hint"); RV.hinted = true; };
+    document.getElementById("rvJ").onclick = () => { SFX.tap(); openJournal(r.id, termsIn(r, p)); };
+    document.getElementById("rvQuit").onclick = () => { SFX.tap(); RV.at = RV.keys.length; next(); };
+    RV.hinted = false;
+    miniQuiz(document.getElementById("rvAns"), p, ok => {
+      const fb = document.getElementById("rvFb");
+      if (ok) { RV.right++; SFX.right(); if (noteRight(r.id, p.id, !RV.hinted)) RV.cleared++; else if (RV.hinted) toast("Right! (Used a hint, so it stays in the notebook for now.)"); }
+      else { SFX.wrong(); noteMistake(r.id, p.id); }
+      save();
+      fb.innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("usagi", "Yaha! Got it! 🐰", "happy") : say("chiikawa", "Uu... not yet. Let's read why. 🥺", "cry")}<p>${esc(p.explain)}</p>${p.tip ? `<p class="tip"><b>📝 Exam tip:</b> ${esc(p.tip)}</p>` : ""}
+        <div class="row"><button class="btn big" id="rvNext">${RV.at + 1 < RV.keys.length ? "Next →" : "Finish"}</button></div></div>`;
+      document.getElementById("rvNext").onclick = () => { SFX.tap(); RV.at++; next(); };
+      document.getElementById("rvNext").focus({ preventScroll: true });
+    });
+    window.scrollTo({ top: 0 });
+  };
+  MUSIC.setMode("room"); next();
+}
+// A self-contained answer widget (multiple choice, dials or spelling) used outside escape rooms
+function miniQuiz(el, p, done) {
+  let over = false;
+  const finish = ok => { if (over) return; over = true; el.querySelectorAll("button,input").forEach(x => (x.disabled = true)); done(ok); };
+  if (p.type === "mc") {
+    const idx = p.choices.map((_, i) => i), order = p.fix ? idx.sort((a, b) => p.choices[a].localeCompare(p.choices[b])) : shuffle(idx);
+    el.innerHTML = `<div class="choices">${order.map((i, n) => `<button class="choice" data-i="${i}"><b>${"ABCD"[n]}</b><span>${esc(p.choices[i])}</span></button>`).join("")}</div>`;
+    el.querySelectorAll(".choice").forEach(b => b.onclick = () => { const ok = Number(b.dataset.i) === p.answer; b.classList.add(ok ? "right" : "wrong"); if (!ok) el.querySelector(`[data-i="${p.answer}"]`).classList.add("right"); finish(ok); });
+  } else if (p.type === "dial") {
+    const pos = p.dials.map(o => Math.floor(Math.random() * o.length));
+    el.innerHTML = `<div class="dials">${p.dials.map((o, d) => `<div class="dial">${p.labels ? `<span class="dlabel">${esc(p.labels[d])}</span>` : ""}<button class="arr" data-d="${d}" data-dir="-1" aria-label="Previous option">▲</button><div class="face" id="mf${d}">${esc(o[pos[d]])}</div><button class="arr" data-d="${d}" data-dir="1" aria-label="Next option">▼</button></div>`).join("")}</div><div class="row" style="justify-content:center"><button class="btn" id="mdOk">Check 🔓</button></div>`;
+    el.querySelectorAll(".arr").forEach(b => b.onclick = () => { const d = Number(b.dataset.d), n = p.dials[d].length; pos[d] = (pos[d] + Number(b.dataset.dir) + n) % n; SFX.click(); document.getElementById("mf" + d).textContent = p.dials[d][pos[d]]; });
+    document.getElementById("mdOk").onclick = () => { const ok = pos.every((v, d) => v === p.answer[d]); if (!ok) p.dials.forEach((o, d) => { document.getElementById("mf" + d).textContent = o[p.answer[d]]; }); finish(ok); };
+  } else {
+    el.innerHTML = `<div class="spell"><div class="sboxes" id="mBoxes">${spellBoxes(p.answer, "")}</div><p class="small muted">${countLetters(p.answer)} letters · starts with “${esc(p.answer[0].toUpperCase())}”</p>
+      <div class="row"><input id="mIn" class="name" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type the biology term"><button class="btn" id="mOk">Check ✏️</button></div></div>`;
+    const inp = document.getElementById("mIn");
+    inp.oninput = () => { document.getElementById("mBoxes").innerHTML = spellBoxes(p.answer, inp.value); };
+    const go = () => { if (!normWord(inp.value)) { toast("Type the word first ✏️"); return; } const ok = normWord(inp.value) === normWord(p.answer); if (!ok) document.getElementById("mBoxes").innerHTML = spellBoxes(p.answer, p.answer); finish(ok); };
+    document.getElementById("mOk").onclick = go; inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); go(); } }); setTimeout(() => inp.focus({ preventScroll: true }), 60);
+  }
 }
 
 /* ----- Room scene (SVG) ----- */
@@ -879,60 +1023,43 @@ function specialSvg(kind) {
   return "";
 }
 function sceneSvg(r, solvedCount) {
-  const o = `stroke="${INK}" stroke-width="4" stroke-linejoin="round"`;
-  const books = ["#FFB7C5", "#A0C4FF", "#FDFFB6", "#B9F3C9", "#C9C3F0", "#FFB7C5", "#A0C4FF"];
-  return `<svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(r.name)} escape room">
-    <rect width="800" height="500" fill="${r.tint}"/>
-    ${r.boss ? `<rect width="800" height="500" fill="url(#bossGlow)"/><defs><radialGradient id="bossGlow" cx=".5" cy=".3" r=".7"><stop offset="0" stop-color="rgba(201,160,255,0)"/><stop offset="1" stop-color="rgba(107,78,140,.45)"/></radialGradient></defs>` : ""}
-    <rect y="360" width="800" height="140" fill="${r.floor}"/><path d="M0 360 H800" ${o}/>
-    <g class="obj" data-hs="0">
-      <rect x="40" y="110" width="160" height="250" rx="8" fill="#D9B48F" ${o}/>
-      ${[170, 240, 310].map(y => `<path d="M40 ${y} H200" ${o}/>`).join("")}
-      ${books.map((c, i) => `<rect x="${52 + i * 20}" y="${i % 2 ? 128 : 124}" width="16" height="${i % 2 ? 42 : 46}" rx="3" fill="${c}" stroke="${INK}" stroke-width="3"/>`).join("")}
-      ${books.slice(0, 5).map((c, i) => `<rect x="${60 + i * 24}" y="${196 + (i % 2) * 4}" width="20" height="${44 - (i % 2) * 4}" rx="3" fill="${c}" stroke="${INK}" stroke-width="3"/>`).join("")}
-      <rect x="64" y="262" width="54" height="48" rx="4" fill="#FFFDF0" stroke="${INK}" stroke-width="3"/>
-    </g>
-    <g class="obj" data-hs="1">
-      <circle cx="300" cy="100" r="46" fill="#FFFDF0" ${o}/>
-      ${[0, 90, 180, 270].map(a => `<circle cx="${300 + 34 * Math.sin(a * Math.PI / 180)}" cy="${100 - 34 * Math.cos(a * Math.PI / 180)}" r="3.5" fill="${INK}"/>`).join("")}
-      <path d="M300 100 V72 M300 100 L318 112" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>
-    </g>
-    <g class="obj" data-hs="2">
-      <rect x="360" y="300" width="160" height="16" rx="4" fill="#C98F6B" ${o}/><path d="M378 316 V360 M502 316 V360" ${o}/>
-      ${specialSvg(r.special)}
-    </g>
-    <g class="obj" data-hs="3">
-      <rect x="248" y="400" width="114" height="72" rx="10" fill="#FFB7C5" ${o}/><path d="M248 424 H362" ${o}/>
-      <rect x="292" y="416" width="26" height="24" rx="5" fill="#FDFFB6" stroke="${INK}" stroke-width="3"/>
-    </g>
-    <g class="obj" data-hs="4">
-      <rect x="556" y="250" width="128" height="120" rx="10" fill="#B8C3D6" ${o}/><rect x="570" y="264" width="100" height="92" rx="6" fill="none" stroke="${INK}" stroke-width="3"/>
-      <circle cx="620" cy="310" r="20" fill="#FFFDF0" ${o}/><path d="M620 296 v10" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
-    </g>
-    ${r.boss ? `<svg x="472" y="372" width="78" height="108" viewBox="-4 -4 72 100" aria-hidden="true">${figure("rakko", "brave").replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "")}</svg>` : ""}
-    <g class="obj" data-hs="door" id="doorG">
-      <rect x="700" y="86" width="92" height="274" fill="#FDFFB6" class="door-light"/>
-      <g class="door-panel"><rect x="700" y="86" width="92" height="274" rx="6" fill="#C98F6B" ${o}/>
-        <rect x="714" y="104" width="64" height="100" rx="6" fill="none" stroke="${INK}" stroke-width="3"/><rect x="714" y="222" width="64" height="118" rx="6" fill="none" stroke="${INK}" stroke-width="3"/>
-        <circle cx="716" cy="228" r="7" fill="#FDFFB6" ${o}/></g>
-      <rect x="668" y="190" width="24" height="36" rx="4" fill="#2B2433" stroke="${INK}" stroke-width="3"/><circle cx="680" cy="200" r="3.5" fill="${solvedCount === 5 ? "#B9F3C9" : "#FF6B6B"}"/>
-    </g>
+  const sc = SCENES[r.scene] || SCENES.library;
+  return `<svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(r.name)}: ${esc(sc.label)} escape room">
+    ${sc.draw(r, solvedCount)}
+    <g class="obj" data-hs="2" transform="translate(${sc.sp[0]} ${sc.sp[1]})">${sc.stand}${specialSvg(r.special)}</g>
+    ${r.boss ? `<defs><radialGradient id="bossGlow" cx=".5" cy=".3" r=".7"><stop offset="0" stop-color="rgba(201,160,255,0)"/><stop offset="1" stop-color="rgba(107,78,140,.45)"/></radialGradient></defs><rect width="800" height="500" fill="url(#bossGlow)" pointer-events="none"/>
+      <svg x="472" y="372" width="78" height="108" viewBox="-4 -4 72 100" aria-hidden="true">${figure("rakko", "brave").replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "")}</svg>` : ""}
   </svg>`;
 }
 
 let R = null, timerId = null, moodTimer = null;
 const masteredIn = r => r.pool.filter(p => S.mastered_puzzles.includes(`${r.id}:${p.id}`)).length;
+/* Each lock needs 3 questions in a row. Locks climb Bloom's levels; spelling questions are capped
+   at 3 per visit (one per lock), and recently seen questions are skipped when possible. */
+const LOCK_Q = 3;
+const BANDS = [[[1, 2], [1, 2], [2, 3]], [[1, 2], [2, 3], [3, 4]], [[2, 3], [3, 4], [3, 4]], [[3, 4], [4, 5], [4, 5]], [[4, 5], [5, 6], [5, 6]]];
 function pickRun(room) {
   const seen = S.seen[room.id] || [], chosen = [];
-  [[1, 2], [2, 3], [3, 4], [4, 5], [5, 6]].forEach(([lo, hi]) => {
-    const cands = room.pool.filter(p => p.b >= lo && p.b <= hi && !chosen.includes(p.id));
-    const fresh = cands.filter(p => !seen.includes(p.id));
-    chosen.push(pick(fresh.length ? fresh : cands).id);
+  let spells = 0;
+  BANDS.forEach(bands => {
+    let lockSpell = false;
+    bands.forEach(([lo, hi]) => {
+      const ok = p => !chosen.includes(p.id) && (!p.gen || (spells < 3 && !lockSpell));
+      let c = room.pool.filter(p => ok(p) && p.b >= lo && p.b <= hi);
+      if (!c.length) c = room.pool.filter(p => ok(p) && p.b >= lo - 1 && p.b <= hi + 1);
+      if (!c.length) c = room.pool.filter(ok);
+      if (!c.length) c = room.pool.filter(p => !chosen.includes(p.id));
+      const fresh = c.filter(p => !seen.includes(p.id)), q = pick(fresh.length ? fresh : c);
+      chosen.push(q.id); if (q.gen) { spells++; lockSpell = true; }
+    });
   });
-  S.seen[room.id] = seen.concat(chosen).slice(-30);
+  S.seen[room.id] = seen.concat(chosen).slice(-45);
   return chosen;
 }
-const runQs = room => S.room_run[room.id].qids.map(id => room.pool.find(p => p.id === id) || room.pool[0]);
+const runQs = room => { const ids = S.room_run[room.id].qids; return [0, 1, 2, 3, 4].map(i => ids.slice(i * LOCK_Q, i * LOCK_Q + LOCK_Q).map(id => room.pool.find(p => p.id === id) || room.pool[0])); };
+const stepOf = i => ((S.room_run[R.room.id].steps || {})[i]) || 0;
+const curQ = i => R.qs[i][Math.min(LOCK_Q - 1, stepOf(i))];
+const akey = i => `${i}_${stepOf(i)}`;
 function stopTimer() { if (timerId) clearInterval(timerId); timerId = null; }
 
 function enterRoom(id) {
@@ -940,7 +1067,10 @@ function enterRoom(id) {
   const room = ROOMS[roomIndex(id)];
   const replay = S.completed_rooms.includes(room.id);
   if (replay || !S.room_run[room.id]) S.room_run[room.id] = freshRun();
-  if (!S.room_run[room.id].qids) S.room_run[room.id].qids = pickRun(room);
+  const rr = S.room_run[room.id];
+  if (!rr.qids || rr.qids.length !== 5 * LOCK_Q) { rr.qids = pickRun(room); rr.steps = {}; }
+  if (!rr.steps) rr.steps = {};
+  HOTSPOTS = (SCENES[room.scene] || SCENES.library).hs; DOOR = (SCENES[room.scene] || SCENES.library).door;
   if (replay) { S.room_progress[room.id] = []; S.room_timer[room.id] = ROOM_SECONDS; }
   if (S.room_timer[room.id] == null) S.room_timer[room.id] = ROOM_SECONDS;
   S.current_room = room.id; save(); MUSIC.setMode("room");
@@ -999,7 +1129,7 @@ function renderRoom() {
         <div class="av ${frameCls()}" id="chiiAv">${avatar("chiikawa", R.mood)}</div>
         <div style="min-width:0"><div class="rtopic">${TOPICS[room.t].icon} ${topicNo(room.topicNo)}: ${esc(room.topic)}</div>
           <div class="rt">${esc(room.name)} ${room.boss ? `<span class="boss-tag">⚔️ BOSS</span>` : ""}</div>
-          <div class="stepper" aria-label="${esc(stageLabel(room))}">${topicRooms(room.t).map(x => `<i class="${x.id === room.id ? "cur" : S.completed_rooms.includes(x.id) ? "on" : ""}"></i>`).join("")}<span class="small">${room.boss ? "Boss stage" : `Stage ${room.s}`} of 3 · ${esc(room.focus)}</span></div>
+          <div class="stepper" aria-label="${esc(stageLabel(room))}">${topicRooms(room.t).map(x => `<i class="${x.id === room.id ? "cur" : S.completed_rooms.includes(x.id) ? "on" : ""}"></i>`).join("")}<span class="small">${room.boss ? "Boss stage" : `Stage ${room.s}`} of ${topicRooms(room.t).length} · ${esc(room.focus)}</span></div>
           <div class="small" id="chiiSt">${"Chiikawa is ready"}</div></div>
       </div>
       <div style="display:grid;justify-items:end;gap:4px">
@@ -1016,7 +1146,7 @@ function renderRoom() {
         ${HOTSPOTS.map((h, i) => {
           const nm = i === 2 ? room.specialName : h.name, done = solved.includes(i);
           if (R.hiddenHs === i && !done) return "";
-          return `<button class="hs ${done ? "done" : ""}" data-hs="${i}" style="left:${h.x}%;top:${h.y}%" aria-label="${esc(nm)}${done ? " (solved)" : ""}">${done ? "✓" : "?"}<span class="lbl">${esc(nm)}</span></button>`;
+          return `<button class="hs ${done ? "done" : ""}" data-hs="${i}" style="left:${h.x}%;top:${h.y}%" aria-label="${esc(nm)}${done ? " (solved)" : stepOf(i) ? ` (${stepOf(i)} of ${LOCK_Q} questions done)` : ""}">${done ? "✓" : stepOf(i) ? `<small>${stepOf(i)}/${LOCK_Q}</small>` : "?"}<span class="lbl">${esc(nm)}</span></button>`;
         }).join("")}
         ${R.stolen !== null ? `<button class="hs wolv" data-wolf="1" style="left:${R.wolfX}%;top:${R.wolfY}%" aria-label="${"Catch the wolverine"}">🐾<span class="lbl">${"Wolverine!"}</span></button>` : ""}
         <button class="hs door" data-hs="door" style="left:${DOOR.x}%;top:${DOOR.y}%" aria-label="${"Exit door"}">🚪<span class="lbl">${"Exit door"}</span></button>
@@ -1052,24 +1182,26 @@ function invHtml(newIdx = -1) {
 function openPuzzle(i) {
   const { room } = R;
   const solved = S.room_progress[room.id] || [];
-  const p = R.qs[i];
   const hsName = i === 2 ? room.specialName : HOTSPOTS[i].name;
   const line = i === 2 ? room.specialLine : HOTSPOTS[i].line;
-  if (solved.includes(i)) { toast(`${hsName}: ${"already solved ✓"}`); return; }
+  if (solved.includes(i)) { toast(`${hsName}: already solved ✓`); return; }
+  const step = stepOf(i), p = curQ(i), k = akey(i);
   SFX.click();
-  R.cur = i; R.att[i] = R.att[i] || 0; R.openedAt = Date.now();
+  R.cur = i; R.att[k] = R.att[k] || 0; R.openedAt = Date.now();
   if (R.hiddenHs === i) { R.hiddenHs = null; toast("🔦 Found the hidden lock!"); }
-  const typeLabel = { mc: "Multiple choice", keypad: "Keypad lock", dial: "Combination dials" }[p.type];
+  const typeLabel = { mc: p.gen ? "Spelling check" : p.graph ? "Graph reading" : "Multiple choice", dial: "Combination dials", spell: "Spelling lock" }[p.type];
   const box = openModal(`
     <span class="kicker">${typeLabel} · T${room.topicNo} ${room.boss ? "Boss" : `S${room.s}`} · 🧠 Bloom ${p.b}: ${BLOOM[p.b]}</span>
     <h2>${esc(hsName)}</h2>
-    ${room.boss && p.b >= 5 ? say("rakko", "A hard one. Think like a scientist: read every choice before you strike. ⚔️", "brave")
+    <div class="lockprog" aria-label="Question ${step + 1} of ${LOCK_Q} for this lock">${Array.from({ length: LOCK_Q }, (_, n) => `<i class="${n < step ? "on" : n === step ? "cur" : ""}"></i>`).join("")}<span class="small"><b>Question ${step + 1} of ${LOCK_Q}</b> to open this lock</span></div>
+    ${step ? say("chiikawa", pick(["Keep going! One more click and the lock wiggles... 🔐", "It's working! The lock is loosening! ✨", "Ya...! Almost there! 🥹"]), "brave")
+      : room.boss && p.b >= 5 ? say("rakko", "A hard one. Think like a scientist: read every choice before you strike. ⚔️", "brave")
       : p.b >= 5 ? say("chiikawa", `${esc(line)} ...Eh?! This one looks HARD! 😱`, "shock") : say("chiikawa", esc(line), p.b >= 3 ? "brave" : "normal")}
     <p class="q">${esc(p.q)}</p>
     ${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
     <div id="jamBox"></div>
     <div id="ans">${answerUi(p)}</div>
-    <div class="row"><button class="btn blue" id="hint">💡 ${"Hint from Hachiware"}</button><button class="btn plain" id="pj">📓 ${"Journal"}</button></div>
+    <div class="row"><button class="btn blue" id="hint">💡 Hint from Hachiware</button><button class="btn plain" id="pj">📓 Journal</button></div>
     <div class="pwr" id="pwr"></div>
     <div id="pfb"></div>`, { wide: true });
   renderPwr(p, i);
@@ -1079,6 +1211,7 @@ function openPuzzle(i) {
   if (R.jam[i] > Date.now()) startJam(i, 0);
   if (R.noHintUntil > Date.now()) { const h = document.getElementById("hint"); h.disabled = true; h.textContent = "😴 Hachiware is sleepy..."; }
   if (R.fog) { R.fog = false; fogAnswers(); }
+  if (p.type === "spell" && !(R.jam[i] > Date.now())) setTimeout(() => { const s = document.getElementById("spIn"); if (s) s.focus({ preventScroll: true }); }, 60);
 }
 function fogAnswers() {
   const ans = document.getElementById("ans"), jb = document.getElementById("jamBox"); if (!ans) return;
@@ -1109,6 +1242,12 @@ function usePower(k, p, i) {
       const opts = [...box.querySelectorAll(".choice")].filter(b => !b.disabled && Number(b.dataset.i) !== p.answer);
       if (!opts.length) { toast("Nothing left to remove!"); return; }
       const b = pick(opts); b.disabled = true; b.classList.add("wrong"); b.style.textDecoration = "line-through";
+    } else if (p.type === "spell") {
+      const inp = document.getElementById("spIn"), w = p.answer, typed = normWord(inp.value), tgt = normWord(w);
+      let n = 0; while (n < typed.length && typed[n] === tgt[n]) n++;
+      if (n >= tgt.length) { toast("The word is complete. Try the lock!"); return; }
+      let out = "", c = 0; for (const ch of w) { if (c >= n + 1) break; out += ch; if (/[a-z]/i.test(ch)) c++; }
+      inp.value = out; inp.dispatchEvent(new Event("input")); inp.focus();
     } else {
       const wrong = p.dials.map((_, d) => d).filter(d => R.dialPos[d] !== p.answer[d]);
       if (!wrong.length) { toast("All dials are already right. Try the lock!"); return; }
@@ -1133,7 +1272,7 @@ function dimLights() {
   const sc = document.getElementById("scene"); if (sc) sc.style.setProperty("--dim", Math.min(.9, R.room.dim + .25));
   const me = R; setTimeout(() => { if (R === me) { const s2 = document.getElementById("scene"); if (s2) s2.style.setProperty("--dim", R.room.dim); } }, 45000);
 }
-function markHint(i) { R.hinted[i] = true; S.room_run[R.room.id].hints = true; save(); }
+function markHint(i) { R.hinted[akey(i)] = true; S.room_run[R.room.id].hints = true; save(); }
 /* Anti-guessing: a lock jams for a while after a guess, and Hachiware's hint must be read. */
 function startJam(i, secs, reason) {
   if (secs) R.jam[i] = Date.now() + secs * 1000;
@@ -1164,6 +1303,9 @@ function answerUi(p) {
   if (p.type === "keypad") return `<div class="keypad"><div class="kdisplay" aria-live="polite"><span id="kd">_</span>${p.unit ? `<span class="u">${esc(p.unit)}</span>` : ""}</div>
     <div class="keys">${["7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "⌫"].map(k => `<button class="key ${k === "⌫" ? "del" : ""}" data-k="${k}" aria-label="${k === "⌫" ? "Delete" : k === "." ? "Decimal point" : k}">${k}</button>`).join("")}</div>
     <button class="btn" id="kok" style="width:min(208px,100%)">Unlock 🔓</button></div>`;
+  if (p.type === "spell") return `<div class="spell"><div class="sboxes" id="sBoxes" aria-hidden="true">${spellBoxes(p.answer, "")}</div>
+    <p class="small muted">${countLetters(p.answer)} letters · starts with “${esc(p.answer[0].toUpperCase())}”. British spelling (HKDSE).</p>
+    <div class="row"><input id="spIn" class="name" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type the biology term"><button class="btn" id="spOk">Try the lock 🔓</button></div></div>`;
   // Dials start at random positions (never all correct)
   const start = p.dials.map(o => Math.floor(Math.random() * o.length));
   if (start.every((v, d) => v === p.answer[d])) start[0] = (start[0] + 1) % p.dials[0].length;
@@ -1173,6 +1315,17 @@ function answerUi(p) {
     <div class="row" style="justify-content:center"><button class="btn" id="dok">${"Try the lock 🔓"}</button></div>`;
 }
 function wireAnswer(p, box) {
+  if (p.type === "spell") {
+    const inp = document.getElementById("spIn");
+    inp.oninput = () => { document.getElementById("sBoxes").innerHTML = spellBoxes(p.answer, inp.value); };
+    const go = () => {
+      if (!normWord(inp.value)) { toast("Type the word first ✏️"); return; }
+      if (normWord(inp.value) === normWord(p.answer)) { inp.disabled = true; document.getElementById("spOk").disabled = true; solve(); } else miss(box);
+    };
+    document.getElementById("spOk").onclick = go;
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); go(); } });
+    return;
+  }
   if (p.type === "mc") {
     box.querySelectorAll(".choice").forEach(b => b.onclick = () => {
       if (Number(b.dataset.i) === p.answer) { b.classList.add("right"); box.querySelectorAll(".choice").forEach(x => (x.disabled = true)); solve(); }
@@ -1202,8 +1355,8 @@ function wireAnswer(p, box) {
   }
 }
 function miss(box) {
-  const i = R.cur, id = R.room.id, now = Date.now(), p = R.qs[i], run = S.room_run[id];
-  R.att[i] = (R.att[i] || 0) + 1; S.stats.run = 0;
+  const i = R.cur, id = R.room.id, now = Date.now(), p = curQ(i), k = akey(i), run = S.room_run[id];
+  R.att[k] = (R.att[k] || 0) + 1; S.stats.run = 0; noteMistake(id, p.id);
   box.classList.remove("shake"); void box.offsetWidth; box.classList.add("shake");
   // Guard charm: blocks every penalty for this one wrong answer
   if (R.guard) {
@@ -1214,7 +1367,7 @@ function miss(box) {
   // Guessing = a wrong answer within 5 s of opening the lock, or within 4 s of the last wrong answer
   const fast = now - R.openedAt < 5000 || (R.lastWrongAt && now - R.lastWrongAt < 4000);
   R.lastWrongAt = now;
-  const [rw, rm, rt] = fast ? ["chiikawa", "cry", "Wah...! That was too fast! Did we guess? 😭"] : R.att[i] >= 2 ? ["chiikawa", "cry", "Wah...! Wrong again... uuu... 😭"] : pick(REACT.wrong);
+  const [rw, rm, rt] = fast ? ["chiikawa", "cry", "Wah...! That was too fast! Did we guess? 😭"] : R.att[k] >= 2 ? ["chiikawa", "cry", "Wah...! Wrong again... uuu... 😭"] : pick(REACT.wrong);
   SFX.wrong(); setMood(rm === "shock" ? "shock" : "cry", 2500);
   const hit = [];
   // Penalty 1: time
@@ -1224,6 +1377,9 @@ function miss(box) {
     const wrap = box.querySelector(".choices"); const kids = shuffle([...wrap.children]);
     kids.forEach((k, n) => { wrap.appendChild(k); k.querySelector("b").textContent = "ABCD"[n]; });
     hit.push("🔀 answers shuffled");
+  } else if (p.type === "spell") {
+    const inp = document.getElementById("spIn"); if (inp) { inp.value = ""; inp.dispatchEvent(new Event("input")); }
+    hit.push("✏️ letters cleared");
   } else if (p.type === "dial") {
     const spun = p.dials.map(o => Math.floor(Math.random() * o.length));
     if (spun.every((v, d) => v === p.answer[d])) spun[0] = (spun[0] + 1) % p.dials[0].length;
@@ -1233,7 +1389,7 @@ function miss(box) {
   // Penalty 3: guessing or a repeat miss jams the lock, adds a strike and costs chestnuts
   let jam = 0, reason = "";
   if (fast) { jam = 25; reason = "Guessing detected! Lock jammed"; }
-  else if (R.att[i] >= 2) { jam = Math.min(40, 10 + 10 * (R.att[i] - 1)); reason = "Wrong again! Lock jammed"; }
+  else if (R.att[k] >= 2) { jam = Math.min(40, 10 + 10 * (R.att[k] - 1)); reason = "Wrong again! Lock jammed"; }
   if (jam) {
     run.strikes += 1; markHint(i); SFX.door(); hit.push(`🔒 jammed ${jam}s`, "⚠️ strike +1");
     if (S.coins > 0) { const fine = Math.min(S.coins, 3); S.coins -= fine; hit.push(`🌰 −${fine}`); renderTools(); }
@@ -1247,35 +1403,43 @@ function miss(box) {
     ${say(rw, rt, rm)}
     <div class="rules"><b>${"Penalties"}:</b> ${hit.join(" · ")}${jam ? `<br>${warn}` : ""}</div>
     ${say("hachiware", `${jam ? "Let's slow down and read carefully. Nantoka naare~!" : "Don't worry! We can figure this out together."} 💡 ${esc(p.hint)}`, "normal", "hint")}
-    ${R.att[i] >= 2 ? (b => say(b[0], b[2], b[1]))(pick(REACT.brave)) : ""}</div>`;
+    ${R.att[k] >= 2 ? (b => say(b[0], b[2], b[1]))(pick(REACT.brave)) : ""}</div>`;
   if (jam) startJam(i, jam, reason);
 }
 function solve() {
-  const { room } = R, i = R.cur, p = R.qs[i];
-  const firstTry = !R.att[i] && !R.hinted[i], pid = `${room.id}:${p.id}`, run = S.room_run[room.id];
+  const { room } = R, i = R.cur, step = stepOf(i), p = curQ(i), k = akey(i);
+  const firstTry = !R.att[k] && !R.hinted[k], pid = `${room.id}:${p.id}`, run = S.room_run[room.id];
   if (firstTry && !S.mastered_puzzles.includes(pid)) S.mastered_puzzles.push(pid);
-  if (firstTry && !run.firsts.includes(i)) run.firsts.push(i);
+  if (firstTry && !run.firsts.includes(k)) run.firsts.push(k);
+  noteRight(room.id, p.id, firstTry);
   S.stats.correct += 1;
   S.stats.run = firstTry ? S.stats.run + 1 : 0; S.stats.bestRun = Math.max(S.stats.bestRun, S.stats.run);
-  const solved = S.room_progress[room.id] || []; if (!solved.includes(i)) solved.push(i); S.room_progress[room.id] = solved;
+  const last = step >= LOCK_Q - 1;
+  if (last) { const solved = S.room_progress[room.id] || []; if (!solved.includes(i)) solved.push(i); S.room_progress[room.id] = solved; }
+  else run.steps[i] = step + 1;
   recomputeMastery(); save(true);
-  SFX.right(); setTimeout(() => yaha(), 150); setMood(firstTry ? "sparkle" : "happy", 4000);
+  SFX.right(); if (last) setTimeout(() => yaha(), 150); setMood(firstTry ? "sparkle" : "happy", 4000);
   const [cw, cm, ct] = S.stats.run >= 3 ? ["momonga", "sparkle", `${S.stats.run} first-try answers in a row?! You're almost as amazing as me! 💜`] : firstTry ? pick(REACT.right) : ["chiikawa", "happy", "Phew... we got it! 🥹"];
   const kt = termsIn(room, p).map(t => room.terms.find(x => x[0] === t));
   setTimeout(checkTrophies, 1400);
-  if (firstTry) confetti(40);
+  if (firstTry) confetti(last ? 40 : 20);
   document.getElementById("hint").hidden = true;
+  const lp = document.querySelector(".lockprog"); if (lp) lp.querySelectorAll("i")[step].className = "on";
   document.getElementById("pfb").innerHTML = `<div class="fb ok">
-    ${say(cw, `${esc(ct)} <b>${firstTry ? "First try! Mastery up 📈" : "Unlocked! 🔓"}</b>`, cm)}
+    ${say(cw, `${esc(ct)} <b>${firstTry ? "First try! Mastery up 📈" : "Correct! ✔️"}</b>`, cm)}
     <p>${esc(p.explain)}</p>
     ${p.tip ? `<p class="tip"><b>📝 Exam tip:</b> ${esc(p.tip)}</p>` : ""}
     ${kt.length ? `<div class="terms">${kt.map(([t, m]) => `<span class="term"><b>${esc(t)}</b><span class="def">${esc(m)}</span></span>`).join("")}</div>` : ""}
-    <div class="found">${ICONS[HOTSPOTS[i].item]}<span>${"You found"}: <b>${esc(itemName(i))}</b>. ${"Code digit"} #${i + 1} = <b>${room.code[i]}</b></span></div>
-    <div class="row"><button class="btn big" id="collect">${"Collect item ✨"}</button></div></div>`;
+    ${last ? `<div class="found">${ICONS[HOTSPOTS[i].item]}<span>Lock open! You found: <b>${esc(itemName(i))}</b>. Code digit #${i + 1} = <b>${room.code[i]}</b></span></div>
+    <div class="row"><button class="btn big" id="collect">Collect item ✨</button></div>`
+    : `<div class="row"><button class="btn big" id="collect">Next question (${step + 2}/${LOCK_Q}) →</button><span class="small muted">${LOCK_Q - step - 1} more to open this lock</span></div>`}</div>`;
   const c = document.getElementById("collect"); c.focus({ preventScroll: true });
   document.getElementById("pfb").scrollIntoView({ behavior: reduced() ? "auto" : "smooth", block: "nearest" });
-  $modal._close = () => collect(i);
-  c.onclick = () => collect(i);
+  if (last) { $modal._close = () => collect(i); c.onclick = () => collect(i); }
+  else {
+    $modal._close = () => { closeModal(); renderRoom(); };
+    c.onclick = () => { SFX.tap(); if (R.jam[i] > Date.now()) R.jam[i] = 0; openPuzzle(i); };
+  }
 }
 function collect(i) {
   if (!R) return;
@@ -1320,10 +1484,10 @@ function escapeRoom() {
   const tLeft = S.room_timer[room.id], used = ROOM_SECONDS - tLeft;
   const first = !S.completed_rooms.includes(room.id);
   if (first) { S.completed_rooms.push(room.id); S.inventory.push(room.item); }
-  const topicDone = first && stagesDone(room.t) === 3 && !S.chiikawa_badges.includes(T.badge);
+  const topicDone = first && stagesDone(room.t) === topicRooms(room.t).length && !S.chiikawa_badges.includes(T.badge);
   if (topicDone) S.chiikawa_badges.push(T.badge);
   const run = S.room_run[room.id] || freshRun();
-  const n = run.firsts.length, base = n === 5 ? 3 : n >= 3 ? 2 : 1;
+  const n = run.firsts.length, base = n >= 13 ? 3 : n >= 9 ? 2 : 1;
   const lost = run.strikes >= 6 ? 2 : run.strikes >= 3 ? 1 : 0;
   const stars = Math.max(1, base - lost);
   S.room_stars[room.id] = Math.max(S.room_stars[room.id] || 0, stars);
@@ -1347,7 +1511,7 @@ function escapeRoom() {
       <h2>🎉 You escaped ${esc(room.name)}!</h2>
       <div class="cast" style="margin:0">${(room.boss ? ["usagi", "chiikawa", "rakko"] : ["usagi", "chiikawa", "hachiware"]).map(w => `<div class="fig" style="width:90px">${figure(w, w === "chiikawa" ? "sparkle" : "happy")}</div>`).join("")}</div>
       <div class="row" style="justify-content:center;font-size:1.8rem" aria-label="${stars} / 3 ★">${starStr(stars)}</div>
-      <p style="text-align:center"><b>${n}/5</b> locks on the first try · ⏱️ ${fmt(Math.max(0, used))}${tLeft < 0 ? " (overtime)" : ""} · ⚠️ ${run.strikes} strike${run.strikes === 1 ? "" : "s"}</p>
+      <p style="text-align:center"><b>${n}/${5 * LOCK_Q}</b> questions right first try · ⏱️ ${fmt(Math.max(0, used))}${tLeft < 0 ? " (overtime)" : ""} · ⚠️ ${run.strikes} strike${run.strikes === 1 ? "" : "s"}</p>
       <p style="text-align:center"><span class="pill coinpill">+${earned} 🌰 chestnuts${revise ? " · 📚 daily revision bonus!" : ""}</span>${R.incidents ? ` <span class="pill">👻 Incidents survived: ${R.incidents}</span>` : ""}</p>
       ${lost ? `<div class="rules">Guess strikes cost you <b>${lost} star${lost > 1 ? "s" : ""}</b> this time. Replay the stage and think before answering to win them back!</div>` : ""}
       ${room.boss && first ? say("rakko", "...Hmph. Not bad. You have the heart of a true biologist. ⚔️", "happy") : ""}
@@ -1424,7 +1588,7 @@ function sideQuiz({ kicker, title, art, p, onRight, onWrong }) {
     box.querySelectorAll(".choice").forEach(x => x.disabled = true); b.classList.add(ok ? "right" : "wrong");
     if (!ok) box.querySelector(`[data-i="${p.answer}"]`).classList.add("right");
     document.getElementById("sfb").innerHTML = `<div class="effect"><p>${esc(p.explain)}</p></div><div class="row" style="margin-top:10px"><button class="btn" id="sOk">${"Continue"}</button></div>`;
-    ok ? (SFX.right(), onRight()) : (SFX.wrong(), onWrong());
+    ok ? (SFX.right(), onRight()) : (SFX.wrong(), noteMistake(p.rid, p.id), onWrong());
     document.getElementById("sOk").onclick = () => { closeModal(); if (R) { renderRoom(); document.getElementById("inv").innerHTML = invHtml(); wireSlots(); } };
   });
 }

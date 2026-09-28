@@ -19,18 +19,26 @@ const out = process.argv[2] || ".";
     await page.screenshot({ path: `${out}/${tag}-2-room.png`, fullPage: true });
     const scroll = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     if (scroll > 0) errors.push(`${tag}: horizontal scroll ${scroll}px in room`);
-    // Solve all 5 locks using the answers in R.qs
+    // Solve all 5 locks (3 questions each) using the answers in R.qs; answer the very first one wrong once
+    let shot = 0, wrongDone = false;
     for (let i = 0; i < 5; i++) {
-      await page.evaluate(i => { R.jam[i] = 0; openPuzzle(i); R.openedAt = 0; }, i);
-      await page.waitForTimeout(150);
-      if (i === 0) await page.screenshot({ path: `${out}/${tag}-3-puzzle.png`, fullPage: false });
-      const p = await page.evaluate(i => ({ type: R.qs[i].type, answer: R.qs[i].answer, n: R.qs[i].dials ? R.qs[i].dials.length : 0 }), i);
-      if (p.type === "mc") await page.click(`.choice[data-i="${p.answer}"]`);
-      else { await page.evaluate(i => { const p = R.qs[i]; p.answer.forEach((a, d) => setDial(d, a, p)); }, i); await page.click("#dok"); }
-      await page.waitForTimeout(250);
-      if (i === 0) await page.screenshot({ path: `${out}/${tag}-4-solved.png`, fullPage: false });
-      await page.click("#collect");
-      await page.waitForTimeout(150);
+      for (let k = 0; k < 3; k++) {
+        await page.evaluate(i => { R.jam[i] = 0; openPuzzle(i); R.openedAt = 0; R.lastWrongAt = 0; }, i);
+        await page.waitForTimeout(120);
+        const p = await page.evaluate(i => { const p = curQ(i); return { type: p.type, answer: p.answer }; }, i);
+        if (!wrongDone && p.type === "mc") {
+          await page.click(`.choice:not([data-i="${p.answer}"])`); wrongDone = true;
+          await page.waitForTimeout(200); await page.evaluate(i => { R.jam[i] = 0; openPuzzle(i); }, i); await page.waitForTimeout(100);
+        }
+        if (shot < 4 && (p.type !== "mc" || shot === 0)) { await page.screenshot({ path: `${out}/${tag}-3-puzzle-${p.type}-${shot++}.png`, fullPage: false }); }
+        if (p.type === "mc") await page.click(`.choice[data-i="${p.answer}"]`);
+        else if (p.type === "spell") { await page.fill("#spIn", p.answer); await page.click("#spOk"); }
+        else { await page.evaluate(i => { const p = curQ(i); p.answer.forEach((a, d) => setDial(d, a, p)); }, i); await page.click("#dok"); }
+        await page.waitForTimeout(200);
+        if (i === 0 && k === 0) await page.screenshot({ path: `${out}/${tag}-4-solved.png`, fullPage: false });
+        await page.click("#collect");
+        await page.waitForTimeout(120);
+      }
     }
     await page.evaluate(() => openDoor());
     const code = await page.evaluate(() => R.room.code);
@@ -64,12 +72,20 @@ const out = process.argv[2] || ".";
     await page.evaluate(() => { closeModal(); renderMap(); openLeaderboard(); }); await page.waitForTimeout(200);
     await page.evaluate(() => { closeModal(); openSaveModal(); }); await page.waitForTimeout(200);
     await page.screenshot({ path: `${out}/${tag}-10-save.png`, fullPage: false });
+    await page.evaluate(() => { closeModal(); renderNotebook(); }); await page.waitForTimeout(200);
+    await page.screenshot({ path: `${out}/${tag}-12-notebook.png`, fullPage: true });
+    const nb = await page.evaluate(() => mistakeKeys().length);
+    if (nb < 1) errors.push(`${tag}: mistake notebook is empty after a wrong answer`);
+    await page.click("#nbAll"); await page.waitForTimeout(200);
+    await page.screenshot({ path: `${out}/${tag}-13-revise.png`, fullPage: false });
     // Every diagram and every stage scene renders
     for (const id of await page.evaluate(() => ROOMS.map(r => r.id))) {
       await page.evaluate(id => { closeModal(); enterRoom(id); R.incidents = 99; }, id);
     }
-    await page.evaluate(() => { closeModal(); enterRoom("t2s3"); R.incidents = 99; }); await page.waitForTimeout(300);
-    await page.screenshot({ path: `${out}/${tag}-11-boss.png`, fullPage: false });
+    if (tag === "desktop") for (const id of ["t2s3", "t2s1", "t6s1", "t2s2", "t1s2", "t1s1", "t4s2", "t4s3"]) {
+      await page.evaluate(id => { closeModal(); enterRoom(id); R.incidents = 99; }, id); await page.waitForTimeout(250);
+      await (await page.$("#scene")).screenshot({ path: `${out}/scene-${id}.png` });
+    }
     await page.close();
   }
   await browser.close();
