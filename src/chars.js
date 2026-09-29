@@ -76,19 +76,18 @@ const CHAR = {
         : eyes(22, 42, 37, m)}${mouth(32, 50, m)}` }
 };
 const avatar = (who, mood = "normal", eq) => `<svg viewBox="0 0 64 64" aria-hidden="true"><g filter="url(#sketch)">${CHAR[who].head(mood)}${who === "chiikawa" ? outfitSvg(eq) : ""}</g></svg>`;
+// Full-body figure: BIG head (scaled ×1.3) on a small chubby body, like a plush toy
+const FIG_VB = "-8 -16 80 112";
 function figure(who, mood = "normal") {
-  const c = CHAR[who].color;
-  const extra = who === "rakko" ? `<path d="M56 86 L62 44" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M56 86 L62 44" stroke="#D3E4FF" stroke-width="2.4" stroke-linecap="round"/><path d="M52 72 h10" stroke="${INK}" stroke-width="3.4" stroke-linecap="round"/>`
-    : who === "usagi" && mood !== "cry" ? `<path d="M6 56 l-4 -6 M10 52 l-2 -8 M58 56 l4 -6" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>` : "";
-  // Soft, chubby oval body (mochi-like) that tucks under the head, with little nub arms and feet
-  const up = mood === "sparkle" || mood === "happy";
-  return `<svg viewBox="-4 -4 72 100" aria-hidden="true"><g filter="url(#sketch)">
-    <ellipse cx="24" cy="89" rx="7" ry="4.5" fill="${c}" ${OUT}/><ellipse cx="40" cy="89" rx="7" ry="4.5" fill="${c}" ${OUT}/>
-    <ellipse cx="32" cy="68" rx="23.5" ry="23" fill="${c}" ${OUT}/>
-    <ellipse cx="9.5" cy="${up ? 60 : 68}" rx="5" ry="6.5" fill="${c}" ${OUT} transform="rotate(${up ? 140 : 25} 9.5 ${up ? 60 : 68})"/>
-    <ellipse cx="54.5" cy="${up ? 60 : 68}" rx="5" ry="6.5" fill="${c}" ${OUT} transform="rotate(${up ? -140 : -25} 54.5 ${up ? 60 : 68})"/>
-    <path d="M24 76 q8 5 16 0" fill="none" stroke="${INK}" stroke-width="1.2" opacity=".25" stroke-linecap="round"/>
-    ${extra}<g>${CHAR[who].head(mood)}${who === "chiikawa" ? outfitSvg() : ""}</g></g></svg>`;
+  const c = CHAR[who].color, up = mood === "sparkle" || mood === "happy";
+  const extra = who === "rakko" ? `<path d="M54 94 L62 62" stroke="${INK}" stroke-width="4.4" stroke-linecap="round"/><path d="M54 94 L62 62" stroke="#D3E4FF" stroke-width="2" stroke-linecap="round"/><path d="M50 84 h9" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`
+    : who === "usagi" && mood !== "cry" ? `<path d="M-3 46 l-4 -6 M1 38 l-2 -8 M67 46 l4 -6" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>` : "";
+  return `<svg viewBox="${FIG_VB}" aria-hidden="true"><g filter="url(#sketch)">
+    <ellipse cx="25.5" cy="91" rx="5.5" ry="3.6" fill="${c}" ${OUT}/><ellipse cx="38.5" cy="91" rx="5.5" ry="3.6" fill="${c}" ${OUT}/>
+    <ellipse cx="32" cy="79" rx="15.5" ry="12" fill="${c}" ${OUT}/>
+    <ellipse cx="${up ? 14 : 17}" cy="${up ? 70 : 79}" rx="4" ry="5.5" fill="${c}" ${OUT} transform="rotate(${up ? 145 : 30} ${up ? 14 : 17} ${up ? 70 : 79})"/>
+    <ellipse cx="${up ? 50 : 47}" cy="${up ? 70 : 79}" rx="4" ry="5.5" fill="${c}" ${OUT} transform="rotate(${up ? -145 : -30} ${up ? 50 : 47} ${up ? 70 : 79})"/>
+    ${extra}<g transform="translate(32 44) scale(1.3) translate(-32 -40)">${CHAR[who].head(mood)}${who === "chiikawa" ? outfitSvg() : ""}</g></g></svg>`;
 }
 /* Short emotional reactions: Chiikawa and friends react out loud to what happens */
 const REACT = {

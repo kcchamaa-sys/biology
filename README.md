@@ -1,6 +1,6 @@
 # 🧬 Chiikawa Bio Escape
 
-A Chiikawa-style escape-room game covering the **whole HKDSE Biology compulsory part (S4–S6)**. English only. One file (`index.html`), no install, no build step for players.
+A cosy Chiikawa-style biology escape-room adventure for **Secondary 4–6**. It is framed as exploring, not exam drilling, but the content follows the local senior secondary Biology curriculum (compulsory part) closely, so teachers can map it to lessons. English only. One file (`index.html`), no install, no build step for players.
 
 - **Play:** open `index.html` in any browser (or the GitHub Pages link).
 - **Session length:** one stage ≈ 15–20 minutes. One stage a day is the whole goal.
@@ -19,9 +19,9 @@ Every topic is open, so students can jump to the one their class is on (the map 
 ## Rooms and questions
 
 - **8 room scenes** (library, science lab, greenhouse, inside a cell, kitchen, underwater pond, secret garden, clinic), so stages feel different.
-- **Each lock needs 3 questions in a row** (15 per visit), climbing Bloom's levels 1–6. Progress on a half-open lock is saved.
+- **Each lock needs 3 questions in a row** (15 per visit), climbing in difficulty. Students see friendly labels (🌱 Easy, 🌿 Medium, 🔥 Hard, ⭐ Expert) instead of Bloom's levels. Progress on a half-open lock is saved.
 - **981 core questions** (15–20 per stage) including **78 graph-reading questions** (drawn to scale: potato-strip osmosis, enzyme curves, absorption spectra, GP/RuBP, lactic acid, and more).
-- **Spelling practice**: every stage's key terms become "type the word" locks and "which spelling is correct?" checks (British/HKDSE spelling). Up to 3 per visit; also a Spelling bee round in Cell Rush.
+- **Spelling practice**: every stage's key terms become "type the word" locks and "which spelling is correct?" checks (British spelling). Up to 3 per visit; also a Spelling bee round in Cell Rush.
 - 📓 **Study Journal:** summary, key rules and key terms for every stage.
 
 ## 🎵 Music
@@ -30,7 +30,7 @@ Eight **original** tunes composed for this game in a cheerful Chiikawa-like mood
 
 ## 📕 Mistake Notebook
 
-Every wrong answer (escape rooms, Cell Rush, incidents) is saved on the device. The notebook groups them by HKDSE topic; students revise up to 10 at a time, and a question is cleared after they get it right twice in a row (without hints).
+Every wrong answer (escape rooms, Cell Rush, incidents) is saved on the device. The notebook groups them by topic; students revise up to 10 at a time, and a question is cleared after they get it right twice in a row (without hints).
 
 ## Chiikawa emotions 🥹
 
@@ -38,12 +38,24 @@ Chiikawa reacts with many moods (nervous, crying, shocked, brave, sparkly-eyed).
 
 ## Game systems
 
-Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, anti-guessing penalties (−20 s, reshuffle, jams, strikes, dim lights), random spooky-but-friendly incidents, ⚡ **Cell Rush** (60-second mixed rush with test-tube colours and organelle spotting), Shisa's shop (outfits and power-ups), 10 trophies, daily streak with shields, daily snack chest and a class leaderboard.
+Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, anti-guessing penalties (−20 s, reshuffle, jams, strikes, dim lights), random spooky-but-friendly incidents, ⚡ **Cell Rush** (60-second mixed rush with test-tube colours and organelle spotting), Shisa's shop (outfits and power-ups), daily streak with shields, daily snack chest and a class leaderboard.
+
+## 🏆 Trophies (26)
+
+Four shelves (Daily habits, Adventure, Brain power, Just for fun) with Bronze, Silver, Gold and Legendary trophies. Each is a drawn cup with a character inside, a rarity ribbon and a shine; gold and legendary ones glow. The map shows the 4 closest to unlocking. Each trophy gives 🌰 30 and a 🎁 capsule.
+
+## 🧸 Capsule collection (20)
+
+Students earn 🎁 capsules (first escape = 1, boss = 2, sometimes on replays, daily chest, 120+ in Cell Rush, every trophy) and open them for collectibles:
+
+- **15 common** biology-snack items (Mitochondria Mochi, Ribosome Boba, Villi Plushie…).
+- **5 ✨ rare** Gen-Z-style items with holographic cards: Powerhouse Era holo photocard, secret blind-box figure, Aura +1000 bag charm, Chloroplast matcha latte, Y2K flip-phone DNA charm.
+- About 1 in 12 pulls is rare, with a guaranteed rare within 12 capsules. Duplicates become 🌰 5.
 
 ## Saving
 
 - Auto-save to `localStorage` key `escapeGame_biology` (separate from the physics game), with a Resume prompt.
-- 🔑 **12-character save code** (e.g. `ABCD-EFGH-JKLM`) or a link ending `#ABCDEFGHJKLM`. It stores stages escaped per topic, the average star rating, locks open in the current stage, streak (up to 31) and shields. The Mistake Notebook, trophies and chestnuts stay on the device.
+- 🔑 **12-character save code** (e.g. `ABCD-EFGH-JKLM`) or a link ending `#ABCDEFGHJKLM`. It stores stages escaped per topic, the average star rating, locks open in the current stage, streak (up to 31) and shields. The Mistake Notebook, trophies, collectibles and chestnuts stay on the device.
 
 ## Leaderboard
 

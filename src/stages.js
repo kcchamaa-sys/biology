@@ -1,10 +1,10 @@
 
 /* ============================================================
-   4. HKDSE Biology compulsory part (S4–S6): 19 topics, each a series of stages.
+   4. Senior secondary Biology compulsory part (S4–S6): 19 topics, each a series of stages.
    The last stage of every topic is a boss stage guarded by Rakko.
    Each stage uses one of 8 room scenes: 5 locks (3 questions each) + an exit door.
    ============================================================ */
-// Topics in HKDSE curriculum order (Parts I–IV of the compulsory part). "no" is the number shown to students.
+// Topics in curriculum order (Parts I–IV of the compulsory part). "no" is the number shown to students.
 const PARTS = ["I. Cells and Molecules of Life", "II. Genetics and Evolution", "III. Organisms and Environment", "IV. Health and Diseases"];
 const TOPICS = [
   { id: "t1", icon: "🧪", name: "Molecules of Life", badge: "🧪 Molecule Master Badge", p: 0 },

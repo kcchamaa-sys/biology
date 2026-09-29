@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#2b2433">
 <title>Chiikawa Bio Escape</title>
-<meta name="description" content="A Chiikawa-style escape room game for the HKDSE Biology compulsory part (S4–S6).">
+<meta name="description" content="A cute Chiikawa-style biology escape-room adventure for Secondary 4–6.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
@@ -256,8 +256,7 @@ footer { text-align: center; font-size: .78rem; color: var(--ink-soft); padding:
   background: #fff; border: var(--line); border-radius: 18px; box-shadow: var(--shadow-sm); padding: 10px 10px 12px;
   display: grid; gap: 4px; justify-items: center; text-align: center; position: relative; align-content: start;
 }
-.trophy::after { content: ""; position: absolute; left: 10px; right: 10px; top: 118px; height: 8px; background: #C98F6B; border: 2px solid var(--ink); border-radius: 4px; }
-.trophy svg.cup { width: 96px; height: 116px; overflow: visible; }
+.trophy svg.cup { width: 100px; height: 120px; overflow: visible; }
 .trophy.got svg.cup { animation: shine 3s ease-in-out infinite; }
 .trophy .tn { font-weight: 800; margin-top: 10px; line-height: 1.2; }
 .trophy .rar { font-size: .7rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; border: 2px solid var(--ink); border-radius: 999px; padding: 0 8px; }
@@ -275,6 +274,54 @@ footer { text-align: center; font-size: .78rem; color: var(--ink-soft); padding:
   display: flex; gap: 12px; align-items: center; width: min(420px, calc(100% - 32px)); animation: drop .5s ease-out;
 }
 .tbanner svg { width: 56px; height: 68px; flex: 0 0 56px; overflow: visible; }
+/* Trophy aesthetics: ribbons, rarity glows, wooden shelves */
+.ribbon { font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; border: 2px solid var(--ink); border-radius: 999px; padding: 1px 9px; white-space: nowrap; }
+.ribbon.bronze { background: #F2C9A0; } .ribbon.silver { background: #E3E8F0; } .ribbon.gold { background: #FFE27A; }
+.ribbon.legend { background: linear-gradient(90deg, #FFB7C5, #FDFFB6, #B9F3C9, #A0C4FF, #C9C3F0); background-size: 200% 100%; animation: holo 4s linear infinite; }
+.trophy .ribbon { position: absolute; top: 7px; left: 50%; transform: translateX(-50%); z-index: 1; }
+.trophy { overflow: hidden; padding-top: 30px; }
+.trophy.locked { filter: saturate(.55); }
+.trophy.locked .ribbon { opacity: .75; }
+.trophy.got.bronze { background: linear-gradient(180deg, #FFF3E6, #fff 60%); }
+.trophy.got.silver { background: linear-gradient(180deg, #F1F5FB, #fff 60%); }
+.trophy.got.gold { background: linear-gradient(180deg, #FFF6C8, #fff 60%); box-shadow: var(--shadow-sm), 0 0 18px rgba(255, 210, 60, .55); }
+.trophy.got.legend { background: linear-gradient(160deg, #FFE3EC, #FFFBD6 30%, #E2FBEA 55%, #E0ECFF 80%, #EEE8FF); box-shadow: var(--shadow-sm), 0 0 22px rgba(201, 160, 255, .6); }
+.trophy.got.gold::before, .trophy.got.legend::before { content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.75), transparent); transform: skewX(-18deg); animation: sweep 3.8s ease-in-out infinite; pointer-events: none; }
+.shelf-title { margin: 14px 0 6px; }
+.shelf.wood { background: linear-gradient(#E7C39C, #D9A878); border: var(--line); border-radius: 16px; padding: 18px 12px 14px; box-shadow: inset 0 -10px 0 #B97E52; }
+.cabinet .shelf { padding-top: 12px; }
+@keyframes sweep { 0%, 55% { left: -60%; } 100% { left: 130%; } }
+@keyframes holo { to { background-position: 200% 0; } }
+/* Capsule collection */
+.mode.coll-mode { background: linear-gradient(135deg, #FFE3EC, #E0ECFF); }
+.capbtn { background: var(--pink); animation: capbob 1.6s ease-in-out infinite; }
+@keyframes capbob { 50% { transform: translateY(-3px); } }
+.btn.pink { background: var(--pink); }
+.rpill { background: linear-gradient(90deg, #FFB7C5, #FDFFB6, #B9F3C9, #A0C4FF, #C9C3F0); }
+.collgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 12px; margin: 8px 0 14px; }
+.coll { background: #fff; border: var(--line); border-radius: 16px; box-shadow: var(--shadow-sm); padding: 10px 8px; display: grid; gap: 4px; justify-items: center; text-align: center; align-content: start; position: relative; min-width: 0; }
+.coll b { line-height: 1.2; overflow-wrap: anywhere; }
+.coll.missing { background: #F4F0E8; }
+.coll.missing .cart { filter: grayscale(1); opacity: .6; }
+.cart { width: 84px; height: 84px; display: grid; place-items: center; }
+.cart svg { width: 67px; height: 84px; display: block; }
+.reveal .cart svg { width: 96px; height: 120px; }
+.cemoji { font-size: 3rem; line-height: 1; filter: drop-shadow(2px 2px 0 rgba(74,62,61,.25)); }
+.cq { font-size: 2.2rem; font-weight: 800; color: #B5ADA2; }
+.rtag { background: linear-gradient(90deg, #FFB7C5, #FDFFB6, #B9F3C9, #A0C4FF, #C9C3F0); font-weight: 800; }
+.coll.rare.own { border-color: transparent; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #FF8FB1, #FFE066, #7CE3A6, #7FB2FF, #C79BFF, #FF8FB1) border-box; background-size: 100% 100%, 300% 100%; animation: holo 3s linear infinite; box-shadow: var(--shadow-sm), 0 0 16px rgba(199, 155, 255, .55); }
+.coll.rare.missing { background: linear-gradient(135deg, #EDE6F7, #F4F0E8); }
+.capsule { width: 150px; height: 150px; margin: 8px auto; }
+.capsule svg { width: 100%; height: 100%; }
+.capsule.shake { animation: capshake .25s linear infinite; }
+@keyframes capshake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+.reveal { display: grid; justify-items: center; margin: 8px auto; animation: cappop .5s ease-out; }
+.reveal .coll { width: 170px; }
+.reveal .cart { width: 120px; height: 120px; }
+.reveal.rare { filter: drop-shadow(0 0 18px rgba(255, 190, 255, .9)); }
+@keyframes cappop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+@media (max-width: 520px) { .shelf, .collgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .shelf.wood { padding: 14px 8px 12px; } .trophy svg.cup { width: 84px; height: 100px; } .trophy .td { font-size: .74rem; } }
+@media (prefers-reduced-motion: reduce) { .capbtn, .coll.rare.own, .ribbon.legend, .trophy.got::before { animation: none !important; } }
 /* Anti-guessing */
 .jam { border: var(--line); border-radius: 16px; background: #2B2433; color: #fff; padding: 12px; display: grid; gap: 6px; text-align: center; }
 .jam .jt { color: var(--led); font-weight: 800; font-size: 1.6rem; font-variant-numeric: tabular-nums; text-shadow: 0 0 8px rgba(255,107,107,.8); }
@@ -366,6 +413,9 @@ footer { text-align: center; font-size: .78rem; color: var(--ink-soft); padding:
 @keyframes blink { to { opacity: .35; } }
 @keyframes spin { 0% { transform: translateY(-8px); opacity: .3; } 100% { transform: translateY(0); opacity: 1; } }
 @keyframes jump { 0% { transform: translateY(40px) scale(.6); opacity: 0; } 25% { transform: translateY(-20px) scale(1.05); opacity: 1; } 45% { transform: translateY(0) scale(1); } 80% { opacity: 1; } 100% { transform: translateY(-10px); opacity: 0; } }
+/* ---------- Difficulty chips ---------- */
+.diff { display: inline-block; margin-left: 6px; padding: 1px 9px; border: 2px solid var(--ink); border-radius: 999px; font-size: .72rem; letter-spacing: .04em; color: var(--ink); vertical-align: middle; }
+.diff.easy { background: #D8F5C9; } .diff.medium { background: #FDFFB6; } .diff.hard { background: #FFCBA4; } .diff.expert { background: linear-gradient(90deg, #FFB7C5, #C9C3F0, #A0C4FF); }
 /* ---------- 3-question locks ---------- */
 .lockprog { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .lockprog i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--ink); background: #fff; display: inline-block; }
@@ -433,7 +483,7 @@ footer { text-align: center; font-size: .78rem; color: var(--ink-soft); padding:
   <div class="tools" id="tools"></div>
 </header>
 <main id="app"></main>
-<footer id="footText">Fan-made study game for HKDSE Biology (S4–S6). Not affiliated with the official Chiikawa brand; Chiikawa belongs to Nagano. Characters are original Chiikawa-style drawings, not official artwork.</footer>
+<footer id="footText">Fan-made biology adventure game. Not affiliated with the official Chiikawa brand; Chiikawa belongs to Nagano. Characters are original Chiikawa-style drawings, not official artwork.</footer>
 <div id="modal"></div>
 <div id="journal"></div>
 <div id="toast" class="toast" hidden></div>

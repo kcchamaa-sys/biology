@@ -1,6 +1,6 @@
 
 /* ============================================================
-   4a. Parts II–IV of the HKDSE compulsory part (usually taught in S5–S6)
+   4a. Parts II–IV of the compulsory part (usually taught in S5–S6)
    ============================================================ */
 const K = (who, mood, text) => [who, mood, text];
 ROOMS.push(
