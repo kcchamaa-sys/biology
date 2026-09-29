@@ -24,6 +24,13 @@ Every topic is open, so students can jump to the one their class is on (the map 
 - **Spelling practice**: every stage's key terms become "type the word" locks and "which spelling is correct?" checks (British and American spellings are both accepted, e.g. haemoglobin / hemoglobin). Up to 3 per visit; also a Spelling bee round in Cell Rush.
 - 📓 **Study Journal:** summary, key rules and key terms for every stage.
 
+## 🎧 Words and fun facts
+
+- 🔊 **British pronunciation** (normal and 🐢 slow, Web Speech API) for every key term in the Study Journal and on spelling locks.
+- 🎧 **Word Dictation** mode: 10 words a round from any topic or from *My missed words*. Two modes: listen and spell, or read the meaning and spell. 2 tries per word, letter boxes, a hint, and a "so close!" nudge for near-misses. Words missed here or in spelling locks come back until spelled right twice. A perfect round gives a 🎁 capsule.
+- 💬 **Chat card** on the map: the characters share biology fun facts (many with Hong Kong examples) and personal encouragement (streak, mistakes to fix, next stage). It changes every 20 s; the same facts appear as 💡 *Did you know?* in the Journal.
+- 🔥 **Streak bonus:** chestnut rewards grow 5% per streak day, up to ×1.5.
+
 ## 🎵 Music
 
 Eight **original** tunes composed for this game in a cheerful Chiikawa-like mood (marimba, toy-piano bells, flute, plucked strings, soft drums), generated live in the browser. The tune changes with the room type, with special tracks for boss stages, Cell Rush and the Mistake Notebook. The official Chiikawa soundtrack is not used (copyright).
@@ -40,7 +47,7 @@ Chiikawa reacts with many moods (nervous, crying, shocked, brave, sparkly-eyed).
 
 Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, gentle anti-guessing penalties (no wait or time loss over 15 s: −10 s, reshuffle, short jams, strikes, chestnut fine, and guessing makes the lock **slip back a notch** so students answer one bonus question), random spooky-but-friendly incidents, ⚡ **Cell Rush** (60-second mixed rush with test-tube colours and organelle spotting), Shisa's shop (outfits and power-ups), daily streak with shields, daily snack chest and a class leaderboard.
 
-## 🏆 Trophies (26)
+## 🏆 Trophies (27)
 
 Four shelves (Daily habits, Adventure, Brain power, Just for fun) with Bronze, Silver, Gold and Legendary trophies. Each is a drawn cup with a character inside, a rarity ribbon and a shine; gold and legendary ones glow. The map shows the 4 closest to unlocking. Each trophy gives 🌰 30 and a 🎁 capsule.
 

@@ -322,6 +322,25 @@ footer { text-align: center; font-size: .78rem; color: var(--ink-soft); padding:
 @keyframes cappop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
 @media (max-width: 520px) { .shelf, .collgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .shelf.wood { padding: 14px 8px 12px; } .trophy svg.cup { width: 84px; height: 100px; } .trophy .td { font-size: .74rem; } }
 @media (prefers-reduced-motion: reduce) { .capbtn, .coll.rare.own, .ribbon.legend, .trophy.got::before { animation: none !important; } }
+/* Pronunciation, chat card, Word Dictation */
+.saybtns { display: inline-flex; gap: 4px; vertical-align: middle; }
+.saybtn { border: 2px solid var(--ink); border-radius: 999px; background: var(--blue-2); min-width: 34px; min-height: 30px; padding: 0 6px; font-size: .9rem; line-height: 1; cursor: pointer; }
+.saybtn:hover { background: var(--blue); }
+.chatcard { background: linear-gradient(135deg, #FFFDF0, #EAF6FF); }
+#chatLine.pop { animation: chatpop .45s ease-out; }
+@keyframes chatpop { 0% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: none; } }
+.jsec.fact { background: #FFF8DC; border: 2px dashed var(--ink); border-radius: 16px; padding: 10px 14px; }
+.mode.dict-mode { background: linear-gradient(135deg, #E8F7EE, #EAF1FF); }
+.dict-hero { background: #243447; background-image: radial-gradient(circle at 85% 10%, rgba(160,196,255,.45), transparent 55%); }
+.dprog { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; position: relative; }
+.dprog i { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; background: rgba(255,255,255,.15); }
+.dprog i.ok { background: var(--green); } .dprog i.no { background: var(--red); } .dprog i.cur { background: var(--yellow); transform: scale(1.2); }
+.dictcard { display: grid; gap: 12px; }
+.dictcard .sboxes { justify-content: center; }
+.dmean { font-size: 1.2rem; font-weight: 700; text-align: center; background: var(--cream-2); border: var(--line); border-radius: 16px; padding: 14px; margin: 0; }
+.dword { text-align: center; font-size: 1.4rem; margin: 6px 0 0; }
+.wlist summary { cursor: pointer; font-weight: 800; padding: 6px 0; }
+@media (prefers-reduced-motion: reduce) { #chatLine.pop { animation: none; } }
 /* Anti-guessing */
 .jam { border: var(--line); border-radius: 16px; background: #2B2433; color: #fff; padding: 12px; display: grid; gap: 6px; text-align: center; }
 .jam .jt { color: var(--led); font-weight: 800; font-size: 1.6rem; font-variant-numeric: tabular-nums; text-shadow: 0 0 8px rgba(255,107,107,.8); }
