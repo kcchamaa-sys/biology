@@ -105,6 +105,7 @@ function addMissedWord(w) { const k = normWord(w); if (!termIndex()[k]) return; 
 function rightWord(w) { const k = normWord(w), m = S.dict.missed[k]; if (!m) return false; m.ok += 1; if (m.ok >= 2) { delete S.dict.missed[k]; return true; } return false; }
 let DT = null;
 function renderDictation(pre) {
+  renderNav("play");
   stopRush(); MUSIC.setMode("calm"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; renderTools();
   const miss = missedWords(), ni = nextRoomIndex();
   const sel = pre || (DT && DT.src) || (miss.length ? "missed" : String(ni === -1 ? 0 : ROOMS[ni].t));

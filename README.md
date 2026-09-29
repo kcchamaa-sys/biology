@@ -24,6 +24,13 @@ Every topic is open, so students can jump to the one their class is on (the map 
 - **Spelling practice**: every stage's key terms become "type the word" locks and "which spelling is correct?" checks (British and American spellings are both accepted, e.g. haemoglobin / hemoglobin). Up to 3 per visit; also a Spelling bee round in Cell Rush.
 - 📓 **Study Journal:** summary, key rules and key terms for every stage.
 
+## 🏠 Layout, art and dress-up
+
+- **Mochi-style home with a bottom tab bar** (🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🏆 Rewards), so each screen is short and students rarely scroll. Home shows Chiikawa in a cosy room, today's one stage, the streak and the chat card.
+- **Art style:** characters are soft, squishy one-piece blobs with thin warm-brown outlines, big blush, nub arms and sparkles (in the style of the Mochi Science Pals game).
+- **👗 Dress up:** a fitting room with 7 slots (hats, wigs, glasses, outfits, accessories, hand items, frames). Tap to try on for free, tap again to buy with 🌰. 35 items, including 🔥 trend / meme items (Pop-Star Swoop wig, Moonwalk jacket + fedora + sparkly glove, Six-seven signs, Deal-with-it shades, Blind-box monster hood, Dubai chocolate, Aura +1000 chain, idol twin-tails, wolf cut, ballerina cappuccino tutu…) and 🇭🇰 Hong Kong items (pineapple-bun hat, milk tea, ding-ding tram tee, lucky mahjong tile).
+- **⏱️ Escape or 📖 Study mode:** a switch on Home and Stages. Study mode has no timer, no penalties, no power-ups and no spooky incidents; after a second wrong answer it shows the explanation. Progress, stars and mastery still count.
+
 ## 🎧 Words and fun facts
 
 - 🔊 **British pronunciation** (normal and 🐢 slow, Web Speech API) for every key term in the Study Journal and on spelling locks.

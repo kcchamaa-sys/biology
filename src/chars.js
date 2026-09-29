@@ -6,88 +6,105 @@
 const L = en => en; // English-only build: keeps text helpers simple
 const INK = "#4A3E3D";
 let clipN = 0;
-function eyes(x1, x2, y, mood, big) {
-  if (mood === "happy") return `<path d="M${x1 - 3.2} ${y + 1.2} q3.2 -4.4 6.4 0 M${x2 - 3.2} ${y + 1.2} q3.2 -4.4 6.4 0" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round"/>`;
-  if (mood === "shock") return `<circle cx="${x1}" cy="${y}" r="4.2" fill="#fff" stroke="${INK}" stroke-width="1.8"/><circle cx="${x2}" cy="${y}" r="4.2" fill="#fff" stroke="${INK}" stroke-width="1.8"/>
-    <circle cx="${x1}" cy="${y}" r="1.4" fill="${INK}"/><circle cx="${x2}" cy="${y}" r="1.4" fill="${INK}"/>
-    <path d="M${x2 + 10} ${y - 8} q-2.4 4.2 0 6 q2.4 -1.8 0 -6Z" fill="#A0C4FF" stroke="#5B8FC9" stroke-width=".8"/>`;
-  const star = (cx, cy) => `<path d="M${cx} ${cy - 5} l1.5 3.4 3.6 .4 -2.7 2.4 .8 3.6 -3.2 -1.9 -3.2 1.9 .8 -3.6 -2.7 -2.4 3.6 -.4z" fill="#FDD66B" stroke="${INK}" stroke-width="1.2" stroke-linejoin="round"/>`;
-  if (mood === "sparkle") return star(x1, y) + star(x2, y);
-  const rx = big ? 3.8 : 2.7, ry = big ? 4.4 : 3.3, hr = big ? 1.4 : 1;
-  let s = `<ellipse cx="${x1}" cy="${y}" rx="${rx}" ry="${ry}" fill="${INK}"/><ellipse cx="${x2}" cy="${y}" rx="${rx}" ry="${ry}" fill="${INK}"/>
-    <circle cx="${x1 + 1}" cy="${y - 1.3}" r="${hr}" fill="#fff"/><circle cx="${x2 + 1}" cy="${y - 1.3}" r="${hr}" fill="#fff"/>`;
-  if (mood === "cry") s += `<path d="M${x1} ${y + 4} q-2.4 4.5 0 6.5 q2.4 -2 0 -6.5Z M${x2} ${y + 4} q-2.4 4.5 0 6.5 q2.4 -2 0 -6.5Z" fill="#A0C4FF" stroke="#5B8FC9" stroke-width=".8"/>`;
-  if (mood === "brave") s += `<path d="M${x1 - 4.5} ${y - 7.5} l7 2.2 M${x2 + 4.5} ${y - 7.5} l-7 2.2" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>`;
-  return s;
+/* Mochi-style art: one soft squishy blob (head and body in one), thin warm-brown outlines,
+   big blush, tiny nub arms and feet, sparkles. All drawn in a 200 × 200 space. */
+const CO = "#5B4B49";
+const CS = `stroke="${CO}" stroke-width="3.5" stroke-linejoin="round"`;
+const BODY = "M100 62 C148 62 170 98 170 130 C170 164 140 178 100 178 C60 178 30 164 30 130 C30 98 52 62 100 62Z";
+const spark4 = (x, y, r, c) => `<path d="M${x} ${y - r} Q${x + r * .22} ${y - r * .22} ${x + r} ${y} Q${x + r * .22} ${y + r * .22} ${x} ${y + r} Q${x - r * .22} ${y + r * .22} ${x - r} ${y} Q${x - r * .22} ${y - r * .22} ${x} ${y - r}Z" fill="${c}"/>`;
+function eyes(m, o = {}) {
+  const [x1, x2, y] = [80, 120, o.y || 116], big = o.big ? 1.25 : 1;
+  const dot = x => `<ellipse cx="${x}" cy="${y}" rx="${6 * big}" ry="${7.5 * big}" fill="${CO}"/><circle cx="${x + 2 * big}" cy="${y - 2.8 * big}" r="${2.3 * big}" fill="#fff"/><circle cx="${x - 2 * big}" cy="${y + 3 * big}" r="${1.1 * big}" fill="#fff"/>`;
+  if (m === "happy") return `<path d="M${x1 - 8} ${y + 4} Q${x1} ${y - 8} ${x1 + 8} ${y + 4} M${x2 - 8} ${y + 4} Q${x2} ${y - 8} ${x2 + 8} ${y + 4}" stroke="${CO}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  if (m === "sparkle") return spark4(x1, y, 11, "#FDD66B") + spark4(x2, y, 11, "#FDD66B") + `<path d="M${x1} ${y - 11} Q${x1 + 2.4} ${y - 2.4} ${x1 + 11} ${y} Q${x1 + 2.4} ${y + 2.4} ${x1} ${y + 11} Q${x1 - 2.4} ${y + 2.4} ${x1 - 11} ${y} Q${x1 - 2.4} ${y - 2.4} ${x1} ${y - 11}Z M${x2} ${y - 11} Q${x2 + 2.4} ${y - 2.4} ${x2 + 11} ${y} Q${x2 + 2.4} ${y + 2.4} ${x2} ${y + 11} Q${x2 - 2.4} ${y + 2.4} ${x2 - 11} ${y} Q${x2 - 2.4} ${y - 2.4} ${x2} ${y - 11}Z" fill="none" stroke="${CO}" stroke-width="2.2" stroke-linejoin="round"/>`;
+  if (m === "shock") return `<circle cx="${x1}" cy="${y}" r="9" fill="#fff" stroke="${CO}" stroke-width="3"/><circle cx="${x2}" cy="${y}" r="9" fill="#fff" stroke="${CO}" stroke-width="3"/><circle cx="${x1}" cy="${y}" r="3" fill="${CO}"/><circle cx="${x2}" cy="${y}" r="3" fill="${CO}"/>`;
+  if (m === "cry") return `<path d="M${x1 - 10} ${y - 12} L${x1 + 6} ${y - 16} M${x2 + 10} ${y - 12} L${x2 - 6} ${y - 16}" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>` + dot(x1) + dot(x2)
+    + `<path class="tear" d="M${x1 - 3} ${y + 8} Q${x1 - 8} ${y + 22} ${x1 - 3} ${y + 30} Q${x1 + 2} ${y + 22} ${x1 - 3} ${y + 8}Z M${x2 + 3} ${y + 8} Q${x2 - 2} ${y + 22} ${x2 + 3} ${y + 30} Q${x2 + 8} ${y + 22} ${x2 + 3} ${y + 8}Z" fill="#9ED0F0" stroke="#6FAFD8" stroke-width="1.2"/>`;
+  if (m === "brave") return dot(x1) + dot(x2) + `<path d="M${x1 - 10} ${y - 16} L${x1 + 7} ${y - 10} M${x2 + 10} ${y - 16} L${x2 - 7} ${y - 10}" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>`;
+  if (m === "line") return `<path d="M${x1 - 8} ${y} h16 M${x2 - 8} ${y} h16" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>`;
+  return dot(x1) + dot(x2);
 }
-function blush(x1, x2, y) {
-  const h = x => `M${x - 3.5} ${y + 1.6} l1.6 -3.2 M${x - .5} ${y + 1.6} l1.6 -3.2 M${x + 2.5} ${y + 1.6} l1.6 -3.2`;
-  return `<ellipse cx="${x1}" cy="${y}" rx="5.2" ry="3.2" fill="#FFB7C5"/><ellipse cx="${x2}" cy="${y}" rx="5.2" ry="3.2" fill="#FFB7C5"/>
-    <path d="${h(x1)} ${h(x2)}" stroke="#E27893" stroke-width=".9" stroke-linecap="round"/>`;
+function blush(hatch = true, y = 132) {
+  const h = x => `M${x - 7} ${y + 3} l3 -6 M${x - 1} ${y + 3} l3 -6 M${x + 5} ${y + 3} l3 -6`;
+  return `<ellipse cx="62" cy="${y}" rx="12" ry="7" fill="#FFB3C1" opacity=".85"/><ellipse cx="138" cy="${y}" rx="12" ry="7" fill="#FFB3C1" opacity=".85"/>${hatch ? `<path d="${h(62)} ${h(138)}" stroke="#E27893" stroke-width="1.6" stroke-linecap="round"/>` : ""}`;
 }
-function mouth(x, y, mood, open) {
-  if (mood === "cry") return `<path d="M${x - 4.5} ${y + 1.5} q2.25 -2.5 4.5 0 q2.25 2.5 4.5 0" fill="none" stroke="${INK}" stroke-width="1.8" stroke-linecap="round"/>`;
-  if (mood === "shock") return `<ellipse cx="${x}" cy="${y + 1}" rx="2.4" ry="3" fill="#F07C9A" stroke="${INK}" stroke-width="1.6"/>`;
-  if (mood === "brave") return `<path d="M${x - 3.5} ${y + 1} h7" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>`;
-  if (open || mood === "happy" || mood === "sparkle") return `<path d="M${x - 3.8} ${y - 1} q3.8 6 7.6 0 Z" fill="#F07C9A" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/>`;
-  return `<path d="M${x - 2.6} ${y} q1.3 1.8 2.6 0 q1.3 1.8 2.6 0" fill="none" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>`;
+function mouth(m, open, y = 130) {
+  if (m === "cry") return `<path d="M88 ${y + 6} q4 -6 8 0 q4 6 8 0 q4 -6 8 0" fill="none" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>`;
+  if (m === "shock") return `<ellipse cx="100" cy="${y + 6}" rx="6" ry="8" fill="#E88A9A" stroke="${CO}" stroke-width="3"/>`;
+  if (m === "brave") return `<path d="M91 ${y + 3} h18" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>`;
+  if (open || m === "happy" || m === "sparkle") return `<path d="M89 ${y - 2} Q100 ${y + 18} 111 ${y - 2}Z" fill="#E88A9A" stroke="${CO}" stroke-width="3" stroke-linejoin="round"/><path d="M95 ${y + 7} Q100 ${y + 3} 105 ${y + 7}" fill="#F7B6C2"/>`;
+  return `<path d="M91 ${y} q4.5 6 9 0 q4.5 6 9 0" fill="none" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>`;
 }
-const OUT = `stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"`;
+const capClip = (d, fill) => { const id = "cc" + (++clipN); return `<clipPath id="${id}"><path d="${BODY}"/></clipPath><path clip-path="url(#${id})" d="${d}" fill="${fill}"/>`; };
 const CHAR = {
   chiikawa: { name: "Chiikawa", color: "#ffffff",
-    head: m => `<circle cx="17" cy="17" r="7" fill="#fff" ${OUT}/><circle cx="47" cy="17" r="7" fill="#fff" ${OUT}/>
-      <ellipse cx="32" cy="37" rx="25" ry="21" fill="#fff" ${OUT}/>${blush(15, 49, 43)}${eyes(24, 40, 36, m)}${mouth(32, 43, m)}` },
-  hachiware: { name: "Hachiware", color: "#ffffff",
-    head: m => { const id = "hc" + (++clipN); return `<path d="M9 26 L13 5 L26 16Z" fill="#A0C4FF" ${OUT}/><path d="M55 26 L51 5 L38 16Z" fill="#A0C4FF" ${OUT}/>
-      <clipPath id="${id}"><ellipse cx="32" cy="37" rx="25" ry="21"/></clipPath>
-      <ellipse cx="32" cy="37" rx="25" ry="21" fill="#fff"/>
-      <path clip-path="url(#${id})" d="M0 33 L0 0 L64 0 L64 33 L42 33 L32 17 L22 33 Z" fill="#A0C4FF"/>
-      <ellipse cx="32" cy="37" rx="25" ry="21" fill="none" ${OUT}/>${blush(15, 49, 44)}${eyes(24, 40, 38, m)}${mouth(32, 45, m)}`; } },
+    back: () => `<circle cx="62" cy="76" r="15" fill="#fff" ${CS}/><circle cx="138" cy="76" r="15" fill="#fff" ${CS}/><circle cx="62" cy="77" r="6.5" fill="#FFD1DA"/><circle cx="138" cy="77" r="6.5" fill="#FFD1DA"/>`,
+    face: m => blush(true) + eyes(m) + mouth(m) },
+  hachiware: { name: "Hachiware", color: "#ffffff", ear: "#9EB9E6",
+    back: () => `<path d="M48 104 L56 48 L94 70Z" fill="#9EB9E6" ${CS}/><path d="M152 104 L144 48 L106 70Z" fill="#9EB9E6" ${CS}/><path d="M58 88 L61 62 L80 74Z M142 88 L139 62 L120 74Z" fill="#F7C6D4"/>`,
+    front: () => capClip("M0 0 H200 V100 H132 L100 70 L68 100 H0Z", "#9EB9E6"),
+    face: m => blush(true) + eyes(m) + mouth(m) },
   usagi: { name: "Usagi", color: "#FDF3A8",
-    head: m => `<ellipse cx="23" cy="10" rx="5.5" ry="13" fill="#FDF3A8" ${OUT}/><ellipse cx="41" cy="10" rx="5.5" ry="13" fill="#FDF3A8" ${OUT}/>
-      <ellipse cx="23" cy="10" rx="2" ry="8" fill="#FFB7C5"/><ellipse cx="41" cy="10" rx="2" ry="8" fill="#FFB7C5"/>
-      <ellipse cx="32" cy="38" rx="24" ry="20" fill="#FDF3A8" ${OUT}/>${blush(15, 49, 44)}${eyes(24, 40, 37, m)}${mouth(32, 45, m, true)}` },
+    back: () => `<ellipse cx="78" cy="40" rx="14" ry="36" fill="#FDF3A8" ${CS} transform="rotate(-8 78 40)"/><ellipse cx="122" cy="40" rx="14" ry="36" fill="#FDF3A8" ${CS} transform="rotate(8 122 40)"/><ellipse cx="78" cy="42" rx="6" ry="24" fill="#FFB9C8" transform="rotate(-8 78 42)"/><ellipse cx="122" cy="42" rx="6" ry="24" fill="#FFB9C8" transform="rotate(8 122 42)"/>`,
+    face: m => blush(true) + eyes(m) + mouth(m, m !== "brave" && m !== "cry") },
   momonga: { name: "Momonga", color: "#ffffff",
-    head: m => { const id = "mc" + (++clipN); return `<circle cx="14" cy="21" r="6.5" fill="#C9C3F0" ${OUT}/><circle cx="50" cy="21" r="6.5" fill="#C9C3F0" ${OUT}/>
-      <clipPath id="${id}"><ellipse cx="32" cy="37" rx="25" ry="21"/></clipPath>
-      <ellipse cx="32" cy="37" rx="25" ry="21" fill="#fff"/>
-      <path clip-path="url(#${id})" d="M0 30 Q32 15 64 30 L64 0 L0 0 Z" fill="#C9C3F0"/>
-      <ellipse cx="32" cy="37" rx="25" ry="21" fill="none" ${OUT}/>${blush(14, 50, 45)}${eyes(23, 41, 38, m, true)}${mouth(32, 46, m)}`; } },
+    back: () => `<path d="M150 168 C204 170 210 104 176 88 C188 118 178 146 150 150Z" fill="#C9C3F0" ${CS}/><path d="M176 96 C190 116 188 140 176 152" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7"/><circle cx="58" cy="80" r="15" fill="#C9C3F0" ${CS}/><circle cx="142" cy="80" r="15" fill="#C9C3F0" ${CS}/>`,
+    front: () => capClip("M0 0 H200 V98 Q100 74 0 98Z", "#C9C3F0"),
+    face: m => blush(false) + eyes(m, { big: true }) + mouth(m) },
   kurimanju: { name: "Kuri-Manju", color: "#F2D7AE",
-    head: m => { const id = "kc" + (++clipN);
-      const e = m === "normal" ? `<path d="M21 37 h6 M37 37 h6" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>` : eyes(24, 40, 37, m);
-      return `<clipPath id="${id}"><path d="M8 45 Q6 18 32 16 Q58 18 56 45 Q32 56 8 45Z"/></clipPath>
-      <path d="M8 45 Q6 18 32 16 Q58 18 56 45 Q32 56 8 45Z" fill="#F2D7AE"/>
-      <path clip-path="url(#${id})" d="M0 29 Q32 19 64 29 L64 0 L0 0 Z" fill="#A8703F"/>
-      <path d="M8 45 Q6 18 32 16 Q58 18 56 45 Q32 56 8 45Z" fill="none" ${OUT}/>${blush(15, 49, 43)}${e}${mouth(32, 44, m)}`; } },
-  // Shisa: a cheerful lion-dog with a curly orange mane (runs the shop)
+    front: () => capClip("M0 0 H200 V100 Q100 82 0 100Z", "#A8703F") + `<path d="M74 78 Q90 70 104 72" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".45"/>`,
+    face: m => blush(false) + eyes(m === "normal" ? "line" : m) + mouth(m) },
   shisa: { name: "Shisa", color: "#FFF1C9",
-    head: m => `${[[8, 30], [10, 46], [56, 30], [54, 46], [16, 18], [48, 18]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="7" fill="#F2A36B" ${OUT}/>`).join("")}
-      <circle cx="18" cy="16" r="5.5" fill="#FFF1C9" ${OUT}/><circle cx="46" cy="16" r="5.5" fill="#FFF1C9" ${OUT}/>
-      <ellipse cx="32" cy="38" rx="24" ry="20" fill="#FFF1C9" ${OUT}/>
-      <path d="M22 27 q2 -3 5 0 M37 27 q3 -3 5 0" stroke="#E07A3F" stroke-width="2" fill="none" stroke-linecap="round"/>${blush(15, 49, 44)}${eyes(24, 40, 37, m)}${mouth(32, 45, m)}` },
-  // Rakko: a calm, strong otter swordsman with a little scar (guards the boss stages)
-  rakko: { name: "Rakko", color: "#F4E6CF",
-    head: m => `<circle cx="14" cy="22" r="5.5" fill="#F4E6CF" ${OUT}/><circle cx="50" cy="22" r="5.5" fill="#F4E6CF" ${OUT}/>
-      <ellipse cx="32" cy="38" rx="25" ry="20" fill="#F4E6CF" ${OUT}/>
-      <ellipse cx="32" cy="46" rx="9" ry="6" fill="#fff" stroke="${INK}" stroke-width="1.4"/><ellipse cx="32" cy="42" rx="2.4" ry="1.6" fill="${INK}"/>
-      ${blush(14, 50, 44)}${m === "normal" || m === "brave"
-        ? `<path d="M19 35 l5 4 M24 35 l-5 4" stroke="${INK}" stroke-width="2" stroke-linecap="round"/><ellipse cx="40" cy="37" rx="2.7" ry="3.3" fill="${INK}"/><circle cx="41" cy="35.7" r="1" fill="#fff"/>`
-        : eyes(22, 42, 37, m)}${mouth(32, 50, m)}` }
+    back: () => [[38, 104], [34, 134], [44, 160], [162, 104], [166, 134], [156, 160], [56, 76], [144, 76], [80, 60], [120, 60]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="17" fill="#F2A36B" ${CS}/>`).join("") + `<circle cx="66" cy="72" r="10" fill="#FFF1C9" ${CS}/><circle cx="134" cy="72" r="10" fill="#FFF1C9" ${CS}/>`,
+    face: m => `<path d="M68 98 q6 -7 13 0 M119 98 q7 -7 13 0" stroke="#E07A3F" stroke-width="3.5" fill="none" stroke-linecap="round"/>` + blush(false) + eyes(m) + mouth(m) },
+  rakko: { name: "Rakko", color: "#EAD7BC",
+    back: () => `<circle cx="60" cy="82" r="11" fill="#EAD7BC" ${CS}/><circle cx="140" cy="82" r="11" fill="#EAD7BC" ${CS}/>`,
+    face: m => `<ellipse cx="100" cy="136" rx="20" ry="13" fill="#fff" stroke="${CO}" stroke-width="2.5"/><ellipse cx="100" cy="128" rx="6.5" ry="4.5" fill="${CO}"/>` + blush(false)
+      + (m === "normal" || m === "brave" ? `<path d="M73 109 l14 14 M87 109 l-14 14" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>` + eyes("x").replace(/^[\s\S]*?(<ellipse cx="120")/, "$1") : eyes(m)) + mouth(m, false, 142) }
 };
-const avatar = (who, mood = "normal", eq) => `<svg viewBox="0 0 64 64" aria-hidden="true"><g filter="url(#sketch)">${CHAR[who].head(mood)}${who === "chiikawa" ? outfitSvg(eq) : ""}</g></svg>`;
-// Full-body figure: BIG head (scaled ×1.3) on a small chubby body, like a plush toy
-const FIG_VB = "-8 -16 80 112";
-function figure(who, mood = "normal") {
-  const c = CHAR[who].color, up = mood === "sparkle" || mood === "happy";
-  const extra = who === "rakko" ? `<path d="M54 94 L62 62" stroke="${INK}" stroke-width="4.4" stroke-linecap="round"/><path d="M54 94 L62 62" stroke="#D3E4FF" stroke-width="2" stroke-linecap="round"/><path d="M50 84 h9" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`
-    : who === "usagi" && mood !== "cry" ? `<path d="M-3 46 l-4 -6 M1 38 l-2 -8 M67 46 l4 -6" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>` : "";
-  return `<svg viewBox="${FIG_VB}" aria-hidden="true"><g filter="url(#sketch)">
-    <ellipse cx="25.5" cy="91" rx="5.5" ry="3.6" fill="${c}" ${OUT}/><ellipse cx="38.5" cy="91" rx="5.5" ry="3.6" fill="${c}" ${OUT}/>
-    <ellipse cx="32" cy="79" rx="15.5" ry="12" fill="${c}" ${OUT}/>
-    <ellipse cx="${up ? 14 : 17}" cy="${up ? 70 : 79}" rx="4" ry="5.5" fill="${c}" ${OUT} transform="rotate(${up ? 145 : 30} ${up ? 14 : 17} ${up ? 70 : 79})"/>
-    <ellipse cx="${up ? 50 : 47}" cy="${up ? 70 : 79}" rx="4" ry="5.5" fill="${c}" ${OUT} transform="rotate(${up ? -145 : -30} ${up ? 50 : 47} ${up ? 70 : 79})"/>
-    ${extra}<g transform="translate(32 44) scale(1.3) translate(-32 -40)">${CHAR[who].head(mood)}${who === "chiikawa" ? outfitSvg() : ""}</g></g></svg>`;
+/* Dress-up layers for Chiikawa (the player). Items live in WARDROBE (engine). */
+function dressParts(eq) {
+  eq = eq || (typeof S !== "undefined" && S && S.equip);
+  const it = k => eq && eq[k] && typeof itemById === "function" ? itemById(eq[k]) : null;
+  return { hat: it("hat"), hair: it("hair"), face: it("face"), outfit: it("outfit"), acc: it("ribbon"), hand: it("hand") };
+}
+function arms(m, c) {
+  const a = (x, y, r) => `<ellipse cx="${x}" cy="${y}" rx="10" ry="14" fill="${c}" ${CS} transform="rotate(${r} ${x} ${y})"/>`;
+  if (m === "happy" || m === "sparkle") return a(34, 110, -32) + a(166, 110, 32);
+  if (m === "shock") return a(28, 120, -60) + a(172, 120, 60);
+  if (m === "cry") return a(52, 144, -10) + a(148, 144, 10);
+  if (m === "brave") return a(40, 142, 25) + a(164, 112, 30);
+  return a(40, 142, 25) + a(160, 142, -25);
+}
+function charSvg(who, m = "normal", eq, full = true) {
+  const C = CHAR[who], c = C.color, d = who === "chiikawa" ? dressParts(eq) : {};
+  const o = d.outfit, armC = (o && o.arm) || c;
+  let s = full ? `<ellipse cx="100" cy="184" rx="58" ry="8" fill="rgba(91,75,73,.13)"/>` : "";
+  if (d.hair && d.hair.back) s += d.hair.back;
+  s += C.back ? C.back() : "";
+  if (full) s += `<ellipse cx="76" cy="176" rx="14" ry="8" fill="${c}" ${CS}/><ellipse cx="124" cy="176" rx="14" ry="8" fill="${c}" ${CS}/>`;
+  s += `<path d="${BODY}" fill="${c}" ${CS}/>`;
+  if (C.front) s += C.front();
+  if (o) { const id = "oc" + (++clipN); s += `<clipPath id="${id}"><path d="${BODY}"/></clipPath><g clip-path="url(#${id})">${o.svg}</g><path d="${BODY}" fill="none" ${CS}/>`; }
+  s += arms(m, armC);
+  if (who === "chiikawa" && d.acc && d.acc.low) s += d.acc.svg;
+  s += C.face(m);
+  if (d.hair) s += d.hair.svg;
+  if (d.face) s += d.face.svg;
+  if (d.hat) s += d.hat.svg;
+  if (d.acc && !d.acc.low) s += d.acc.svg;
+  if (d.hand) s += d.hand.svg;
+  if (full && who === "rakko") s += `<path d="M170 176 L190 96" stroke="${CO}" stroke-width="9" stroke-linecap="round"/><path d="M170 176 L190 96" stroke="#D3E4FF" stroke-width="4.5" stroke-linecap="round"/><path d="M160 158 h22" stroke="${CO}" stroke-width="6" stroke-linecap="round"/>`;
+  if (full && who === "usagi" && m !== "cry") s += `<path d="M14 100 l-10 -8 M18 84 l-6 -12 M186 100 l10 -8" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>`;
+  if (m === "sparkle" || m === "happy") s += `<g class="twinkle">${spark4(26, 70, 8, "#FFB3C1")}${spark4(176, 60, 7, "#A9D4EE")}</g>`;
+  if (m === "shock") s += `<path d="M160 70 Q154 82 160 88 Q166 82 160 70Z" fill="#9ED0F0" stroke="#6FAFD8" stroke-width="1.5"/>`;
+  return s;
+}
+const AV_VB = "12 30 176 160";
+const avatar = (who, mood = "normal", eq) => `<svg viewBox="${AV_VB}" aria-hidden="true">${charSvg(who, mood, eq, false)}</svg>`;
+const FIG_VB = "-14 -6 228 202";
+function figure(who, mood = "normal", eq) {
+  return `<svg viewBox="${FIG_VB}" aria-hidden="true"><g class="squish">${charSvg(who, mood, eq, true)}</g></svg>`;
 }
 /* Short emotional reactions: Chiikawa and friends react out loud to what happens */
 const REACT = {

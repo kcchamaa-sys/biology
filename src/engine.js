@@ -74,8 +74,8 @@ function freshState() {
     bio_mastery: freshMastery(),
     room_progress: {}, mastered_puzzles: [], room_stars: {}, room_timer: {}, last_chest_date: null, seen: {}, last_revise_day: null,
     room_run: {}, trophies: {}, stats: freshStats(),
-    coins: 0, owned: [], equip: { hat: null, face: null, ribbon: null, frame: null }, power: { torch: 1, crystal: 1, guard: 1 },
-    rush: { best: 0, lastDay: null }, player_id: newId(), lb_last: 0, mistakes: {}, mistakes_cleared: 0, coll: { owned: {}, pending: 0, pity: 0 }, dict: { missed: {}, best: 0 }
+    coins: 0, owned: [], equip: { hat: null, hair: null, face: null, outfit: null, ribbon: null, hand: null, frame: null }, power: { torch: 1, crystal: 1, guard: 1 },
+    rush: { best: 0, lastDay: null }, player_id: newId(), lb_last: 0, mistakes: {}, mistakes_cleared: 0, playMode: "escape", coll: { owned: {}, pending: 0, pity: 0 }, dict: { missed: {}, best: 0 }
   };
 }
 function normalise(obj) {
@@ -88,7 +88,7 @@ function normalise(obj) {
   s.mistakes = Object.assign({}, s.mistakes);
   s.coll = Object.assign({ owned: {}, pending: 0, pity: 0 }, s.coll); s.coll.owned = Object.assign({}, s.coll.owned);
   s.dict = Object.assign({ missed: {}, best: 0 }, s.dict); s.dict.missed = Object.assign({}, s.dict.missed);
-  s.equip = Object.assign({ hat: null, face: null, ribbon: null, frame: null }, s.equip); s.power = Object.assign({ torch: 0, crystal: 0, guard: 0 }, s.power);
+  s.equip = Object.assign({ hat: null, hair: null, face: null, outfit: null, ribbon: null, hand: null, frame: null }, s.equip); s.power = Object.assign({ torch: 0, crystal: 0, guard: 0 }, s.power);
   s.rush = Object.assign({ best: 0, lastDay: null }, s.rush); s.owned = [...(s.owned || [])]; if (!s.player_id) s.player_id = newId();
   s.completed_rooms = [...new Set((s.completed_rooms || []).filter(id => ROOMS.some(r => r.id === id)))];
   if (!ROOMS.some(r => r.id === s.current_room)) s.current_room = ROOMS[0].id;
@@ -337,7 +337,7 @@ function trophySvg(t, got) {
     <rect x="28" y="88" width="44" height="10" rx="3" fill="${lt}" stroke="${INK}" stroke-width="3"/>
     <rect x="20" y="98" width="60" height="16" rx="4" fill="${got ? "#8A5A3C" : "#B8AFA3"}" stroke="${INK}" stroke-width="3"/>
     <rect x="34" y="102" width="32" height="8" rx="2" fill="${got ? "#F5C542" : "#D8D0C4"}" stroke="${INK}" stroke-width="1.6"/>
-    ${got ? `<svg x="29" y="17" width="42" height="42" viewBox="0 0 64 64">${CHAR[t.who].head("happy")}</svg>`
+    ${got ? `<svg x="27" y="18" width="46" height="42" viewBox="${AV_VB}">${charSvg(t.who, "happy", {}, false)}</svg>`
           : `<text x="50" y="50" text-anchor="middle" font-size="26" font-weight="800" fill="#8C8478">?</text>`}
     ${got && t.rar !== "bronze" ? spark(12, 14, 7) + spark(90, 20, 5) + (t.rar !== "silver" ? spark(88, 66, 6) + spark(10, 70, 4) : "") : ""}
     ${got ? "" : `<g transform="translate(78 92)"><rect x="-9" y="-3" width="18" height="14" rx="3" fill="#fff" stroke="${INK}" stroke-width="2.4"/><path d="M-5 -3 v-4 a5 5 0 0 1 10 0 v4" fill="none" stroke="${INK}" stroke-width="2.4"/></g>`}
@@ -497,24 +497,81 @@ function showTrophyBanner() {
 /* ============================================================
    6c. Wardrobe (cosmetics) and power-ups, bought with 🌰 chestnuts from Cell Rush
    ============================================================ */
-const O2 = `stroke="${INK}" stroke-width="2.2" stroke-linejoin="round"`;
+const O2 = `stroke="${CO}" stroke-width="3" stroke-linejoin="round"`;
+/* Wardrobe: items are drawn on the 200 × 200 Mochi-style body (see charSvg in chars.js).
+   Only append new items so saved outfits stay valid. tag: "trend" = Gen Z / meme, "hk" = Hong Kong */
+const txt = (x, y, t, sz, c, w = 900) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="${sz}" font-weight="${w}" fill="${c}" font-family="system-ui, sans-serif">${t}</text>`;
 const WARDROBE = [
-  { id: "hat_party", slot: "hat", name: "Party hat", price: 40, svg: `<path d="M21 19 L32 -8 L43 19 Z" fill="#FFB7C5" ${O2}/><path d="M25 12 H39 M28 4 H36" stroke="#fff" stroke-width="2.4"/><circle cx="32" cy="-9" r="3.5" fill="#FDFFB6" ${O2}/>` },
-  { id: "hat_beret", slot: "hat", name: "Pink beret", price: 60, svg: `<ellipse cx="30" cy="15" rx="21" ry="7.5" fill="#FF8FA3" ${O2}/><path d="M30 7.5 v-4" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>` },
-  { id: "hat_ears", slot: "hat", name: "Bunny-ear band", price: 80, svg: `<ellipse cx="22" cy="0" rx="5" ry="12" fill="#fff" ${O2}/><ellipse cx="42" cy="0" rx="5" ry="12" fill="#fff" ${O2}/><ellipse cx="22" cy="0" rx="2" ry="8" fill="#FFB7C5"/><ellipse cx="42" cy="0" rx="2" ry="8" fill="#FFB7C5"/><path d="M13 21 Q32 6 51 21" fill="none" stroke="#FF8FA3" stroke-width="4" stroke-linecap="round"/>` },
-  { id: "hat_grad", slot: "hat", name: "Graduation cap", price: 120, svg: `<rect x="20" y="10" width="24" height="9" rx="2" fill="${INK}"/><path d="M8 9 L32 1 L56 9 L32 17 Z" fill="${INK}" ${O2}/><path d="M32 9 L50 12 V22" stroke="#FDFFB6" stroke-width="2" fill="none"/><circle cx="50" cy="23" r="2.4" fill="#FDFFB6"/>` },
-  { id: "hat_crown", slot: "hat", name: "Little crown", price: 160, svg: `<path d="M19 19 L21 3 L26.5 11 L32 1 L37.5 11 L43 3 L45 19 Z" fill="#FFE27A" ${O2}/><circle cx="32" cy="14" r="2.5" fill="#FFB7C5"/><circle cx="24.5" cy="15" r="1.8" fill="#A0C4FF"/><circle cx="39.5" cy="15" r="1.8" fill="#A0C4FF"/>` },
-  { id: "face_round", slot: "face", name: "Round glasses", price: 50, svg: `<g fill="rgba(255,255,255,.3)" stroke="${INK}" stroke-width="2"><circle cx="24" cy="36" r="6"/><circle cx="40" cy="36" r="6"/></g><path d="M30 36 h4 M18 35 l-6 -2 M46 35 l6 -2" stroke="${INK}" stroke-width="2"/>` },
-  { id: "face_sun", slot: "face", name: "Cool sunglasses", price: 90, svg: `<path d="M16 32 h14 v4 q-7 8 -14 0Z M34 32 h14 v4 q-7 8 -14 0Z" fill="#2B2433" ${O2}/><path d="M30 33 h4" stroke="${INK}" stroke-width="2"/><path d="M19 34 h4 M37 34 h4" stroke="#fff" stroke-width="1.5"/>` },
-  { id: "face_prism", slot: "face", name: "Lab goggles", price: 130, svg: `<path d="M8 34 h48" stroke="#5B8FE0" stroke-width="3"/><rect x="15" y="29" width="15" height="12" rx="5" fill="rgba(211,228,255,.7)" ${O2}/><rect x="34" y="29" width="15" height="12" rx="5" fill="rgba(211,228,255,.7)" ${O2}/><path d="M30 34 h4" stroke="${INK}" stroke-width="2.4"/><path d="M18 32 l4 -1 M37 32 l4 -1" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>` },
-  { id: "rib_bow", slot: "ribbon", name: "Red bow", price: 30, svg: `<path d="M48 13 L40 8 L41 18 Z M48 13 L56 8 L55 18 Z" fill="#FF6B6B" ${O2}/><circle cx="48" cy="13" r="2.8" fill="#FF6B6B" ${O2}/>` },
-  { id: "rib_flower", slot: "ribbon", name: "Sakura flower", price: 45, svg: `${[0, 72, 144, 216, 288].map(a => `<circle cx="${(48 + 4 * Math.sin(a * Math.PI / 180)).toFixed(1)}" cy="${(12 - 4 * Math.cos(a * Math.PI / 180)).toFixed(1)}" r="3.4" fill="#FFB7C5" stroke="${INK}" stroke-width="1.6"/>`).join("")}<circle cx="48" cy="12" r="2.2" fill="#FDFFB6"/>` },
-  { id: "rib_star", slot: "ribbon", name: "Star clip", price: 70, svg: `<path d="M48 3 l2.6 5.4 5.9 .8 -4.3 4.1 1 5.9 -5.2 -2.8 -5.2 2.8 1 -5.9 -4.3 -4.1 5.9 -.8z" fill="#FDFFB6" ${O2}/>` },
+  { id: "hat_party", slot: "hat", name: "Party hat", price: 40, svg: `<path d="M76 72 L100 12 L124 72Z" fill="#FFB7C5" ${O2}/><path d="M86 52 H114 M92 34 H108" stroke="#fff" stroke-width="5" stroke-linecap="round"/><circle cx="100" cy="11" r="8" fill="#FDFFB6" ${O2}/>` },
+  { id: "hat_beret", slot: "hat", name: "Pink beret", price: 60, svg: `<ellipse cx="94" cy="66" rx="46" ry="15" fill="#FF8FA3" ${O2}/><path d="M94 51 v-10" stroke="${CO}" stroke-width="5" stroke-linecap="round"/><path d="M62 62 Q80 56 98 58" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".6"/>` },
+  { id: "hat_ears", slot: "hat", name: "Bunny-ear band", price: 80, svg: `<ellipse cx="80" cy="30" rx="11" ry="26" fill="#fff" ${O2}/><ellipse cx="120" cy="30" rx="11" ry="26" fill="#fff" ${O2}/><ellipse cx="80" cy="32" rx="4.5" ry="17" fill="#FFB7C5"/><ellipse cx="120" cy="32" rx="4.5" ry="17" fill="#FFB7C5"/><path d="M56 80 Q100 46 144 80" fill="none" stroke="#FF8FA3" stroke-width="8" stroke-linecap="round"/>` },
+  { id: "hat_grad", slot: "hat", name: "Graduation cap", price: 120, svg: `<rect x="74" y="50" width="52" height="18" rx="4" fill="${CO}"/><path d="M50 50 L100 32 L150 50 L100 66Z" fill="${CO}" ${O2}/><path d="M100 49 L140 56 V78" stroke="#FDD66B" stroke-width="3.5" fill="none"/><circle cx="140" cy="80" r="5" fill="#FDD66B"/>` },
+  { id: "hat_crown", slot: "hat", name: "Little crown", price: 160, svg: `<path d="M72 72 L76 36 L89 54 L100 30 L111 54 L124 36 L128 72Z" fill="#FFE27A" ${O2}/><circle cx="100" cy="62" r="5.5" fill="#FFB7C5" ${O2}/><circle cx="84" cy="64" r="3.5" fill="#A0C4FF"/><circle cx="116" cy="64" r="3.5" fill="#A0C4FF"/>` },
+  { id: "face_round", slot: "face", name: "Round glasses", price: 50, svg: `<g fill="rgba(255,255,255,.3)" stroke="${CO}" stroke-width="3.5"><circle cx="80" cy="116" r="15"/><circle cx="120" cy="116" r="15"/></g><path d="M95 116 h10 M65 113 l-20 -6 M135 113 l20 -6" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>` },
+  { id: "face_sun", slot: "face", name: "Cool sunglasses", price: 90, svg: `<path d="M58 106 h38 v8 q-19 22 -38 0Z M104 106 h38 v8 q-19 22 -38 0Z" fill="#2B2433" ${O2}/><path d="M96 109 h8" stroke="${CO}" stroke-width="3.5"/><path d="M66 111 h10 M112 111 h10" stroke="#fff" stroke-width="3" stroke-linecap="round"/>` },
+  { id: "face_prism", slot: "face", name: "Lab goggles", price: 130, svg: `<path d="M32 114 h136" stroke="#5B8FE0" stroke-width="6"/><rect x="60" y="102" width="38" height="28" rx="12" fill="rgba(211,228,255,.75)" ${O2}/><rect x="102" y="102" width="38" height="28" rx="12" fill="rgba(211,228,255,.75)" ${O2}/><path d="M68 110 l10 -2 M110 110 l10 -2" stroke="#fff" stroke-width="3" stroke-linecap="round"/>` },
+  { id: "rib_bow", slot: "ribbon", name: "Red bow", price: 30, svg: `<path d="M142 70 L124 58 L126 84Z M142 70 L160 58 L158 84Z" fill="#FF6B6B" ${O2}/><circle cx="142" cy="71" r="6" fill="#FF6B6B" ${O2}/>` },
+  { id: "rib_flower", slot: "ribbon", name: "Sakura flower", price: 45, svg: `${[0, 72, 144, 216, 288].map(a => `<circle cx="${(142 + 9 * Math.sin(a * Math.PI / 180)).toFixed(1)}" cy="${(70 - 9 * Math.cos(a * Math.PI / 180)).toFixed(1)}" r="7.5" fill="#FFB7C5" stroke="${CO}" stroke-width="2.5"/>`).join("")}<circle cx="142" cy="70" r="5" fill="#FDFFB6"/>` },
+  { id: "rib_star", slot: "ribbon", name: "Star clip", price: 70, svg: `<path d="M142 50 l5.8 12 13 1.8 -9.5 9 2.3 13 -11.6 -6.2 -11.6 6.2 2.3 -13 -9.5 -9 13 -1.8z" fill="#FDFFB6" ${O2}/>` },
   { id: "fr_sakura", slot: "frame", name: "Sakura frame", price: 60, cls: "fr-sakura" },
   { id: "fr_laser", slot: "frame", name: "Laser frame", price: 90, cls: "fr-laser" },
-  { id: "fr_rainbow", slot: "frame", name: "Rainbow frame", price: 140, cls: "fr-rainbow" }
+  { id: "fr_rainbow", slot: "frame", name: "Rainbow frame", price: 140, cls: "fr-rainbow" },
+  // --- Wigs ---
+  { id: "hair_bob", slot: "hair", name: "Bob-cut wig", price: 70,
+    back: `<path d="M34 92 C24 124 28 156 46 164 L64 156 L58 98Z M166 92 C176 124 172 156 154 164 L136 156 L142 98Z" fill="#2F2A30" ${O2}/>`,
+    svg: `<path d="M38 108 C32 62 66 44 100 44 C134 44 168 62 162 108 L152 108 L150 96 H50 L48 108Z" fill="#2F2A30" ${O2}/><path d="M70 58 Q88 50 104 52" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".35"/>` },
+  { id: "hair_swoop", slot: "hair", tag: "trend", name: "Pop-Star Swoop wig", desc: "The famous 2010 side-swept fringe. Baby, baby, baby, oh~", price: 150,
+    svg: `<path d="M38 104 C30 60 66 38 104 40 C142 42 170 62 164 102 C156 88 144 82 132 82 C112 80 90 86 70 98 C60 104 50 108 38 104Z" fill="#8B5A3C" ${O2}/><path d="M160 90 C126 70 84 78 50 112 C58 96 66 90 74 88 C64 100 60 108 58 116 C86 92 122 84 160 90Z" fill="#A36B45" ${O2}/><path d="M84 56 Q110 48 132 58 M70 74 Q96 62 124 66" stroke="#D29A6E" stroke-width="4" fill="none" stroke-linecap="round"/>` },
+  { id: "hair_wolf", slot: "hair", tag: "trend", name: "Wolf-cut wig", desc: "Shaggy layers, very K-pop, very Gen Z.", price: 130,
+    back: `<path d="M36 96 C24 120 26 148 36 160 L44 150 L40 170 L56 150 L54 104Z M164 96 C176 120 174 148 164 160 L156 150 L160 170 L144 150 L146 104Z" fill="#3B3033" ${O2}/>`,
+    svg: `<path d="M38 108 C30 58 66 40 100 40 C134 40 170 58 162 108 L154 94 L148 110 L138 92 L128 108 L118 90 L108 106 L100 88 L92 106 L82 90 L72 108 L62 92 L52 110 L46 94Z" fill="#3B3033" ${O2}/><path d="M70 56 Q92 46 114 50" stroke="#8A7F86" stroke-width="4" fill="none" stroke-linecap="round"/>` },
+  { id: "hair_twin", slot: "hair", tag: "trend", name: "Idol twin-tails wig", desc: "Pink K-pop idol twin-tails. Fan-meeting ready!", price: 140,
+    back: `<ellipse cx="22" cy="124" rx="17" ry="40" fill="#FF9EC4" ${O2} transform="rotate(18 22 124)"/><ellipse cx="178" cy="124" rx="17" ry="40" fill="#FF9EC4" ${O2} transform="rotate(-18 178 124)"/>`,
+    svg: `<path d="M42 104 C38 62 70 46 100 46 C130 46 162 62 158 104 Q148 88 134 92 Q120 80 100 90 Q80 80 66 92 Q52 88 42 104Z" fill="#FF9EC4" ${O2}/><circle cx="40" cy="88" r="8" fill="#FDFFB6" ${O2}/><circle cx="160" cy="88" r="8" fill="#FDFFB6" ${O2}/><path d="M76 58 Q94 50 112 54" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".6"/>` },
+  // --- Outfits (drawn on the lower body; arm = sleeve colour) ---
+  { id: "out_labcoat", slot: "outfit", name: "Lab coat", price: 90, arm: "#fff",
+    svg: `<path d="M20 146 Q100 132 180 146 V190 H20Z" fill="#fff" stroke="${CO}" stroke-width="3"/><path d="M100 140 L86 186 M100 140 L114 186" stroke="${CO}" stroke-width="3"/><path d="M84 142 L100 156 L116 142" fill="#D3E4FF" ${O2}/><rect x="124" y="158" width="20" height="14" rx="3" fill="none" stroke="${CO}" stroke-width="2.5"/><path d="M130 158 v-8 M137 158 v-6" stroke="#5B8FE0" stroke-width="3" stroke-linecap="round"/>` },
+  { id: "out_hoodie", slot: "outfit", name: "Matcha hoodie", price: 80, arm: "#B8DDB0",
+    svg: `<path d="M20 144 Q100 132 180 144 V190 H20Z" fill="#B8DDB0" stroke="${CO}" stroke-width="3"/><rect x="76" y="160" width="48" height="18" rx="8" fill="#A3CF9A" stroke="${CO}" stroke-width="2.5"/><path d="M90 142 v14 M110 142 v14" stroke="#fff" stroke-width="3" stroke-linecap="round"/>` },
+  { id: "out_moonwalk", slot: "outfit", tag: "trend", name: "Moonwalk jacket", desc: "Red zip-up jacket from the King of Pop's legendary music video era. Hee-hee!", price: 200, arm: "#D7263D",
+    svg: `<path d="M20 142 Q100 130 180 142 V190 H20Z" fill="#D7263D" stroke="${CO}" stroke-width="3"/><path d="M62 144 L80 190 M138 144 L120 190 M40 156 L66 166 M160 156 L134 166" stroke="#2B2433" stroke-width="4.5"/><path d="M100 138 V190" stroke="#E8E8E8" stroke-width="3" stroke-dasharray="3 3"/>` },
+  { id: "out_tram", slot: "outfit", tag: "hk", name: "Ding-ding tram tee", desc: "Hong Kong's famous double-decker tram, on a comfy tee.", price: 110, arm: "#3FA06B",
+    svg: `<path d="M20 144 Q100 132 180 144 V190 H20Z" fill="#3FA06B" stroke="${CO}" stroke-width="3"/><rect x="78" y="150" width="44" height="26" rx="5" fill="#2E7D52" stroke="#fff" stroke-width="2.5"/><path d="M78 163 H122" stroke="#fff" stroke-width="2"/><rect x="83" y="154" width="8" height="6" fill="#FFF1C5"/><rect x="96" y="154" width="8" height="6" fill="#FFF1C5"/><rect x="109" y="154" width="8" height="6" fill="#FFF1C5"/><rect x="83" y="167" width="8" height="6" fill="#FFF1C5"/><rect x="109" y="167" width="8" height="6" fill="#FFF1C5"/><path d="M100 150 V144" stroke="#fff" stroke-width="2"/>` },
+  { id: "out_tutu", slot: "outfit", tag: "trend", name: "Ballerina cappuccino tutu", desc: "Twirl like the internet's favourite brainrot ballerina. ☕🩰", price: 150, arm: "#fff",
+    svg: `<path d="M24 148 Q100 136 176 148 V164 H24Z" fill="#FFC2D6" stroke="${CO}" stroke-width="3"/><path d="M16 164 ${Array.from({ length: 12 }, (_, i) => `q7 16 14 0`).join(" ")} V190 H16Z" fill="#FFE0EC" stroke="${CO}" stroke-width="2.5"/><circle cx="100" cy="156" r="5" fill="#FDFFB6" ${O2}/>` },
+  { id: "out_puffer", slot: "outfit", tag: "trend", name: "Puffer jacket", desc: "Big, puffy and cosy: the winter Gen Z uniform.", price: 120, arm: "#F4A259",
+    svg: `<path d="M18 140 Q100 128 182 140 V190 H18Z" fill="#F4A259" stroke="${CO}" stroke-width="3"/><path d="M22 156 Q100 146 178 156 M22 172 Q100 162 178 172" stroke="#D9803A" stroke-width="3" fill="none"/><path d="M100 136 V190" stroke="${CO}" stroke-width="3"/><path d="M84 138 Q100 150 116 138" stroke="${CO}" stroke-width="3" fill="#FFD9B0"/>` },
+  // --- Trend / meme items ---
+  { id: "hat_fedora", slot: "hat", tag: "trend", name: "Moonwalk fedora", desc: "Tilt it, lean forward, moonwalk. Shamone!", price: 130,
+    svg: `<g transform="rotate(-8 100 60)"><ellipse cx="100" cy="66" rx="54" ry="11" fill="#2B2433" ${O2}/><path d="M70 64 Q68 30 100 30 Q132 30 130 64Z" fill="#2B2433" ${O2}/><path d="M84 36 Q100 46 116 36" stroke="#4A4050" stroke-width="3" fill="none"/><path d="M71 56 H129 V63 H71Z" fill="#fff"/></g>` },
+  { id: "hat_monster", slot: "hat", tag: "trend", name: "Blind-box monster hood", desc: "Pointy ears and a cheeky toothy grin: the blind-box monster craze.", price: 160,
+    svg: `<path d="M72 64 L60 8 L92 50Z M128 64 L140 8 L108 50Z" fill="#C9A27A" ${O2}/><path d="M72 58 L66 26 L84 50Z M128 58 L134 26 L116 50Z" fill="#FFD1DA"/><path d="M42 96 C42 54 70 40 100 40 C130 40 158 54 158 96 Q100 70 42 96Z" fill="#C9A27A" ${O2}/><path d="M60 88 l5 9 5 -9 5 9 5 -9 5 9 5 -9 5 9 5 -9 5 9 5 -9 5 9 5 -9 5 9 5 -9 5 9 5 -9" fill="#fff" stroke="${CO}" stroke-width="1.8" stroke-linejoin="round"/>` },
+  { id: "hat_pineapple", slot: "hat", tag: "hk", name: "Pineapple-bun hat", desc: "A warm bo lo bao from the cha chaan teng, now a hat.", price: 90,
+    svg: `<path d="M56 72 C56 30 144 30 144 72Z" fill="#F5C04A" ${O2}/><path d="M70 50 L90 70 M86 40 L114 70 M106 38 L130 64 M130 50 L112 70 M110 38 L82 68 M90 40 L68 62" stroke="#D9932E" stroke-width="3" stroke-linecap="round"/><path d="M72 46 Q84 38 96 38" stroke="#FFF1C5" stroke-width="4" fill="none" stroke-linecap="round"/>` },
+  { id: "face_pixel", slot: "face", tag: "trend", name: "Deal-with-it shades", desc: "The classic pixel sunglasses meme. 😎", price: 110,
+    svg: `<g fill="#111"><rect x="54" y="104" width="92" height="8"/><rect x="60" y="112" width="34" height="9"/><rect x="66" y="121" width="22" height="7"/><rect x="106" y="112" width="34" height="9"/><rect x="112" y="121" width="22" height="7"/></g><g fill="#fff"><rect x="66" y="114" width="7" height="5"/><rect x="112" y="114" width="7" height="5"/></g>` },
+  { id: "face_heart", slot: "face", tag: "trend", name: "Y2K heart shades", desc: "Pink heart glasses. Very Y2K, very cute.", price: 90,
+    svg: `<path d="M80 130 C60 116 62 100 80 108 C98 100 100 116 80 130Z M120 130 C100 116 102 100 120 108 C138 100 140 116 120 130Z" fill="rgba(255,95,162,.8)" ${O2}/><path d="M97 110 h6" stroke="${CO}" stroke-width="3.5"/><path d="M72 108 l4 -2 M112 108 l4 -2" stroke="#fff" stroke-width="3" stroke-linecap="round"/>` },
+  { id: "acc_phones", slot: "ribbon", tag: "trend", name: "Cat-ear headphones", desc: "Glowing cat-ear headphones for lo-fi study beats.", price: 120,
+    svg: `<path d="M38 112 C36 50 164 50 162 112" fill="none" stroke="#F2A7C8" stroke-width="10" stroke-linecap="round"/><path d="M38 112 C36 50 164 50 162 112" fill="none" stroke="${CO}" stroke-width="2" stroke-linecap="round" opacity=".5"/><path d="M62 62 L60 38 L80 54Z M138 62 L140 38 L120 54Z" fill="#F2A7C8" ${O2}/><rect x="24" y="98" width="22" height="34" rx="10" fill="#F2A7C8" ${O2}/><rect x="154" y="98" width="22" height="34" rx="10" fill="#F2A7C8" ${O2}/>` },
+  { id: "acc_aura", slot: "ribbon", tag: "trend", name: "Aura +1000 chain", desc: "Instant main-character energy. +1000 aura.", price: 100, low: true,
+    svg: `<path d="M64 146 Q100 170 136 146" fill="none" stroke="#E0B44A" stroke-width="4" stroke-dasharray="5 3"/><rect x="80" y="156" width="40" height="18" rx="9" fill="#FFE27A" ${O2}/>${txt(100, 169.5, "+1000", 11, CO)}` },
+  { id: "hand_67", slot: "hand", tag: "trend", name: "Six-seven signs", desc: "Six... SEVEN! 🤷 The meme everyone keeps shouting.", price: 120,
+    svg: `<g><animateTransform attributeName="transform" type="translate" values="0 0;0 -10;0 0" dur=".9s" repeatCount="indefinite"/><rect x="2" y="120" width="32" height="30" rx="8" fill="#FFE27A" ${O2}/>${txt(18, 144, "6", 24, CO)}</g><g><animateTransform attributeName="transform" type="translate" values="0 -10;0 0;0 -10" dur=".9s" repeatCount="indefinite"/><rect x="166" y="120" width="32" height="30" rx="8" fill="#A0E7E5" ${O2}/>${txt(182, 144, "7", 24, CO)}</g>` },
+  { id: "hand_glove", slot: "hand", tag: "trend", name: "Sparkly glove", desc: "One glittering white glove. Hee-hee! ✨", price: 90,
+    svg: `<path d="M152 128 C150 112 160 104 170 108 L178 100 C182 98 186 102 184 106 L180 114 C186 118 186 130 180 140 C172 150 156 148 152 128Z" fill="#fff" ${O2}/>${[[162, 122], [170, 130], [160, 136], [174, 120]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.4" fill="#A9D4EE"/>`).join("")}${spark4(188, 92, 7, "#FDD66B")}` },
+  { id: "hand_dubai", slot: "hand", tag: "trend", name: "Dubai chocolate bar", desc: "Crunchy pistachio kunafa inside. The viral snack!", price: 100,
+    svg: `<g transform="rotate(14 170 140)"><path d="M156 116 L162 110 L168 116 L174 110 L180 116 L184 112 V164 H156Z" fill="#9BC53D" ${O2}/><rect x="156" y="124" width="28" height="40" rx="3" fill="#5A3825" ${O2}/><path d="M160 134 H180 M160 146 H180 M170 124 V164" stroke="#7A4E33" stroke-width="2"/><path d="M160 118 l4 4 M168 116 l2 5 M176 118 l-2 4" stroke="#6E9E22" stroke-width="2"/></g>` },
+  { id: "hand_milktea", slot: "hand", tag: "hk", name: "HK milk tea", desc: "Silky 'silk-stocking' milk tea, iced, from the cha chaan teng.", price: 70,
+    svg: `<path d="M154 108 H186 L182 162 H158Z" fill="rgba(255,255,255,.85)" ${O2}/><path d="M156 124 H184 L181 160 H159Z" fill="#C58B5C"/><rect x="160" y="128" width="8" height="8" rx="2" fill="rgba(255,255,255,.7)"/><rect x="171" y="138" width="8" height="8" rx="2" fill="rgba(255,255,255,.7)"/><path d="M176 108 L184 88" stroke="#FF6B6B" stroke-width="4" stroke-linecap="round"/>` },
+  { id: "hand_tumbler", slot: "hand", tag: "trend", name: "Giant pastel tumbler", desc: "The huge 40 oz cup everyone carries. Hydrate!", price: 90,
+    svg: `<path d="M184 116 C198 116 198 144 184 144" fill="none" stroke="${CO}" stroke-width="4"/><path d="M156 106 H186 L182 170 H160Z" fill="#B8D8F2" ${O2}/><rect x="152" y="98" width="38" height="10" rx="4" fill="#E6F0FA" ${O2}/><path d="M176 98 L182 76" stroke="${CO}" stroke-width="5" stroke-linecap="round"/><path d="M176 98 L182 76" stroke="#FFB7C5" stroke-width="2.5" stroke-linecap="round"/>` },
+  { id: "hand_mahjong", slot: "hand", tag: "hk", name: "Lucky mahjong tile", desc: "The 'fa' tile (發) for good fortune in exams!", price: 80,
+    svg: `<g transform="rotate(10 170 136)"><rect x="152" y="112" width="34" height="46" rx="6" fill="#FFFDF0" ${O2}/><rect x="152" y="148" width="34" height="10" rx="4" fill="#3FA06B"/>${txt(169, 142, "發", 24, "#2E8B57", 700)}</g>` }
 ];
-const SLOT_NAMES = { hat: "Hats", face: "Glasses", ribbon: "Hair clips", frame: "Frames" };
+const SLOT_NAMES = { hat: "Hats", hair: "Wigs", face: "Glasses", outfit: "Outfits", ribbon: "Accessories", hand: "Hand items", frame: "Frames" };
+const SLOT_ICONS = { hat: "🎩", hair: "💇", face: "🕶️", outfit: "👕", ribbon: "🎀", hand: "🧋", frame: "🖼️" };
+const EQ_KEYS = Object.keys(SLOT_NAMES);
 const POWERUPS = [
   { id: "torch", icon: "🔦", name: "Torch", price: 25, desc: "Removes one wrong answer, or sets one dial correctly. (Counts as a hint.)" },
   { id: "crystal", icon: "⏳", name: "Time crystal", price: 30, desc: "Adds 60 seconds to the room timer." },
@@ -522,52 +579,10 @@ const POWERUPS = [
 ];
 const MAX_POWER = 5;
 const itemById = id => WARDROBE.find(w => w.id === id);
-function outfitSvg(eq) {
-  eq = eq || (typeof S !== "undefined" && S && S.equip);
-  if (!eq) return "";
-  return ["ribbon", "face", "hat"].map(k => eq[k] && itemById(eq[k]) ? itemById(eq[k]).svg : "").join("");
-}
 const frameCls = eq => { eq = eq || (S && S.equip) || {}; const f = eq.frame && itemById(eq.frame); return f ? f.cls : ""; };
 const playerAv = (mood = "normal") => `<span class="${frameCls()}" style="display:inline-flex">${avatar("chiikawa", mood)}</span>`;
 function addCoins(n, why) { S.coins = Math.max(0, (S.coins || 0) + n); save(); renderTools(); if (why) toast(`${n >= 0 ? "+" : ""}${n} 🌰 ${why}`); }
 
-function openShop(tab = "outfits") {
-  const draw = () => {
-    const eq = S.equip;
-    const html = `
-      <span class="kicker">👗 ${"Wardrobe &amp; Shop"}</span>
-      <h2>${"Dress up Chiikawa"}</h2>
-      <div class="preview-big"><div class="fig"><span class="${frameCls()}" style="display:inline-flex;border-radius:50%">${figure("chiikawa", "happy")}</span></div>
-        <div style="display:grid;gap:6px"><span class="pill coinpill" style="justify-self:start">🌰 ${S.coins} ${"chestnuts"}</span>
-        ${say("shisa", "Welcome to Shisa's shop~! Earn chestnuts in ⚡ Cell Rush (double on your first round each day), by escaping stages and by unlocking trophies. 🦁", "happy")}</div></div>
-      <div class="tabs" role="tablist"><button class="tab" role="tab" aria-selected="${tab === "outfits"}" data-tab="outfits">👒 ${"Outfits"}</button><button class="tab" role="tab" aria-selected="${tab === "power"}" data-tab="power">🎒 ${"Power-ups"}</button></div>
-      ${tab === "outfits" ? Object.keys(SLOT_NAMES).map(slot => `<h3>${SLOT_NAMES[slot]}</h3><div class="shopgrid">${WARDROBE.filter(w => w.slot === slot).map(w => {
-          const own = S.owned.includes(w.id), on = eq[slot] === w.id;
-          const prevEq = Object.assign({}, eq, { [slot]: w.id });
-          return `<div class="sitem ${on ? "on" : ""}"><div class="pv"><span class="${frameCls(prevEq)}" style="display:inline-flex;border-radius:50%">${avatar("chiikawa", "happy", prevEq)}</span></div>
-            <b class="small">${esc(w.name)}</b>
-            ${own ? `<button class="btn ${on ? "plain" : "blue"}" data-wear="${w.id}">${on ? "Take off" : "Wear"}</button>`
-                  : `<button class="btn yellow" data-buy="${w.id}" ${S.coins < w.price ? "disabled" : ""}>🌰 ${w.price}</button>`}</div>`; }).join("")}</div>`).join("")
-      : `<p class="small muted">${`Power-ups help inside escape rooms. Use them from the 🎒 bar in any lock. You can hold up to ${MAX_POWER} of each.`}</p>
-         <div class="shopgrid">${POWERUPS.map(u => `<div class="sitem"><div style="font-size:2.2rem">${u.icon}</div><b>${esc(u.name)}</b><span class="small muted">${esc(u.desc)}</span>
-           <span class="small"><b>${"You have"} ${S.power[u.id] || 0}</b></span>
-           <button class="btn yellow" data-pbuy="${u.id}" ${S.coins < u.price || (S.power[u.id] || 0) >= MAX_POWER ? "disabled" : ""}>🌰 ${u.price}</button></div>`).join("")}</div>`}`;
-    const box = openModal(html, { wide: true });
-    box.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => { SFX.tap(); tab = b.dataset.tab; draw(); });
-    box.querySelectorAll("[data-buy]").forEach(b => b.onclick = () => {
-      const w = itemById(b.dataset.buy); if (S.coins < w.price) return;
-      S.coins -= w.price; S.owned.push(w.id); S.equip[w.slot] = w.id; save(true); SFX.fanfare(); confetti(50); yaha("Cute!"); draw(); refreshPlayer();
-    });
-    box.querySelectorAll("[data-wear]").forEach(b => b.onclick = () => {
-      const w = itemById(b.dataset.wear); S.equip[w.slot] = S.equip[w.slot] === w.id ? null : w.id; save(true); SFX.item(); draw(); refreshPlayer();
-    });
-    box.querySelectorAll("[data-pbuy]").forEach(b => b.onclick = () => {
-      const u = POWERUPS.find(x => x.id === b.dataset.pbuy); if (S.coins < u.price) return;
-      S.coins -= u.price; S.power[u.id] = (S.power[u.id] || 0) + 1; save(true); SFX.item(); draw();
-    });
-  };
-  draw();
-}
 function refreshPlayer() {
   document.getElementById("brandav").innerHTML = playerAv("happy");
   const c = document.getElementById("chiiAv"); if (c) { c.className = "av " + frameCls(); c.innerHTML = avatar("chiikawa", R ? R.mood : "normal"); }
@@ -683,6 +698,7 @@ function rushIntro() {
   document.getElementById("rushShop").onclick = () => { SFX.tap(); openShop(); };
 }
 function startRush() {
+  renderNav(false);
   closeModal(); stopTimer(); if (R) clearTimeout(R.introT); R = null; stopRush();
   MUSIC.setMode("rush"); renderTools();
   RU = { score: 0, combo: 0, correct: 0, total: 0, end: Date.now() + RUSH_SECONDS * 1000, lock: false, last: -1 };
@@ -765,7 +781,7 @@ function renderTools() {
   const justSaved = Date.now() - savedFlash < 2500;
   document.getElementById("tools").innerHTML = `
     ${S ? `<span class="pill" title="Daily streak · chestnut bonus ×${streakMult().toFixed(2)}">🔥 ${S.current_streak}${streakMult() > 1 ? `<span class="lbl"> ×${streakMult().toFixed(2).replace(/0$/, "")}</span>` : ""}</span>` : ""}
-    ${S ? `<span class="pill ${justSaved ? "saved" : ""}" title="${"Your progress saves automatically on this device"}">${justSaved ? `✓<span class="lbl"> ${"Saved"}</span>` : `💾<span class="lbl"> ${"Auto-save"}</span>`}</span>` : ""}
+    ${S ? `<span class="pill savepill ${justSaved ? "saved" : ""}" title="${"Your progress saves automatically on this device"}">${justSaved ? `✓<span class="lbl"> ${"Saved"}</span>` : `💾<span class="lbl"> ${"Auto-save"}</span>`}</span>` : ""}
     ${S ? `<button class="iconbtn coinpill" id="tCoins" aria-label="${"Chestnuts"}: ${S.coins}">🌰 ${S.coins}</button>` : ""}
     ${S ? `<button class="iconbtn" id="tTrophy" aria-label="${"Open the Trophy Cabinet"}">🏆<span class="lbl">${"Trophies"}</span></button>` : ""}
     ${S && S.coll.pending ? `<button class="iconbtn capbtn" id="tCap" aria-label="Open ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""}">🎁<span class="lbl"> ${S.coll.pending}</span></button>` : ""}
@@ -992,86 +1008,11 @@ function stageBtn(r, i, ni) {
   </button>`;
 }
 let mapPart = null;
-function renderMap() {
-  stopRush(); MUSIC.setMode("map"); stopTimer(); lbSubmit(); if (R) clearTimeout(R.introT); R = null; recomputeMastery(); save(); renderTools();
-  const ni = nextRoomIndex(), allDone = ni === -1, chestReady = S.last_chest_date !== today(), nr = allDone ? null : ROOMS[ni];
-  const totalStars = ROOMS.reduce((a, r) => a + roomStars(r), 0);
-  if (mapPart === null) mapPart = nr ? TOPICS[nr.t].p : 0;
-  $app.innerHTML = `
-    <section class="hero">${starsBg()}
-      <span class="kicker" style="color:#fff">${HERO_KICKER}</span>
-      <h1>Hi, ${esc(S.player_name)}!</h1>
-      <p class="sub">${allDone ? "You escaped EVERY stage! 🎉" : `Next: ${stageLabel(nr)} · ${esc(nr.name)}`}</p>
-      ${castHtml(allDone ? { chiikawa: "sparkle", hachiware: "happy", usagi: "happy", momonga: "happy", kurimanju: "happy" } : { usagi: "happy", chiikawa: S.completed_rooms.length ? "happy" : "normal" })}
-    </section>
-    ${streakNote ? `<section class="card cream"><b>${esc(streakNote)}</b></section>` : ""}
-    <section class="card">
-      ${allDone ? say("chiikawa", "We escaped EVERY stage! 🥹🎉 Replay stages to earn 3 stars and master every question.", "sparkle") : say("hachiware", `Your next right step: just <b>one</b> stage today. ${nr.boss ? "It's a <b>boss stage</b>, but you're ready! ⚔️" : "Small steps grow into big brains! 🌱"}`, "normal", "hint")}
-      <div class="row">
-        ${!allDone ? `<button class="btn big" data-room="${nr.id}">▶ Enter ${esc(nr.name)}</button>` : ""}
-        <button class="btn yellow" id="chest" ${chestReady ? "" : "disabled"}>${chestReady ? "🎁 Daily snack chest" : "🎁 Opened. Back tomorrow!"}</button>
-      </div>
-    </section>
-    <section class="card">
-      <div class="row" style="justify-content:space-between"><h2>🗺️ Topic map</h2><span class="pill">⭐ ${totalStars} / ${ROOMS.length * 3} · 🚪 ${S.completed_rooms.length} / ${ROOMS.length}</span></div>
-      <p class="small muted">Every topic is open. Inside a topic, clear the stages in order; the last one is a ⚔️ boss stage. Each stage is a different room: labs, gardens, even inside a cell!</p>
-      <div class="tabs" role="tablist" aria-label="Curriculum parts">${PARTS.map((P, pi) => { const n = TOPICS.filter(T => T.p === pi).length, d = TOPICS.filter((T, ti) => T.p === pi && stagesDone(ti) === topicRooms(ti).length).length;
-        return `<button class="tab" role="tab" aria-selected="${pi === mapPart}" data-part="${pi}">Part ${esc(P)} <span class="small">${d}/${n}</span></button>`; }).join("")}</div>
-      <div class="tgrid">${TOPICS.map((T, ti) => { if (T.p !== mapPart) return "";
-        const rs = topicRooms(ti), d = stagesDone(ti), cur = nr && nr.t === ti;
-        const nT = rs.length;
-        return `<div class="tcard ${d === nT ? "done" : ""} ${cur ? "next" : ""}">
-          <div class="thead"><span class="ticon" aria-hidden="true">${T.icon}</span><span style="min-width:0"><span class="tnum">Topic ${T.no}${d === nT ? " · 🏅 cleared" : ` · ${nT} stages`}</span><br><span class="tname">${esc(T.name)}</span></span></div>
-          <div class="tprog" aria-label="${d} of ${nT} stages escaped"><i style="width:${Math.round(100 * d / nT)}%"></i></div>
-          <div class="stages">${rs.map(r => stageBtn(r, roomIndex(r.id), ni)).join("")}</div>
-        </div>`; }).join("")}</div>
-    </section>
-    ${chatCardHtml()}
-    <section class="card">
-      <h2>🎮 Game modes</h2>
-      <div class="modes">
-        <button class="mode rush" id="mRush"><h3>⚡ Cell Rush</h3><span class="muted small">60 seconds of mixed quick questions from every topic. Earn 🌰 chestnuts for outfits and power-ups.</span><span class="small">Best: <b>${S.rush.best}</b> pts ${S.rush.lastDay !== today() ? "· <b>×2 today!</b>" : ""}</span></button>
-        <button class="mode note" id="mNote"><h3>📕 Mistake Notebook</h3><span class="muted small">Every question you got wrong, saved so you can fix it calmly. Get each right twice to clear it.</span><span class="small"><b>${mistakeKeys().length}</b> to fix · ${S.mistakes_cleared || 0} cleared</span></button>
-        <button class="mode dict-mode" id="mDict"><h3>🎧 Word Dictation</h3><span class="muted small">Hear each key term in a British accent (🐢 slow too) and spell it. Missed words come back until you know them.</span><span class="small">${Object.keys(S.dict.missed).length ? `<b>${Object.keys(S.dict.missed).length}</b> missed words to practise` : `Best round: <b>${S.dict.best}</b>/${DICT_N}`}</span></button>
-        <button class="mode" id="mShop"><h3>👗 Shisa's Shop</h3><span class="muted small">Dress up Chiikawa and buy power-ups for the escape rooms.</span><span class="small">🌰 <b>${S.coins}</b> chestnuts</span></button>
-        <button class="mode coll-mode" id="mColl"><h3>🧸 Capsule Collection</h3><span class="muted small">20 cute collectibles to find, including 5 ✨ rare ones. Open capsules you earn from playing.</span><span class="small"><b>${collOwned()}</b>/${COLLECTIBLES.length} collected${S.coll.pending ? ` · <b>🎁 ${S.coll.pending} to open!</b>` : ""}</span></button>
-        <button class="mode" id="mLb"><h3>🏅 Leaderboard</h3><span class="muted small">The 10 most dedicated players.</span><span class="small">Your points: <b>${dedication()}</b></span></button>
-      </div>
-    </section>
-    <section class="card">
-      <h2>📈 Biology mastery</h2>
-      <p class="small muted">Each stage has 15–20 questions from 🌱 Easy to ⭐ Expert, including graph reading, plus spelling practice for its key terms. Mastery goes up when you answer one right on the first try without a hint. Replay cleared stages to master them all! The first replay each day earns a 📚 revision bonus.</p>
-      ${TOPICS.map((T, ti) => { const v = S.bio_mastery[T.id]; return `${!ti || TOPICS[ti - 1].p !== T.p ? `<h3 class="small" style="margin-top:6px">Part ${esc(T.part)}</h3>` : ""}<div><div class="row" style="justify-content:space-between"><b class="small">${TOPIC_LABELS[T.id]}</b><b class="small">${v}%</b></div>
-        <div class="tprog"><i style="width:${v}%"></i></div></div>`; }).join("")}
-    </section>
-    <section class="card cream cabinet" id="cabinet">${cabinetHtml(false)}</section>
-    <section class="card">
-      <h2>🎒 Backpack</h2>
-      <div class="bag">${S.chiikawa_badges.concat(S.inventory).map(b => `<span class="tag">${esc(b)}</span>`).join("") || `<span class="muted small">Empty. Escape a stage or open the daily chest!</span>`}</div>
-      <p class="small muted">🔥 Longest streak: ${S.longest_streak} days · 🛡️ Shields: ${S.streak_shields} (a shield saves your streak if you miss a day)</p>
-    </section>`;
-  $app.querySelectorAll("[data-room]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); streakNote = ""; enterRoom(b.dataset.room); });
-  $app.querySelectorAll("[data-part]").forEach(b => b.onclick = () => { SFX.tap(); mapPart = Number(b.dataset.part); const y = window.scrollY; renderMap(); window.scrollTo({ top: y }); });
-  document.getElementById("mRush").onclick = () => { SFX.init(); SFX.tap(); rushIntro(); };
-  document.getElementById("mShop").onclick = () => { SFX.init(); SFX.tap(); openShop(); };
-  document.getElementById("mNote").onclick = () => { SFX.init(); SFX.tap(); renderNotebook(); };
-  document.getElementById("mLb").onclick = () => { SFX.init(); SFX.tap(); openLeaderboard(); };
-  document.getElementById("mDict").onclick = () => { SFX.init(); SFX.tap(); DT = null; renderDictation(); };
-  wireChatCard();
-  document.getElementById("mColl").onclick = () => { SFX.init(); SFX.tap(); openAlbum(); };
-  const oc = document.getElementById("openCab"); if (oc) oc.onclick = () => { SFX.init(); SFX.tap(); openCabinet(); };
-  const c = document.getElementById("chest");
-  if (chestReady) c.onclick = () => {
-    SFX.init(); SFX.fanfare(); confetti(70);
-    const snack = pick(SNACKS); S.inventory.push(snack);
-    let extra = ""; if (Math.random() < .2 && S.streak_shields < 3) { S.streak_shields++; extra = " …and a 🛡️ shield!"; }
-    S.last_chest_date = today(); S.stats.chests += 1; S.coll.pending += 1; streakNote = `🎁 Kuri-Manju opened the chest: ${snack}${extra} …plus a mystery capsule!`; save(true); renderMap(); checkTrophies(); openCapsule();
-  };
-}
 
 /* ----- 📕 Mistake Notebook: revise the questions you got wrong ----- */
 const shortQ = t => (t.length > 110 ? t.slice(0, 107) + "…" : t);
 function renderNotebook() {
+  renderNav("play");
   stopRush(); MUSIC.setMode("calm"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; renderTools();
   const all = mistakeKeys(), cleared = S.mistakes_cleared || 0;
   const rows = all.map(k => ({ k, ...mistakeQ(k), m: S.mistakes[k] })).sort((a, b) => a.r.t - b.r.t || b.m.n - a.m.n);
@@ -1226,7 +1167,7 @@ function sceneSvg(r, solvedCount) {
     ${sc.draw(r, solvedCount)}
     <g class="obj" data-hs="2" transform="translate(${sc.sp[0]} ${sc.sp[1]})">${sc.stand}${specialSvg(r.special)}</g>
     ${r.boss ? `<defs><radialGradient id="bossGlow" cx=".5" cy=".3" r=".7"><stop offset="0" stop-color="rgba(201,160,255,0)"/><stop offset="1" stop-color="rgba(107,78,140,.45)"/></radialGradient></defs><rect width="800" height="500" fill="url(#bossGlow)" pointer-events="none"/>
-      <svg x="468" y="372" width="84" height="116" viewBox="${FIG_VB}" aria-hidden="true">${figure("rakko", "brave").replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "")}</svg>` : ""}
+      <svg x="452" y="386" width="112" height="100" viewBox="${FIG_VB}" aria-hidden="true">${figure("rakko", "brave").replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "")}</svg>` : ""}
   </svg>`;
 }
 
@@ -1271,11 +1212,11 @@ function enterRoom(id) {
   HOTSPOTS = (SCENES[room.scene] || SCENES.library).hs; DOOR = (SCENES[room.scene] || SCENES.library).door;
   if (replay) { S.room_progress[room.id] = []; S.room_timer[room.id] = ROOM_SECONDS; }
   if (S.room_timer[room.id] == null) S.room_timer[room.id] = ROOM_SECONDS;
-  S.current_room = room.id; save(); MUSIC.setMode(room.boss ? "boss" : SCENE_SONG[room.scene] || "room");
+  S.current_room = room.id; save(); MUSIC.setMode(S.playMode === "study" ? "calm" : room.boss ? "boss" : SCENE_SONG[room.scene] || "room");
   if (R) clearTimeout(R.introT);
   if (R) clearTimeout(R.incT);
-  R = { room, replay, mood: "normal", att: {}, hinted: {}, jam: {}, lastWrongAt: 0, qs: runQs(room), incidents: 0, used: [], stolen: null, hiddenHs: null };
-  const me = R; R.incT = setTimeout(() => tryIncident(me), (replay ? 25 : 40) * 1000 + Math.random() * 40000);
+  R = { room, replay, study: S.playMode === "study", mood: "normal", att: {}, hinted: {}, jam: {}, lastWrongAt: 0, qs: runQs(room), incidents: 0, used: [], stolen: null, hiddenHs: null };
+  const me = R; if (!R.study) R.incT = setTimeout(() => tryIncident(me), (replay ? 25 : 40) * 1000 + Math.random() * 40000);
   closeModal(); renderRoom();
   window.scrollTo({ top: 0 });
   stopTimer(); timerId = setInterval(tickTimer, 1000);
@@ -1287,7 +1228,7 @@ function playIntro() {
     if (R !== me) return;
     const [w, m, t] = lines[k++];
     setLine(w, t, m);
-    me.introT = setTimeout(k < lines.length ? step : () => R === me && setLine("hachiware", "Tap a glowing <b>?</b> to start. ⚠️ Careful: a wrong answer costs <b>10 seconds</b> and shuffles the lock. Guessing makes the lock <b>slip back a notch</b> (one bonus question to climb back), jams it for a few seconds, costs 🌰 chestnuts and can make the lights go dim. Think first! And watch out for strange happenings in the dark... 👀 (Stuck? Tap 📓 for the textbook notes.)"), k < lines.length ? 2600 : 3200);
+    me.introT = setTimeout(k < lines.length ? step : () => R === me && (R.study ? setLine("hachiware", "📖 <b>Study mode:</b> no timer, no penalties, no spooky surprises. Take your time, and tap 📓 for the textbook notes whenever you like. Tap a glowing <b>?</b> to start! 🌱") : setLine("hachiware", "Tap a glowing <b>?</b> to start. ⚠️ Careful: a wrong answer costs <b>10 seconds</b> and shuffles the lock. Guessing makes the lock <b>slip back a notch</b> (one bonus question to climb back), jams it for a few seconds, costs 🌰 chestnuts and can make the lights go dim. Think first! And watch out for strange happenings in the dark... 👀 (Stuck? Tap 📓 for the textbook notes.)")), k < lines.length ? 2600 : 3200);
   };
   step();
 }
@@ -1303,7 +1244,7 @@ function setMood(m, ms) {
   if (ms) moodTimer = setTimeout(() => R && setMood(S.room_timer[R.room.id] < 120 ? "cry" : "normal"), ms);
 }
 function tickTimer() {
-  if (!R || document.hidden) return;
+  if (!R || document.hidden || R.study) return;
   const id = R.room.id, now = Date.now();
   const frozen = R.freezeUntil > now, warp = R.warpUntil > now;
   if (!frozen) S.room_timer[id] -= warp ? 2 : 1;
@@ -1317,7 +1258,7 @@ function tickTimer() {
   if (R.blackUntil && now > R.blackUntil) { R.blackUntil = 0; const sc = document.getElementById("scene"); if (sc) { sc.classList.remove("blackout"); sc.style.setProperty("--dim", R.room.dim); } }
 }
 function renderRoom() {
-  renderTools();
+  renderTools(); renderNav(false);
   const { room } = R;
   const solved = S.room_progress[room.id] || [];
   const t = S.room_timer[room.id];
@@ -1331,9 +1272,9 @@ function renderRoom() {
           <div class="small" id="chiiSt">${"Chiikawa is ready"}</div></div>
       </div>
       <div style="display:grid;justify-items:end;gap:4px">
-        <div class="timer ${t < 0 ? "over" : t < 120 ? "low" : ""}" id="timer" role="timer" aria-label="${"Time left"}">${t >= 0 ? fmt(t) : `${"OVERTIME"} ${fmt(t)}`}</div>
+        ${R.study ? `<div class="timer study" id="timer" title="Study mode: no timer">📖 Study</div>` : `<div class="timer ${t < 0 ? "over" : t < 120 ? "low" : ""}" id="timer" role="timer" aria-label="${"Time left"}">${t >= 0 ? fmt(t) : `${"OVERTIME"} ${fmt(t)}`}</div>`}
         <span class="small">🔓 ${solved.length}/5 ${"locks"} · 🚪 ${solved.length === 5 ? "code ready!" : "door locked"}</span>
-        <span class="strikes" id="strikes" title="${"Guess strikes: 3 strikes = −1 star, 6 strikes = −2 stars"}">⚠️ ${"Strikes"} ${S.room_run[room.id].strikes}</span>
+        <span class="strikes" id="strikes" ${R.study ? "hidden" : ""} title="${"Guess strikes: 3 strikes = −1 star, 6 strikes = −2 stars"}">⚠️ ${"Strikes"} ${S.room_run[room.id].strikes}</span>
       </div>
     </section>
     <div id="line"></div>
@@ -1424,7 +1365,7 @@ function fogAnswers() {
   tick();
 }
 function renderPwr(p, i) {
-  const el = document.getElementById("pwr"); if (!el) return;
+  const el = document.getElementById("pwr"); if (!el) return; if (R.study) { el.innerHTML = `<span class="small muted">📖 Study mode: power-ups rest while you study.</span>`; return; }
   const n = k => S.power[k] || 0;
   el.innerHTML = `<b class="small">🎒 ${"Power-ups"}:</b>
     <button class="btn" data-pw="torch" ${n("torch") ? "" : "disabled"} title="${esc(POWERUPS[0].desc)}">🔦 ${POWERUPS[0].name} ×${n("torch")}</button>
@@ -1462,7 +1403,7 @@ function setDial(d, v, p) {
   f.textContent = p.dials[d][v]; f.classList.remove("spin"); void f.offsetWidth; f.classList.add("spin");
 }
 function updateTimerEl() {
-  const tEl = document.getElementById("timer"); if (!tEl || !R) return;
+  const tEl = document.getElementById("timer"); if (!tEl || !R || R.study) return;
   const t = S.room_timer[R.room.id]; tEl.textContent = t >= 0 ? fmt(t) : `${"OVERTIME"} ${fmt(t)}`; tEl.className = "timer" + (t < 0 ? " over" : t < 120 ? " low" : "");
 }
 function dimLights() {
@@ -1561,6 +1502,13 @@ function miss(box) {
   if (R.guard) {
     R.guard = false; R.lastWrongAt = now; SFX.hint(); save(); renderPwr(p, i);
     document.getElementById("pfb").innerHTML = `<div class="fb no">${say("hachiware", `${"🛡️ The Guard charm blocked the penalty! Not the right answer though."} 💡 ${esc(p.hint)}`, "normal", "hint")}</div>`;
+    return;
+  }
+  // Study mode: no penalties at all. Just a gentle hint, and the explanation after a second miss.
+  if (R.study) {
+    SFX.wrong(); setMood("cry", 2000); save();
+    document.getElementById("pfb").innerHTML = `<div class="fb no">${say("chiikawa", R.att[k] >= 2 ? "Uu... still not it. Let's read why together. 📖" : pick(["Hmm... not quite! 🥺", "Eh? Not that one... 💦", "Almost! Let's think again. 🌱"]), "cry")}
+      ${say("hachiware", `💡 ${esc(p.hint)}${R.att[k] >= 2 && p.explain ? `<br><br>📖 <b>Why:</b> ${esc(p.explain)}` : ""}`, "normal", "hint")}</div>`;
     return;
   }
   // Guessing = a wrong answer within 5 s of opening the lock, or within 4 s of the last wrong answer
@@ -1715,7 +1663,7 @@ function escapeRoom() {
   if (!first) S.stats.replays += 1;
   const revise = !first && S.last_revise_day !== today(); if (revise) S.last_revise_day = today();
   const earned = withStreak(first ? (room.boss ? 25 : 15) : revise ? 20 : 5); S.coins = (S.coins || 0) + earned; R.done = true; clearTimeout(R.incT);
-  if (tLeft >= 0 && run.strikes === 0) S.stats.cleanEscapes += 1;
+  if (!R.study && tLeft >= 0 && run.strikes === 0) S.stats.cleanEscapes += 1;
   if (!run.hints) S.stats.noHintEscapes += 1;
   if (new Date().getHours() >= 21) S.stats.night += 1;
   const caps = first ? (room.boss ? 2 : 1) : Math.random() < .4 ? 1 : 0; S.coll.pending += caps;
@@ -1731,10 +1679,10 @@ function escapeRoom() {
     SFX.fanfare(); confetti(topicDone ? 260 : 180); yaha(topicDone ? "Topic cleared!!" : "Yaha!!");
     openModal(`
       <span class="kicker">Escaped! · ${esc(stageLabel(room))}</span>
-      <h2>🎉 You escaped ${esc(room.name)}!</h2>
+      <h2>${R.study ? `📖 You studied ${esc(room.name)}!` : `🎉 You escaped ${esc(room.name)}!`}</h2>
       <div class="cast" style="margin:0">${(room.boss ? ["usagi", "chiikawa", "rakko"] : ["usagi", "chiikawa", "hachiware"]).map(w => `<div class="fig" style="width:90px">${figure(w, w === "chiikawa" ? "sparkle" : "happy")}</div>`).join("")}</div>
       <div class="row" style="justify-content:center;font-size:1.8rem" aria-label="${stars} / 3 ★">${starStr(stars)}</div>
-      <p style="text-align:center"><b>${n}/${5 * LOCK_Q}</b> questions right first try · ⏱️ ${fmt(Math.max(0, used))}${tLeft < 0 ? " (overtime)" : ""} · ⚠️ ${run.strikes} strike${run.strikes === 1 ? "" : "s"}</p>
+      <p style="text-align:center"><b>${n}/${5 * LOCK_Q}</b> questions right first try${R.study ? " · 📖 Study mode" : ` · ⏱️ ${fmt(Math.max(0, used))}${tLeft < 0 ? " (overtime)" : ""} · ⚠️ ${run.strikes} strike${run.strikes === 1 ? "" : "s"}`}</p>
       <p style="text-align:center"><span class="pill coinpill">+${earned} 🌰 chestnuts${revise ? " · 📚 daily revision bonus!" : ""}${multTag()}</span>${caps ? ` <span class="pill rpill">🎁 +${caps} capsule${caps > 1 ? "s" : ""}</span>` : ""}${R.incidents ? ` <span class="pill">👻 Incidents survived: ${R.incidents}</span>` : ""}</p>
       ${lost ? `<div class="rules">Guess strikes cost you <b>${lost} star${lost > 1 ? "s" : ""}</b> this time. Replay the stage and think before answering to win them back!</div>` : ""}
       ${room.boss && first ? say("rakko", "...Hmph. Not bad. You have the heart of a true biologist. ⚔️", "happy") : ""}
@@ -1833,7 +1781,7 @@ function owlQuiz() {
 /* ============================================================
    10. Boot: save-code links (#CODE), resume prompt, or new game
    ============================================================ */
-document.getElementById("home").onclick = () => { if (S) { SFX.init(); SFX.tap(); closeModal(); renderMap(); } };
+document.getElementById("home").onclick = () => { if (S) { SFX.init(); SFX.tap(); closeModal(); homeTab = "home"; renderMap(); } };
 document.addEventListener("pointerdown", () => { SFX.init(); MUSIC.start(); }, { once: true });
 document.addEventListener("keydown", () => { SFX.init(); MUSIC.start(); }, { once: true });
 document.addEventListener("visibilitychange", () => { if (document.hidden && S) save(); });
