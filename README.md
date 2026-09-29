@@ -21,7 +21,7 @@ Every topic is open, so students can jump to the one their class is on (the map 
 - **8 room scenes** (library, science lab, greenhouse, inside a cell, kitchen, underwater pond, secret garden, clinic), so stages feel different.
 - **Each lock needs 3 questions in a row** (15 per visit), climbing in difficulty. Students see friendly labels (🌱 Easy, 🌿 Medium, 🔥 Hard, ⭐ Expert) instead of Bloom's levels. Progress on a half-open lock is saved.
 - **981 core questions** (15–20 per stage) including **78 graph-reading questions** (drawn to scale: potato-strip osmosis, enzyme curves, absorption spectra, GP/RuBP, lactic acid, and more).
-- **Spelling practice**: every stage's key terms become "type the word" locks and "which spelling is correct?" checks (British spelling). Up to 3 per visit; also a Spelling bee round in Cell Rush.
+- **Spelling practice**: every stage's key terms become "type the word" locks and "which spelling is correct?" checks (British and American spellings are both accepted, e.g. haemoglobin / hemoglobin). Up to 3 per visit; also a Spelling bee round in Cell Rush.
 - 📓 **Study Journal:** summary, key rules and key terms for every stage.
 
 ## 🎵 Music
@@ -38,7 +38,7 @@ Chiikawa reacts with many moods (nervous, crying, shocked, brave, sparkly-eyed).
 
 ## Game systems
 
-Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, anti-guessing penalties (−20 s, reshuffle, jams, strikes, dim lights), random spooky-but-friendly incidents, ⚡ **Cell Rush** (60-second mixed rush with test-tube colours and organelle spotting), Shisa's shop (outfits and power-ups), daily streak with shields, daily snack chest and a class leaderboard.
+Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, gentle anti-guessing penalties (no wait or time loss over 15 s: −10 s, reshuffle, short jams, strikes, chestnut fine, and guessing makes the lock **slip back a notch** so students answer one bonus question), random spooky-but-friendly incidents, ⚡ **Cell Rush** (60-second mixed rush with test-tube colours and organelle spotting), Shisa's shop (outfits and power-ups), daily streak with shields, daily snack chest and a class leaderboard.
 
 ## 🏆 Trophies (26)
 

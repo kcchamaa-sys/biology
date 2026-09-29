@@ -3431,6 +3431,13 @@ const diffChip = b => { const d = DIFF(b); return `<span class="diff ${d.c}">${d
    also become "which spelling is correct?" checks with believable misspellings. */
 const normWord = w => String(w || "").toLowerCase().replace(/[^a-z]/g, "");
 const countLetters = w => normWord(w).length;
+// British and American spellings are both accepted: both sides are mapped to one shared form
+// (haemoglobin/hemoglobin, oesophagus/esophagus, fertilise/fertilize, fibre/fiber, colour/color...).
+const US_RULES = [[/haem/g, "hem"], [/aemi/g, "emi"], [/caec/g, "cec"], [/faec/g, "fec"], [/paed/g, "ped"], [/foet/g, "fet"], [/^oe/, "e"],
+  [/sulph/g, "sulf"], [/mould/g, "mold"], [/grey/g, "gray"], [/(fib|cent|lit|met|lust)re(s?)$/, "$1er$2"], [/our(s?)$/, "or$1"],
+  [/([a-z]{3})ys(e|es|ed|ing|er|ers)$/, "$1yz$2"], [/([a-z]{3})is(e|es|ed|ing|ation|ations|er|ers)$/, "$1iz$2"], [/logue$/, "log"], [/rrhoea/g, "rrhea"], [/anaes/g, "anes"], [/programme/g, "program"]];
+const spellKey = w => String(w || "").toLowerCase().split(/[^a-z]+/).filter(Boolean).map(x => US_RULES.reduce((a, [re, to]) => a.replace(re, to), x)).join("");
+const sameSpelling = (a, b) => normWord(a) === normWord(b) || spellKey(a) === spellKey(b);
 function spellBoxes(word, typed) {
   const t = normWord(typed); let k = 0;
   return [...word].map((ch, j) => /[a-z]/i.test(ch) ? `<i class="${t[k] ? "f" : ""}">${esc(t[k] ? t[k++] : (j === 0 ? ch.toLowerCase() : ""))}</i>` : ch === " " ? `<i class="gap"></i>` : `<i class="gap">${esc(ch)}</i>`).join("");
@@ -3441,7 +3448,7 @@ function misspell(w) {
   for (let i = w.length - 3; i >= 2 && out.size < 2; i--) if (w[i] !== w[i + 1]) out.add(sw(w, i));
   const dbl = w.search(/([a-z])\1/); if (dbl > 0) out.add(w.slice(0, dbl) + w.slice(dbl + 1)); else { const c = w.search(/[^aeiou][aeiou]/); if (c > 0) out.add(w.slice(0, c + 1) + w[c] + w.slice(c + 1)); }
   for (let i = 1; i < w.length - 1 && out.size < 5; i++) if (V[w[i]]) out.add(w.slice(0, i) + V[w[i]] + w.slice(i + 1));
-  return [...out].filter(x => x !== w).slice(0, 3);
+  return [...out].filter(x => x !== w && !sameSpelling(x, w)).slice(0, 3);
 }
 function buildPools() {
   ROOMS.forEach(r => {
@@ -3459,6 +3466,8 @@ function buildPools() {
 }
 buildPools();
 const ROOM_SECONDS = 20 * 60;
+// Students asked for shorter waits: no time penalty or lock-out lasts longer than 15 s.
+const MAX_WAIT = 15, TIME_FINE = 10;
 const CHEERS = ["Yaha!", "Ura!", "Puru puru!", "Waaai!", "Sugoi!"];
 const SNACKS = ["🍡 Chestnut bun", "🍘 Rice cracker", "🍮 Pudding", "🍙 Onigiri", "🍜 Ramen ticket", "🧋 Bubble tea", "🥚 Egg tart", "🧇 Egg waffle", "🍍 Pineapple bun", "🍓 Strawberry daifuku"];
 const TOPIC_LABELS = Object.fromEntries(TOPICS.map(t => [t.id, `${t.icon} ${t.name}`]));
@@ -4569,7 +4578,7 @@ function miniQuiz(el, p, done) {
       <div class="row"><input id="mIn" class="name" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type the biology term"><button class="btn" id="mOk">Check ✏️</button></div></div>`;
     const inp = document.getElementById("mIn");
     inp.oninput = () => { document.getElementById("mBoxes").innerHTML = spellBoxes(p.answer, inp.value); };
-    const go = () => { if (!normWord(inp.value)) { toast("Type the word first ✏️"); return; } const ok = normWord(inp.value) === normWord(p.answer); if (!ok) document.getElementById("mBoxes").innerHTML = spellBoxes(p.answer, p.answer); finish(ok); };
+    const go = () => { if (!normWord(inp.value)) { toast("Type the word first ✏️"); return; } const ok = sameSpelling(inp.value, p.answer); if (!ok) document.getElementById("mBoxes").innerHTML = spellBoxes(p.answer, p.answer); finish(ok); };
     document.getElementById("mOk").onclick = go; inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); go(); } }); setTimeout(() => inp.focus({ preventScroll: true }), 60);
   }
 }
@@ -4696,7 +4705,7 @@ function playIntro() {
     if (R !== me) return;
     const [w, m, t] = lines[k++];
     setLine(w, t, m);
-    me.introT = setTimeout(k < lines.length ? step : () => R === me && setLine("hachiware", "Tap a glowing <b>?</b> to start. ⚠️ Careful: a wrong answer costs <b>20 seconds</b> and shuffles the lock. Guessing <b>jams the lock</b>, costs 🌰 chestnuts and can make the lights go dim. Think first! And watch out for strange happenings in the dark... 👀 (Stuck? Tap 📓 for the textbook notes.)"), k < lines.length ? 2600 : 3200);
+    me.introT = setTimeout(k < lines.length ? step : () => R === me && setLine("hachiware", "Tap a glowing <b>?</b> to start. ⚠️ Careful: a wrong answer costs <b>10 seconds</b> and shuffles the lock. Guessing makes the lock <b>slip back a notch</b> (one bonus question to climb back), jams it for a few seconds, costs 🌰 chestnuts and can make the lights go dim. Think first! And watch out for strange happenings in the dark... 👀 (Stuck? Tap 📓 for the textbook notes.)"), k < lines.length ? 2600 : 3200);
   };
   step();
 }
@@ -4875,9 +4884,9 @@ function updateTimerEl() {
   const t = S.room_timer[R.room.id]; tEl.textContent = t >= 0 ? fmt(t) : `${"OVERTIME"} ${fmt(t)}`; tEl.className = "timer" + (t < 0 ? " over" : t < 120 ? " low" : "");
 }
 function dimLights() {
-  if (!R) return; R.dimUntil = Date.now() + 45000;
+  if (!R) return; R.dimUntil = Date.now() + MAX_WAIT * 1000;
   const sc = document.getElementById("scene"); if (sc) sc.style.setProperty("--dim", Math.min(.9, R.room.dim + .25));
-  const me = R; setTimeout(() => { if (R === me) { const s2 = document.getElementById("scene"); if (s2) s2.style.setProperty("--dim", R.room.dim); } }, 45000);
+  const me = R; setTimeout(() => { if (R === me) { const s2 = document.getElementById("scene"); if (s2) s2.style.setProperty("--dim", R.room.dim); } }, MAX_WAIT * 1000);
 }
 function markHint(i) { R.hinted[akey(i)] = true; S.room_run[R.room.id].hints = true; save(); }
 /* Anti-guessing: a lock jams for a while after a guess, and Hachiware's hint must be read. */
@@ -4911,7 +4920,7 @@ function answerUi(p) {
     <div class="keys">${["7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "⌫"].map(k => `<button class="key ${k === "⌫" ? "del" : ""}" data-k="${k}" aria-label="${k === "⌫" ? "Delete" : k === "." ? "Decimal point" : k}">${k}</button>`).join("")}</div>
     <button class="btn" id="kok" style="width:min(208px,100%)">Unlock 🔓</button></div>`;
   if (p.type === "spell") return `<div class="spell"><div class="sboxes" id="sBoxes" aria-hidden="true">${spellBoxes(p.answer, "")}</div>
-    <p class="small muted">${countLetters(p.answer)} letters · starts with “${esc(p.answer[0].toUpperCase())}”. British spelling.</p>
+    <p class="small muted">${countLetters(p.answer)} letters · starts with “${esc(p.answer[0].toUpperCase())}”. British or American spelling are both fine.</p>
     <div class="row"><input id="spIn" class="name" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type the biology term"><button class="btn" id="spOk">Try the lock 🔓</button></div></div>`;
   // Dials start at random positions (never all correct)
   const start = p.dials.map(o => Math.floor(Math.random() * o.length));
@@ -4927,7 +4936,7 @@ function wireAnswer(p, box) {
     inp.oninput = () => { document.getElementById("sBoxes").innerHTML = spellBoxes(p.answer, inp.value); };
     const go = () => {
       if (!normWord(inp.value)) { toast("Type the word first ✏️"); return; }
-      if (normWord(inp.value) === normWord(p.answer)) { inp.disabled = true; document.getElementById("spOk").disabled = true; solve(); } else miss(box);
+      if (sameSpelling(inp.value, p.answer)) { inp.disabled = true; document.getElementById("spOk").disabled = true; solve(); } else miss(box);
     };
     document.getElementById("spOk").onclick = go;
     inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); go(); } });
@@ -4978,7 +4987,7 @@ function miss(box) {
   SFX.wrong(); setMood(rm === "shock" ? "shock" : "cry", 2500);
   const hit = [];
   // Penalty 1: time
-  S.room_timer[id] -= 20; penaltyFlash("−20s ⏱️"); updateTimerEl(); hit.push("⏱️ −20 seconds");
+  S.room_timer[id] -= TIME_FINE; penaltyFlash(`−${TIME_FINE}s ⏱️`); updateTimerEl(); hit.push(`⏱️ −${TIME_FINE} seconds`);
   // Penalty 2: the lock reshuffles, so tapping the next option doesn't work
   if (p.type === "mc") {
     const wrap = box.querySelector(".choices"); const kids = shuffle([...wrap.children]);
@@ -4995,13 +5004,17 @@ function miss(box) {
   }
   // Penalty 3: guessing or a repeat miss jams the lock, adds a strike and costs chestnuts
   let jam = 0, reason = "";
-  if (fast) { jam = 25; reason = "Guessing detected! Lock jammed"; }
-  else if (R.att[k] >= 2) { jam = Math.min(40, 10 + 10 * (R.att[k] - 1)); reason = "Wrong again! Lock jammed"; }
+  if (fast) { jam = MAX_WAIT; reason = "Guessing detected! Lock jammed"; }
+  else if (R.att[k] >= 2) { jam = Math.min(MAX_WAIT, 5 + 5 * (R.att[k] - 1)); reason = "Wrong again! Lock jammed"; }
+  // Penalty 3b: guessing, or a 3rd miss on the same question, makes the lock slip back a notch.
+  // The student must answer one extra (fresh) question to climb back: more practice, not more waiting.
+  const slipped = (fast || R.att[k] >= 3) && stepOf(i) > 0 && slipLock(i);
+  if (slipped) hit.push("🔙 lock slipped back a notch (+1 bonus question)");
   if (jam) {
     run.strikes += 1; markHint(i); SFX.door(); hit.push(`🔒 jammed ${jam}s`, "⚠️ strike +1");
     if (S.coins > 0) { const fine = Math.min(S.coins, 3); S.coins -= fine; hit.push(`🌰 −${fine}`); renderTools(); }
     // Penalty 4: every 3rd strike, the lights flicker and the room goes dim
-    if (run.strikes % 3 === 0) { dimLights(); hit.push("🌑 lights dimmed for 45 s"); }
+    if (run.strikes % 3 === 0) { dimLights(); hit.push(`🌑 lights dimmed for ${MAX_WAIT} s`); }
   }
   save();
   const st = document.getElementById("strikes"); if (st) st.textContent = `⚠️ ${"Strikes"} ${run.strikes}`;
@@ -5009,9 +5022,25 @@ function miss(box) {
   document.getElementById("pfb").innerHTML = `<div class="fb no">
     ${say(rw, rt, rm)}
     <div class="rules"><b>${"Penalties"}:</b> ${hit.join(" · ")}${jam ? `<br>${warn}` : ""}</div>
+    ${slipped ? `<div class="row" style="justify-content:center"><button class="btn blue" id="slipGo">🔙 Try the bonus question</button></div>` : ""}
     ${say("hachiware", `${jam ? "Let's slow down and read carefully. Nantoka naare~!" : "Don't worry! We can figure this out together."} 💡 ${esc(p.hint)}`, "normal", "hint")}
     ${R.att[k] >= 2 ? (b => say(b[0], b[2], b[1]))(pick(REACT.brave)) : ""}</div>`;
   if (jam) startJam(i, jam, reason);
+  if (slipped) {
+    const ans = document.getElementById("ans"); if (ans) ans.inert = true;
+    document.getElementById("slipGo").onclick = () => { SFX.tap(); openPuzzle(i); };
+  }
+}
+/* Lock slip: step back one notch and swap in a fresh question of a similar level for that step. */
+function slipLock(i) {
+  const run = S.room_run[R.room.id], s = stepOf(i) - 1, old = R.qs[i][s], used = R.qs.flat().map(q => q.id);
+  let c = R.room.pool.filter(q => !used.includes(q.id) && !q.gen && Math.abs(q.b - old.b) <= 1);
+  if (!c.length) c = R.room.pool.filter(q => !used.includes(q.id) && !q.gen);
+  if (!c.length) return false;
+  const nq = pick(c);
+  R.qs[i][s] = nq; run.qids[i * LOCK_Q + s] = nq.id; run.steps[i] = s;
+  const nk = `${i}_${s}`; delete R.att[nk]; delete R.hinted[nk];
+  save(); return true;
 }
 function solve() {
   const { room } = R, i = R.cur, step = stepOf(i), p = curQ(i), k = akey(i);
