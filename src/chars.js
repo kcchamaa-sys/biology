@@ -1,6 +1,6 @@
 <script>
 /* ============================================================
-   1. Characters: original Chiikawa-style SVG drawings (not official artwork)
+   1. Characters: original kawaii-style SVG drawings (not official artwork)
    moods: "normal" | "happy" | "cry" | "shock" | "sparkle" | "brave"
    ============================================================ */
 const L = en => en; // English-only build: keeps text helpers simple
@@ -21,6 +21,7 @@ function eyes(m, o = {}) {
   if (m === "cry") return `<path d="M${x1 - 10} ${y - 12} L${x1 + 6} ${y - 16} M${x2 + 10} ${y - 12} L${x2 - 6} ${y - 16}" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>` + dot(x1) + dot(x2)
     + `<path class="tear" d="M${x1 - 3} ${y + 8} Q${x1 - 8} ${y + 22} ${x1 - 3} ${y + 30} Q${x1 + 2} ${y + 22} ${x1 - 3} ${y + 8}Z M${x2 + 3} ${y + 8} Q${x2 - 2} ${y + 22} ${x2 + 3} ${y + 30} Q${x2 + 8} ${y + 22} ${x2 + 3} ${y + 8}Z" fill="#9ED0F0" stroke="#6FAFD8" stroke-width="1.2"/>`;
   if (m === "brave") return dot(x1) + dot(x2) + `<path d="M${x1 - 10} ${y - 16} L${x1 + 7} ${y - 10} M${x2 + 10} ${y - 16} L${x2 - 7} ${y - 10}" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>`;
+  if (m === "sick") return `<path d="M${x1 - 9} ${y - 2} h18 M${x2 - 9} ${y - 2} h18" stroke="${CO}" stroke-width="3" stroke-linecap="round"/><path d="M${x1 - 8} ${y} Q${x1} ${y + 8} ${x1 + 8} ${y} M${x2 - 8} ${y} Q${x2} ${y + 8} ${x2 + 8} ${y}" stroke="${CO}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
   if (m === "line") return `<path d="M${x1 - 8} ${y} h16 M${x2 - 8} ${y} h16" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>`;
   return dot(x1) + dot(x2);
 }
@@ -31,38 +32,39 @@ function blush(hatch = true, y = 132) {
 function mouth(m, open, y = 130) {
   if (m === "cry") return `<path d="M88 ${y + 6} q4 -6 8 0 q4 6 8 0 q4 -6 8 0" fill="none" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>`;
   if (m === "shock") return `<ellipse cx="100" cy="${y + 6}" rx="6" ry="8" fill="#E88A9A" stroke="${CO}" stroke-width="3"/>`;
+  if (m === "sick") return `<path d="M90 ${y + 5} q5 -5 10 0 q5 5 10 0" fill="none" stroke="${CO}" stroke-width="3" stroke-linecap="round"/><path d="M106 ${y + 5} L136 ${y + 16}" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M106 ${y + 5} L136 ${y + 16}" stroke="#9ED0F0" stroke-width="2.5" stroke-linecap="round"/><circle cx="137" cy="${y + 17}" r="4.5" fill="#FF6B6B" stroke="${CO}" stroke-width="1.5"/>`;
   if (m === "brave") return `<path d="M91 ${y + 3} h18" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>`;
   if (open || m === "happy" || m === "sparkle") return `<path d="M89 ${y - 2} Q100 ${y + 18} 111 ${y - 2}Z" fill="#E88A9A" stroke="${CO}" stroke-width="3" stroke-linejoin="round"/><path d="M95 ${y + 7} Q100 ${y + 3} 105 ${y + 7}" fill="#F7B6C2"/>`;
   return `<path d="M91 ${y} q4.5 6 9 0 q4.5 6 9 0" fill="none" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>`;
 }
 const capClip = (d, fill) => { const id = "cc" + (++clipN); return `<clipPath id="${id}"><path d="${BODY}"/></clipPath><path clip-path="url(#${id})" d="${d}" fill="${fill}"/>`; };
 const CHAR = {
-  chiikawa: { name: "Chiikawa", color: "#ffffff",
+  chiikawa: { name: "Bao", color: "#ffffff",
     back: () => `<circle cx="62" cy="76" r="15" fill="#fff" ${CS}/><circle cx="138" cy="76" r="15" fill="#fff" ${CS}/><circle cx="62" cy="77" r="6.5" fill="#FFD1DA"/><circle cx="138" cy="77" r="6.5" fill="#FFD1DA"/>`,
     face: m => blush(true) + eyes(m) + mouth(m) },
-  hachiware: { name: "Hachiware", color: "#ffffff", ear: "#9EB9E6",
+  hachiware: { name: "Sora", color: "#ffffff", ear: "#9EB9E6",
     back: () => `<path d="M48 104 L56 48 L94 70Z" fill="#9EB9E6" ${CS}/><path d="M152 104 L144 48 L106 70Z" fill="#9EB9E6" ${CS}/><path d="M58 88 L61 62 L80 74Z M142 88 L139 62 L120 74Z" fill="#F7C6D4"/>`,
     front: () => capClip("M0 0 H200 V100 H132 L100 70 L68 100 H0Z", "#9EB9E6"),
     face: m => blush(true) + eyes(m) + mouth(m) },
-  usagi: { name: "Usagi", color: "#FDF3A8",
+  usagi: { name: "Pom", color: "#FDF3A8",
     back: () => `<ellipse cx="78" cy="40" rx="14" ry="36" fill="#FDF3A8" ${CS} transform="rotate(-8 78 40)"/><ellipse cx="122" cy="40" rx="14" ry="36" fill="#FDF3A8" ${CS} transform="rotate(8 122 40)"/><ellipse cx="78" cy="42" rx="6" ry="24" fill="#FFB9C8" transform="rotate(-8 78 42)"/><ellipse cx="122" cy="42" rx="6" ry="24" fill="#FFB9C8" transform="rotate(8 122 42)"/>`,
     face: m => blush(true) + eyes(m) + mouth(m, m !== "brave" && m !== "cry") },
-  momonga: { name: "Momonga", color: "#ffffff",
+  momonga: { name: "Lulu", color: "#ffffff",
     back: () => `<path d="M150 168 C204 170 210 104 176 88 C188 118 178 146 150 150Z" fill="#C9C3F0" ${CS}/><path d="M176 96 C190 116 188 140 176 152" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7"/><circle cx="58" cy="80" r="15" fill="#C9C3F0" ${CS}/><circle cx="142" cy="80" r="15" fill="#C9C3F0" ${CS}/>`,
     front: () => capClip("M0 0 H200 V98 Q100 74 0 98Z", "#C9C3F0"),
     face: m => blush(false) + eyes(m, { big: true }) + mouth(m) },
-  kurimanju: { name: "Kuri-Manju", color: "#F2D7AE",
+  kurimanju: { name: "Maron", color: "#F2D7AE",
     front: () => capClip("M0 0 H200 V100 Q100 82 0 100Z", "#A8703F") + `<path d="M74 78 Q90 70 104 72" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".45"/>`,
     face: m => blush(false) + eyes(m === "normal" ? "line" : m) + mouth(m) },
-  shisa: { name: "Shisa", color: "#FFF1C9",
+  shisa: { name: "Leo", color: "#FFF1C9",
     back: () => [[38, 104], [34, 134], [44, 160], [162, 104], [166, 134], [156, 160], [56, 76], [144, 76], [80, 60], [120, 60]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="17" fill="#F2A36B" ${CS}/>`).join("") + `<circle cx="66" cy="72" r="10" fill="#FFF1C9" ${CS}/><circle cx="134" cy="72" r="10" fill="#FFF1C9" ${CS}/>`,
     face: m => `<path d="M68 98 q6 -7 13 0 M119 98 q7 -7 13 0" stroke="#E07A3F" stroke-width="3.5" fill="none" stroke-linecap="round"/>` + blush(false) + eyes(m) + mouth(m) },
-  rakko: { name: "Rakko", color: "#EAD7BC",
+  rakko: { name: "Otto", color: "#EAD7BC",
     back: () => `<circle cx="60" cy="82" r="11" fill="#EAD7BC" ${CS}/><circle cx="140" cy="82" r="11" fill="#EAD7BC" ${CS}/>`,
     face: m => `<ellipse cx="100" cy="136" rx="20" ry="13" fill="#fff" stroke="${CO}" stroke-width="2.5"/><ellipse cx="100" cy="128" rx="6.5" ry="4.5" fill="${CO}"/>` + blush(false)
       + (m === "normal" || m === "brave" ? `<path d="M73 109 l14 14 M87 109 l-14 14" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>` + eyes("x").replace(/^[\s\S]*?(<ellipse cx="120")/, "$1") : eyes(m)) + mouth(m, false, 142) }
 };
-/* Dress-up layers for Chiikawa (the player). Items live in WARDROBE (engine). */
+/* Dress-up layers for Bao (the player). Items live in WARDROBE (engine). */
 function dressParts(eq) {
   eq = eq || (typeof S !== "undefined" && S && S.equip);
   const it = k => eq && eq[k] && typeof itemById === "function" ? itemById(eq[k]) : null;
@@ -97,6 +99,7 @@ function charSvg(who, m = "normal", eq, full = true) {
   if (full && who === "rakko") s += `<path d="M170 176 L190 96" stroke="${CO}" stroke-width="9" stroke-linecap="round"/><path d="M170 176 L190 96" stroke="#D3E4FF" stroke-width="4.5" stroke-linecap="round"/><path d="M160 158 h22" stroke="${CO}" stroke-width="6" stroke-linecap="round"/>`;
   if (full && who === "usagi" && m !== "cry") s += `<path d="M14 100 l-10 -8 M18 84 l-6 -12 M186 100 l10 -8" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>`;
   if (m === "sparkle" || m === "happy") s += `<g class="twinkle">${spark4(26, 70, 8, "#FFB3C1")}${spark4(176, 60, 7, "#A9D4EE")}</g>`;
+  if (m === "sick") s += `<path d="M82 84 v12 M100 80 v14 M118 84 v12" stroke="#8FB8E8" stroke-width="3.5" stroke-linecap="round" opacity=".85"/><ellipse cx="62" cy="132" rx="13" ry="8" fill="#FF8FA3" opacity=".7"/><ellipse cx="138" cy="132" rx="13" ry="8" fill="#FF8FA3" opacity=".7"/>`;
   if (m === "shock") s += `<path d="M160 70 Q154 82 160 88 Q166 82 160 70Z" fill="#9ED0F0" stroke="#6FAFD8" stroke-width="1.5"/>`;
   return s;
 }
@@ -106,11 +109,11 @@ const FIG_VB = "-14 -6 228 202";
 function figure(who, mood = "normal", eq) {
   return `<svg viewBox="${FIG_VB}" aria-hidden="true"><g class="squish">${charSvg(who, mood, eq, true)}</g></svg>`;
 }
-/* Short emotional reactions: Chiikawa and friends react out loud to what happens */
+/* Short emotional reactions: Bao and friends react out loud to what happens */
 const REACT = {
-  right: [["usagi", "happy", "Yaha! 🐰"], ["chiikawa", "sparkle", "Ya...! We did it! ✨"], ["hachiware", "happy", "Sugoi! You're so smart! 💙"], ["momonga", "sparkle", "Hmph... that was cute AND correct! 💜"], ["usagi", "happy", "URA! URAAA! 🎉"], ["chiikawa", "happy", "Waaai~! 🥹"]],
+  right: [["usagi", "happy", "Wahoo! 🐰"], ["chiikawa", "sparkle", "Ya...! We did it! ✨"], ["hachiware", "happy", "Sugoi! You're so smart! 💙"], ["momonga", "sparkle", "Hmph... that was cute AND correct! 💜"], ["usagi", "happy", "WOO! WOOOO! 🎉"], ["chiikawa", "happy", "Waaai~! 🥹"]],
   wrong: [["chiikawa", "cry", "Wah...! 😭 The lock didn't open..."], ["chiikawa", "shock", "Eh?! EHHH?! 😱"], ["chiikawa", "cry", "Uu... uuu... 🥺"], ["usagi", "shock", "Haa?! 🐰💦"]],
-  brave: [["chiikawa", "brave", "I-I won't give up! 💪"], ["hachiware", "happy", "Nantoka naare~! It'll work out somehow! ✨"], ["chiikawa", "brave", "Let's read it again... slowly. 📖"]]
+  brave: [["chiikawa", "brave", "I-I won't give up! 💪"], ["hachiware", "happy", "It'll work out somehow! ✨"], ["chiikawa", "brave", "Let's read it again... slowly. 📖"]]
 };
 
 /* ============================================================
@@ -150,7 +153,7 @@ const SFX = {
 };
 
 /* ============================================================
-   2b. Background music: 8 ORIGINAL cute tunes in a cheerful Chiikawa-like mood,
+   2b. Background music: 8 ORIGINAL cute tunes in a cheerful Bao-like mood,
    generated live with Web Audio (no audio files, no official soundtrack).
    Each song: 8 bars × 8 eighth-notes. melody/bass are MIDI numbers (0 = rest),
    chords are held pads, drums are 8-step strings (k kick, s snare, h hat, . rest).
@@ -189,14 +192,14 @@ const SONGS = {
     melody: [[79, 0, 79, 81, 83, 0, 79, 0], [76, 0, 79, 0, 76, 0, 74, 0], [72, 0, 76, 0, 79, 0, 76, 0], [74, 0, 78, 0, 81, 0, 0, 0],
              [83, 0, 81, 79, 81, 0, 79, 76], [79, 0, 76, 0, 74, 0, 71, 0], [72, 0, 74, 76, 79, 0, 76, 0], [74, 0, 78, 0, 79, 0, 0, 0]],
     bass: bassBar([43, 40, 36, 38, 43, 40, 36, 38], [0, null, 7, null, 0, 12, 7, null]) },
-  // Boss stages: "Rakko's Trial" (D minor, brave and driving)
-  boss: { title: "Rakko's Trial", bpm: 118, swing: 0, lead: "pluck", drums: "k.hsk.hs",
+  // Boss stages: "Otto's Trial" (D minor, brave and driving)
+  boss: { title: "Otto's Trial", bpm: 118, swing: 0, lead: "pluck", drums: "k.hsk.hs",
     chords: ["Dm", "Bb", "C", "A", "Dm", "Bb", "C", "A"],
     melody: [[74, 0, 74, 77, 76, 0, 74, 0], [70, 0, 74, 0, 77, 0, 74, 0], [72, 0, 76, 0, 79, 77, 76, 0], [73, 0, 76, 0, 81, 0, 0, 0],
              [81, 0, 79, 77, 76, 0, 74, 0], [77, 0, 74, 0, 70, 0, 74, 0], [76, 0, 72, 0, 79, 0, 76, 0], [73, 0, 69, 0, 74, 0, 0, 0]],
     bass: bassBar([38, 34, 36, 33, 38, 34, 36, 33], [0, 0, 12, 0, 0, 12, 0, 7]) },
-  // Cell Rush: "Yaha Dash" (fast C major)
-  rush: { title: "Yaha Dash", bpm: 150, swing: 0, lead: "marimba", drums: "k.hsk.hs",
+  // Cell Rush: "Wahoo Dash" (fast C major)
+  rush: { title: "Wahoo Dash", bpm: 150, swing: 0, lead: "marimba", drums: "k.hsk.hs",
     chords: ["C", "G", "Am", "F", "C", "G", "F", "C"],
     melody: [[72, 76, 79, 76, 72, 76, 79, 84], [83, 79, 74, 79, 83, 0, 79, 0], [81, 76, 72, 76, 81, 84, 81, 76], [77, 0, 81, 0, 77, 0, 74, 0],
              [72, 76, 79, 84, 83, 79, 76, 79], [74, 79, 83, 86, 84, 0, 83, 0], [81, 84, 81, 76, 77, 81, 77, 74], [72, 0, 79, 0, 72, 0, 0, 0]],

@@ -4,13 +4,13 @@
    Tabs: 🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🏆 Rewards
    ============================================================ */
 let homeTab = "home", dressSlot = "hat", dressTry = null;
-const NAV_TABS = [["home", "🏠", "Home"], ["stages", "🗺️", "Stages"], ["play", "🎮", "Practice"], ["dress", "👗", "Dress up"], ["rewards", "🏆", "Rewards"]];
+const NAV_TABS = [["home", "🏠", "Home"], ["stages", "🗺️", "Stages"], ["play", "🎮", "Practice"], ["dress", "👗", "Dress up"], ["pets", "🐾", "Pets"], ["rewards", "🏆", "Rewards"]];
 function renderNav(active) {
   const nav = document.getElementById("bnav"); if (!nav) return;
   $app.className = active ? "tab-" + active : "";
   if (active === false || !S) { nav.hidden = true; document.body.classList.remove("has-nav"); return; }
   nav.hidden = false; document.body.classList.add("has-nav");
-  const badge = { play: mistakeKeys().length, rewards: S.coll.pending };
+  const badge = { play: mistakeKeys().length, rewards: S.coll.pending, home: S.ill ? "🤒" : 0 };
   nav.innerHTML = `<div class="nav-in">${NAV_TABS.map(([id, ic, label]) => `<button data-nav="${id}" ${active === id ? 'aria-current="page"' : ""}><span class="ni" aria-hidden="true">${ic}</span>${label}${badge[id] ? `<span class="nbadge">${badge[id]}</span>` : ""}</button>`).join("")}</div>`;
   nav.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); homeTab = b.dataset.nav; renderMap(); window.scrollTo({ top: 0 }); });
 }
@@ -27,16 +27,19 @@ function wireModeSwitch(root) {
   root.querySelectorAll("[data-pm]").forEach(b => b.onclick = () => { SFX.tap(); S.playMode = b.dataset.pm; save(); toast(isStudy() ? "📖 Study mode: take your time, no timer or penalties." : "⏱️ Escape mode: beat the clock!"); renderMap(); });
 }
 
-/* A cosy pastel room with the player's dressed-up Chiikawa, like the Mochi pet room */
+/* A cosy pastel room with the player's dressed-up Bao, like the Mochi pet room */
 function roomWindow() {
   const h = new Date().getHours(), night = h >= 19 || h < 6;
   return `<svg class="rwin" viewBox="0 0 100 105" aria-hidden="true"><rect x="4" y="4" width="92" height="92" rx="18" fill="${night ? "#6E6590" : "#CFE9F7"}" stroke="#fff" stroke-width="6"/>${night
     ? `<circle cx="66" cy="34" r="12" fill="#FFF1C5"/><circle cx="72" cy="30" r="10" fill="#6E6590"/><circle cx="28" cy="60" r="2" fill="#fff"/><circle cx="40" cy="28" r="1.6" fill="#fff"/>`
     : `<circle cx="30" cy="32" r="12" fill="#FFF1A8"/><ellipse cx="62" cy="62" rx="20" ry="9" fill="#fff"/>`}<path d="M50 4 V96 M4 50 H96" stroke="#fff" stroke-width="5"/><rect x="0" y="92" width="100" height="10" rx="5" fill="#E6CBB0"/></svg>`;
 }
-function roomCard(line, mood = "happy", eq) {
+function roomCard(line, mood = "happy", eq, withPet = true) {
+  const pet = withPet && S.activePet && S.pets[S.activePet] ? petById(S.activePet) : null;
+  if (S.ill) mood = "sick";
   return `<div class="petroom">${roomWindow()}<div class="pbubble">${line}</div>
-    <div class="rug"></div><div class="pet ${frameCls(eq)}">${figure("chiikawa", mood, eq)}</div></div>`;
+    <div class="rug"></div><div class="pet ${frameCls(eq)}">${figure("chiikawa", mood, eq)}</div>
+    ${pet ? `<button class="rpet" data-pet="${pet.id}" aria-label="${esc(pet.nick)} the ${esc(pet.name)}">${petSvg(pet.id)}</button>` : ""}</div>`;
 }
 function weekDots() {
   const n = Math.min(7, S.current_streak || 0), d = new Date();
@@ -44,6 +47,7 @@ function weekDots() {
 }
 function greeting() {
   if (streakNote) return esc(streakNote);
+  if (S.ill) return `Achoo... I feel sick... 🤒 (${esc(illById(S.ill.id).sym.split(",")[0])})`;
   const h = new Date().getHours(), ni = nextRoomIndex();
   return pick([h < 12 ? `Good morning, ${esc(S.player_name)}! ☀️` : h < 18 ? `Hi ${esc(S.player_name)}! Ready for one small stage? 🌱` : `Evening study buddy~ 🌙`,
     ni === -1 ? "We escaped EVERY stage! 🥹🎉" : "Ya...! Let's explore biology together! ✨", "Tap 👗 Dress up to change my look! 🎀"]);
@@ -54,9 +58,9 @@ function renderMap() {
   if (!NAV_TABS.some(t => t[0] === homeTab)) homeTab = "home";
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni];
   if (mapPart === null) mapPart = nr ? TOPICS[nr.t].p : 0;
-  $app.innerHTML = { home: homeHtml, stages: stagesHtml, play: playHtml, dress: dressHtml, rewards: rewardsHtml }[homeTab]();
+  $app.innerHTML = { home: homeHtml, stages: stagesHtml, play: playHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml }[homeTab]();
   renderNav(homeTab);
-  ({ home: wireHome, stages: wireStages, play: wirePlay, dress: wireDress, rewards: wireRewards })[homeTab]();
+  ({ home: wireHome, stages: wireStages, play: wirePlay, dress: wireDress, pets: wirePets, rewards: wireRewards })[homeTab]();
 }
 
 /* ----- 🏠 Home ----- */
@@ -67,6 +71,8 @@ function homeHtml() {
     <section class="card roomwrap">${roomCard(greeting(), S.completed_rooms.length ? "happy" : "normal")}
       <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" id="chest" ${chestReady ? "" : "disabled"}>${chestReady ? "🎁 Daily chest" : "🎁 Back tomorrow"}</button></div></section>
     <div class="homeside">
+      ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>Bao is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Bao gets better.</div></div></div>
+        <button class="btn big" id="goClinic">🩺 Open the medicine cabinet</button></section>` : ""}
       <section class="card nextcard">
         <span class="kicker">✨ One small thing today</span>
         ${nr ? `<h2>${T.icon} ${esc(nr.name)}</h2><p class="small muted" style="margin:0">Topic ${T.no}: ${esc(T.name)} · ${nr.boss ? "⚔️ Boss stage" : `Stage ${nr.s}`} · ${esc(nr.focus)}</p>`
@@ -82,15 +88,17 @@ function homeHtml() {
 }
 function wireHome() {
   wireCommon(); wireChatCard(); wireModeSwitch($app);
+  const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
   const c = document.getElementById("chest");
   if (S.last_chest_date !== today()) c.onclick = () => {
     SFX.init(); SFX.fanfare(); confetti(70);
     const snack = pick(SNACKS); S.inventory.push(snack);
     let extra = ""; if (Math.random() < .2 && S.streak_shields < 3) { S.streak_shields++; extra = " …and a 🛡️ shield!"; }
-    S.last_chest_date = today(); S.stats.chests += 1; S.coll.pending += 1; streakNote = `🎁 Kuri-Manju opened the chest: ${snack}${extra} …plus a mystery capsule!`; save(true); renderMap(); checkTrophies(); openCapsule();
+    S.last_chest_date = today(); S.stats.chests += 1; S.coll.pending += 1; streakNote = `🎁 Maron opened the chest: ${snack}${extra} …plus a mystery capsule!`; save(true); renderMap(); checkTrophies(); openCapsule();
   };
 }
 function wireCommon() {
+  $app.querySelectorAll(".rpet[data-pet]").forEach(b => b.onclick = () => { SFX.item(); const p = petById(b.dataset.pet); const bub = $app.querySelector(".pbubble"); if (bub) { bub.innerHTML = `<b>${esc(p.nick)}:</b> ${esc(pick(p.story.split(". ")))}${/[.!?]$/.test(p.story) ? "" : "."}`; bub.style.animation = "none"; void bub.offsetWidth; bub.style.animation = ""; } b.classList.remove("hop"); void b.offsetWidth; b.classList.add("hop"); });
   $app.querySelectorAll("[data-room]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); streakNote = ""; enterRoom(b.dataset.room); });
   $app.querySelectorAll("[data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });
 }
@@ -220,3 +228,28 @@ function wireDress() {
   });
 }
 function openShop(tab) { dressSlot = tab === "power" ? "power" : dressSlot === "power" ? "hat" : dressSlot; closeModal(); goTab("dress"); }
+
+/* ----- 🐾 Pets ----- */
+let petFilter = "all";
+function petsHtml() {
+  const own = PETS.filter(p => S.pets[p.id]).length, act = S.activePet && petById(S.activePet);
+  const F = { all: ["All", () => true], hk: ["🇭🇰 Hong Kong", p => p.hk], esc: ["⏱️ Escape only", p => p.esc], mine: ["⭐ Mine", p => S.pets[p.id]] };
+  const order = { common: 0, rare: 1, epic: 2, legend: 3 };
+  const list = PETS.filter(F[petFilter][1]).slice().sort((a, b) => order[a.rar] - order[b.rar]);
+  return `<section class="card">
+      <div class="row" style="justify-content:space-between"><h2>🐾 Bao's pets</h2><span class="pill">${own} / ${PETS.length} adopted · 🇭🇰 ${PETS.filter(p => p.hk && S.pets[p.id]).length} / 5</span></div>
+      ${say("chiikawa", act ? `${esc(act.nick)} the ${esc(act.name)} is my companion! Tap a pet to read its real biology story. 🥹` : "Rare animals from all over the world want to live with me! Clear stages to adopt them. Half of them only come in ⏱️ Escape mode! 🐾", "happy")}
+      <div class="slottabs" role="tablist">${Object.entries(F).map(([k, [l]]) => `<button role="tab" aria-selected="${k === petFilter}" data-pf="${k}">${l}</button>`).join("")}</div>
+      <div class="petgrid">${list.map(p => { const got = !!S.pets[p.id];
+        return `<button class="petcard ${got ? "own" : "locked"} ${p.rar} ${S.activePet === p.id ? "active" : ""}" data-openpet="${p.id}">
+          ${p.hk ? `<span class="itag hk">🇭🇰 HK</span>` : p.esc ? `<span class="itag esc">⏱️ Escape</span>` : ""}
+          <div class="petpic">${petSvg(p.id)}</div>
+          <b class="small">${got ? esc(p.nick) : "???"}</b><span class="small muted">${esc(p.name)}</span>
+          <span class="rchip" style="background:${PET_RAR[p.rar][1]}">${PET_RAR[p.rar][0]}</span>
+          ${got ? "" : `<div class="tprog" style="width:100%"><i style="width:${Math.min(100, Math.round(100 * petVal(p.k) / p.n))}%"></i></div>`}</button>`; }).join("")}</div>
+    </section>`;
+}
+function wirePets() {
+  $app.querySelectorAll("[data-pf]").forEach(b => b.onclick = () => { SFX.tap(); petFilter = b.dataset.pf; renderMap(); });
+  $app.querySelectorAll("[data-openpet]").forEach(b => b.onclick = () => { SFX.tap(); openPet(b.dataset.openpet); });
+}

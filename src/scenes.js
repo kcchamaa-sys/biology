@@ -13,7 +13,7 @@ const lampFor = (x, y, solved) => `<rect x="${x}" y="${y}" width="24" height="36
 const SCENES = {
   library: { label: "Library", sp: [0, 0], door: { x: 93, y: 47 },
     hs: [H("Bookshelf", 15, 50, "card", "Code card", "A biology textbook is glowing on the shelf... there's a question inside!"), H("Wall clock", 37.5, 20, "hand", "Clock hand", "The clock has stopped ticking. A riddle is written on its face."), null,
-      H("Locked box", 38, 86, "key", "Small key", "A cute pink box with a padlock. It's humming quietly..."), H("Safe", 77.5, 63, "gem", "Cell gem", "A heavy safe with a dial. Hmm... Chiikawa gulps.")],
+      H("Locked box", 38, 86, "key", "Small key", "A cute pink box with a padlock. It's humming quietly..."), H("Safe", 77.5, 63, "gem", "Cell gem", "A heavy safe with a dial. Hmm... Bao gulps.")],
     draw(r, n) {
       const books = ["#FFB7C5", "#A0C4FF", "#FDFFB6", "#B9F3C9", "#C9C3F0", "#FFB7C5", "#A0C4FF"];
       return `<rect width="800" height="500" fill="${r.tint}"/><rect y="360" width="800" height="140" fill="${r.floor}"/><path d="M0 360 H800" ${SO}/>

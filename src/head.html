@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#2b2433">
-<title>Chiikawa Bio Escape</title>
-<meta name="description" content="A cute Chiikawa-style biology escape-room adventure for Secondary 4–6.">
+<title>Bao Bio Escape</title>
+<meta name="description" content="A cute kawaii-style biology escape-room adventure for Secondary 4–6.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
-/* Single deliberate look: Chiikawa picture-book cream + dim escape-room scenes. */
+/* Single deliberate look: Bao picture-book cream + dim escape-room scenes. */
 :root {
   color-scheme: light;
   --cream: #FFFDF0;
@@ -411,6 +411,38 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .itag { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); font-size: .66rem; font-weight: 800; border: 2px solid var(--ink); border-radius: 999px; padding: 0 7px; white-space: nowrap; background: #FFE27A; }
 .itag.hk { background: #FFC2C2; }
 @media (prefers-reduced-motion: reduce) { .squish, .twinkle, .tear, .streakcard .flame { animation: none; } }
+/* Pets and clinic */
+.bnav .nav-in { grid-template-columns: repeat(6, 1fr); }
+@media (max-width: 400px) { .bnav button { font-size: .7rem; } }
+.rpet { position: absolute; left: 6%; bottom: 10px; width: 26%; max-width: 110px; background: none; border: 0; padding: 0; cursor: pointer; animation: capbob 2.2s ease-in-out infinite; }
+.rpet svg { width: 100%; height: auto; display: block; overflow: visible; }
+.rpet.hop { animation: pethop .5s ease-out; }
+@keyframes pethop { 40% { transform: translateY(-18px); } }
+.petgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 12px; }
+.petcard { position: relative; background: #fff; border: var(--line); border-radius: 18px; box-shadow: var(--shadow-sm); padding: 10px 8px; display: grid; gap: 3px; justify-items: center; text-align: center; font: inherit; color: inherit; cursor: pointer; min-width: 0; }
+.petcard .petpic { width: 92px; height: 88px; }
+.petcard .petpic svg, .petpic svg { width: 100%; height: 100%; overflow: visible; }
+.petcard.locked .petpic svg { filter: brightness(0) opacity(.18); }
+.petcard.own.rare { background: linear-gradient(180deg, #EEF4FF, #fff 60%); }
+.petcard.own.epic { background: linear-gradient(180deg, #F3EAFF, #fff 60%); }
+.petcard.own.legend { background: linear-gradient(160deg, #FFF6C8, #FFE3EC 50%, #E0ECFF); box-shadow: var(--shadow-sm), 0 0 16px rgba(255, 210, 60, .55); }
+.petcard.active { outline: 4px solid var(--green); outline-offset: 2px; }
+.rchip { font-size: .68rem; font-weight: 800; border: 2px solid var(--ink); border-radius: 999px; padding: 0 7px; }
+.itag.esc { background: #2B2433; color: #fff; }
+.petstory { display: grid; grid-template-columns: 150px 1fr; gap: 14px; align-items: center; }
+.petstory .petpic { width: 150px; height: 140px; }
+.petstory .petpic.locked svg { filter: brightness(0) opacity(.2); }
+@media (max-width: 480px) { .petstory { grid-template-columns: 1fr; justify-items: center; } }
+.petreveal { width: 190px; height: 180px; margin: 0 auto; animation: cappop .6s ease-out; }
+.petreveal svg { width: 100%; height: 100%; overflow: visible; }
+.petreveal.legend { filter: drop-shadow(0 0 18px rgba(255, 210, 60, .9)); }
+.sickcard { background: #FFF0F0; border-color: #C0392B; }
+.chart { background: #F4FAFF; border: 2px dashed var(--ink); border-radius: 14px; padding: 10px 12px; line-height: 1.5; }
+.medgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.med { border: var(--line); border-radius: 14px; background: #fff; box-shadow: var(--shadow-sm); font: inherit; font-weight: 700; font-size: .88rem; padding: 8px; display: flex; gap: 8px; align-items: center; text-align: left; cursor: pointer; min-height: 52px; }
+.med .mi { font-size: 1.5rem; }
+.med.tried { opacity: .45; text-decoration: line-through; box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { .rpet { animation: none; } }
 /* Anti-guessing */
 .jam { border: var(--line); border-radius: 16px; background: #2B2433; color: #fff; padding: 12px; display: grid; gap: 6px; text-align: center; }
 .jam .jt { color: var(--led); font-weight: 800; font-size: 1.6rem; font-variant-numeric: tabular-nums; text-shadow: 0 0 8px rgba(255,107,107,.8); }
@@ -419,7 +451,7 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .penalty { position: fixed; left: 50%; top: 30%; transform: translateX(-50%); z-index: 96; pointer-events: none; font-size: 2.4rem; font-weight: 800; color: #fff; background: #D64545; border: var(--line); border-radius: 18px; padding: 0 16px; box-shadow: var(--shadow); animation: rise 1.1s ease-out forwards; }
 .rules { background: #FFF0F0; border: 2px dashed var(--ink); border-radius: 12px; padding: 8px 12px; font-size: .9rem; }
 .rules ul { margin: 4px 0 0; padding-left: 20px; }
-/* Frames around the player's Chiikawa */
+/* Frames around the player's Bao */
 .fr-rainbow { border-radius: 50%; background: conic-gradient(#FFB7C5, #FDFFB6, #B9F3C9, #A0C4FF, #C9C3F0, #FFB7C5); padding: 4px; }
 .fr-laser { border-radius: 50%; background: #2B2433; padding: 4px; box-shadow: 0 0 0 2px #39FF14, 0 0 12px #39FF14; }
 .fr-sakura { border-radius: 50%; background: radial-gradient(circle, #FFE3EA 60%, #FFB7C5 61%); padding: 4px; }
@@ -568,11 +600,11 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
   <filter id="sketch"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter>
 </svg>
 <header class="top">
-  <button class="brand" id="home" aria-label="Go to the topic map"><span id="brandav"></span><span class="bt" id="brandText">Chiikawa Bio Escape</span></button>
+  <button class="brand" id="home" aria-label="Go to the topic map"><span id="brandav"></span><span class="bt" id="brandText">Bao Bio Escape</span></button>
   <div class="tools" id="tools"></div>
 </header>
 <main id="app"></main>
-<footer id="footText">Fan-made biology adventure game. Not affiliated with the official Chiikawa brand; Chiikawa belongs to Nagano. Characters are original Chiikawa-style drawings, not official artwork.</footer>
+<footer id="footText">Biology adventure game with original kawaii-style characters. All art is drawn for this game.</footer>
 <nav id="bnav" class="bnav" aria-label="Main" hidden></nav>
 <div id="modal"></div>
 <div id="journal"></div>

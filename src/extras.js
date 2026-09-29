@@ -22,8 +22,8 @@ document.addEventListener("click", e => { const b = e.target.closest && e.target
 
 /* 🔥 Streak bonus: chestnut rewards grow 5% per streak day, up to ×1.5 */
 const streakMult = () => Math.min(1.5, 1 + .05 * Math.max(0, ((S && S.current_streak) || 1) - 1));
-const withStreak = n => Math.round(n * streakMult());
-const multTag = () => streakMult() > 1 ? ` · 🔥 ×${streakMult().toFixed(2).replace(/0$/, "")} streak bonus` : "";
+const withStreak = n => Math.round(n * streakMult() * (S && S.ill ? .5 : 1));
+const multTag = () => (streakMult() > 1 ? ` · 🔥 ×${streakMult().toFixed(2).replace(/0$/, "")} streak bonus` : "") + (S && S.ill ? " · 🤒 ×0.5 (Bao is sick)" : "");
 
 /* Near-miss check for spelling ("so close!") */
 function lev(a, b) {
@@ -59,11 +59,13 @@ const FACTS = {
 const FACT_WHO = ["hachiware", "momonga", "kurimanju", "chiikawa", "usagi"];
 function cheerLines() {
   const ni = nextRoomIndex(), out = [];
-  if (S.current_streak > 1) out.push(["usagi", "happy", `🔥 ${S.current_streak} days in a row! Your chestnut rewards are ×${streakMult().toFixed(2).replace(/0$/, "")} right now. YAHA!`]);
+  if (S.current_streak > 1) out.push(["usagi", "happy", `🔥 ${S.current_streak} days in a row! Your chestnut rewards are ×${streakMult().toFixed(2).replace(/0$/, "")} right now. WAHOO!`]);
   else out.push(["chiikawa", "happy", "Every day you come back, your 🔥 streak grows and chestnut rewards go up (up to ×1.5)! 🥹"]);
   const nm = mistakeKeys().length; if (nm) out.push(["hachiware", "normal", `📕 ${nm} question${nm > 1 ? "s" : ""} waiting in your Mistake Notebook. Fixing just 3 today makes your brain stronger!`]);
   const nw = Object.keys(S.dict.missed).length; if (nw) out.push(["momonga", "happy", `🎧 ${nw} tricky word${nw > 1 ? "s" : ""} to practise in Word Dictation. I could spell them easily... probably. 💜`]);
   if (ni !== -1) out.push(["hachiware", "normal", `Next right step: <b>${esc(ROOMS[ni].name)}</b>. Just one stage. You've got this! 🌱`]);
+  if (S.ill) out.push(["shisa", "normal", `🤒 Bao is sick with <b>${esc(illById(S.ill.id).name)}</b>. Open the 🩺 medicine cabinet and pick the right treatment!`]);
+  out.push(["chiikawa", "happy", esc(pick(DAILY_LIFE))]);
   if (S.coll.pending) out.push(["chiikawa", "sparkle", `🎁 You have ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""} to open! What's inside?!`]);
   out.push(["kurimanju", "happy", "Tired? A 5-minute Cell Rush or a Dictation round still counts. Small steps. *sip* 🍵"]);
   return out;
@@ -151,6 +153,7 @@ function renderDictation(pre) {
   };
 }
 function dictWord() {
+  renderNav(false);
   const x = DT.words[DT.i], listen = DT.mode === "listen";
   DT.tries = 0; DT.done = false; DT.hint = false;
   $app.innerHTML = `
@@ -187,7 +190,7 @@ function dictWord() {
     if (ok) { DT.right += 1; S.stats.spellRight += 1; const cleared = rightWord(x.w); if (cleared) toast("🎧 Cleared from your missed words! 🎉"); }
     else { DT.missed.push(x); addMissedWord(x.w); }
     save();
-    document.getElementById("dFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say(pick(["usagi", "chiikawa", "momonga"]), pick(["YAHA!! Perfect spelling! 🐰", "We did it...! 🥹✨", "Correct! Almost as cute as me. 💜"]), "sparkle")
+    document.getElementById("dFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say(pick(["usagi", "chiikawa", "momonga"]), pick(["WAHOO!! Perfect spelling! 🐰", "We did it...! 🥹✨", "Correct! Almost as cute as me. 💜"]), "sparkle")
       : say("chiikawa", "Uuu... that one was tricky. 😭 We'll practise it again later!", "cry")}
       <p class="dword"><b>${esc(x.w)}</b> ${sayBtns(x.w)}</p><p class="small muted" style="text-align:center">${esc(x.m)}</p>
       <div class="row" style="justify-content:center"><button class="btn big" id="dNext">${DT.i + 1 < DT.words.length ? "Next word ▶" : "See results 🎉"}</button></div></div>`;
@@ -208,6 +211,7 @@ function dictWord() {
 }
 function dictNext() { DT.i += 1; if (DT.i < DT.words.length) dictWord(); else dictEnd(); }
 function dictEnd() {
+  renderNav("play");
   const n = Math.min(DT.i + (DT.done ? 1 : 0), DT.words.length), perfect = n >= 8 && n === DT.words.length && DT.right === n;
   S.stats.dictRounds = (S.stats.dictRounds || 0) + (n ? 1 : 0);
   S.dict.best = Math.max(S.dict.best, DT.right);
@@ -222,7 +226,7 @@ function dictEnd() {
       <p class="sub"><span class="pill coinpill">+${coins} 🌰${multTag()}</span> ${perfect ? `<span class="pill rpill">🎁 +1 capsule</span>` : ""}</p>
     </section>
     <section class="card">
-      ${perfect ? say("usagi", "URAAA!!! Every single word! 🐰🎊", "sparkle") : DT.right >= n / 2 ? say("hachiware", "Nice work! The words you missed are saved in <b>My missed words</b>. Spell each one right twice to clear it. 🌱", "happy", "hint") : say("kurimanju", "Tricky words today. That's how brains grow. Listen to them once more below. 🍵", "happy")}
+      ${perfect ? say("usagi", "WOOOO!!! Every single word! 🐰🎊", "sparkle") : DT.right >= n / 2 ? say("hachiware", "Nice work! The words you missed are saved in <b>My missed words</b>. Spell each one right twice to clear it. 🌱", "happy", "hint") : say("kurimanju", "Tricky words today. That's how brains grow. Listen to them once more below. 🍵", "happy")}
       ${DT.missed.length ? `<h3>Words to practise</h3><table class="tterms"><tbody>${DT.missed.map(x => `<tr><td><b>${esc(x.w)}</b> ${sayBtns(x.w)}</td><td>${esc(x.m)}</td></tr>`).join("")}</tbody></table>` : ""}
       <div class="row">${perfect ? `<button class="btn pink" id="dCap">🎁 Open capsule</button>` : ""}<button class="btn big" id="dAgain">🎧 Another round</button>${DT.missed.length ? `<button class="btn yellow" id="dMissed">Practise missed words</button>` : ""}<button class="btn plain" id="dMap">🗺️ Map</button></div>
     </section>`;
