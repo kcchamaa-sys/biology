@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#2b2433">
 <title>Chiikawa Bio Escape</title>
-<meta name="description" content="A Chiikawa-style escape room game for the HKDSE Biology compulsory part (S4–S6).">
+<meta name="description" content="A cute Chiikawa-style biology escape-room adventure for Secondary 4–6.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
@@ -256,8 +256,7 @@ footer { text-align: center; font-size: .78rem; color: var(--ink-soft); padding:
   background: #fff; border: var(--line); border-radius: 18px; box-shadow: var(--shadow-sm); padding: 10px 10px 12px;
   display: grid; gap: 4px; justify-items: center; text-align: center; position: relative; align-content: start;
 }
-.trophy::after { content: ""; position: absolute; left: 10px; right: 10px; top: 118px; height: 8px; background: #C98F6B; border: 2px solid var(--ink); border-radius: 4px; }
-.trophy svg.cup { width: 96px; height: 116px; overflow: visible; }
+.trophy svg.cup { width: 100px; height: 120px; overflow: visible; }
 .trophy.got svg.cup { animation: shine 3s ease-in-out infinite; }
 .trophy .tn { font-weight: 800; margin-top: 10px; line-height: 1.2; }
 .trophy .rar { font-size: .7rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; border: 2px solid var(--ink); border-radius: 999px; padding: 0 8px; }
@@ -275,6 +274,54 @@ footer { text-align: center; font-size: .78rem; color: var(--ink-soft); padding:
   display: flex; gap: 12px; align-items: center; width: min(420px, calc(100% - 32px)); animation: drop .5s ease-out;
 }
 .tbanner svg { width: 56px; height: 68px; flex: 0 0 56px; overflow: visible; }
+/* Trophy aesthetics: ribbons, rarity glows, wooden shelves */
+.ribbon { font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; border: 2px solid var(--ink); border-radius: 999px; padding: 1px 9px; white-space: nowrap; }
+.ribbon.bronze { background: #F2C9A0; } .ribbon.silver { background: #E3E8F0; } .ribbon.gold { background: #FFE27A; }
+.ribbon.legend { background: linear-gradient(90deg, #FFB7C5, #FDFFB6, #B9F3C9, #A0C4FF, #C9C3F0); background-size: 200% 100%; animation: holo 4s linear infinite; }
+.trophy .ribbon { position: absolute; top: 7px; left: 50%; transform: translateX(-50%); z-index: 1; }
+.trophy { overflow: hidden; padding-top: 30px; }
+.trophy.locked { filter: saturate(.55); }
+.trophy.locked .ribbon { opacity: .75; }
+.trophy.got.bronze { background: linear-gradient(180deg, #FFF3E6, #fff 60%); }
+.trophy.got.silver { background: linear-gradient(180deg, #F1F5FB, #fff 60%); }
+.trophy.got.gold { background: linear-gradient(180deg, #FFF6C8, #fff 60%); box-shadow: var(--shadow-sm), 0 0 18px rgba(255, 210, 60, .55); }
+.trophy.got.legend { background: linear-gradient(160deg, #FFE3EC, #FFFBD6 30%, #E2FBEA 55%, #E0ECFF 80%, #EEE8FF); box-shadow: var(--shadow-sm), 0 0 22px rgba(201, 160, 255, .6); }
+.trophy.got.gold::before, .trophy.got.legend::before { content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.75), transparent); transform: skewX(-18deg); animation: sweep 3.8s ease-in-out infinite; pointer-events: none; }
+.shelf-title { margin: 14px 0 6px; }
+.shelf.wood { background: linear-gradient(#E7C39C, #D9A878); border: var(--line); border-radius: 16px; padding: 18px 12px 14px; box-shadow: inset 0 -10px 0 #B97E52; }
+.cabinet .shelf { padding-top: 12px; }
+@keyframes sweep { 0%, 55% { left: -60%; } 100% { left: 130%; } }
+@keyframes holo { to { background-position: 200% 0; } }
+/* Capsule collection */
+.mode.coll-mode { background: linear-gradient(135deg, #FFE3EC, #E0ECFF); }
+.capbtn { background: var(--pink); animation: capbob 1.6s ease-in-out infinite; }
+@keyframes capbob { 50% { transform: translateY(-3px); } }
+.btn.pink { background: var(--pink); }
+.rpill { background: linear-gradient(90deg, #FFB7C5, #FDFFB6, #B9F3C9, #A0C4FF, #C9C3F0); }
+.collgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 12px; margin: 8px 0 14px; }
+.coll { background: #fff; border: var(--line); border-radius: 16px; box-shadow: var(--shadow-sm); padding: 10px 8px; display: grid; gap: 4px; justify-items: center; text-align: center; align-content: start; position: relative; min-width: 0; }
+.coll b { line-height: 1.2; overflow-wrap: anywhere; }
+.coll.missing { background: #F4F0E8; }
+.coll.missing .cart { filter: grayscale(1); opacity: .6; }
+.cart { width: 84px; height: 84px; display: grid; place-items: center; }
+.cart svg { width: 67px; height: 84px; display: block; }
+.reveal .cart svg { width: 96px; height: 120px; }
+.cemoji { font-size: 3rem; line-height: 1; filter: drop-shadow(2px 2px 0 rgba(74,62,61,.25)); }
+.cq { font-size: 2.2rem; font-weight: 800; color: #B5ADA2; }
+.rtag { background: linear-gradient(90deg, #FFB7C5, #FDFFB6, #B9F3C9, #A0C4FF, #C9C3F0); font-weight: 800; }
+.coll.rare.own { border-color: transparent; background: linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #FF8FB1, #FFE066, #7CE3A6, #7FB2FF, #C79BFF, #FF8FB1) border-box; background-size: 100% 100%, 300% 100%; animation: holo 3s linear infinite; box-shadow: var(--shadow-sm), 0 0 16px rgba(199, 155, 255, .55); }
+.coll.rare.missing { background: linear-gradient(135deg, #EDE6F7, #F4F0E8); }
+.capsule { width: 150px; height: 150px; margin: 8px auto; }
+.capsule svg { width: 100%; height: 100%; }
+.capsule.shake { animation: capshake .25s linear infinite; }
+@keyframes capshake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+.reveal { display: grid; justify-items: center; margin: 8px auto; animation: cappop .5s ease-out; }
+.reveal .coll { width: 170px; }
+.reveal .cart { width: 120px; height: 120px; }
+.reveal.rare { filter: drop-shadow(0 0 18px rgba(255, 190, 255, .9)); }
+@keyframes cappop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+@media (max-width: 520px) { .shelf, .collgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .shelf.wood { padding: 14px 8px 12px; } .trophy svg.cup { width: 84px; height: 100px; } .trophy .td { font-size: .74rem; } }
+@media (prefers-reduced-motion: reduce) { .capbtn, .coll.rare.own, .ribbon.legend, .trophy.got::before { animation: none !important; } }
 /* Anti-guessing */
 .jam { border: var(--line); border-radius: 16px; background: #2B2433; color: #fff; padding: 12px; display: grid; gap: 6px; text-align: center; }
 .jam .jt { color: var(--led); font-weight: 800; font-size: 1.6rem; font-variant-numeric: tabular-nums; text-shadow: 0 0 8px rgba(255,107,107,.8); }
@@ -366,6 +413,9 @@ footer { text-align: center; font-size: .78rem; color: var(--ink-soft); padding:
 @keyframes blink { to { opacity: .35; } }
 @keyframes spin { 0% { transform: translateY(-8px); opacity: .3; } 100% { transform: translateY(0); opacity: 1; } }
 @keyframes jump { 0% { transform: translateY(40px) scale(.6); opacity: 0; } 25% { transform: translateY(-20px) scale(1.05); opacity: 1; } 45% { transform: translateY(0) scale(1); } 80% { opacity: 1; } 100% { transform: translateY(-10px); opacity: 0; } }
+/* ---------- Difficulty chips ---------- */
+.diff { display: inline-block; margin-left: 6px; padding: 1px 9px; border: 2px solid var(--ink); border-radius: 999px; font-size: .72rem; letter-spacing: .04em; color: var(--ink); vertical-align: middle; }
+.diff.easy { background: #D8F5C9; } .diff.medium { background: #FDFFB6; } .diff.hard { background: #FFCBA4; } .diff.expert { background: linear-gradient(90deg, #FFB7C5, #C9C3F0, #A0C4FF); }
 /* ---------- 3-question locks ---------- */
 .lockprog { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .lockprog i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--ink); background: #fff; display: inline-block; }
@@ -433,7 +483,7 @@ footer { text-align: center; font-size: .78rem; color: var(--ink-soft); padding:
   <div class="tools" id="tools"></div>
 </header>
 <main id="app"></main>
-<footer id="footText">Fan-made study game for HKDSE Biology (S4–S6). Not affiliated with the official Chiikawa brand; Chiikawa belongs to Nagano. Characters are original Chiikawa-style drawings, not official artwork.</footer>
+<footer id="footText">Fan-made biology adventure game. Not affiliated with the official Chiikawa brand; Chiikawa belongs to Nagano. Characters are original Chiikawa-style drawings, not official artwork.</footer>
 <div id="modal"></div>
 <div id="journal"></div>
 <div id="toast" class="toast" hidden></div>
@@ -517,19 +567,18 @@ const CHAR = {
         : eyes(22, 42, 37, m)}${mouth(32, 50, m)}` }
 };
 const avatar = (who, mood = "normal", eq) => `<svg viewBox="0 0 64 64" aria-hidden="true"><g filter="url(#sketch)">${CHAR[who].head(mood)}${who === "chiikawa" ? outfitSvg(eq) : ""}</g></svg>`;
+// Full-body figure: BIG head (scaled ×1.3) on a small chubby body, like a plush toy
+const FIG_VB = "-8 -16 80 112";
 function figure(who, mood = "normal") {
-  const c = CHAR[who].color;
-  const extra = who === "rakko" ? `<path d="M56 86 L62 44" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M56 86 L62 44" stroke="#D3E4FF" stroke-width="2.4" stroke-linecap="round"/><path d="M52 72 h10" stroke="${INK}" stroke-width="3.4" stroke-linecap="round"/>`
-    : who === "usagi" && mood !== "cry" ? `<path d="M6 56 l-4 -6 M10 52 l-2 -8 M58 56 l4 -6" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>` : "";
-  // Soft, chubby oval body (mochi-like) that tucks under the head, with little nub arms and feet
-  const up = mood === "sparkle" || mood === "happy";
-  return `<svg viewBox="-4 -4 72 100" aria-hidden="true"><g filter="url(#sketch)">
-    <ellipse cx="24" cy="89" rx="7" ry="4.5" fill="${c}" ${OUT}/><ellipse cx="40" cy="89" rx="7" ry="4.5" fill="${c}" ${OUT}/>
-    <ellipse cx="32" cy="68" rx="23.5" ry="23" fill="${c}" ${OUT}/>
-    <ellipse cx="9.5" cy="${up ? 60 : 68}" rx="5" ry="6.5" fill="${c}" ${OUT} transform="rotate(${up ? 140 : 25} 9.5 ${up ? 60 : 68})"/>
-    <ellipse cx="54.5" cy="${up ? 60 : 68}" rx="5" ry="6.5" fill="${c}" ${OUT} transform="rotate(${up ? -140 : -25} 54.5 ${up ? 60 : 68})"/>
-    <path d="M24 76 q8 5 16 0" fill="none" stroke="${INK}" stroke-width="1.2" opacity=".25" stroke-linecap="round"/>
-    ${extra}<g>${CHAR[who].head(mood)}${who === "chiikawa" ? outfitSvg() : ""}</g></g></svg>`;
+  const c = CHAR[who].color, up = mood === "sparkle" || mood === "happy";
+  const extra = who === "rakko" ? `<path d="M54 94 L62 62" stroke="${INK}" stroke-width="4.4" stroke-linecap="round"/><path d="M54 94 L62 62" stroke="#D3E4FF" stroke-width="2" stroke-linecap="round"/><path d="M50 84 h9" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`
+    : who === "usagi" && mood !== "cry" ? `<path d="M-3 46 l-4 -6 M1 38 l-2 -8 M67 46 l4 -6" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>` : "";
+  return `<svg viewBox="${FIG_VB}" aria-hidden="true"><g filter="url(#sketch)">
+    <ellipse cx="25.5" cy="91" rx="5.5" ry="3.6" fill="${c}" ${OUT}/><ellipse cx="38.5" cy="91" rx="5.5" ry="3.6" fill="${c}" ${OUT}/>
+    <ellipse cx="32" cy="79" rx="15.5" ry="12" fill="${c}" ${OUT}/>
+    <ellipse cx="${up ? 14 : 17}" cy="${up ? 70 : 79}" rx="4" ry="5.5" fill="${c}" ${OUT} transform="rotate(${up ? 145 : 30} ${up ? 14 : 17} ${up ? 70 : 79})"/>
+    <ellipse cx="${up ? 50 : 47}" cy="${up ? 70 : 79}" rx="4" ry="5.5" fill="${c}" ${OUT} transform="rotate(${up ? -145 : -30} ${up ? 50 : 47} ${up ? 70 : 79})"/>
+    ${extra}<g transform="translate(32 44) scale(1.3) translate(-32 -40)">${CHAR[who].head(mood)}${who === "chiikawa" ? outfitSvg() : ""}</g></g></svg>`;
 }
 /* Short emotional reactions: Chiikawa and friends react out loud to what happens */
 const REACT = {
@@ -1005,11 +1054,11 @@ Object.assign(DIAGRAMS, {
 });
 
 /* ============================================================
-   4. HKDSE Biology compulsory part (S4–S6): 19 topics, each a series of stages.
+   4. Senior secondary Biology compulsory part (S4–S6): 19 topics, each a series of stages.
    The last stage of every topic is a boss stage guarded by Rakko.
    Each stage uses one of 8 room scenes: 5 locks (3 questions each) + an exit door.
    ============================================================ */
-// Topics in HKDSE curriculum order (Parts I–IV of the compulsory part). "no" is the number shown to students.
+// Topics in curriculum order (Parts I–IV of the compulsory part). "no" is the number shown to students.
 const PARTS = ["I. Cells and Molecules of Life", "II. Genetics and Evolution", "III. Organisms and Environment", "IV. Health and Diseases"];
 const TOPICS = [
   { id: "t1", icon: "🧪", name: "Molecules of Life", badge: "🧪 Molecule Master Badge", p: 0 },
@@ -1435,7 +1484,7 @@ const ROOMS = [
 ];
 
 /* ============================================================
-   4a. Parts II–IV of the HKDSE compulsory part (usually taught in S5–S6)
+   4a. Parts II–IV of the compulsory part (usually taught in S5–S6)
    ============================================================ */
 const K = (who, mood, text) => [who, mood, text];
 ROOMS.push(
@@ -3374,8 +3423,10 @@ const TEST_BANK = [
 ];
 /* Visual type 2: organelle spotter (a part of the plant cell glows) */
 const SPOT_PARTS = { wall: "Cell wall", membrane: "Cell membrane", vacuole: "Vacuole", nucleus: "Nucleus", chloroplast: "Chloroplast", mito: "Mitochondrion" };
-// Each stage's pool: its 15 questions (Bloom 1–6), converted to one shape
-const BLOOM = [null, "Remember", "Understand", "Apply", "Analyse", "Evaluate", "Create"];
+// Each stage's pool: its questions, converted to one shape. Internally each has a Bloom level b (1–6);
+// students only ever see a friendly difficulty label.
+const DIFF = b => b <= 2 ? { t: "Easy", i: "🌱", c: "easy" } : b <= 4 ? { t: "Medium", i: "🌿", c: "medium" } : b === 5 ? { t: "Hard", i: "🔥", c: "hard" } : { t: "Expert", i: "⭐", c: "expert" };
+const diffChip = b => { const d = DIFF(b); return `<span class="diff ${d.c}">${d.i} ${d.t}</span>`; };
 /* Spelling: every stage's key terms become "type the word" locks, and longer single words
    also become "which spelling is correct?" checks with believable misspellings. */
 const normWord = w => String(w || "").toLowerCase().replace(/[^a-z]/g, "");
@@ -3428,7 +3479,7 @@ const shareBase = () => (window.top !== window.self && ARTIFACT_URL ? ARTIFACT_U
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 const dayNum = s => { const [y, m, d] = s.split("-").map(Number); return Math.round(Date.UTC(y, m - 1, d) / 86400000); };
 
-function freshStats() { return { days: 0, correct: 0, run: 0, bestRun: 0, replays: 0, cleanEscapes: 0, noHintEscapes: 0, rushRounds: 0 }; }
+function freshStats() { return { days: 0, correct: 0, run: 0, bestRun: 0, replays: 0, cleanEscapes: 0, noHintEscapes: 0, rushRounds: 0, chests: 0, night: 0, spellRight: 0, graphFirst: 0, incidents: 0 }; }
 function freshRun() { return { firsts: [], strikes: 0, hints: false, qids: null, steps: {} }; }
 function newId() { return "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 function freshMastery() { return Object.fromEntries(TOPICS.map(t => [t.id, 0])); }
@@ -3440,7 +3491,7 @@ function freshState() {
     room_progress: {}, mastered_puzzles: [], room_stars: {}, room_timer: {}, last_chest_date: null, seen: {}, last_revise_day: null,
     room_run: {}, trophies: {}, stats: freshStats(),
     coins: 0, owned: [], equip: { hat: null, face: null, ribbon: null, frame: null }, power: { torch: 1, crystal: 1, guard: 1 },
-    rush: { best: 0, lastDay: null }, player_id: newId(), lb_last: 0, mistakes: {}, mistakes_cleared: 0
+    rush: { best: 0, lastDay: null }, player_id: newId(), lb_last: 0, mistakes: {}, mistakes_cleared: 0, coll: { owned: {}, pending: 0, pity: 0 }
   };
 }
 function normalise(obj) {
@@ -3451,6 +3502,7 @@ function normalise(obj) {
   s.room_progress = Object.assign({}, s.room_progress); s.room_stars = Object.assign({}, s.room_stars); s.room_timer = Object.assign({}, s.room_timer);
   s.mastered_puzzles = [...new Set(s.mastered_puzzles || [])];
   s.mistakes = Object.assign({}, s.mistakes);
+  s.coll = Object.assign({ owned: {}, pending: 0, pity: 0 }, s.coll); s.coll.owned = Object.assign({}, s.coll.owned);
   s.equip = Object.assign({ hat: null, face: null, ribbon: null, frame: null }, s.equip); s.power = Object.assign({ torch: 0, crystal: 0, guard: 0 }, s.power);
   s.rush = Object.assign({ best: 0, lastDay: null }, s.rush); s.owned = [...(s.owned || [])]; if (!s.player_id) s.player_id = newId();
   s.completed_rooms = [...new Set((s.completed_rooms || []).filter(id => ROOMS.some(r => r.id === id)))];
@@ -3540,7 +3592,7 @@ function stateFromCode(d, name) {
   s.current_room = nextR.id;
   if (!s.completed_rooms.includes(nextR.id) && d.lock) s.room_progress[nextR.id] = Array.from({ length: d.lock }, (_, i) => i);
   s.current_streak = d.streak; s.longest_streak = d.streak; s.streak_shields = d.shields; s.last_login_date = today();
-  if (S) { s.trophies = S.trophies || {}; s.stats = Object.assign(freshStats(), S.stats); s.coins = S.coins || 0; s.owned = S.owned || []; s.equip = S.equip || s.equip; s.power = S.power || s.power; s.rush = S.rush || s.rush; s.player_id = S.player_id || s.player_id; s.last_chest_date = S.last_chest_date; s.mistakes = S.mistakes || {}; s.inventory = s.inventory.concat((S.inventory || []).filter(x => SNACKS.includes(x))); }
+  if (S) { s.trophies = S.trophies || {}; s.stats = Object.assign(freshStats(), S.stats); s.coins = S.coins || 0; s.owned = S.owned || []; s.equip = S.equip || s.equip; s.power = S.power || s.power; s.rush = S.rush || s.rush; s.player_id = S.player_id || s.player_id; s.last_chest_date = S.last_chest_date; s.mistakes = S.mistakes || {}; s.mistakes_cleared = S.mistakes_cleared || 0; s.coll = S.coll || s.coll; s.inventory = s.inventory.concat((S.inventory || []).filter(x => SNACKS.includes(x))); }
   return s;
 }
 
@@ -3647,62 +3699,200 @@ const ICONS = {
 /* ============================================================
    6b. Trophies: 10 hard ones that reward steady effort over many days
    ============================================================ */
+const topicsCleared = () => TOPICS.filter((_, ti) => stagesDone(ti) === topicRooms(ti).length).length;
+const partsCleared = () => PARTS.filter((_, pi) => TOPICS.every((T, ti) => T.p !== pi || stagesDone(ti) === topicRooms(ti).length)).length;
+const bossesBeaten = () => ROOMS.filter(r => r.boss && S.completed_rooms.includes(r.id)).length;
+const collOwned = rare => COLLECTIBLES.filter(c => (rare == null || c.rare === rare) && (S.coll.owned[c.id] || 0) > 0).length;
+const TROPHY_CATS = [["habit", "🔥 Daily habits"], ["adventure", "🗺️ Adventure"], ["brain", "🧠 Brain power"], ["fun", "🎀 Fun & style"]];
 const TROPHIES = [
-  { id: "week", name: "Week Warrior", rar: "bronze", who: "chiikawa", desc: "Play 7 days in a row", prog: () => [S.longest_streak, 7] },
-  { id: "steady", name: "Steady Explorer", rar: "silver", who: "hachiware", desc: "Play on 20 different days", prog: () => [S.stats.days, 20] },
-  { id: "flame", name: "Eternal Flame", rar: "legend", who: "usagi", desc: "Reach a 30-day streak", prog: () => [S.longest_streak, 30] },
-  { id: "sharp", name: "Sharpshooter", rar: "gold", who: "momonga", desc: "15 first-try answers in a row (no hints, no mistakes)", prog: () => [S.stats.bestRun, 15] },
-  { id: "hunter", name: "Knowledge Hunter", rar: "gold", who: "kurimanju", desc: "Open 100 locks in total", prog: () => [S.stats.correct, 100] },
-  { id: "escaper", name: "Master Escaper", rar: "gold", who: "chiikawa", desc: `Escape all ${ROOMS.length} stages (every topic)`, prog: () => [S.completed_rooms.length, ROOMS.length] },
-  { id: "stars", name: "Star Collector", rar: "legend", who: "hachiware", desc: "Collect 120 stars across the stages (3★ = 3 stars)", prog: () => [ROOMS.reduce((a, r) => a + roomStars(r), 0), 120] },
-  { id: "clock", name: "Beat the Clock", rar: "silver", who: "usagi", desc: "5 escapes before time runs out, with 0 guess strikes", prog: () => [S.stats.cleanEscapes, 5] },
-  { id: "brain", name: "Brain Power", rar: "silver", who: "momonga", desc: "5 escapes without using any hint", prog: () => [S.stats.noHintEscapes, 5] },
-  { id: "practice", name: "Practice Makes Perfect", rar: "bronze", who: "kurimanju", desc: "Replay escaped stages 10 times", prog: () => [S.stats.replays, 10] }
+  { id: "week", cat: "habit", name: "Week Warrior", rar: "bronze", who: "chiikawa", desc: "Play 7 days in a row", prog: () => [S.longest_streak, 7] },
+  { id: "chest", cat: "habit", name: "Snack Stash", rar: "bronze", who: "kurimanju", desc: "Open the daily snack chest 10 times", prog: () => [S.stats.chests, 10] },
+  { id: "steady", cat: "habit", name: "Steady Explorer", rar: "silver", who: "hachiware", desc: "Play on 20 different days", prog: () => [S.stats.days, 20] },
+  { id: "night", cat: "habit", name: "Night Owl", rar: "bronze", who: "momonga", desc: "Escape a stage after 9 pm", prog: () => [S.stats.night, 1] },
+  { id: "flame", cat: "habit", name: "Eternal Flame", rar: "legend", who: "usagi", desc: "Reach a 30-day streak", prog: () => [S.longest_streak, 30] },
+  { id: "first", cat: "adventure", name: "First Door", rar: "bronze", who: "chiikawa", desc: "Escape your very first stage", prog: () => [S.completed_rooms.length, 1] },
+  { id: "topic", cat: "adventure", name: "Topic Tamer", rar: "silver", who: "hachiware", desc: "Clear every stage of one topic", prog: () => [topicsCleared(), 1] },
+  { id: "boss5", cat: "adventure", name: "Boss Buster", rar: "gold", who: "rakko", desc: "Beat 5 boss stages", prog: () => [bossesBeaten(), 5] },
+  { id: "part", cat: "adventure", name: "Part Champion", rar: "gold", who: "shisa", desc: "Clear every topic in one Part", prog: () => [partsCleared(), 1] },
+  { id: "escaper", cat: "adventure", name: "Master Escaper", rar: "gold", who: "chiikawa", desc: `Escape all ${ROOMS.length} stages`, prog: () => [S.completed_rooms.length, ROOMS.length] },
+  { id: "bossall", cat: "adventure", name: "Rakko's Respect", rar: "legend", who: "rakko", desc: `Beat all ${TOPICS.length} boss stages`, prog: () => [bossesBeaten(), TOPICS.length] },
+  { id: "stars", cat: "adventure", name: "Star Collector", rar: "legend", who: "hachiware", desc: "Collect 120 stars (3★ = 3 stars)", prog: () => [ROOMS.reduce((a, r) => a + roomStars(r), 0), 120] },
+  { id: "spell", cat: "brain", name: "Spelling Bee", rar: "silver", who: "usagi", desc: "Spell 30 biology words correctly", prog: () => [S.stats.spellRight, 30] },
+  { id: "tidy", cat: "brain", name: "Tidy Notebook", rar: "silver", who: "kurimanju", desc: "Clear 20 questions from your Mistake Notebook", prog: () => [S.mistakes_cleared || 0, 20] },
+  { id: "clock", cat: "brain", name: "Beat the Clock", rar: "silver", who: "usagi", desc: "5 escapes before time runs out, with 0 guess strikes", prog: () => [S.stats.cleanEscapes, 5] },
+  { id: "brain", cat: "brain", name: "Brain Power", rar: "silver", who: "momonga", desc: "5 escapes without using any hint", prog: () => [S.stats.noHintEscapes, 5] },
+  { id: "sharp", cat: "brain", name: "Sharpshooter", rar: "gold", who: "momonga", desc: "15 first-try answers in a row (no hints, no mistakes)", prog: () => [S.stats.bestRun, 15] },
+  { id: "graph", cat: "brain", name: "Graph Guru", rar: "gold", who: "hachiware", desc: "Read 25 graphs right on the first try", prog: () => [S.stats.graphFirst, 25] },
+  { id: "hunter", cat: "brain", name: "Knowledge Hunter", rar: "gold", who: "kurimanju", desc: "Answer 300 questions correctly", prog: () => [S.stats.correct, 300] },
+  { id: "practice", cat: "brain", name: "Practice Makes Perfect", rar: "bronze", who: "kurimanju", desc: "Replay escaped stages 10 times", prog: () => [S.stats.replays, 10] },
+  { id: "rush1", cat: "fun", name: "Rush Rookie", rar: "bronze", who: "usagi", desc: "Score 100 points in one Cell Rush", prog: () => [S.rush.best, 100] },
+  { id: "spooky", cat: "fun", name: "Spooky Survivor", rar: "silver", who: "chiikawa", desc: "Survive 20 random incidents", prog: () => [S.stats.incidents, 20] },
+  { id: "fashion", cat: "fun", name: "Fashion Icon", rar: "silver", who: "momonga", desc: "Own 8 outfits from Shisa's shop", prog: () => [S.owned.length, 8] },
+  { id: "rush2", cat: "fun", name: "Lightning Brain", rar: "gold", who: "usagi", desc: "Score 300 points in one Cell Rush", prog: () => [S.rush.best, 300] },
+  { id: "coll", cat: "fun", name: "Collector", rar: "gold", who: "shisa", desc: "Collect 15 different collectibles", prog: () => [collOwned(), 15] },
+  { id: "rare", cat: "fun", name: "Rare Hunter", rar: "legend", who: "chiikawa", desc: "Collect all 5 rare collectibles", prog: () => [collOwned(true), 5] }
 ];
-const RAR = { bronze: ["#E9A874", "#F7D2AE", "Bronze"], silver: ["#B9C3D3", "#EEF2F8", "Silver"], gold: ["#F5C542", "#FFF1A8", "Gold"], legend: ["#F49AC1", "#D7F0FF", "Legendary"] };
+// Rarity palette: [dark metal, light metal, label, card glow]
+const RAR = { bronze: ["#C9824F", "#F7D2AE", "Bronze", "#F7D9BD"], silver: ["#9AA7BC", "#F4F7FB", "Silver", "#E3E9F2"], gold: ["#E0A92A", "#FFF3B0", "Gold", "#FFF1A8"], legend: ["#E27893", "#D7F0FF", "Legendary", "#F8D5E6"] };
 function trophySvg(t, got) {
-  const [c1, c2] = got ? RAR[t.rar] : ["#CFC8BC", "#E8E2D6"], id = "tg" + t.id + (++clipN);
-  const fill = t.rar === "legend" && got ? `url(#${id})` : c1;
-  return `<svg class="cup" viewBox="0 0 100 120" aria-hidden="true">
-    <defs><linearGradient id="${id}" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#FFB7C5"/><stop offset=".35" stop-color="#FDFFB6"/><stop offset=".65" stop-color="#B9F3C9"/><stop offset="1" stop-color="#A0C4FF"/></linearGradient></defs>
-    ${got && t.rar === "legend" ? `<g fill="#F5C542">${[[10, 18], [90, 24], [14, 70], [88, 64]].map(([x, y]) => `<path d="M${x} ${y - 6} l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2z"/>`).join("")}</g>` : ""}
-    <path d="M24 26 C6 26 6 56 30 58" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M24 26 C6 26 6 56 30 58" fill="none" stroke="${c2}" stroke-width="3" stroke-linecap="round"/>
-    <path d="M76 26 C94 26 94 56 70 58" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M76 26 C94 26 94 56 70 58" fill="none" stroke="${c2}" stroke-width="3" stroke-linecap="round"/>
-    <path d="M20 14 H80 V38 C80 60 66 72 50 72 C34 72 20 60 20 38 Z" fill="${fill}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
-    <path d="M28 20 V36 C28 46 32 54 38 58" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7"/>
-    <rect x="44" y="72" width="12" height="14" fill="${c1}" stroke="${INK}" stroke-width="3"/>
-    <rect x="30" y="86" width="40" height="12" rx="3" fill="${c2}" stroke="${INK}" stroke-width="3"/>
-    <rect x="24" y="98" width="52" height="12" rx="3" fill="${c1}" stroke="${INK}" stroke-width="3"/>
-    ${got ? `<svg x="31" y="22" width="38" height="38" viewBox="0 0 64 64">${CHAR[t.who].head("happy")}</svg>`
-          : `<g transform="translate(50 42)"><rect x="-10" y="-4" width="20" height="16" rx="3" fill="#fff" stroke="${INK}" stroke-width="3"/><path d="M-6 -4 v-5 a6 6 0 0 1 12 0 v5" fill="none" stroke="${INK}" stroke-width="3"/></g>`}
+  const id = "tg" + t.id + (++clipN), [dk, lt] = got ? RAR[t.rar] : ["#BDB5A8", "#E8E2D6"];
+  const legend = got && t.rar === "legend";
+  const metal = legend ? `<linearGradient id="${id}" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#FFB7C5"/><stop offset=".35" stop-color="#FDFFB6"/><stop offset=".65" stop-color="#B9F3C9"/><stop offset="1" stop-color="#A0C4FF"/></linearGradient>`
+    : `<linearGradient id="${id}" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="${dk}"/><stop offset=".45" stop-color="${lt}"/><stop offset="1" stop-color="${dk}"/></linearGradient>`;
+  const spark = (x, y, r = 6) => `<path d="M${x} ${y - r} l${r * .3} ${r * .7} ${r * .7} ${r * .3} -${r * .7} ${r * .3} -${r * .3} ${r * .7} -${r * .3} -${r * .7} -${r * .7} -${r * .3} ${r * .7} -${r * .3}z" fill="#FFF7C2" stroke="${INK}" stroke-width="1"/>`;
+  return `<svg class="cup" viewBox="0 0 100 124" aria-hidden="true"><defs>${metal}</defs>
+    ${got && (t.rar === "gold" || legend) ? `<circle cx="50" cy="44" r="44" fill="${legend ? "rgba(248,213,230,.55)" : "rgba(255,241,168,.55)"}"/>` : ""}
+    <path d="M24 24 C4 24 6 58 32 58" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M24 24 C4 24 6 58 32 58" fill="none" stroke="${lt}" stroke-width="3" stroke-linecap="round"/>
+    <path d="M76 24 C96 24 94 58 68 58" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M76 24 C96 24 94 58 68 58" fill="none" stroke="${lt}" stroke-width="3" stroke-linecap="round"/>
+    <path d="M18 12 H82 V36 C82 60 67 74 50 74 C33 74 18 60 18 36 Z" fill="url(#${id})" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M18 12 H82" stroke="${INK}" stroke-width="3"/><ellipse cx="50" cy="12" rx="32" ry="4" fill="${lt}" stroke="${INK}" stroke-width="2.4"/>
+    <path d="M27 20 V36 C27 47 31 55 37 60" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".75"/>
+    <path d="M44 74 H56 L58 88 H42 Z" fill="url(#${id})" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="28" y="88" width="44" height="10" rx="3" fill="${lt}" stroke="${INK}" stroke-width="3"/>
+    <rect x="20" y="98" width="60" height="16" rx="4" fill="${got ? "#8A5A3C" : "#B8AFA3"}" stroke="${INK}" stroke-width="3"/>
+    <rect x="34" y="102" width="32" height="8" rx="2" fill="${got ? "#F5C542" : "#D8D0C4"}" stroke="${INK}" stroke-width="1.6"/>
+    ${got ? `<svg x="29" y="17" width="42" height="42" viewBox="0 0 64 64">${CHAR[t.who].head("happy")}</svg>`
+          : `<text x="50" y="50" text-anchor="middle" font-size="26" font-weight="800" fill="#8C8478">?</text>`}
+    ${got && t.rar !== "bronze" ? spark(12, 14, 7) + spark(90, 20, 5) + (t.rar !== "silver" ? spark(88, 66, 6) + spark(10, 70, 4) : "") : ""}
+    ${got ? "" : `<g transform="translate(78 92)"><rect x="-9" y="-3" width="18" height="14" rx="3" fill="#fff" stroke="${INK}" stroke-width="2.4"/><path d="M-5 -3 v-4 a5 5 0 0 1 10 0 v4" fill="none" stroke="${INK}" stroke-width="2.4"/></g>`}
   </svg>`;
 }
 function trophyCard(t) {
   const got = !!S.trophies[t.id];
   const [cur, goal] = t.prog(), v = Math.min(cur, goal);
-  return `<div class="trophy ${got ? "got" : "locked"}" aria-label="${esc(t.name)}: ${got ? "unlocked" : `${v} / ${goal}`}">
+  return `<div class="trophy ${got ? `got ${t.rar}` : "locked"}" aria-label="${esc(t.name)}: ${got ? "unlocked" : `${v} / ${goal}`}">
+    <span class="ribbon ${t.rar}">${RAR[t.rar][2]}</span>
     ${trophySvg(t, got)}
     <span class="tn">${esc(t.name)}</span>
-    <span class="rar ${t.rar}">${RAR[t.rar][2]}</span>
     <span class="td">${esc(t.desc)}</span>
-    ${got ? `<span class="pnum">🏆 ${"Unlocked"} ${esc(S.trophies[t.id])}</span>`
+    ${got ? `<span class="pnum">🏆 ${esc(S.trophies[t.id])}</span>`
           : `<div class="pbar"><i style="width:${Math.round(100 * v / goal)}%"></i></div><span class="pnum">${v} / ${goal}</span>`}
   </div>`;
 }
-function cabinetHtml() {
+function cabinetHtml(full = true) {
   const n = TROPHIES.filter(t => S.trophies[t.id]).length;
-  return `<div class="row" style="justify-content:space-between"><h2>🏆 ${"Trophy Cabinet"}</h2><span class="pill">${n} / ${TROPHIES.length} ${"unlocked"}</span></div>
-    <p class="small muted">${"These are hard on purpose. They reward coming back day after day and thinking carefully, not rushing."}</p>
-    <div class="shelf">${TROPHIES.map(trophyCard).join("")}</div>`;
+  const byR = r => `${TROPHIES.filter(t => t.rar === r && S.trophies[t.id]).length}/${TROPHIES.filter(t => t.rar === r).length}`;
+  const head = `<div class="row" style="justify-content:space-between"><h2>🏆 Trophy Cabinet</h2><span class="pill" style="margin-right:${full ? 44 : 0}px">${n} / ${TROPHIES.length} unlocked</span></div>
+    <div class="tprog"><i style="width:${Math.round(100 * n / TROPHIES.length)}%"></i></div>
+    <div class="row small"><span class="ribbon bronze">Bronze ${byR("bronze")}</span><span class="ribbon silver">Silver ${byR("silver")}</span><span class="ribbon gold">Gold ${byR("gold")}</span><span class="ribbon legend">Legendary ${byR("legend")}</span></div>`;
+  if (!full) {
+    const near = TROPHIES.filter(t => !S.trophies[t.id]).map(t => { const [c, g] = t.prog(); return [t, Math.min(1, c / g)]; }).sort((a, b) => b[1] - a[1]).slice(0, 4).map(x => x[0]);
+    return `${head}<p class="small muted">Closest to unlocking next:</p><div class="shelf">${near.map(trophyCard).join("")}</div>
+      <div class="row"><button class="btn yellow" id="openCab">🏆 Open the full cabinet</button></div>`;
+  }
+  return `${head}<p class="small muted">Some are quick wins, some take weeks. Every one rewards curiosity and coming back, not rushing. Each trophy also gives 🌰 30 and a 🎁 capsule!</p>
+    ${TROPHY_CATS.map(([c, label]) => `<h3 class="shelf-title">${label}</h3><div class="shelf wood">${TROPHIES.filter(t => t.cat === c).map(trophyCard).join("")}</div>`).join("")}`;
 }
-function openCabinet() { openModal(cabinetHtml(), { wide: true }); }
+function openCabinet() { openModal(cabinetHtml(true), { wide: true }); }
+
+/* ============================================================
+   6b2. Collectibles: 20 capsule toys (15 common, 5 rare). Earn 🎁 capsules by playing; open them to collect.
+   ============================================================ */
+const COLL_ART = {
+  photocard: `<svg viewBox="0 0 80 100" aria-hidden="true"><defs><linearGradient id="holoA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB7C5"/><stop offset=".3" stop-color="#FDFFB6"/><stop offset=".55" stop-color="#B9F3C9"/><stop offset=".8" stop-color="#A0C4FF"/><stop offset="1" stop-color="#C9C3F0"/></linearGradient></defs>
+    <rect x="6" y="4" width="68" height="92" rx="10" fill="url(#holoA)" stroke="${INK}" stroke-width="3"/><rect x="13" y="12" width="54" height="56" rx="6" fill="#FFF1E6" stroke="${INK}" stroke-width="2"/>
+    <g transform="rotate(-12 40 42)"><ellipse cx="40" cy="42" rx="20" ry="11" fill="#F9C9A6" stroke="${INK}" stroke-width="2.2"/><path d="M24 42 h5 v-6 h5 v12 h5 v-12 h5 v12 h5 v-6 h6" fill="none" stroke="${INK}" stroke-width="1.8"/></g>
+    <circle cx="33" cy="40" r="1.8" fill="${INK}"/><circle cx="46" cy="38" r="1.8" fill="${INK}"/><path d="M20 20 l3 5 5 1 -5 1 -3 5 -1 -5 -5 -1 5 -1z" fill="#fff"/>
+    <text x="40" y="80" text-anchor="middle" font-size="7.5" font-weight="800" fill="${INK}">POWERHOUSE</text><text x="40" y="89" text-anchor="middle" font-size="7.5" font-weight="800" fill="${INK}">ERA ✦</text></svg>`,
+  blindbox: `<svg viewBox="0 0 80 100" aria-hidden="true"><rect x="10" y="50" width="60" height="44" rx="6" fill="#2B2433" stroke="${INK}" stroke-width="3"/><path d="M10 50 l8 -10 h44 l8 10" fill="#3E3350" stroke="${INK}" stroke-width="3"/>
+    <text x="40" y="78" text-anchor="middle" font-size="9" font-weight="800" fill="#FDD66B">SECRET</text><text x="40" y="89" text-anchor="middle" font-size="6.5" fill="#C9A0FF">1 / 144</text>
+    <g transform="translate(20 4) scale(.62)"><circle cx="17" cy="17" r="7" fill="#3A3145" stroke="${INK}" stroke-width="2.4"/><circle cx="47" cy="17" r="7" fill="#3A3145" stroke="${INK}" stroke-width="2.4"/><ellipse cx="32" cy="37" rx="25" ry="21" fill="#3A3145" stroke="${INK}" stroke-width="2.4"/><ellipse cx="24" cy="36" rx="3" ry="3.6" fill="#FDD66B"/><ellipse cx="40" cy="36" rx="3" ry="3.6" fill="#FDD66B"/><ellipse cx="15" cy="43" rx="5" ry="3" fill="#C9A0FF"/><ellipse cx="49" cy="43" rx="5" ry="3" fill="#C9A0FF"/><path d="M52 8 a8 8 0 1 0 6 10 a6 6 0 1 1 -6 -10z" fill="#FDD66B"/></g></svg>`,
+  aura: `<svg viewBox="0 0 80 100" aria-hidden="true"><circle cx="40" cy="58" r="34" fill="rgba(201,160,255,.35)"/><circle cx="40" cy="58" r="26" fill="rgba(160,196,255,.35)"/><path d="M40 6 v18" stroke="${INK}" stroke-width="3"/><circle cx="40" cy="8" r="5" fill="none" stroke="${INK}" stroke-width="3"/>
+    <circle cx="40" cy="56" r="22" fill="#FFFDF0" stroke="${INK}" stroke-width="3"/><circle cx="28" cy="38" r="6" fill="#FFFDF0" stroke="${INK}" stroke-width="2.4"/><circle cx="52" cy="38" r="6" fill="#FFFDF0" stroke="${INK}" stroke-width="2.4"/>
+    <path d="M31 54 l3 -3 3 3 M43 54 l3 -3 3 3" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/><path d="M36 62 q4 4 8 0" fill="none" stroke="${INK}" stroke-width="2"/><ellipse cx="28" cy="60" rx="4" ry="2.4" fill="#FFB7C5"/><ellipse cx="52" cy="60" rx="4" ry="2.4" fill="#FFB7C5"/>
+    <text x="40" y="94" text-anchor="middle" font-size="10" font-weight="800" fill="#6B4E8C">+1000 ✦</text></svg>`,
+  matcha: `<svg viewBox="0 0 80 100" aria-hidden="true"><path d="M18 30 H62 L56 92 H24 Z" fill="rgba(255,255,255,.7)" stroke="${INK}" stroke-width="3"/><path d="M20 52 H60 L56 90 H24Z" fill="#9CCB6B"/><path d="M19 42 H61 L60 52 H20Z" fill="#F4F0E8"/>
+    ${[[32, 70], [46, 76], [38, 84]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="6" ry="3.5" fill="#6BBF5F" stroke="${INK}" stroke-width="1.4"/>`).join("")}<rect x="14" y="24" width="52" height="8" rx="3" fill="#FFFDF0" stroke="${INK}" stroke-width="2.4"/><path d="M48 24 L56 4" stroke="#FFB7C5" stroke-width="5" stroke-linecap="round"/>
+    <path d="M40 60 q-8 -6 -4 -12 q6 -2 4 12 q-2 -14 4 -12 q4 6 -4 12" fill="#FFFDF0" opacity=".8"/></svg>`,
+  flip: `<svg viewBox="0 0 80 100" aria-hidden="true"><rect x="22" y="6" width="36" height="42" rx="8" fill="#FFB7C5" stroke="${INK}" stroke-width="3"/><rect x="27" y="11" width="26" height="26" rx="4" fill="#D3E4FF" stroke="${INK}" stroke-width="2"/><text x="40" y="28" text-anchor="middle" font-size="10">💖</text>
+    <rect x="22" y="50" width="36" height="42" rx="8" fill="#FFB7C5" stroke="${INK}" stroke-width="3"/>${[0, 1, 2].map(r => [0, 1, 2].map(c => `<rect x="${28 + c * 9}" y="${58 + r * 9}" width="6" height="5" rx="2" fill="#FFFDF0" stroke="${INK}" stroke-width="1"/>`).join("")).join("")}
+    <path d="M58 70 q14 4 12 16" fill="none" stroke="${INK}" stroke-width="1.6"/><path d="M66 84 q4 4 0 8 q-4 4 0 8 M72 84 q-4 4 0 8 q4 4 0 8" fill="none" stroke="#5B8FE0" stroke-width="2"/>${[[16, 10], [64, 44], [12, 60]].map(([x, y]) => `<path d="M${x} ${y - 5} l1.5 3.5 3.5 1.5 -3.5 1.5 -1.5 3.5 -1.5 -3.5 -3.5 -1.5 3.5 -1.5z" fill="#FDD66B"/>`).join("")}</svg>`
+};
+const COLLECTIBLES = [
+  { id: "mochi", e: "🍡", name: "Mitochondria Mochi", desc: "The powerhouse of the cell, but squishy." },
+  { id: "onigiri", e: "🍙", name: "Chloroplast Onigiri", desc: "Packed with green goodness and sunshine." },
+  { id: "boba", e: "🧋", name: "Ribosome Boba", desc: "Every pearl is a tiny protein factory." },
+  { id: "dango", e: "🔑", name: "Enzyme Key Charm", desc: "Fits exactly one lock. Very specific." },
+  { id: "donut", e: "🍩", name: "Red Blood Cell Donut", desc: "Biconcave, no nucleus, extra cute." },
+  { id: "grapes", e: "🍇", name: "Alveoli Grapes", desc: "Huge surface area, tiny and juicy." },
+  { id: "villi", e: "🧸", name: "Villi Plushie", desc: "Soft, finger-shaped and absorbent." },
+  { id: "virus", e: "🦠", name: "Virus Squishy", desc: "Harmless. Probably. Wash your hands!" },
+  { id: "jelly", e: "🪼", name: "Amoeba Jelly", desc: "Changes shape whenever it wants." },
+  { id: "pollen", e: "🌼", name: "Pollen Puff", desc: "Sticky, spiky and ready to travel." },
+  { id: "peapod", e: "🫛", name: "Pea-Pod Pals", desc: "Round and wrinkled friends, Mendel-approved." },
+  { id: "dnastick", e: "🧬", name: "DNA Biscuit Stick", desc: "A–T, C–G, crunch!" },
+  { id: "heartkey", e: "💓", name: "Heartbeat Keychain", desc: "Ba-dum, ba-dum, double circulation." },
+  { id: "stomaclip", e: "🍃", name: "Stomata Hair Clip", desc: "Opens in the day, closes when it's dry." },
+  { id: "noodles", e: "🍜", name: "Neuron Noodles", desc: "Long, fast and full of impulses." },
+  { id: "photocard", rare: true, art: "photocard", name: "Powerhouse Era Holo Photocard", desc: "Holographic idol photocard of Mitochondria. It's in its powerhouse era. ✦" },
+  { id: "blindbox", rare: true, art: "blindbox", name: "Secret Blind-Box: Midnight Chiikawa", desc: "The 1-in-144 secret figure. Collectors everywhere are screaming." },
+  { id: "aura", rare: true, art: "aura", name: "Aura +1000 Bag Charm", desc: "Clip it on your bag for instant main-character energy." },
+  { id: "matcha", rare: true, art: "matcha", name: "Chloroplast Matcha Latte", desc: "Iced, aesthetic, and it's giving photosynthesis." },
+  { id: "flip", rare: true, art: "flip", name: "Y2K Flip-Phone DNA Charm", desc: "Sparkly retro flip phone with a double-helix strap. Y2K core." }
+];
+const RARE_CHANCE = .08, RARE_PITY = 12;
+function collArt(c) { return c.rare ? COLL_ART[c.art] : `<span class="cemoji" aria-hidden="true">${c.e}</span>`; }
+function collCard(c, own) {
+  return `<div class="coll ${c.rare ? "rare" : ""} ${own ? "own" : "missing"}" aria-label="${own ? esc(c.name) : "Not collected yet"}">
+    <div class="cart">${own ? collArt(c) : `<span class="cq">?</span>`}</div>
+    <b class="small">${own ? esc(c.name) : c.rare ? "??? Rare" : "???"}</b>
+    <span class="tag ${c.rare ? "rtag" : ""}">${c.rare ? "✨ Rare" : "Common"}</span>
+    ${own && own > 1 ? `<span class="small muted">×${own}</span>` : ""}</div>`;
+}
+function openAlbum() {
+  const n = collOwned(), nr = collOwned(true), cap = S.coll.pending;
+  const box = openModal(`<span class="kicker">🧸 Collection</span><h2>Capsule Collection</h2>
+    <div class="row" style="justify-content:space-between"><span class="pill">${n} / ${COLLECTIBLES.length} collected</span><span class="pill rpill">✨ ${nr} / 5 rare</span></div>
+    ${say("shisa", cap ? `You have <b>${cap}</b> capsule${cap > 1 ? "s" : ""} waiting! Open ${cap > 1 ? "them" : "it"}~ 🦁🎁` : "Earn 🎁 capsules by escaping stages, beating bosses, opening the daily chest, scoring 120+ in Cell Rush and unlocking trophies!", "happy")}
+    ${cap ? `<div class="row"><button class="btn big" id="alOpen">🎁 Open a capsule (${cap})</button></div>` : ""}
+    <h3>✨ Rare</h3><div class="collgrid">${COLLECTIBLES.filter(c => c.rare).map(c => collCard(c, S.coll.owned[c.id])).join("")}</div>
+    <h3>Common</h3><div class="collgrid">${COLLECTIBLES.filter(c => !c.rare).map(c => collCard(c, S.coll.owned[c.id])).join("")}</div>
+    <p class="small muted">Rare pulls are about 1 in 12, and you're guaranteed one within ${RARE_PITY} capsules. Duplicates turn into 🌰 5.</p>`, { wide: true });
+  const b = box.querySelector("#alOpen"); if (b) b.onclick = () => { SFX.tap(); openCapsule(true); };
+}
+function grantCapsule(n = 1, why = "") {
+  S.coll.pending += n; save(true);
+  if (why) toast(`🎁 +${n} capsule${n > 1 ? "s" : ""}: ${why}`);
+}
+function rollCollectible() {
+  const rareHit = S.coll.pity + 1 >= RARE_PITY || Math.random() < RARE_CHANCE;
+  const pool = COLLECTIBLES.filter(c => !!c.rare === rareHit), fresh = pool.filter(c => !S.coll.owned[c.id]);
+  const c = pick(fresh.length && Math.random() < .75 ? fresh : pool);
+  S.coll.pity = c.rare ? 0 : S.coll.pity + 1;
+  return c;
+}
+function openCapsule(fromAlbum) {
+  if (!(S.coll.pending > 0)) return;
+  const box = openModal(`<span class="kicker">🎁 Mystery capsule</span><h2>What's inside?</h2>
+    <div class="capsule" id="cap" aria-hidden="true"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="44" fill="#FFB7C5" stroke="${INK}" stroke-width="4"/><path d="M16 60 H104 A44 44 0 0 1 16 60Z" fill="#FFFDF0" stroke="${INK}" stroke-width="4"/><circle cx="60" cy="60" r="9" fill="#FDFFB6" stroke="${INK}" stroke-width="3"/><path d="M36 34 q10 -10 22 -10" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg></div>
+    ${say("chiikawa", "Uu... I'm so nervous... please be something cute! 🥺🙏", "brave")}
+    <div class="row" style="justify-content:center"><button class="btn big" id="capGo">Twist and open! 🔄</button></div>`, { closable: false });
+  box.querySelector("#capGo").onclick = () => {
+    SFX.click(); const cap = document.getElementById("cap"); cap.classList.add("shake"); box.querySelector("#capGo").disabled = true;
+    setTimeout(() => {
+      const c = rollCollectible(), dup = (S.coll.owned[c.id] || 0) > 0;
+      S.coll.owned[c.id] = (S.coll.owned[c.id] || 0) + 1; S.coll.pending -= 1; if (dup) S.coins += 5;
+      save(true); checkTrophies();
+      if (c.rare) { SFX.fanfare(); setTimeout(() => SFX.yaha(), 400); confetti(220); } else { SFX.item(); confetti(60); }
+      box.innerHTML = `<span class="kicker">${c.rare ? "✨ RARE PULL! ✨" : "🎁 Capsule opened"}</span><h2>${c.rare ? "No way... it's RARE!!" : dup ? "A friend you already have!" : "New collectible!"}</h2>
+        <div class="reveal ${c.rare ? "rare" : ""}">${collCard(c, 1)}</div>
+        <p style="text-align:center">${esc(c.desc)}</p>
+        ${c.rare ? say("usagi", "YAHA!!! URAAA!!! That's SO rare!!! 🐰✨", "sparkle") : dup ? say("kurimanju", "A duplicate... traded for 🌰 5. *sip* 🍵", "happy") : say("hachiware", "Cute! It's in your collection now. ✨", "happy", "hint")}
+        <div class="row" style="justify-content:center">${S.coll.pending ? `<button class="btn big" id="capMore">🎁 Open another (${S.coll.pending})</button>` : ""}<button class="btn yellow" id="capAlbum">🧸 See collection</button><button class="btn plain" id="capDone">Done</button></div>`;
+      const more = box.querySelector("#capMore"); if (more) more.onclick = () => { SFX.tap(); openCapsule(fromAlbum); };
+      box.querySelector("#capAlbum").onclick = () => { SFX.tap(); openAlbum(); };
+      box.querySelector("#capDone").onclick = () => { SFX.tap(); closeModal(); if (!R && !RU) renderMap(); };
+    }, reduced() ? 50 : 1100);
+  };
+}
+
 let trophyQueue = [];
 function checkTrophies() {
   if (!S) return;
   TROPHIES.forEach(t => {
     if (S.trophies[t.id]) return;
     const [cur, goal] = t.prog();
-    if (cur >= goal) { S.trophies[t.id] = today(); S.coins = (S.coins || 0) + 30; trophyQueue.push(t); }
+    if (cur >= goal) { S.trophies[t.id] = today(); S.coins = (S.coins || 0) + 30; S.coll.pending += 1; trophyQueue.push(t); }
   });
   if (trophyQueue.length) { save(); renderTools(); showTrophyBanner(); lbSubmit(true); }
 }
@@ -3710,7 +3900,7 @@ function showTrophyBanner() {
   if (document.querySelector(".tbanner") || !trophyQueue.length) return;
   const t = trophyQueue.shift();
   const d = document.createElement("button"); d.className = "tbanner"; d.setAttribute("aria-live", "polite");
-  d.innerHTML = `${trophySvg(t, true)}<span style="text-align:left"><span class="kicker" style="padding:0">${"Trophy unlocked!"}</span><br><b>${esc(t.name)}</b><br><span class="small">${esc(t.desc)} · +30 🌰</span></span>`;
+  d.innerHTML = `${trophySvg(t, true)}<span style="text-align:left"><span class="kicker" style="padding:0">${"Trophy unlocked!"}</span><br><b>${esc(t.name)}</b><br><span class="small">${esc(t.desc)} · +30 🌰 · +1 🎁</span></span>`;
   const done = () => { d.remove(); setTimeout(showTrophyBanner, 300); };
   d.onclick = () => { SFX.tap(); done(); };
   document.body.appendChild(d);
@@ -3912,7 +4102,7 @@ function startRush() {
   RU = { score: 0, combo: 0, correct: 0, total: 0, end: Date.now() + RUSH_SECONDS * 1000, lock: false, last: -1 };
   $app.innerHTML = `
     <section class="rushhead">
-      <div class="status"><div class="av ${frameCls()}" id="rushAv">${avatar("chiikawa", "normal")}</div><div><div class="rtopic" style="color:var(--yellow)">⚡ ${"Cell Rush · HKDSE Biology"}</div><div class="big" id="rScore">0 ${"pts"}</div></div></div>
+      <div class="status"><div class="av ${frameCls()}" id="rushAv">${avatar("chiikawa", "normal")}</div><div><div class="rtopic" style="color:var(--yellow)">⚡ ${"Cell Rush · Biology"}</div><div class="big" id="rScore">0 ${"pts"}</div></div></div>
       <div style="display:grid;justify-items:end;gap:6px"><div class="timer" id="rTimer">01:00</div><span class="combo" id="rCombo">${"Combo"} ×1</span></div>
     </section>
     <section class="card rq"><span class="rtype" id="rType"></span><p class="q" id="rPrompt"></p><div id="rBody"></div><div id="rFb"></div></section>
@@ -3961,12 +4151,14 @@ function rushEnd() {
   let coins = Math.ceil(r.score / 10); if (bonus && r.total > 0) coins *= 2;
   if (r.total > 0) { S.rush.lastDay = today(); S.stats.rushRounds += 1; }
   const best = r.score > S.rush.best; S.rush.best = Math.max(S.rush.best, r.score);
+  const rcap = r.score >= 120 ? 1 : 0; S.coll.pending += rcap;
   S.coins += coins; save(true); checkTrophies(); lbSubmit(true);
   SFX.fanfare(); if (r.score > 0) confetti(120);
   openModal(`<span class="kicker">⚡ ${"Cell Rush · Round over"}</span><h2>${best ? "🎉 New best score!" : "Time's up!"}</h2>
-    <div class="row" style="justify-content:center;gap:18px;font-size:1.2rem"><b>${r.score} ${"pts"}</b><span>✅ ${r.correct}/${r.total}</span><span class="pill coinpill">+${coins} 🌰${bonus && r.total > 0 ? " (×2 daily bonus)" : ""}</span></div>
+    <div class="row" style="justify-content:center;gap:18px;font-size:1.2rem"><b>${r.score} ${"pts"}</b><span>✅ ${r.correct}/${r.total}</span><span class="pill coinpill">+${coins} 🌰${bonus && r.total > 0 ? " (×2 daily bonus)" : ""}</span>${rcap ? `<span class="pill rpill">🎁 +1 capsule</span>` : ""}</div>
     ${say(r.correct >= 8 ? "usagi" : "hachiware", r.correct >= 8 ? "YAHA!!! Amazing rush! 🐰🎊" : "Nice try! Every round makes your brain faster. 🌱", "happy", r.correct >= 8 ? "" : "hint")}
-    <div class="row"><button class="btn big" id="rAgain">⚡ ${"Play again"}</button><button class="btn yellow" id="rShop">👗 ${"Spend chestnuts"}</button><button class="btn plain" id="rMap">🗺️ ${"Map"}</button></div>`, { onClose: renderMap });
+    <div class="row">${rcap ? `<button class="btn pink" id="rCap">🎁 Open capsule</button>` : ""}<button class="btn big" id="rAgain">⚡ ${"Play again"}</button><button class="btn yellow" id="rShop">👗 ${"Spend chestnuts"}</button><button class="btn plain" id="rMap">🗺️ ${"Map"}</button></div>`, { onClose: renderMap });
+  const rc = document.getElementById("rCap"); if (rc) rc.onclick = () => { SFX.tap(); closeModal(); renderMap(); openCapsule(); };
   document.getElementById("rAgain").onclick = () => { SFX.tap(); startRush(); };
   document.getElementById("rShop").onclick = () => { SFX.tap(); renderMap(); openShop(); };
   document.getElementById("rMap").onclick = () => { SFX.tap(); closeModal(); renderMap(); };
@@ -3990,12 +4182,14 @@ function renderTools() {
     ${S ? `<span class="pill ${justSaved ? "saved" : ""}" title="${"Your progress saves automatically on this device"}">${justSaved ? `✓<span class="lbl"> ${"Saved"}</span>` : `💾<span class="lbl"> ${"Auto-save"}</span>`}</span>` : ""}
     ${S ? `<button class="iconbtn coinpill" id="tCoins" aria-label="${"Chestnuts"}: ${S.coins}">🌰 ${S.coins}</button>` : ""}
     ${S ? `<button class="iconbtn" id="tTrophy" aria-label="${"Open the Trophy Cabinet"}">🏆<span class="lbl">${"Trophies"}</span></button>` : ""}
+    ${S && S.coll.pending ? `<button class="iconbtn capbtn" id="tCap" aria-label="Open ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""}">🎁<span class="lbl"> ${S.coll.pending}</span></button>` : ""}
     <button class="iconbtn" id="tJournal" aria-label="${"Open the Study Journal"}">📓<span class="lbl">${"Journal"}</span></button>
     ${S ? `<button class="iconbtn" id="tSave" aria-label="${"Save and share code"}">🔑<span class="lbl">${"Save code"}</span></button>` : ""}
     <button class="iconbtn" id="tMus" aria-label="${MUSIC.on ? "Turn music off" : "Turn music on"}" title="Background music: ${esc((SONGS[MUSIC.mode] || SONGS.map).title)}" aria-pressed="${MUSIC.on}" style="${MUSIC.on ? "" : "opacity:.5;text-decoration:line-through"}">🎵<span class="lbl">${MUSIC.on ? "Music on" : "Music off"}</span></button>
     <button class="iconbtn" id="tSnd" aria-label="${SFX.on ? "Turn sound effects off" : "Turn sound effects on"}" title="${"Sound effects"}">${SFX.on ? "🔊" : "🔇"}</button>`;
   document.getElementById("tJournal").onclick = () => { SFX.init(); SFX.tap(); openJournal(); };
   const tc = document.getElementById("tCoins"); if (tc) tc.onclick = () => { SFX.init(); SFX.tap(); openShop(); };
+  const tcap = document.getElementById("tCap"); if (tcap) tcap.onclick = () => { SFX.init(); SFX.tap(); openCapsule(); };
   const tt = document.getElementById("tTrophy"); if (tt) tt.onclick = () => { SFX.init(); SFX.tap(); openCabinet(); };
   const ts = document.getElementById("tSave"); if (ts) ts.onclick = () => { SFX.init(); SFX.tap(); openSaveModal(); };
   document.getElementById("tMus").onclick = () => {
@@ -4041,7 +4235,7 @@ function openJournal(roomId, highlight = []) {
     const r = ROOMS[roomIndex(rid)], T = TOPICS[r.t];
     $journal.innerHTML = `<div class="overlay top" id="jov"><div class="modal wide" role="dialog" aria-modal="true" aria-label="Study Journal">
       <button class="iconbtn x" id="jx" aria-label="Close journal">✕</button>
-      <span class="kicker">📓 Study Journal · HKDSE Biology · Part ${esc(T.part)}</span>
+      <span class="kicker">📓 Study Journal · Part ${esc(T.part)}</span>
       <h2>${T.icon} Topic ${T.no}: ${esc(T.name)}</h2>
       <div class="tabs" role="tablist" aria-label="Topics">${TOPICS.map((x, ti) => `<button class="tab" role="tab" aria-selected="${ti === r.t}" data-t="${topicRooms(ti)[0].id}">${x.icon} T${x.no}</button>`).join("")}</div>
       <div class="tabs" role="tablist" aria-label="Stages">${topicRooms(r.t).map(x => `<button class="tab" role="tab" aria-selected="${x.id === rid}" data-t="${x.id}">${x.boss ? "⚔️ Boss" : `Stage ${x.s}`}: ${esc(x.focus)}</button>`).join("")}</div>
@@ -4153,7 +4347,7 @@ function showCodeFromLink(d) {
    ============================================================ */
 const castHtml = moods => `<div class="cast">${["usagi", "hachiware", "chiikawa", "momonga", "kurimanju"].map(w => `<div class="fig">${figure(w, (moods && moods[w]) || "normal")}</div>`).join("")}</div>`;
 const starsBg = () => `<div class="stars" aria-hidden="true">${[[6, 14], [18, 40], [30, 10], [52, 22], [70, 8], [84, 30], [94, 12], [62, 44]].map(([x, y], i) => `<span style="left:${x}%;top:${y}%;animation-delay:${-i * .4}s">✦</span>`).join("")}</div>`;
-const HERO_KICKER = "HKDSE Biology · S4–S6 compulsory part";
+const HERO_KICKER = "A cosy biology adventure · Secondary 4–6";
 
 function renderWelcome() {
   stopRush(); MUSIC.setMode("map"); stopTimer(); R = null; renderTools();
@@ -4166,7 +4360,7 @@ function renderWelcome() {
     </section>
     <section class="card">
       ${say("chiikawa", "Ya...!! 😭 We fell asleep in the biology lab... and woke up TINY, inside a giant cell world!", "cry")}
-      ${say("hachiware", "Every door is locked with an HKDSE Biology puzzle, from S4 cells all the way to S6 ecosystems and health. Each topic is a series of stages (Photosynthesis has 6!), and the last one is a <b>boss stage</b> guarded by Rakko. Each lock needs <b>3 questions</b> in a row to open. Nantoka naare~! Will you help us escape? ✨", "normal", "hint")}
+      ${say("hachiware", "Every door is locked with a biology puzzle, from tiny cells all the way to ecosystems and staying healthy. Each topic is a series of stages (Photosynthesis has 6!), and the last one is a <b>boss stage</b> guarded by Rakko. Each lock needs <b>3 questions</b> in a row to open. Nantoka naare~! Will you help us escape? ✨", "normal", "hint")}
       ${say("usagi", "YAHA! Let's GO! 🐰💥", "happy")}
       <label for="nm"><b>What should we call you?</b></label>
       <input id="nm" class="name" maxlength="24" placeholder="Your name or nickname" autocomplete="off">
@@ -4249,18 +4443,19 @@ function renderMap() {
       <h2>🎮 Game modes</h2>
       <div class="modes">
         <button class="mode rush" id="mRush"><h3>⚡ Cell Rush</h3><span class="muted small">60 seconds of mixed quick questions from every topic. Earn 🌰 chestnuts for outfits and power-ups.</span><span class="small">Best: <b>${S.rush.best}</b> pts ${S.rush.lastDay !== today() ? "· <b>×2 today!</b>" : ""}</span></button>
-        <button class="mode note" id="mNote"><h3>📕 Mistake Notebook</h3><span class="muted small">Every question you got wrong, saved for focused DSE revision. Get each right twice to clear it.</span><span class="small"><b>${mistakeKeys().length}</b> to fix · ${S.mistakes_cleared || 0} cleared</span></button>
+        <button class="mode note" id="mNote"><h3>📕 Mistake Notebook</h3><span class="muted small">Every question you got wrong, saved so you can fix it calmly. Get each right twice to clear it.</span><span class="small"><b>${mistakeKeys().length}</b> to fix · ${S.mistakes_cleared || 0} cleared</span></button>
         <button class="mode" id="mShop"><h3>👗 Shisa's Shop</h3><span class="muted small">Dress up Chiikawa and buy power-ups for the escape rooms.</span><span class="small">🌰 <b>${S.coins}</b> chestnuts</span></button>
+        <button class="mode coll-mode" id="mColl"><h3>🧸 Capsule Collection</h3><span class="muted small">20 cute collectibles to find, including 5 ✨ rare ones. Open capsules you earn from playing.</span><span class="small"><b>${collOwned()}</b>/${COLLECTIBLES.length} collected${S.coll.pending ? ` · <b>🎁 ${S.coll.pending} to open!</b>` : ""}</span></button>
         <button class="mode" id="mLb"><h3>🏅 Leaderboard</h3><span class="muted small">The 10 most dedicated players.</span><span class="small">Your points: <b>${dedication()}</b></span></button>
       </div>
     </section>
     <section class="card">
       <h2>📈 Biology mastery</h2>
-      <p class="small muted">Each stage has 15–20 core questions (Bloom levels 1–6) including graph reading, plus spelling practice for its key terms. Mastery goes up when you answer one right on the first try without a hint. Replay cleared stages to master them all! The first replay each day earns a 📚 revision bonus.</p>
+      <p class="small muted">Each stage has 15–20 questions from 🌱 Easy to ⭐ Expert, including graph reading, plus spelling practice for its key terms. Mastery goes up when you answer one right on the first try without a hint. Replay cleared stages to master them all! The first replay each day earns a 📚 revision bonus.</p>
       ${TOPICS.map((T, ti) => { const v = S.bio_mastery[T.id]; return `${!ti || TOPICS[ti - 1].p !== T.p ? `<h3 class="small" style="margin-top:6px">Part ${esc(T.part)}</h3>` : ""}<div><div class="row" style="justify-content:space-between"><b class="small">${TOPIC_LABELS[T.id]}</b><b class="small">${v}%</b></div>
         <div class="tprog"><i style="width:${v}%"></i></div></div>`; }).join("")}
     </section>
-    <section class="card cream cabinet" id="cabinet">${cabinetHtml()}</section>
+    <section class="card cream cabinet" id="cabinet">${cabinetHtml(false)}</section>
     <section class="card">
       <h2>🎒 Backpack</h2>
       <div class="bag">${S.chiikawa_badges.concat(S.inventory).map(b => `<span class="tag">${esc(b)}</span>`).join("") || `<span class="muted small">Empty. Escape a stage or open the daily chest!</span>`}</div>
@@ -4272,12 +4467,14 @@ function renderMap() {
   document.getElementById("mShop").onclick = () => { SFX.init(); SFX.tap(); openShop(); };
   document.getElementById("mNote").onclick = () => { SFX.init(); SFX.tap(); renderNotebook(); };
   document.getElementById("mLb").onclick = () => { SFX.init(); SFX.tap(); openLeaderboard(); };
+  document.getElementById("mColl").onclick = () => { SFX.init(); SFX.tap(); openAlbum(); };
+  const oc = document.getElementById("openCab"); if (oc) oc.onclick = () => { SFX.init(); SFX.tap(); openCabinet(); };
   const c = document.getElementById("chest");
   if (chestReady) c.onclick = () => {
     SFX.init(); SFX.fanfare(); confetti(70);
     const snack = pick(SNACKS); S.inventory.push(snack);
     let extra = ""; if (Math.random() < .2 && S.streak_shields < 3) { S.streak_shields++; extra = " …and a 🛡️ shield!"; }
-    S.last_chest_date = today(); streakNote = `🎁 Kuri-Manju opened the chest: ${snack}${extra}`; save(true); renderMap();
+    S.last_chest_date = today(); S.stats.chests += 1; S.coll.pending += 1; streakNote = `🎁 Kuri-Manju opened the chest: ${snack}${extra} …plus a mystery capsule!`; save(true); renderMap(); checkTrophies(); openCapsule();
   };
 }
 
@@ -4294,12 +4491,12 @@ function renderNotebook() {
       <p class="sub">${all.length ? `${all.length} question${all.length === 1 ? "" : "s"} to fix · ${cleared} cleared so far` : `Nothing to fix right now · ${cleared} cleared so far`}</p>
     </section>
     <section class="card">
-      ${say("hachiware", all.length ? "Every mistake you make in the escape rooms, Cell Rush and incidents is saved here. Answer one right <b>twice in a row</b> to clear it from the notebook. Mistakes are treasure maps to marks in the DSE! 🗺️" : "Your notebook is empty. Play escape rooms and Cell Rush; any question you miss will appear here for focused revision. 🌱", "normal", "hint")}
+      ${say("hachiware", all.length ? "Every mistake you make in the escape rooms, Cell Rush and incidents is saved here. Answer one right <b>twice in a row</b> to clear it from the notebook. Every mistake is a clue that makes your brain stronger! 🗺️" : "Your notebook is empty. Play escape rooms and Cell Rush; any question you miss will appear here for focused revision. 🌱", "normal", "hint")}
       ${all.length ? say("chiikawa", "Uu... I don't like mistakes... but I'll fix them one by one! 💪", "brave") : ""}
       <div class="row">${all.length ? `<button class="btn big" id="nbAll">▶ Revise ${Math.min(10, all.length)} mistake${all.length === 1 ? "" : "s"}</button>` : ""}<button class="btn plain" id="nbMap">← Topic map</button></div>
     </section>
     <section class="card">
-      <h2>By topic (HKDSE compulsory part)</h2>
+      <h2>By topic</h2>
       <div class="nbtopics">${TOPICS.map((T, ti) => { const n = mistakeKeys(ti).length; return `<div class="nbrow"><span class="ticon" aria-hidden="true">${T.icon}</span>
         <span style="min-width:0"><b>Topic ${T.no}: ${esc(T.name)}</b><br><span class="small muted">${esc(T.part)}</span></span>
         <span class="pill ${n ? "" : "saved"}">${n ? `${n} to fix` : "✓ clear"}</span>
@@ -4333,7 +4530,7 @@ function startRevision(ti) {
     const k = RV.keys[RV.at], { r, p } = mistakeQ(k), m = S.mistakes[k] || { n: 0, ok: 0 };
     $app.innerHTML = `<section class="rushhead"><div class="status"><div class="av">${avatar("chiikawa", "brave")}</div><div><div class="rtopic" style="color:var(--yellow)">📕 Mistake Notebook${ti == null ? "" : ` · ${esc(TOPICS[ti].name)}`}</div><div class="big">Question ${RV.at + 1} of ${RV.keys.length}</div></div></div>
         <span class="combo">✓ ${m.ok}/2 to clear</span></section>
-      <section class="card"><span class="kicker">${TOPICS[r.t].icon} ${esc(stageLabel(r))} · ${esc(r.focus)} · 🧠 Bloom ${p.b}</span>
+      <section class="card"><span class="kicker">${TOPICS[r.t].icon} ${esc(stageLabel(r))} · ${esc(r.focus)} ${diffChip(p.b)}</span>
         <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
         <div id="rvAns"></div><div class="row"><button class="btn blue" id="rvHint">💡 Hint</button><button class="btn plain" id="rvJ">📓 Notes</button><button class="btn plain" id="rvQuit">✕ Stop</button></div><div id="rvFb"></div></section>`;
     document.getElementById("rvHint").onclick = () => { SFX.hint(); document.getElementById("rvFb").innerHTML = say("hachiware", `💡 ${esc(p.hint)}`, "normal", "hint"); RV.hinted = true; };
@@ -4345,7 +4542,7 @@ function startRevision(ti) {
       if (ok) { RV.right++; SFX.right(); if (noteRight(r.id, p.id, !RV.hinted)) RV.cleared++; else if (RV.hinted) toast("Right! (Used a hint, so it stays in the notebook for now.)"); }
       else { SFX.wrong(); noteMistake(r.id, p.id); }
       save();
-      fb.innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("usagi", "Yaha! Got it! 🐰", "happy") : say("chiikawa", "Uu... not yet. Let's read why. 🥺", "cry")}<p>${esc(p.explain)}</p>${p.tip ? `<p class="tip"><b>📝 Exam tip:</b> ${esc(p.tip)}</p>` : ""}
+      fb.innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("usagi", "Yaha! Got it! 🐰", "happy") : say("chiikawa", "Uu... not yet. Let's read why. 🥺", "cry")}<p>${esc(p.explain)}</p>${p.tip ? `<p class="tip"><b>📝 Top tip:</b> ${esc(p.tip)}</p>` : ""}
         <div class="row"><button class="btn big" id="rvNext">${RV.at + 1 < RV.keys.length ? "Next →" : "Finish"}</button></div></div>`;
       document.getElementById("rvNext").onclick = () => { SFX.tap(); RV.at++; next(); };
       document.getElementById("rvNext").focus({ preventScroll: true });
@@ -4438,7 +4635,7 @@ function sceneSvg(r, solvedCount) {
     ${sc.draw(r, solvedCount)}
     <g class="obj" data-hs="2" transform="translate(${sc.sp[0]} ${sc.sp[1]})">${sc.stand}${specialSvg(r.special)}</g>
     ${r.boss ? `<defs><radialGradient id="bossGlow" cx=".5" cy=".3" r=".7"><stop offset="0" stop-color="rgba(201,160,255,0)"/><stop offset="1" stop-color="rgba(107,78,140,.45)"/></radialGradient></defs><rect width="800" height="500" fill="url(#bossGlow)" pointer-events="none"/>
-      <svg x="472" y="372" width="78" height="108" viewBox="-4 -4 72 100" aria-hidden="true">${figure("rakko", "brave").replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "")}</svg>` : ""}
+      <svg x="468" y="372" width="84" height="116" viewBox="${FIG_VB}" aria-hidden="true">${figure("rakko", "brave").replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "")}</svg>` : ""}
   </svg>`;
 }
 
@@ -4601,7 +4798,7 @@ function openPuzzle(i) {
   if (R.hiddenHs === i) { R.hiddenHs = null; toast("🔦 Found the hidden lock!"); }
   const typeLabel = { mc: p.gen ? "Spelling check" : p.graph ? "Graph reading" : "Multiple choice", dial: "Combination dials", spell: "Spelling lock" }[p.type];
   const box = openModal(`
-    <span class="kicker">${typeLabel} · T${room.topicNo} ${room.boss ? "Boss" : `S${room.s}`} · 🧠 Bloom ${p.b}: ${BLOOM[p.b]}</span>
+    <span class="kicker">${typeLabel} · T${room.topicNo} ${room.boss ? "Boss" : `S${room.s}`} ${diffChip(p.b)}</span>
     <h2>${esc(hsName)}</h2>
     <div class="lockprog" aria-label="Question ${step + 1} of ${LOCK_Q} for this lock">${Array.from({ length: LOCK_Q }, (_, n) => `<i class="${n < step ? "on" : n === step ? "cur" : ""}"></i>`).join("")}<span class="small"><b>Question ${step + 1} of ${LOCK_Q}</b> to open this lock</span></div>
     ${step ? say("chiikawa", pick(["Keep going! One more click and the lock wiggles... 🔐", "It's working! The lock is loosening! ✨", "Ya...! Almost there! 🥹"]), "brave")
@@ -4714,7 +4911,7 @@ function answerUi(p) {
     <div class="keys">${["7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "⌫"].map(k => `<button class="key ${k === "⌫" ? "del" : ""}" data-k="${k}" aria-label="${k === "⌫" ? "Delete" : k === "." ? "Decimal point" : k}">${k}</button>`).join("")}</div>
     <button class="btn" id="kok" style="width:min(208px,100%)">Unlock 🔓</button></div>`;
   if (p.type === "spell") return `<div class="spell"><div class="sboxes" id="sBoxes" aria-hidden="true">${spellBoxes(p.answer, "")}</div>
-    <p class="small muted">${countLetters(p.answer)} letters · starts with “${esc(p.answer[0].toUpperCase())}”. British spelling (HKDSE).</p>
+    <p class="small muted">${countLetters(p.answer)} letters · starts with “${esc(p.answer[0].toUpperCase())}”. British spelling.</p>
     <div class="row"><input id="spIn" class="name" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type the biology term"><button class="btn" id="spOk">Try the lock 🔓</button></div></div>`;
   // Dials start at random positions (never all correct)
   const start = p.dials.map(o => Math.floor(Math.random() * o.length));
@@ -4823,6 +5020,8 @@ function solve() {
   if (firstTry && !run.firsts.includes(k)) run.firsts.push(k);
   noteRight(room.id, p.id, firstTry);
   S.stats.correct += 1;
+  if (p.type === "spell" || p.gen) S.stats.spellRight += 1;
+  if (p.graph && firstTry) S.stats.graphFirst += 1;
   S.stats.run = firstTry ? S.stats.run + 1 : 0; S.stats.bestRun = Math.max(S.stats.bestRun, S.stats.run);
   const last = step >= LOCK_Q - 1;
   if (last) { const solved = S.room_progress[room.id] || []; if (!solved.includes(i)) solved.push(i); S.room_progress[room.id] = solved; }
@@ -4838,7 +5037,7 @@ function solve() {
   document.getElementById("pfb").innerHTML = `<div class="fb ok">
     ${say(cw, `${esc(ct)} <b>${firstTry ? "First try! Mastery up 📈" : "Correct! ✔️"}</b>`, cm)}
     <p>${esc(p.explain)}</p>
-    ${p.tip ? `<p class="tip"><b>📝 Exam tip:</b> ${esc(p.tip)}</p>` : ""}
+    ${p.tip ? `<p class="tip"><b>📝 Top tip:</b> ${esc(p.tip)}</p>` : ""}
     ${kt.length ? `<div class="terms">${kt.map(([t, m]) => `<span class="term"><b>${esc(t)}</b><span class="def">${esc(m)}</span></span>`).join("")}</div>` : ""}
     ${last ? `<div class="found">${ICONS[HOTSPOTS[i].item]}<span>Lock open! You found: <b>${esc(itemName(i))}</b>. Code digit #${i + 1} = <b>${room.code[i]}</b></span></div>
     <div class="row"><button class="btn big" id="collect">Collect item ✨</button></div>`
@@ -4906,6 +5105,8 @@ function escapeRoom() {
   const earned = first ? (room.boss ? 25 : 15) : revise ? 20 : 5; S.coins = (S.coins || 0) + earned; R.done = true; clearTimeout(R.incT);
   if (tLeft >= 0 && run.strikes === 0) S.stats.cleanEscapes += 1;
   if (!run.hints) S.stats.noHintEscapes += 1;
+  if (new Date().getHours() >= 21) S.stats.night += 1;
+  const caps = first ? (room.boss ? 2 : 1) : Math.random() < .4 ? 1 : 0; S.coll.pending += caps;
   S.room_run[room.id] = freshRun();
   S.room_timer[room.id] = ROOM_SECONDS;
   const ni = nextRoomIndex(); S.current_room = ni === -1 ? room.id : ROOMS[ni].id;
@@ -4922,15 +5123,16 @@ function escapeRoom() {
       <div class="cast" style="margin:0">${(room.boss ? ["usagi", "chiikawa", "rakko"] : ["usagi", "chiikawa", "hachiware"]).map(w => `<div class="fig" style="width:90px">${figure(w, w === "chiikawa" ? "sparkle" : "happy")}</div>`).join("")}</div>
       <div class="row" style="justify-content:center;font-size:1.8rem" aria-label="${stars} / 3 ★">${starStr(stars)}</div>
       <p style="text-align:center"><b>${n}/${5 * LOCK_Q}</b> questions right first try · ⏱️ ${fmt(Math.max(0, used))}${tLeft < 0 ? " (overtime)" : ""} · ⚠️ ${run.strikes} strike${run.strikes === 1 ? "" : "s"}</p>
-      <p style="text-align:center"><span class="pill coinpill">+${earned} 🌰 chestnuts${revise ? " · 📚 daily revision bonus!" : ""}</span>${R.incidents ? ` <span class="pill">👻 Incidents survived: ${R.incidents}</span>` : ""}</p>
+      <p style="text-align:center"><span class="pill coinpill">+${earned} 🌰 chestnuts${revise ? " · 📚 daily revision bonus!" : ""}</span>${caps ? ` <span class="pill rpill">🎁 +${caps} capsule${caps > 1 ? "s" : ""}</span>` : ""}${R.incidents ? ` <span class="pill">👻 Incidents survived: ${R.incidents}</span>` : ""}</p>
       ${lost ? `<div class="rules">Guess strikes cost you <b>${lost} star${lost > 1 ? "s" : ""}</b> this time. Replay the stage and think before answering to win them back!</div>` : ""}
       ${room.boss && first ? say("rakko", "...Hmph. Not bad. You have the heart of a true biologist. ⚔️", "happy") : ""}
       ${topicDone ? say("momonga", `TOPIC ${T.no} CLEARED! You earned <b>${esc(T.badge)}</b>! Everyone is crying happy tears! 💜🥹`, "sparkle") : first ? say("momonga", `You earned <b>${esc(room.item)}</b>! 💜`, "happy") : say("kurimanju", "Replay complete. Practice makes the brain strong. 🍵", "happy")}
       <section class="card cream jsec"><h3>📖 Textbook recap: ${esc(room.focus)}</h3><ul>${room.notes.map(x => `<li>${x}</li>`).join("")}</ul></section>
-      ${say("hachiware", !nxt ? "That was the final stage of every topic. You've conquered the whole HKDSE Biology compulsory part! 🌟" : `That's today's mission done! 🌱 Rest your brain, or keep going if you feel great. Next: <b>${esc(stageLabel(nxt))}: ${esc(nxt.name)}</b>.`, "happy", "hint")}
-      <div class="row"><button class="btn big" id="eMap">Back to the map</button>${nxt ? `<button class="btn blue" id="eNext">▶ Next stage</button>` : ""}<button class="btn yellow" id="eCode">🔑 Get my save code</button></div>`, { onClose: renderMap });
+      ${say("hachiware", !nxt ? "That was the final stage of every topic. You've explored every corner of the biology world! 🌟" : `That's today's mission done! 🌱 Rest your brain, or keep going if you feel great. Next: <b>${esc(stageLabel(nxt))}: ${esc(nxt.name)}</b>.`, "happy", "hint")}
+      <div class="row">${caps ? `<button class="btn pink" id="eCap">🎁 Open capsule</button>` : ""}<button class="btn big" id="eMap">Back to the map</button>${nxt ? `<button class="btn blue" id="eNext">▶ Next stage</button>` : ""}<button class="btn yellow" id="eCode">🔑 Get my save code</button></div>`, { onClose: renderMap });
     document.getElementById("eMap").onclick = () => { SFX.tap(); closeModal(); renderMap(); };
     if (nxt) document.getElementById("eNext").onclick = () => { SFX.tap(); closeModal(); enterRoom(nxt.id); };
+    const ec = document.getElementById("eCap"); if (ec) ec.onclick = () => { SFX.tap(); closeModal(); renderMap(); openCapsule(); };
     document.getElementById("eCode").onclick = () => { SFX.tap(); renderMap(); openSaveModal(); };
     setTimeout(checkTrophies, 1800); lbSubmit(true);
   }, reduced() ? 100 : 1000);
@@ -4972,7 +5174,7 @@ function tryIncident(me) {
   const opts = INCIDENTS.filter(x => !R.used.includes(x.id) && (!x.cond || x.cond()));
   if (!opts.length) return;
   const inc = pick(opts.flatMap(x => Array(x.w).fill(x)));
-  R.used.push(inc.id); R.incidents++;
+  R.used.push(inc.id); R.incidents++; S.stats.incidents += 1;
   if (inc.good) SFX.hint(); else SFX.creepy();
   openModal(`<span class="kicker">👻 ${"Incident!"}</span>
     <h2>${inc.title[0]}</h2>
