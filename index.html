@@ -477,6 +477,8 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .earsteps li.off { opacity: .4; text-decoration: line-through; }
 .simq .choice.right { background: var(--green); }
 .sqfb { min-height: 1.2em; }
+.studybar { height: 10px; border-radius: 999px; background: #EDE6F7; overflow: hidden; border: 2px solid var(--ink); }
+.studybar i { display: block; height: 100%; background: linear-gradient(90deg, #B9F3C9, #7CC47A); transition: width .4s; }
 .chk { display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; } .chk input { flex: 0 0 auto; width: 18px; height: 18px; }
 .simbtns { gap: 6px; } .simbtns .btn { min-height: 38px; padding: 4px 10px; font-size: .88rem; }
 /* Anti-guessing */
@@ -955,19 +957,32 @@ function axes(x0, y0, w, h, xl, yl) {
 }
 const dot = (x, y, t, dx = 8, dy = -10) => `<circle cx="${x}" cy="${y}" r="4.5" fill="${PINK}" stroke="${INK}" stroke-width="1.6"/>${lab(x + dx, y + dy, t)}`;
 
-/* Plant cell. opts.letters shows A–F labels; opts.hl glows one part (wall, membrane, vacuole, nucleus, chloroplast, mito) */
+/* Plant cell: textbook-style (cellulose wall with plasmodesmata, granular cytoplasm, tonoplast, nuclear envelope).
+   opts.letters shows A–F labels; opts.hl glows one part (wall, membrane, vacuole, nucleus, chloroplast, mito) */
 function plantCellSvg(opts = {}) {
   const hl = k => opts.hl === k ? `stroke="${PINK}" stroke-width="5" filter="url(#glowF)"` : "";
   const L1 = opts.letters;
-  const chl = (x, y, r) => `<g transform="rotate(${r} ${x} ${y})"><ellipse cx="${x}" cy="${y}" rx="13" ry="7.5" fill="#7BC96F" stroke="${INK}" stroke-width="1.8" ${hl("chloroplast")}/><path d="M${x - 7} ${y - 2} h5 M${x + 1} ${y + 2} h6 M${x - 4} ${y + 3} h4" stroke="#2F6B2A" stroke-width="1.6"/></g>`;
+  const chl = (x, y, r) => `<g transform="rotate(${r} ${x} ${y})"><ellipse cx="${x}" cy="${y}" rx="14.5" ry="7.8" fill="url(#pcChl)" stroke="#2F6B2A" stroke-width="1.3" ${hl("chloroplast")}/>
+    <path d="M${x - 11} ${y} H${x + 11}" stroke="#3E8E3A" stroke-width=".9"/>${[-8, -3, 2, 7].map(dx => `<rect x="${x + dx - 1.8}" y="${y - 3.4}" width="3.6" height="6.8" rx="1" fill="#246B24" opacity=".85"/>`).join("")}</g>`;
+  const dots = [[52, 44], [60, 80], [48, 110], [80, 36], [120, 36], [160, 34], [212, 80], [214, 100], [208, 150], [196, 180], [120, 180], [96, 176], [60, 186], [210, 40], [180, 172], [140, 190]];
   return `${svgOpen(300, 215, "A plant cell" + (L1 ? " with parts labelled A to F" : " with one part glowing"))}
-    <defs><filter id="glowF" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-    <rect x="30" y="18" width="200" height="180" rx="18" fill="#CFEFC0" stroke="${INK}" stroke-width="5" ${hl("wall")}/>
-    <rect x="41" y="29" width="178" height="158" rx="12" fill="#F6FFF1" stroke="#5E9E4B" stroke-width="2.2" ${hl("membrane")}/>
-    <rect x="88" y="52" width="108" height="108" rx="40" fill="#D3E4FF" stroke="${INK}" stroke-width="2" ${hl("vacuole")}/>
-    <circle cx="68" cy="150" r="19" fill="#C9C3F0" stroke="${INK}" stroke-width="2" ${hl("nucleus")}/><circle cx="72" cy="146" r="5" fill="#8E7CC3"/>
-    ${chl(64, 58, -20)}${chl(206, 122, 70)}${chl(160, 176, 5)}
-    <g transform="rotate(-15 204 54)"><ellipse cx="204" cy="54" rx="11" ry="6.5" fill="#F2A36B" stroke="${INK}" stroke-width="1.8" ${hl("mito")}/><path d="M196 54 q2 -4 4 0 t4 0 t4 0" fill="none" stroke="${INK}" stroke-width="1.3"/></g>
+    <defs><filter id="glowF" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <radialGradient id="pcVac" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#EEF5FF"/><stop offset="1" stop-color="#C6DAF5"/></radialGradient>
+      <radialGradient id="pcNuc" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#E4DDF7"/><stop offset="1" stop-color="#A89AD8"/></radialGradient>
+      <linearGradient id="pcCyt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBFFF3"/><stop offset="1" stop-color="#EAF5DC"/></linearGradient>
+      <linearGradient id="pcChl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9AD88B"/><stop offset="1" stop-color="#4FA746"/></linearGradient></defs>
+    <path d="M36 22 Q130 12 226 22 Q236 110 228 196 Q130 206 34 196 Q26 110 36 22Z" fill="#D7EBC0" stroke="#6E8F4E" stroke-width="5" ${hl("wall")}/>
+    <path d="M36 22 Q130 12 226 22 Q236 110 228 196 Q130 206 34 196 Q26 110 36 22Z" fill="none" stroke="${INK}" stroke-width="1.2" opacity=".6"/>
+    ${[[130, 17, 0], [231, 110, 90], [130, 201, 0], [30, 110, 90]].map(([x, y, r]) => `<rect x="${x - 2}" y="${y - 4}" width="4" height="8" fill="#FBFFF3" transform="rotate(${r} ${x} ${y})"/>`).join("")}
+    <path d="M44 30 Q130 21 218 30 Q227 110 220 188 Q130 197 42 188 Q35 110 44 30Z" fill="url(#pcCyt)" stroke="#4E8A3A" stroke-width="1.6" ${hl("membrane")}/>
+    ${dots.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.4" fill="#8FB57A"/>`).join("")}
+    <path d="M90 128 q-8 14 0 30 M96 124 q-10 18 0 38" fill="none" stroke="#B9A7D8" stroke-width="1.4"/>
+    <path d="M96 60 Q140 46 186 62 Q200 106 188 150 Q146 166 102 152 Q84 106 96 60Z" fill="url(#pcVac)" stroke="#6A8FC9" stroke-width="1.8" ${hl("vacuole")}/>
+    <path d="M110 70 Q140 60 170 70" fill="none" stroke="#fff" stroke-width="3" opacity=".7" stroke-linecap="round"/>
+    <circle cx="68" cy="150" r="19" fill="url(#pcNuc)" stroke="#5C4B9A" stroke-width="2" ${hl("nucleus")}/><circle cx="68" cy="150" r="16.5" fill="none" stroke="#5C4B9A" stroke-width=".8" stroke-dasharray="5 2"/>
+    <circle cx="72" cy="146" r="5.5" fill="#6B5AAE"/>${[[60, 156], [64, 160], [76, 156], [58, 146]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.3" fill="#6B5AAE"/>`).join("")}
+    ${chl(64, 58, -20)}${chl(206, 122, 70)}${chl(160, 176, 5)}${chl(112, 176, -8)}
+    <g transform="rotate(-15 204 54)"><ellipse cx="204" cy="54" rx="12" ry="6.8" fill="#F4B183" stroke="#9A5B2B" stroke-width="1.5" ${hl("mito")}/><path d="M195 51 v4 M199 49 v6 M203 50 v7 M207 49 v6 M211 51 v4" stroke="#9A5B2B" stroke-width="1.2" stroke-linecap="round"/></g>
     ${L1 ? `${lead(215, 54, 256, 40)}${lab(262, 40, "F")}${lead(196, 100, 256, 86)}${lab(262, 86, "C")}${lead(212, 128, 256, 128)}${lab(262, 128, "E")}
       ${lead(219, 158, 256, 160)}${lab(262, 160, "B")}${lead(230, 190, 256, 192)}${lab(262, 192, "A")}${lead(55, 160, 14, 186)}${lab(6, 196, "D")}` : ""}
   </svg>`;
@@ -981,12 +996,14 @@ const DIAGRAMS = {
       return `<path d="M${x} 20 V128 a18 18 0 0 0 36 0 V20" fill="#fff" stroke="${INK}" stroke-width="3"/><path d="M${x + 2} 70 V128 a16 16 0 0 0 32 0 V70 Z" fill="${c}"/>
         <path d="M${x - 4} 20 h44" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>${lab(x + 18, 162, t, "middle")}`; }).join("")}</svg>`,
 
-  chromosome: `${svgOpen(300, 170, "A chromosome made of two parts joined at one point. X points to one arm, Y points to the joining point")}
-    <path d="M120 22 Q138 85 120 148" fill="none" stroke="#A0C4FF" stroke-width="18" stroke-linecap="round"/>
-    <path d="M160 22 Q142 85 160 148" fill="none" stroke="#A0C4FF" stroke-width="18" stroke-linecap="round"/>
-    <path d="M120 22 Q138 85 120 148 M160 22 Q142 85 160 148" fill="none" stroke="${INK}" stroke-width="2" opacity=".35"/>
-    <circle cx="140" cy="85" r="10" fill="#FFB7C5" stroke="${INK}" stroke-width="2.4"/>
-    ${lead(114, 40, 60, 40)}${lab(40, 40, "X")}${lead(150, 85, 222, 85)}${lab(230, 85, "Y")}</svg>`,
+  chromosome: `${svgOpen(300, 170, "A chromosome made of two sister chromatids joined at the centromere. X points to one chromatid, Y points to the centromere")}
+    <defs><linearGradient id="chG" x1="0" x2="1"><stop offset="0" stop-color="#6F86D6"/><stop offset=".5" stop-color="#A9BCF2"/><stop offset="1" stop-color="#6F86D6"/></linearGradient>
+      <clipPath id="chL"><path d="M104 26 Q100 14 113 13 Q127 14 129 27 Q133 70 137 85 Q133 100 129 143 Q127 156 113 157 Q100 156 104 144 Q115 100 123 85 Q115 70 104 26Z"/></clipPath>
+      <clipPath id="chR"><path d="M176 26 Q180 14 167 13 Q153 14 151 27 Q147 70 143 85 Q147 100 151 143 Q153 156 167 157 Q180 156 176 144 Q165 100 157 85 Q165 70 176 26Z"/></clipPath></defs>
+    ${["chL", "chR"].map(id => `<g clip-path="url(#${id})"><rect x="90" y="0" width="100" height="170" fill="url(#chG)"/>${[24, 34, 46, 56, 66, 104, 116, 128, 140, 150].map((y, i) => `<rect x="90" y="${y}" width="100" height="${i % 3 ? 3 : 6}" fill="#2E3A78" opacity=".35"/>`).join("")}</g>`).join("")}
+    <path d="M104 26 Q100 14 113 13 Q127 14 129 27 Q133 70 137 85 Q133 100 129 143 Q127 156 113 157 Q100 156 104 144 Q115 100 123 85 Q115 70 104 26Z M176 26 Q180 14 167 13 Q153 14 151 27 Q147 70 143 85 Q147 100 151 143 Q153 156 167 157 Q180 156 176 144 Q165 100 157 85 Q165 70 176 26Z" fill="none" stroke="#2E3A78" stroke-width="1.8"/>
+    <ellipse cx="140" cy="85" rx="8" ry="5" fill="#F29BB5" stroke="${INK}" stroke-width="1.6"/>
+    ${lead(112, 44, 60, 40)}${lab(40, 40, "X")}${lead(146, 85, 222, 85)}${lab(230, 85, "Y")}${small(140, 166, "(banding stain, as seen in a karyotype)", "middle")}</svg>`,
 
   membrane: `${svgOpen(340, 190, "The cell membrane: a double layer of phospholipids with proteins. X marks a phospholipid head, Y the tails, Z a protein")}
     ${small(20, 14, "outside the cell")}${small(20, 180, "cytoplasm")}
@@ -1005,23 +1022,28 @@ const DIAGRAMS = {
     ${lab(90, 138, "P", "middle")}${lab(230, 138, "Q", "middle")}${small(166, 14, "membrane")}</svg>`,
 
   plantStates: `${svgOpen(330, 150, "Three plant cells A, B and C after being placed in different solutions")}
+    <defs><radialGradient id="psV" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#EEF5FF"/><stop offset="1" stop-color="#B9D0F2"/></radialGradient></defs>
     ${[0, 1, 2].map(i => { const x = 18 + i * 106;
-      const wall = i === 2 ? `<path d="M${x} 20 H${x + 86} Q${x + 78} 70 ${x + 86} 120 H${x} Q${x + 8} 70 ${x} 20Z" fill="#CFEFC0" stroke="${INK}" stroke-width="4"/>` : `<rect x="${x}" y="20" width="86" height="100" rx="8" fill="#CFEFC0" stroke="${INK}" stroke-width="4"/>`;
-      const inner = i === 0 ? `<rect x="${x + 6}" y="26" width="74" height="88" rx="6" fill="#F6FFF1" stroke="#5E9E4B" stroke-width="2"/><rect x="${x + 16}" y="36" width="54" height="68" rx="18" fill="#A0C4FF" stroke="${INK}" stroke-width="1.8"/>`
-        : i === 1 ? `<rect x="${x + 6}" y="26" width="74" height="88" rx="6" fill="#E9F2DC"/><path d="M${x + 22} 44 Q${x + 43} 30 ${x + 64} 44 Q${x + 72} 70 ${x + 62} 96 Q${x + 43} 108 ${x + 24} 96 Q${x + 14} 70 ${x + 22} 44Z" fill="#F6FFF1" stroke="#5E9E4B" stroke-width="2"/><ellipse cx="${x + 43}" cy="70" rx="12" ry="16" fill="#A0C4FF" stroke="${INK}" stroke-width="1.6"/>`
-        : `<path d="M${x + 6} 26 H${x + 80} Q${x + 73} 70 ${x + 80} 114 H${x + 6} Q${x + 13} 70 ${x + 6} 26Z" fill="#F6FFF1" stroke="#5E9E4B" stroke-width="2"/><rect x="${x + 22}" y="44" width="42" height="52" rx="16" fill="#A0C4FF" stroke="${INK}" stroke-width="1.8"/>`;
+      const wall = i === 2 ? `<path d="M${x} 20 H${x + 86} Q${x + 76} 70 ${x + 86} 120 H${x} Q${x + 10} 70 ${x} 20Z" fill="${i === 1 ? "#FDE3EA" : "#D7EBC0"}" stroke="#6E8F4E" stroke-width="4.5"/>` : `<rect x="${x}" y="20" width="86" height="100" rx="6" fill="${i === 1 ? "#FDE3EA" : "#D7EBC0"}" stroke="#6E8F4E" stroke-width="4.5"/>`;
+      const chl = pts => pts.map(([a, b]) => `<ellipse cx="${a}" cy="${b}" rx="4.5" ry="2.6" fill="#4FA746" stroke="#2F6B2A" stroke-width=".8"/>`).join("");
+      const inner = i === 0
+        ? `<rect x="${x + 5}" y="25" width="76" height="90" rx="4" fill="#F4FBEA" stroke="#4E8A3A" stroke-width="1.6"/><rect x="${x + 13}" y="33" width="60" height="74" rx="10" fill="url(#psV)" stroke="#6A8FC9" stroke-width="1.5"/>${chl([[x + 9, 40], [x + 9, 70], [x + 9, 100], [x + 77, 50], [x + 77, 90], [x + 40, 29], [x + 45, 111]])}<circle cx="${x + 70}" cy="104" r="5" fill="#A89AD8" stroke="#5C4B9A" stroke-width="1"/>`
+        : i === 1 ? `<path d="M${x + 24} 42 Q${x + 43} 30 ${x + 62} 42 Q${x + 72} 70 ${x + 62} 98 Q${x + 43} 110 ${x + 24} 98 Q${x + 14} 70 ${x + 24} 42Z" fill="#F4FBEA" stroke="#4E8A3A" stroke-width="1.8"/><ellipse cx="${x + 43}" cy="70" rx="11" ry="15" fill="url(#psV)" stroke="#6A8FC9" stroke-width="1.3"/>${chl([[x + 28, 56], [x + 26, 80], [x + 58, 56], [x + 60, 82], [x + 43, 45]])}<circle cx="${x + 43}" cy="96" r="4" fill="#A89AD8"/><path d="M${x + 24} 42 L${x + 6} 26 M${x + 62} 98 L${x + 80} 114" stroke="#4E8A3A" stroke-width=".8" stroke-dasharray="2 2"/>`
+        : `<path d="M${x + 5} 25 H${x + 81} Q${x + 72} 70 ${x + 81} 115 H${x + 5} Q${x + 14} 70 ${x + 5} 25Z" fill="#F4FBEA" stroke="#4E8A3A" stroke-width="1.6"/><path d="M${x + 22} 40 Q${x + 43} 34 ${x + 64} 40 Q${x + 60} 70 ${x + 64} 100 Q${x + 43} 106 ${x + 22} 100 Q${x + 26} 70 ${x + 22} 40Z" fill="url(#psV)" stroke="#6A8FC9" stroke-width="1.5"/>${chl([[x + 13, 40], [x + 15, 72], [x + 13, 104], [x + 72, 48], [x + 72, 96]])}<circle cx="${x + 68}" cy="72" r="4.5" fill="#A89AD8"/>`;
       return wall + inner + lab(x + 43, 138, "ABC"[i], "middle"); }).join("")}</svg>`,
 
   mitosis: `${svgOpen(330, 150, "Three dividing animal cells A, B and C at different stages of mitosis")}
+    <defs><radialGradient id="mtC" cx=".5" cy=".45" r=".6"><stop offset="0" stop-color="#FFF9EC"/><stop offset="1" stop-color="#F6E3C4"/></radialGradient></defs>
     ${[0, 1, 2].map(i => { const x = 18 + i * 106, cx = x + 43;
-      const cell = i === 2 ? `<path d="M${x + 4} 70 Q${x + 4} 22 ${cx} 26 Q${x + 82} 22 ${x + 82} 70 Q${x + 82} 118 ${cx} 114 Q${x + 4} 118 ${x + 4} 70Z M${cx - 6} 26 Q${cx} 70 ${cx - 6} 114" fill="#FFF6DA" stroke="${INK}" stroke-width="3"/>`
-        : `<ellipse cx="${cx}" cy="70" rx="40" ry="46" fill="#FFF6DA" stroke="${INK}" stroke-width="3"/>`;
-      const spindle = i < 2 ? `<path d="M${cx} 28 L${cx - 16} 70 L${cx} 112 M${cx} 28 L${cx} 112 M${cx} 28 L${cx + 16} 70 L${cx} 112" fill="none" stroke="${SOFT}" stroke-width="1.2"/>` : "";
-      const X = (px, py) => `<path d="M${px - 5} ${py - 7} L${px + 5} ${py + 7} M${px + 5} ${py - 7} L${px - 5} ${py + 7}" stroke="#5B8FE0" stroke-width="4" stroke-linecap="round"/>`;
-      const V = (px, py, up) => `<path d="M${px - 5} ${py + (up ? 7 : -7)} L${px} ${py} L${px + 5} ${py + (up ? 7 : -7)}" fill="none" stroke="#5B8FE0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
-      const chrom = i === 0 ? [52, 70, 88].map(py => X(cx, py)).join("") : i === 1 ? [cx - 12, cx, cx + 12].map(px => V(px, 40, true) + V(px, 100, false)).join("")
-        : `<ellipse cx="${cx - 2}" cy="48" rx="20" ry="13" fill="#C9C3F0" stroke="${INK}" stroke-width="1.8"/><ellipse cx="${cx - 2}" cy="92" rx="20" ry="13" fill="#C9C3F0" stroke="${INK}" stroke-width="1.8"/>`;
-      return cell + spindle + chrom + lab(cx, 138, "ABC"[i], "middle"); }).join("")}</svg>`,
+      const cell = i === 2 ? `<path d="M${x + 4} 70 Q${x + 4} 22 ${cx} 27 Q${x + 82} 22 ${x + 82} 70 Q${x + 82} 118 ${cx} 113 Q${x + 4} 118 ${x + 4} 70Z" fill="url(#mtC)" stroke="#9A7B55" stroke-width="2.5"/><path d="M${cx} 27 Q${cx - 5} 70 ${cx} 113" fill="none" stroke="#9A7B55" stroke-width="2.5"/>`
+        : `<ellipse cx="${cx}" cy="70" rx="${i === 1 ? 38 : 40}" ry="${i === 1 ? 48 : 46}" fill="url(#mtC)" stroke="#9A7B55" stroke-width="2.5"/>`;
+      const poles = i < 2 ? [28, 112].map(y => `<g transform="translate(${cx} ${y})"><rect x="-4" y="-1.5" width="8" height="3" rx="1.5" fill="#6B5AAE"/><rect x="-1.5" y="-4" width="3" height="8" rx="1.5" fill="#6B5AAE"/></g>`).join("") : "";
+      const spindle = i < 2 ? [-22, -12, -4, 4, 12, 22].map(dx => `<path d="M${cx} 28 Q${cx + dx} 70 ${cx} 112" fill="none" stroke="#B8A58A" stroke-width=".9"/>`).join("") : "";
+      const X = (px, py) => `<g><path d="M${px - 3} ${py - 9} Q${px} ${py} ${px - 3} ${py + 9}" stroke="#3E5BB8" stroke-width="4.2" fill="none" stroke-linecap="round"/><path d="M${px + 3} ${py - 9} Q${px} ${py} ${px + 3} ${py + 9}" stroke="#6F86D6" stroke-width="4.2" fill="none" stroke-linecap="round"/><circle cx="${px}" cy="${py}" r="1.8" fill="#F29BB5"/></g>`;
+      const V = (px, py, up) => `<path d="M${px - 5} ${py + (up ? 9 : -9)} Q${px} ${py} ${px + 5} ${py + (up ? 9 : -9)}" fill="none" stroke="${up ? "#3E5BB8" : "#6F86D6"}" stroke-width="4" stroke-linecap="round"/><circle cx="${px}" cy="${py}" r="1.6" fill="#F29BB5"/>`;
+      const chrom = i === 0 ? [cx - 14, cx, cx + 14].map(px => X(px, 70)).join("") : i === 1 ? [cx - 12, cx, cx + 12].map(px => V(px, 40, true) + V(px, 100, false)).join("")
+        : [48, 92].map(y => `<ellipse cx="${cx - 2}" cy="${y}" rx="18" ry="12" fill="#E4DDF7" stroke="#5C4B9A" stroke-width="1.6"/><path d="M${cx - 12} ${y - 2} q5 -5 10 0 t10 2 M${cx - 10} ${y + 4} q6 3 12 -1" fill="none" stroke="#6B5AAE" stroke-width="1.6" stroke-linecap="round"/>`).join("");
+      return cell + spindle + poles + chrom + lab(cx, 138, "ABC"[i], "middle"); }).join("")}</svg>`,
 
   lockKey: `${svgOpen(320, 170, "An enzyme with a triangular active site, and three molecules A, B and C of different shapes")}
     <path d="M30 40 H90 L110 78 L130 40 H180 V130 H30 Z" fill="#A0C4FF" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
@@ -1048,26 +1070,39 @@ const DIAGRAMS = {
     ${dot(86, 112, "X", -22, -6)}${dot(250, 44, "Y", -4, -16)}</svg>`,
 
   leaf: `${svgOpen(340, 215, "Cross-section of a leaf with layers labelled A to D")}
-    <path d="M20 24 H300" stroke="#9CCB8A" stroke-width="5"/>
-    ${Array.from({ length: 10 }, (_, i) => `<rect x="${22 + i * 28}" y="27" width="28" height="18" rx="3" fill="#FFFDF0" stroke="${INK}" stroke-width="1.6"/>`).join("")}
-    ${Array.from({ length: 14 }, (_, i) => `<rect x="${23 + i * 20}" y="48" width="18" height="52" rx="7" fill="#B9F3C9" stroke="${INK}" stroke-width="1.6"/>${[58, 70, 82, 92].map(y => `<circle cx="${32 + i * 20}" cy="${y}" r="3" fill="#3E8E3A"/>`).join("")}`).join("")}
-    ${[[40, 118], [78, 128], [118, 116], [160, 130], [200, 118], [240, 128], [280, 116], [58, 150], [140, 152], [222, 150], [290, 150]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="17" ry="12" fill="#D8F5C9" stroke="${INK}" stroke-width="1.6"/><circle cx="${x - 5}" cy="${y}" r="2.5" fill="#3E8E3A"/><circle cx="${x + 5}" cy="${y + 2}" r="2.5" fill="#3E8E3A"/>`).join("")}
-    ${Array.from({ length: 10 }, (_, i) => i === 4 ? "" : `<rect x="${22 + i * 28}" y="168" width="28" height="16" rx="3" fill="#FFFDF0" stroke="${INK}" stroke-width="1.6"/>`).join("")}
-    <path d="M134 168 q7 8 0 16 q-6 -8 0 -16Z M156 168 q-7 8 0 16 q6 -8 0 -16Z" fill="#7BC96F" stroke="${INK}" stroke-width="1.6"/>
-    ${lead(300, 36, 318, 36)}${lab(322, 36, "A")}${lead(298, 74, 318, 74)}${lab(322, 74, "B")}${lead(300, 132, 318, 132)}${lab(322, 132, "C")}${lead(145, 188, 145, 204)}${lab(152, 206, "D")}</svg>`,
+    <defs><linearGradient id="lfP" x1="0" x2="1"><stop offset="0" stop-color="#C9EFB8"/><stop offset=".5" stop-color="#E4F8D8"/><stop offset="1" stop-color="#C9EFB8"/></linearGradient></defs>
+    <rect x="20" y="20" width="282" height="170" fill="#F3FAEE"/>
+    <path d="M20 22 H302" stroke="#E5CF72" stroke-width="4"/>
+    ${[26, 30, 24, 32, 28, 26, 30, 27, 29, 30].reduce((a, w) => { const x = a.x; a.s += `<rect x="${x}" y="25" width="${w}" height="18" rx="2" fill="#FFFDF4" stroke="#6E8F4E" stroke-width="1.3"/>`; a.x += w; return a; }, { x: 20, s: "" }).s}
+    ${Array.from({ length: 14 }, (_, i) => `<rect x="${21 + i * 20}" y="45" width="18" height="54" rx="7" fill="url(#lfP)" stroke="#4E8A3A" stroke-width="1.3"/>${[53, 63, 73, 83, 93].map((y, k) => `<ellipse cx="${(k % 2 ? 36 : 25) + i * 20}" cy="${y}" rx="2.6" ry="3.6" fill="#3E8E3A"/>`).join("")}`).join("")}
+    ${[[38, 116, 16, 11], [76, 124, 15, 12], [112, 112, 13, 10], [206, 116, 15, 11], [244, 126, 16, 12], [282, 114, 14, 11], [52, 150, 15, 11], [226, 152, 16, 11], [284, 150, 13, 11]].map(([x, y, rx, ry]) => `<path d="M${x - rx} ${y} Q${x - rx} ${y - ry} ${x} ${y - ry} Q${x + rx + 2} ${y - ry + 2} ${x + rx} ${y} Q${x + rx - 2} ${y + ry} ${x} ${y + ry} Q${x - rx - 1} ${y + ry - 1} ${x - rx} ${y}Z" fill="#E0F4D2" stroke="#4E8A3A" stroke-width="1.3"/><circle cx="${x - 5}" cy="${y - 2}" r="2.2" fill="#3E8E3A"/><circle cx="${x + 5}" cy="${y + 3}" r="2.2" fill="#3E8E3A"/>`).join("")}
+    <g><ellipse cx="160" cy="128" rx="30" ry="22" fill="#EFE6C8" stroke="#8C7A4A" stroke-width="1.6"/>${[[150, 120], [162, 116], [172, 124], [156, 130]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4.6" fill="#FFFDF4" stroke="#8C6A3A" stroke-width="2"/>`).join("")}${[[150, 142], [160, 144], [170, 141]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.6" fill="#D9E9C8" stroke="#6E8F4E" stroke-width="1"/>`).join("")}</g>
+    ${[26, 30, 24, 32, 36, 30, 27, 29, 30].reduce((a, w, i) => { const x = a.x; if (i !== 4) a.s += `<rect x="${x}" y="170" width="${w}" height="16" rx="2" fill="#FFFDF4" stroke="#6E8F4E" stroke-width="1.3"/>`; a.x += w + (i === 3 ? 4 : 0); return a; }, { x: 20, s: "" }).s}
+    <path d="M20 188 H302" stroke="#E5CF72" stroke-width="3"/>
+    <path d="M145 170 q-10 -12 -26 -10" fill="none" stroke="#9FB98A" stroke-width="1" stroke-dasharray="2 2"/>
+    <path d="M132 170 q9 8 0 17 q-7 -8 0 -17Z M158 170 q-9 8 0 17 q7 -8 0 -17Z" fill="#8CCF7E" stroke="#2F6B2A" stroke-width="1.5"/><circle cx="133" cy="178" r="1.5" fill="#246B24"/><circle cx="157" cy="178" r="1.5" fill="#246B24"/>
+    ${lead(300, 34, 318, 34)}${lab(322, 34, "A")}${lead(298, 72, 318, 72)}${lab(322, 72, "B")}${lead(296, 132, 318, 132)}${lab(322, 132, "C")}${lead(145, 186, 145, 204)}${lab(152, 206, "D")}${small(160, 162, "vein", "middle")}</svg>`,
 
   chloroplast: `${svgOpen(320, 170, "A chloroplast with parts labelled A, B and C")}
-    <ellipse cx="150" cy="85" rx="130" ry="62" fill="#D8F5C9" stroke="${INK}" stroke-width="3"/><ellipse cx="150" cy="85" rx="123" ry="55" fill="none" stroke="${INK}" stroke-width="1.6"/>
-    ${[[70, 70], [115, 100], [160, 62], [205, 98], [228, 62]].map(([x, y]) => [0, 1, 2, 3].map(k => `<rect x="${x - 16}" y="${y - 12 + k * 7}" width="32" height="6" rx="3" fill="#6BBF5F" stroke="${INK}" stroke-width="1.2"/>`).join("")).join("")}
-    <path d="M86 78 H99 M131 92 H144 M176 76 H189" stroke="#6BBF5F" stroke-width="2"/>
-    <ellipse cx="150" cy="118" rx="16" ry="8" fill="#fff" stroke="${INK}" stroke-width="1.6"/>
+    <defs><radialGradient id="cpS" cx=".5" cy=".45" r=".65"><stop offset="0" stop-color="#EDF9E4"/><stop offset="1" stop-color="#C6E9B3"/></radialGradient>
+      <linearGradient id="cpT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8CD27B"/><stop offset="1" stop-color="#3F9A38"/></linearGradient></defs>
+    <path d="M22 85 Q30 26 150 22 Q272 26 280 85 Q272 144 150 148 Q30 144 22 85Z" fill="url(#cpS)" stroke="#2F6B2A" stroke-width="2.6"/>
+    <path d="M28 85 Q36 32 150 28 Q266 32 274 85 Q266 138 150 142 Q36 138 28 85Z" fill="none" stroke="#2F6B2A" stroke-width="1.2"/>
+    ${Array.from({ length: 40 }, (_, i) => `<circle cx="${40 + (i * 53) % 225}" cy="${40 + (i * 37) % 90}" r=".9" fill="#7FB36F"/>`).join("")}
+    <path d="M52 76 Q90 70 110 96 M130 92 Q150 70 172 64 M190 70 Q205 84 224 92 M86 70 Q120 58 150 56" fill="none" stroke="#5DAA52" stroke-width="2.2"/>
+    ${[[70, 70], [115, 100], [160, 62], [205, 98], [228, 62]].map(([x, y]) => [0, 1, 2, 3, 4].map(k => `<rect x="${x - 16}" y="${y - 14 + k * 6}" width="32" height="5" rx="2.5" fill="url(#cpT)" stroke="#245E20" stroke-width=".8"/>`).join("")).join("")}
+    <ellipse cx="150" cy="118" rx="17" ry="9" fill="#FFFDF4" stroke="#8C7A4A" stroke-width="1.4"/><ellipse cx="150" cy="118" rx="10" ry="5" fill="none" stroke="#C9B98A" stroke-width="1"/><ellipse cx="150" cy="118" rx="4" ry="2" fill="none" stroke="#C9B98A" stroke-width="1"/>
+    ${[[92, 122], [210, 124], [60, 102]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3" fill="#6B5A2E"/>`).join("")}
     ${lead(228, 56, 296, 30)}${lab(300, 30, "A")}${lead(185, 128, 296, 140)}${lab(300, 140, "B")}${lead(150, 122, 120, 162)}${lab(104, 162, "C")}</svg>`,
 
   mito: `${svgOpen(320, 160, "A mitochondrion with parts labelled A, B and C")}
-    <ellipse cx="150" cy="80" rx="128" ry="58" fill="#F9C9A6" stroke="${INK}" stroke-width="3"/>
-    <path d="M36 80 Q36 34 150 30 Q264 34 264 80 Q264 126 150 130 Q36 126 36 80Z" fill="#FFE4D1" stroke="${INK}" stroke-width="1.6"/>
-    <path d="M40 80 L70 80 L70 40 L85 40 L85 108 L100 108 L100 40 L115 40 L115 118 L130 118 L130 38 L145 38 L145 118 L160 118 L160 38 L175 38 L175 118 L190 118 L190 40 L205 40 L205 110 L220 110 L220 44 L235 44 L235 80 L260 80" fill="none" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>
-    ${lead(270, 96, 300, 118)}${lab(304, 122, "A")}${lead(160, 60, 196, 12)}${lab(200, 12, "B")}${lead(122, 80, 60, 146)}${lab(44, 150, "C")}</svg>`,
+    <defs><radialGradient id="mtM" cx=".5" cy=".45" r=".65"><stop offset="0" stop-color="#FFE9D6"/><stop offset="1" stop-color="#F6C9A2"/></radialGradient></defs>
+    <path d="M22 80 Q24 22 150 20 Q276 22 278 80 Q276 138 150 140 Q24 138 22 80Z" fill="#F4B183" stroke="#8A4B1E" stroke-width="2.6"/>
+    <path d="M32 80 Q34 32 150 30 Q266 32 268 80 Q266 128 150 130 Q34 128 32 80Z" fill="url(#mtM)" stroke="#9A5B2B" stroke-width="1.6"/>
+    ${[[62, 1], [92, -1], [122, 1], [152, -1], [182, 1], [212, -1], [240, 1]].map(([x, s]) => { const y0 = s > 0 ? 32 : 128, y1 = s > 0 ? 96 : 64; return `<path d="M${x - 7} ${y0} C${x - 9} ${(y0 + y1) / 2} ${x - 4} ${y1} ${x} ${y1} C${x + 4} ${y1} ${x + 9} ${(y0 + y1) / 2} ${x + 7} ${y0}" fill="#FFE3CC" stroke="#9A5B2B" stroke-width="1.6"/>`; }).join("")}
+    ${Array.from({ length: 30 }, (_, i) => `<circle cx="${46 + (i * 47) % 208}" cy="${46 + (i * 29) % 70}" r="1.1" fill="#C98A5A"/>`).join("")}
+    <path d="M100 108 q10 -8 20 0 q-10 8 -20 0" fill="none" stroke="#6B5AAE" stroke-width="1.3"/>
+    ${lead(270, 96, 300, 118)}${lab(304, 122, "A")}${lead(152, 84, 196, 12)}${lab(200, 12, "B")}${lead(136, 80, 60, 146)}${lab(44, 150, "C")}</svg>`,
 
   lightGraph: `${svgOpen(320, 205, "Graph of rate of photosynthesis against light intensity at high and low carbon dioxide concentration, with points X and Y on the lower curve")}
     ${axes(50, 165, 250, 145, "light intensity", "rate of photosynthesis")}
@@ -1076,20 +1111,33 @@ const DIAGRAMS = {
     ${dot(80, 122, "X", -22, -6)}${dot(250, 90, "Y", -4, -16)}</svg>`,
 
   villus: `${svgOpen(300, 215, "A villus with parts labelled A, B and C")}
-    <path d="M70 205 V70 Q70 18 130 18 Q190 18 190 70 V205" fill="#FFD6DF" stroke="${INK}" stroke-width="3"/>
-    ${Array.from({ length: 8 }, (_, i) => `<path d="M${72} ${198 - i * 17} h8 M${188} ${198 - i * 17} h-8" stroke="${INK}" stroke-width="1.4"/>`).join("")}
-    <path d="M122 205 V64 Q122 50 130 50 Q138 50 138 64 V205" fill="#FFFDF0" stroke="${INK}" stroke-width="2"/>
-    <path d="M96 205 V70 Q96 36 130 36 Q164 36 164 70 V205 M96 150 L122 138 M96 110 L122 98 M164 150 L138 138 M164 110 L138 98" fill="none" stroke="#D64545" stroke-width="2.6"/>
-    ${lead(186, 120, 236, 120)}${lab(242, 120, "A")}${lead(162, 80, 236, 66)}${lab(242, 66, "B")}${lead(130, 170, 236, 176)}${lab(242, 176, "C")}</svg>`,
+    <defs><linearGradient id="vlE" x1="0" x2="1"><stop offset="0" stop-color="#F6B7C4"/><stop offset=".5" stop-color="#FFE1E7"/><stop offset="1" stop-color="#F6B7C4"/></linearGradient></defs>
+    <path d="M66 205 V70 Q66 14 130 14 Q194 14 194 70 V205" fill="none" stroke="#E8A0B0" stroke-width="4" stroke-dasharray="1 3"/>
+    <path d="M70 205 V70 Q70 18 130 18 Q190 18 190 70 V205" fill="url(#vlE)" stroke="${INK}" stroke-width="2.4"/>
+    <path d="M82 205 V72 Q82 30 130 30 Q178 30 178 72 V205" fill="#FFF2F4" stroke="#D78C9C" stroke-width="1.2"/>
+    ${Array.from({ length: 10 }, (_, i) => `<path d="M70 ${196 - i * 13} H82 M178 ${196 - i * 13} H190" stroke="#D78C9C" stroke-width="1"/><ellipse cx="76" cy="${190 - i * 13}" rx="2.2" ry="3.2" fill="#8E7CC3"/><ellipse cx="184" cy="${190 - i * 13}" rx="2.2" ry="3.2" fill="#8E7CC3"/>`).join("")}
+    ${Array.from({ length: 16 }, (_, i) => { const a = Math.PI * (i / 15); return `<circle cx="${(130 - 60 * Math.cos(a)).toFixed(1)}" cy="${(70 - 52 * Math.sin(a)).toFixed(1)}" r="2.8" fill="#8E7CC3"/>`; }).join("")}
+    <path d="M122 205 V62 Q122 48 130 48 Q138 48 138 62 V205" fill="#FFF6D6" stroke="#C9A94A" stroke-width="1.8"/>
+    <path d="M96 205 V74 Q96 40 130 40 Q164 40 164 74 V205" fill="none" stroke="#C0392B" stroke-width="3"/>
+    <path d="M96 170 Q108 162 122 164 M96 140 Q110 132 122 136 M96 110 Q108 104 122 106 M164 170 Q152 162 138 164 M164 140 Q150 132 138 136 M164 110 Q152 104 138 106 M104 60 Q116 70 122 80 M156 60 Q144 70 138 80" fill="none" stroke="#C0392B" stroke-width="1.8"/>
+    <path d="M100 205 V180 M160 205 V180" stroke="#6A8FC9" stroke-width="3"/>
+    ${lead(186, 120, 236, 120)}${lab(242, 120, "A")}${lead(163, 82, 236, 66)}${lab(242, 66, "B")}${lead(130, 170, 236, 176)}${lab(242, 176, "C")}${small(130, 8, "microvilli (brush border)", "middle")}</svg>`,
 
   gut: `${svgOpen(300, 250, "The human digestive system with organs labelled A to E")}
-    <path d="M150 10 V78" stroke="${INK}" stroke-width="10" stroke-linecap="round"/><path d="M150 10 V78" stroke="#FFD6DF" stroke-width="5" stroke-linecap="round"/>
-    <path d="M60 76 Q70 58 150 64 L148 104 Q100 112 70 100 Z" fill="#A8703F" stroke="${INK}" stroke-width="2.4"/>
-    <path d="M150 76 Q200 64 206 100 Q210 138 170 136 Q150 134 152 118" fill="#FFB7C5" stroke="${INK}" stroke-width="2.4"/>
-    <path d="M150 128 Q176 146 206 138" fill="none" stroke="${INK}" stroke-width="2"/><path d="M150 140 Q182 154 212 142 L210 150 Q180 162 150 150Z" fill="#FDE7A6" stroke="${INK}" stroke-width="2"/>
-    <path d="M80 238 V160 Q80 150 90 150 H214 Q224 150 224 160 V224" fill="none" stroke="${INK}" stroke-width="16" stroke-linejoin="round"/><path d="M80 238 V160 Q80 150 90 150 H214 Q224 150 224 160 V224" fill="none" stroke="#E5C3A2" stroke-width="11" stroke-linejoin="round"/>
-    <path d="M110 172 q20 -12 40 0 t40 0 M110 190 q20 12 40 0 t40 0 M110 208 q20 -12 40 0 t40 0" fill="none" stroke="${INK}" stroke-width="8" stroke-linecap="round"/><path d="M110 172 q20 -12 40 0 t40 0 M110 190 q20 12 40 0 t40 0 M110 208 q20 -12 40 0 t40 0" fill="none" stroke="#FFD6DF" stroke-width="4" stroke-linecap="round"/>
-    ${lead(76, 86, 24, 70)}${lab(10, 70, "A")}${lead(196, 96, 262, 84)}${lab(268, 84, "B")}${lead(206, 146, 262, 134)}${lab(268, 134, "C")}${lead(150, 190, 150, 190)}${lab(150, 238, "D", "middle")}${lead(224, 200, 262, 200)}${lab(268, 200, "E")}</svg>`,
+    <defs><linearGradient id="gtL" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#B5563E"/><stop offset="1" stop-color="#7A3322"/></linearGradient>
+      <linearGradient id="gtS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC6D0"/><stop offset="1" stop-color="#E88A9C"/></linearGradient>
+      <linearGradient id="gtC" x1="0" x2="1"><stop offset="0" stop-color="#D9A77E"/><stop offset=".5" stop-color="#EBC3A0"/><stop offset="1" stop-color="#D9A77E"/></linearGradient></defs>
+    <path d="M60 8 Q150 -6 240 8 Q262 120 250 246 H50 Q38 120 60 8Z" fill="#FFF6EE" stroke="#E6CBB0" stroke-width="2"/>
+    <path d="M146 8 Q150 40 152 80" stroke="#E8A0B0" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M146 8 Q150 40 152 80" stroke="#9A5B6B" stroke-width="1.2" fill="none"/>
+    <path d="M152 84 Q162 70 190 72 Q222 76 214 108 Q208 136 180 138 Q160 138 156 124 Q170 128 184 124 Q198 116 194 100 Q186 88 168 94 Q158 98 152 92Z" fill="url(#gtS)" stroke="#9A5B6B" stroke-width="2"/>
+    <path d="M48 70 Q70 52 150 60 Q160 70 146 86 Q120 104 84 104 Q54 102 48 90 Z" fill="url(#gtL)" stroke="#5A2418" stroke-width="2"/><path d="M110 62 Q112 80 104 100" stroke="#5A2418" stroke-width="1.3" fill="none"/>
+    <ellipse cx="110" cy="104" rx="8" ry="6" fill="#7CB342" stroke="#3E6B1E" stroke-width="1.5"/>
+    <path d="M152 140 Q180 134 214 142 Q220 148 212 152 Q182 148 156 152 Q148 148 152 140Z" fill="#F2D38C" stroke="#9A7A2B" stroke-width="1.6"/>${[164, 176, 188, 200].map(x => `<circle cx="${x}" cy="146" r="1.5" fill="#C9A94A"/>`).join("")}
+    <path d="M78 236 V164 Q78 152 90 152 H214 Q226 152 226 164 V222" fill="none" stroke="#9A6A45" stroke-width="18" stroke-linejoin="round"/><path d="M78 236 V164 Q78 152 90 152 H214 Q226 152 226 164 V222" fill="none" stroke="url(#gtC)" stroke-width="14" stroke-linejoin="round"/>
+    ${[[78, 172], [78, 192], [78, 212], [110, 152], [140, 152], [170, 152], [200, 152], [226, 172], [226, 192]].map(([x, y]) => `<path d="M${x - (x === 78 || x === 226 ? 7 : 0)} ${y - (x === 78 || x === 226 ? 0 : 7)} ${x === 78 || x === 226 ? "h14" : "v14"}" stroke="#9A6A45" stroke-width="1.2"/>`).join("")}
+    <path d="M226 222 Q200 238 160 236 V246" fill="none" stroke="#9A6A45" stroke-width="12"/><path d="M226 222 Q200 238 160 236 V246" fill="none" stroke="#EBC3A0" stroke-width="8"/>
+    <path d="M100 172 q12 -10 24 0 t24 0 t24 0 t24 0 M100 190 q12 10 24 0 t24 0 t24 0 t24 0 M100 208 q12 -10 24 0 t24 0 t24 0 t24 0 M104 222 q12 8 24 0 t24 0" fill="none" stroke="#B55C73" stroke-width="9" stroke-linecap="round"/><path d="M100 172 q12 -10 24 0 t24 0 t24 0 t24 0 M100 190 q12 10 24 0 t24 0 t24 0 t24 0 M100 208 q12 -10 24 0 t24 0 t24 0 t24 0 M104 222 q12 8 24 0 t24 0" fill="none" stroke="#F7B9C6" stroke-width="5" stroke-linecap="round"/>
+    ${lead(72, 84, 24, 70)}${lab(10, 70, "A")}${lead(206, 96, 262, 84)}${lab(268, 84, "B")}${lead(210, 147, 262, 134)}${lab(268, 134, "C")}${lab(150, 198, "D", "middle")}${lead(226, 200, 262, 200)}${lab(268, 200, "E")}</svg>`,
 
   yeast: `${svgOpen(320, 190, "Yeast in glucose solution under a layer of oil, with a tube leading into a second tube of liquid. X marks the oil layer and Y the liquid in the second tube")}
     <path d="M60 30 V150 a28 28 0 0 0 56 0 V30" fill="#fff" stroke="${INK}" stroke-width="3"/><path d="M62 62 V150 a26 26 0 0 0 52 0 V62Z" fill="#FDE7A6"/><rect x="62" y="52" width="52" height="12" fill="#F5C542" opacity=".8"/>
@@ -1099,11 +1147,17 @@ const DIAGRAMS = {
     ${lead(114, 58, 150, 70)}${lab(156, 70, "X")}${lead(254, 120, 284, 120)}${lab(290, 120, "Y")}${small(88, 184, "yeast + glucose", "middle", INK)}</svg>`,
 
   starchTest: `${svgOpen(330, 150, "Steps of testing a leaf for starch: A boiling water, B hot alcohol in a water bath, C iodine solution")}
+    <defs><linearGradient id="stW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCEBFA"/><stop offset="1" stop-color="#B9D3EE"/></linearGradient></defs>
     ${["A", "B", "C"].map((t, i) => { const x = 22 + i * 106;
-      return `<rect x="${x}" y="40" width="86" height="70" rx="10" fill="${i === 2 ? "#FFFDF0" : "#D3E4FF"}" stroke="${INK}" stroke-width="3"/>
-        ${i === 1 ? `<rect x="${x + 28}" y="18" width="30" height="80" rx="6" fill="#E9FFD9" stroke="${INK}" stroke-width="2.4"/>` : ""}
-        ${i === 2 ? `<ellipse cx="${x + 43}" cy="75" rx="30" ry="18" fill="#1F2350" stroke="${INK}" stroke-width="2"/><circle cx="${x + 70}" cy="30" r="0"/>` : `<ellipse cx="${x + 43}" cy="80" rx="22" ry="12" fill="${i === 0 ? "#6BBF5F" : "#CFEFC0"}" stroke="${INK}" stroke-width="2"/>`}
-        ${i < 2 ? `<path d="M${x + 20} 128 q6 -10 0 -18 M${x + 43} 128 q6 -10 0 -18 M${x + 66} 128 q6 -10 0 -18" fill="none" stroke="#E07A3F" stroke-width="2.4" stroke-linecap="round"/>` : ""}
+      if (i === 2) return `<rect x="${x}" y="84" width="86" height="26" rx="3" fill="#FFFFFF" stroke="#9A8C88" stroke-width="2"/>
+        <path d="M${x + 16} 94 Q${x + 43} 70 ${x + 70} 94 Q${x + 43} 108 ${x + 16} 94Z" fill="#E6E0C8" stroke="#8C7A4A" stroke-width="1.4"/><path d="M${x + 26} 94 Q${x + 43} 80 ${x + 60} 94 Q${x + 43} 102 ${x + 26} 94Z" fill="#1F2350" opacity=".85"/><path d="M${x + 20} 94 H${x + 66}" stroke="#8C7A4A" stroke-width=".8"/>
+        <rect x="${x + 50}" y="18" width="8" height="40" rx="2" fill="#E9E1C8" stroke="#8C7A4A" stroke-width="1.2"/><path d="M${x + 50} 18 h8 l0 -6 q-4 -6 -8 0Z" fill="#555" /><path d="M${x + 54} 58 v10" stroke="#8C5A2B" stroke-width="3" stroke-dasharray="2 4"/>${lab(x + 43, 138, t, "middle")}`;
+      return `<path d="M${x + 8} 32 V96 Q${x + 8} 104 ${x + 16} 104 H${x + 70} Q${x + 78} 104 ${x + 78} 96 V32" fill="rgba(255,255,255,.6)" stroke="#7A8C9A" stroke-width="2.2"/>
+        <path d="M${x + 10} 48 V96 Q${x + 10} 102 ${x + 16} 102 H${x + 70} Q${x + 76} 102 ${x + 76} 96 V48Z" fill="url(#stW)"/>
+        ${[[20, 60], [34, 72], [52, 58], [64, 76], [42, 88]].map(([dx, dy]) => `<circle cx="${x + dx}" cy="${dy}" r="2.2" fill="none" stroke="#fff" stroke-width="1"/>`).join("")}
+        ${i === 1 ? `<rect x="${x + 30}" y="14" width="24" height="84" rx="11" fill="rgba(255,255,255,.75)" stroke="#7A8C9A" stroke-width="2"/><rect x="${x + 32}" y="52" width="20" height="44" rx="9" fill="#C8E6A0" opacity=".9"/><path d="M${x + 36} 70 q6 -8 12 0 q-6 10 -12 0Z" fill="#E8F0C8" stroke="#8CA86A" stroke-width="1"/>` : `<path d="M${x + 26} 84 q17 -16 34 0 q-17 8 -34 0Z" fill="#4FA746" stroke="#2F6B2A" stroke-width="1.4"/>`}
+        <rect x="${x + 4}" y="104" width="78" height="6" fill="#9A9A9A"/>
+        ${i === 0 ? `<path d="M${x + 43} 128 q-10 -8 0 -22 q10 14 0 22Z" fill="#6FA8FF" opacity=".9"/><path d="M${x + 43} 126 q-5 -4 0 -12 q5 8 0 12Z" fill="#CFE3FF"/><rect x="${x + 37}" y="128" width="12" height="6" fill="#777"/>` : `<rect x="${x + 14}" y="112" width="58" height="14" rx="3" fill="#555"/><circle cx="${x + 64}" cy="119" r="2.5" fill="#FF6B6B"/>`}
         ${lab(x + 43, 142, t, "middle")}`; }).join("")}</svg>`
 };
 
@@ -1273,7 +1327,7 @@ const ROOMS = [
       "Water has a high <b>specific heat capacity</b>, so body temperature stays steady. <b>Evaporation of sweat</b> removes heat and cools us.",
       "Water gives <b>support</b>: turgid plant cells hold up soft stems and leaves. It also <b>lubricates</b> (e.g. mucus, synovial fluid).",
       "Inorganic ions: <b>Mg²⁺</b> for chlorophyll · <b>Fe²⁺</b> for haemoglobin · <b>Ca²⁺</b> for bones, teeth and blood clotting · <b>nitrate</b> for making proteins · <b>phosphate</b> for DNA, ATP and phospholipids.",
-      "Lack of Fe → <b>anaemia</b> (tired, pale). Lack of Mg or nitrate in plants → <b>yellow leaves</b> (chlorosis) and poor growth."
+      "Lack of Fe → <b>anaemia</b> (tired, pale). In plants: lack of Mg → <b>yellow leaves</b> (chlorosis); lack of nitrate → <b>stunted growth</b>."
     ],
     rules: ["Water: solvent · transport medium · reactant · temperature control · support · lubricant", "Mg → chlorophyll · Fe → haemoglobin · Ca → bones & clotting", "N (nitrate) → proteins · P (phosphate) → DNA, ATP, phospholipids"],
     terms: [["solvent", "a liquid that other substances dissolve in"], ["specific heat capacity", "energy needed to warm a substance; high in water, so temperature changes slowly"], ["hydrolysis", "breaking a large molecule into smaller ones by adding water"], ["inorganic ion", "a charged mineral particle, e.g. Ca²⁺, Fe²⁺, Mg²⁺"], ["haemoglobin", "red protein in red blood cells that carries oxygen; contains iron"], ["chlorophyll", "green pigment that absorbs light; contains magnesium"], ["anaemia", "lack of haemoglobin, e.g. from too little iron"], ["chlorosis", "yellowing of leaves, e.g. from lack of magnesium or nitrate"]] },
@@ -1378,7 +1432,7 @@ const ROOMS = [
       "<b>Visking tubing</b> (dialysis tubing) acts like a differentially permeable membrane in experiments."
     ],
     rules: ["Water moves: dilute (high water potential) → concentrated (low water potential)", "Animal cell in water → bursts · plant cell in water → turgid (wall stops bursting)", "Plant cell in strong solution → flaccid → plasmolysed"],
-    terms: [["osmosis", "net movement of water through a differentially permeable membrane from dilute to concentrated solution"], ["water potential", "tendency of water to move out; high in dilute solutions"], ["turgid", "firm plant cell full of water, pressing on its wall"], ["flaccid", "soft plant cell that has lost water"], ["plasmolysis", "cell membrane pulling away from the cell wall after water loss"], ["haemolysis", "bursting of red blood cells in a dilute solution"], ["Visking tubing", "artificial differentially permeable membrane"]] },
+    terms: [["osmosis", "net movement of water through a differentially permeable membrane from higher to lower water potential"], ["water potential", "how free water is to move; pure water is highest (never say water concentration)"], ["turgid", "firm plant cell full of water, pressing on its wall"], ["flaccid", "soft plant cell that has lost water"], ["plasmolysis", "cell membrane pulling away from the cell wall after water loss"], ["haemolysis", "bursting of red blood cells in a dilute solution"], ["Visking tubing", "artificial differentially permeable membrane"]] },
   { id: "t3s3", t: 2, s: 3, name: "The Energy Pump Station", focus: "Active transport and phagocytosis", scene: "cellworld",
     special: "pump", specialName: "Uphill pump", specialLine: "A pump pushes little balls UPHILL... it needs a battery to work!",
     tint: "#F2B6A0", floor: "#C98C77", dim: .72, code: "38461", item: "🔋 Pump-battery sticker",
@@ -1651,7 +1705,7 @@ const ROOMS = [
     intro: [["rakko", "brave", "Final boss of nutrition. Absorb the knowledge... or be absorbed. ⚔️"], ["chiikawa", "cry", "The villi are tickling me... uuu... 🥺"], ["hachiware", "happy", "Last stage of the topic! It'll work out~! We can do it! ✨"]],
     notes: [
       "Most digested food is absorbed in the <b>small intestine</b> (ileum). Adaptations: very <b>long</b>; inner wall folded with millions of <b>villi</b>, and <b>microvilli</b> on epithelial cells → huge <b>surface area</b>.",
-      "Villus wall is <b>one cell thick</b> (short diffusion distance) with a dense <b>capillary network</b> (keeps a steep concentration gradient) and a central <b>lacteal</b>.",
+      "The <b>epithelium</b> of the villus is <b>one cell thick</b> (short diffusion distance) with a dense <b>capillary network</b> (keeps a steep concentration gradient) and a central <b>lacteal</b>.",
       "<b>Glucose, amino acids</b>, minerals and water-soluble vitamins enter the <b>blood capillaries</b> by diffusion and active transport, then travel in the <b>hepatic portal vein</b> to the <b>liver</b>.",
       "<b>Fatty acids and glycerol</b> recombine into fats and enter the <b>lacteal</b> (lymphatic system).",
       "The <b>large intestine</b> (colon) absorbs most of the remaining <b>water</b> and minerals. Undigested material (faeces) leaves through the anus: <b>egestion</b>.",
@@ -1718,7 +1772,7 @@ ROOMS.push(
       "Sugar and phosphate form the backbone. Bases pair by <b>complementary base pairing</b>: <b>A–T</b> and <b>C–G</b>, held by hydrogen bonds.",
       "In a DNA molecule, amount of A = amount of T and amount of C = amount of G.",
       "A <b>gene</b> is a sequence of bases that codes for a polypeptide. The <b>genome</b> is all the DNA of an organism.",
-      "DNA is packed with proteins into <b>chromosomes</b> in the nucleus. Humans have 23 pairs.",
+      "DNA is packed with proteins into <b>chromosomes</b> in the nucleus. Human body cells have 23 pairs (46); gametes have 23 single chromosomes.",
       "<b>DNA replication</b> (before cell division): the helix unzips, each strand acts as a template, and new complementary strands are built, so each new molecule has one old and one new strand (<b>semi-conservative</b>)."
     ],
     rules: ["Nucleotide = deoxyribose + phosphate + base", "A–T · C–G (complementary base pairing)", "Replication is semi-conservative: one old strand + one new strand"],
@@ -1845,7 +1899,7 @@ ROOMS.push(
       "Air path: <b>nasal cavity</b> → pharynx → larynx → <b>trachea</b> → <b>bronchi</b> → <b>bronchioles</b> → <b>alveoli</b>.",
       "The nasal cavity warms, moistens and filters air. <b>Mucus</b> traps dust and germs; <b>cilia</b> sweep mucus up to the throat.",
       "C-shaped <b>cartilage</b> rings keep the trachea open.",
-      "<b>Alveoli</b> are adapted for gas exchange: huge total <b>surface area</b>; walls <b>one cell thick</b> (short diffusion distance); <b>moist</b> lining (gases dissolve); dense <b>capillary network</b> (steep concentration gradient).",
+      "<b>Alveoli</b> are adapted for gas exchange: huge total <b>surface area</b>; the <b>epithelium</b> is <b>one cell thick</b> (short diffusion distance); <b>moist</b> lining (gases dissolve); dense <b>capillary network</b> (steep concentration gradient).",
       "O₂ diffuses from alveolar air into the blood; CO₂ diffuses from the blood into the alveoli."
     ],
     rules: ["Nose → trachea → bronchi → bronchioles → alveoli", "Alveoli: large area · thin · moist · rich blood supply", "O₂: alveoli → blood · CO₂: blood → alveoli"],
@@ -1889,9 +1943,9 @@ ROOMS.push(
       "<b>White blood cells</b> defend the body: <b>phagocytes</b> engulf germs; <b>lymphocytes</b> make antibodies. <b>Platelets</b> help <b>blood clotting</b>.",
       "<b>Arteries</b> carry blood <b>away</b> from the heart at high pressure: thick, muscular, elastic walls, small lumen.",
       "<b>Veins</b> carry blood <b>to</b> the heart at low pressure: thin walls, large lumen, <b>valves</b> stop backflow.",
-      "<b>Capillaries</b>: walls <b>one cell thick</b>, very narrow; exchange substances with body cells."
+      "<b>Capillaries</b>: the <b>endothelium</b> is <b>one cell thick</b>, very narrow; exchange substances with body cells."
     ],
-    rules: ["Artery: away, thick elastic wall, high pressure", "Vein: to heart, thin wall, valves, low pressure", "Capillary: one cell thick → exchange"],
+    rules: ["Artery: away, thick elastic wall, high pressure", "Vein: to heart, thin wall, valves, low pressure", "Capillary: endothelium one cell thick → exchange"],
     terms: [["plasma", "liquid part of blood"], ["red blood cell", "cell with haemoglobin that carries oxygen"], ["white blood cell", "cell that defends the body against pathogens"], ["platelet", "cell fragment that helps blood clot"], ["artery", "vessel carrying blood away from the heart"], ["vein", "vessel carrying blood back to the heart"], ["capillary", "tiny vessel with walls one cell thick"], ["lumen", "the space inside a blood vessel"]] },
   { id: "t14s2", t: "t14", s: 2, name: "The Heart Pump House", focus: "The heart and double circulation", scene: "cellworld",
     special: "heart", specialName: "Beating heart", specialLine: "Ba-dum! Ba-dum! A giant heart beats... one chamber holds a riddle.",
@@ -2426,7 +2480,7 @@ QB.t3s1 = [
 QB.t3s2 = [
 [1, "Osmosis is the movement of which substance through a differentially permeable membrane?", ["Water", "Glucose", "Salt", "Oxygen"], "Osmosis is special to one molecule.", "Osmosis is the net movement of water molecules through a differentially permeable membrane."],
 [1, "What is a plant cell called when it is full of water and firm?", ["Turgid", "Flaccid", "Plasmolysed", "Haemolysed"], "The opposite of floppy.", "A turgid cell is full of water; its contents press against the cell wall."],
-[2, "Which way does water move by osmosis?", ["From a dilute solution to a more concentrated solution", "From a concentrated solution to a dilute solution", "Always into cells", "Always out of cells"], "Dilute solutions have more free water molecules.", "Water moves from a region of higher water potential (dilute) to lower water potential (concentrated)."],
+[2, "Which way does water move by osmosis?", ["From a region of higher water potential to a region of lower water potential", "From a region of lower water potential to a region of higher water potential", "Always into cells", "From high water concentration to low water concentration"], "Dilute solutions have more free water molecules.", "Water moves from a region of higher water potential (dilute) to lower water potential (concentrated)."],
 [2, "What happens to a red blood cell put into pure water?", ["It takes in water and bursts", "It shrinks", "Nothing happens", "It turns into a plant cell"], "Red blood cells have no cell wall.", "Water enters by osmosis. With no cell wall to resist, the cell swells and bursts (haemolysis)."],
 [2, "What is plasmolysis?", ["When a plant cell loses so much water that the membrane pulls away from the cell wall", "When a plant cell bursts", "When a plant cell takes in water", "When chloroplasts divide"], "Plasma membrane + 'lysis'.", "In a concentrated solution, a plant cell loses water; the cytoplasm shrinks and the membrane pulls away from the wall."],
 [3, "Potato strips are left in a concentrated salt solution for 30 minutes. What happens?", ["They lose mass and become soft (flaccid)", "They gain mass and become firm", "They stay exactly the same", "They burst"], "Where is the water potential lower?", "The salt solution has a lower water potential than the cell sap, so water leaves the potato cells by osmosis. The strips lose mass and go soft."],
@@ -3025,7 +3079,7 @@ QB.t13s1 = [
 [1, "What keeps the trachea open?", ["C-shaped rings of cartilage", "Muscles only", "Bones", "Air pressure alone"], "Firm rings.", "Cartilage rings stop the trachea collapsing when air pressure changes."],
 [2, "What is the job of cilia in the airways?", ["To sweep mucus with trapped dust and germs up towards the throat", "To exchange gases", "To make oxygen", "To pump blood"], "Tiny beating hairs.", "Cilia beat to move mucus (and trapped particles) away from the lungs."],
 [2, "Why is it better to breathe through the nose than the mouth?", ["The nose warms, moistens and filters the air", "The nose makes oxygen", "The mouth has no air", "The nose absorbs CO₂"], "Nasal hairs and mucus.", "The nasal cavity warms, moistens and filters incoming air, protecting the lungs."],
-[2, "Why are alveoli walls only one cell thick?", ["To give a short diffusion distance for gases", "To make them stronger", "To store air", "To stop gases passing"], "Shorter distance, faster diffusion.", "Thin walls let O₂ and CO₂ diffuse quickly between air and blood."],
+[2, "Why is the epithelium of the air sac (alveolus) only one cell thick?", ["To give a short diffusion distance for gases", "To make them stronger", "To store air", "To stop gases passing"], "Shorter distance, faster diffusion.", "The epithelium is one cell thick ➔ short diffusion distance ➔ rapid diffusion of O₂ and CO₂. (Write 'the epithelium', not 'the alveolus', is one cell thick.)"],
 [3, "Why is a dense capillary network around the alveoli important?", ["Blood flow keeps a steep concentration gradient for O₂ and CO₂", "It makes the lungs red", "It traps dust", "It produces mucus"], "Keep the gradient steep.", "Blood constantly removes O₂ and brings CO₂, maintaining diffusion gradients."],
 [3, "Why is the inner surface of the alveoli moist?", ["Gases must dissolve in water before diffusing across", "To trap dust", "To make the alveoli heavier", "To kill bacteria only"], "Dissolve first.", "O₂ dissolves in the moisture lining before diffusing into the blood."],
 { b: 3, type: "dial", q: "Put the airway in order, from outside to the gas exchange surface.", labels: ["First", "Middle", "Last"], dials: [["Trachea", "Bronchiole", "Alveolus"], ["Trachea", "Bronchiole", "Alveolus"], ["Trachea", "Bronchiole", "Alveolus"]], answer: [0, 1, 2],
@@ -3081,9 +3135,9 @@ QB.t14s1 = [
 [2, "Why do veins have valves?", ["To prevent blood flowing backwards at low pressure", "To pump blood", "To make blood clot", "To exchange gases"], "Low pressure in veins.", "Valves stop backflow, helping blood return to the heart."],
 [2, "What is the main function of platelets?", ["To help blood clot", "To carry oxygen", "To make antibodies", "To carry glucose"], "Wounds.", "Platelets start blood clotting at wounds, stopping blood loss and entry of germs."],
 [3, "Why do arteries have thick, elastic walls?", ["To withstand high pressure and stretch and recoil with each heartbeat", "To let substances pass through", "To store blood", "To carry blood slowly"], "Pressure from the ventricles.", "Blood leaves the heart at high pressure; thick elastic walls withstand and smooth it."],
-[3, "Why are capillary walls only one cell thick?", ["For fast diffusion of substances between blood and body cells", "To make them strong", "To carry blood quickly", "To stop leaks"], "Exchange vessels.", "Thin walls give a short diffusion distance for O₂, glucose, CO₂ and wastes."],
-{ b: 3, type: "dial", q: "Match each vessel to its feature.", labels: ["Artery", "Vein", "Capillary"], dials: [["Thick muscular wall", "Valves, large lumen", "Wall one cell thick"], ["Thick muscular wall", "Valves, large lumen", "Wall one cell thick"], ["Thick muscular wall", "Valves, large lumen", "Wall one cell thick"]], answer: [0, 1, 2],
-  hint: "High pressure, low pressure, exchange.", explain: "Arteries have thick muscular walls; veins have valves and a large lumen; capillaries have walls one cell thick." },
+[3, "Why is the endothelium of a capillary only one cell thick?", ["For fast diffusion of substances between blood and body cells", "To make them strong", "To carry blood quickly", "To stop leaks"], "Exchange vessels.", "The endothelium is one cell thick ➔ short diffusion distance ➔ rapid exchange of O₂, glucose, CO₂ and wastes (via tissue fluid)."],
+{ b: 3, type: "dial", q: "Match each vessel to its feature.", labels: ["Artery", "Vein", "Capillary"], dials: [["Thick muscular wall", "Valves, large lumen", "Endothelium one cell thick"], ["Thick muscular wall", "Valves, large lumen", "Endothelium one cell thick"], ["Thick muscular wall", "Valves, large lumen", "Endothelium one cell thick"]], answer: [0, 1, 2],
+  hint: "High pressure, low pressure, exchange.", explain: "Arteries have thick muscular walls; veins have valves and a large lumen; capillaries have an endothelium one cell thick." },
 [4, "People living at high altitude develop more red blood cells. Why is this useful?", ["Air has less O₂, so more red cells help carry enough oxygen", "It makes blood lighter", "It helps digestion", "It lowers body temperature"], "Less oxygen in the air.", "Extra red blood cells (more haemoglobin) compensate for lower O₂ availability."],
 [4, "A person has a low white blood cell count. What problem is likely?", ["They get infections more easily", "They get tired from lack of oxygen", "Their blood can't clot", "Their plasma can't carry glucose"], "White cells defend.", "Fewer phagocytes and lymphocytes means weaker defence against pathogens."],
 [4, "Why is a pulse felt in arteries but not veins?", ["Blood in arteries surges with each heartbeat under high pressure; blood in veins flows smoothly at low pressure", "Veins have no blood", "Veins are too deep", "Arteries have valves"], "Pressure surges.", "Each heartbeat sends a pressure wave along the elastic arteries."],
@@ -3492,6 +3546,395 @@ QB.t19s3 = [
 ].forEach(([sid, b, svg, q, choices, hint, explain]) => QB[sid].push({ b, svg: svg === "gSpirometer" ? "gSpiro" : svg, q, choices, answer: 0, hint, explain, graph: true }));
 
 /* ============================================================
+   5a-kb. Extra questions written from the core knowledge base (marker wording, common mistakes as distractors).
+   Appended to the end of each stage's bank so saved progress stays valid.
+   ============================================================ */
+const KB = (id, list) => { QB[id] = (QB[id] || []).concat(list); };
+KB("t1s1", [
+[2, "Which statement about the jobs of water in the body is correct?", ["Water is a solvent and a medium for chemical reactions", "Water gives the body energy", "Water is a store of food", "Water digests food"], "Where do cell reactions take place?", "Water dissolves many substances, so it is a medium for reactions and for transport. It gives no energy."],
+[3, "A student feels tired and looks pale. Which mineral is most likely lacking?", ["Iron", "Calcium", "Magnesium", "Sodium"], "Which mineral makes haemoglobin?", "Iron is needed to make haemoglobin. Lack of iron ➔ anaemia ➔ tired and pale. Lack of calcium causes rickets, not anaemia."],
+[4, "Why do our bodies need calcium AND vitamin D?", ["Both are needed for strong bones and teeth; lack of either can cause rickets", "Both are needed to make haemoglobin", "Both give the body energy", "Both help digest fats"], "Think of the disease with soft, deformed bones.", "Calcium builds bones and teeth; vitamin D helps the body absorb calcium. Lack of either ➔ rickets."],
+[5, "A student writes: 'Minerals and vitamins give us energy when we are tired.' Which is the best judgement?", ["Wrong: vitamins and minerals give no energy; carbohydrates and lipids do", "Correct: all food substances give energy", "Correct for vitamins only", "Correct for minerals only"], "Which food substances are respired?", "Vitamins, minerals, water and dietary fibre give no energy. Carbohydrate (about 4 kcal/g), protein (about 4 kcal/g) and lipid (about 9 kcal/g) do.", "Energy values: lipid ≈ 9 kcal/g; carbohydrate and protein ≈ 4 kcal/g."]
+]);
+KB("t1s2", [
+[1, "Which sugar gives a NEGATIVE Benedict's test?", ["Sucrose", "Glucose", "Maltose", "Fructose"], "One common disaccharide is non-reducing.", "Sucrose is a non-reducing sugar, so Benedict's solution stays blue even after heating."],
+[2, "How do you test a food for reducing sugar?", ["Add Benedict's solution, then heat in a boiling water bath: a brick-red precipitate forms", "Add Benedict's solution: a red colour appears straight away without heating", "Add iodine solution: it turns blue-black", "Rub it on filter paper: a translucent spot appears"], "Don't forget one important step.", "Benedict's test needs heating in a boiling water bath. A positive result is a brick-red precipitate."],
+[2, "Gram for gram, which food substance gives the MOST energy?", ["Lipid (fat), about 9 kcal per gram", "Carbohydrate, about 4 kcal per gram", "Protein, about 4 kcal per gram", "Dietary fibre"], "Fat is more than twice the others.", "Lipid gives about 9 kcal/g, over twice as much as carbohydrate or protein (about 4 kcal/g). Fibre gives none."],
+[3, "How do you test for lipid?", ["Rub the food on filter paper and let it dry: a permanent translucent spot is left", "Add iodine: it turns blue-black", "Add Benedict's solution and heat: brick-red", "Add DCPIP: it turns colourless"], "The grease spot test.", "A lipid leaves a permanent translucent spot on filter paper, even after drying. Water leaves a spot that disappears."],
+[4, "Why is dietary fibre important even though it gives no energy?", ["It adds bulk and stimulates peristalsis, which prevents constipation", "It is digested into glucose", "It is a store of energy", "It makes haemoglobin"], "Fibre is mostly cellulose.", "Fibre (cellulose) cannot be digested, so it gives no energy. It adds bulk and stimulates peristalsis ➔ prevents constipation."]
+]);
+KB("t1s3", [
+[2, "What is the positive result of the biuret test for protein?", ["Purple / violet", "Blue-black", "Brick-red precipitate", "Colourless"], "Biuret: think purple.", "Protein gives a purple (violet) colour with the biuret test."],
+[3, "How should you carry out the DCPIP test for vitamin C?", ["Add the fruit juice drop by drop into blue DCPIP until it is decolorized", "Add DCPIP drop by drop into the fruit juice until the colour changes", "Heat the juice with DCPIP in a water bath", "Add iodine solution to the juice"], "Which liquid goes into which?", "Juice goes drop by drop INTO the DCPIP. The fewer drops needed to decolorize it, the more vitamin C the juice has."],
+[4, "Juice A decolorizes 1 cm³ of DCPIP in 5 drops; juice B needs 15 drops. What can you conclude?", ["Juice A has more vitamin C than juice B", "Juice B has more vitamin C than juice A", "Both have the same amount of vitamin C", "Neither contains vitamin C"], "Fewer drops = more vitamin C.", "Juice A needs fewer drops to decolorize the same volume of DCPIP, so it has a higher vitamin C content."],
+[5, "Why should you NOT shake the DCPIP tube hard during the vitamin C test?", ["Vitamin C is oxidised by oxygen in the air, so the result would be too low", "Shaking denatures the DCPIP", "Shaking makes the solution turn blue-black", "Shaking releases vitamin C from the juice"], "What does air do to vitamin C?", "Vitamin C is easily oxidised by oxygen in the air, so shaking would destroy some of it and give a false (lower) result."]
+]);
+KB("t2s1", [
+[2, "What is the formula for magnification?", ["Magnification = image size ÷ actual size", "Magnification = actual size ÷ image size", "Magnification = image size × actual size", "Magnification = eyepiece + objective"], "Bigger image means bigger magnification.", "Magnification = image size ÷ actual size. For a light microscope, total magnification = eyepiece × objective."],
+[3, "A cell is 20 µm long. Its image is 10 mm long. What is the magnification?", ["×500", "×200", "×50", "×2000"], "Convert: 10 mm = 10 000 µm.", "10 mm = 10 000 µm. Magnification = 10 000 ÷ 20 = ×500."],
+[3, "Why can an electron microscope show ribosomes but a light microscope cannot?", ["The electron microscope has a much higher resolution", "The electron microscope uses coloured light", "Ribosomes are only in dead cells", "The light microscope has a higher resolution"], "Resolution is about seeing two close points separately.", "The electron microscope has a much higher resolution, so small organelles like ribosomes can be seen."],
+[2, "When focusing a light microscope, what should you do first?", ["Use the low-power objective and watch from the side while raising the stage", "Use the high-power objective and the coarse knob", "Look down the eyepiece and turn the coarse knob quickly towards the slide", "Remove the eyepiece"], "Safety first: don't crack the slide.", "Start with low power and watch from the side while raising the stage, then focus with the coarse knob, then the fine knob."]
+]);
+KB("t2s2", [
+[1, "Which organelle is the site of protein synthesis?", ["Ribosome", "Golgi apparatus", "Smooth endoplasmic reticulum", "Vacuole"], "Tiny dots on rough ER.", "Ribosomes are the site of protein synthesis."],
+[2, "Which statement about the cell wall is correct?", ["It is fully permeable and gives support", "It controls what enters and leaves the cell", "It is found in animal cells", "It is made of protein"], "Which layer is differentially permeable?", "The cellulose cell wall is fully permeable; it gives support and stops the cell bursting. The cell membrane controls what enters and leaves."],
+[3, "Pancreas cells secrete lots of enzymes. Which organelles would they have a lot of?", ["Rough endoplasmic reticulum and Golgi apparatus", "Chloroplasts and a large vacuole", "Smooth ER and cell wall", "Centrioles and lysosomes only"], "Enzymes are proteins made for secretion.", "Proteins for secretion are made on rough ER and packaged into vesicles by the Golgi apparatus."],
+[3, "Why do muscle cells and sperm cells have many mitochondria?", ["Many mitochondria ➔ more aerobic respiration ➔ more energy released for activity", "Mitochondria produce energy from nothing", "Mitochondria store food", "Mitochondria make proteins"], "Energy is released, not produced.", "Mitochondria are the site of aerobic respiration, which releases energy (ATP). Active cells need lots of it.", "Write 'release energy', never 'produce energy'."],
+[4, "Which statement is correct?", ["Root cells have no chloroplasts", "All plant cells have chloroplasts", "Animal cells have a small cell wall", "Bacteria have a nucleus"], "Think about cells underground.", "Root cells do not photosynthesise, so they have no chloroplasts. Animal cells have no cell wall. Bacteria have no nucleus."]
+]);
+KB("t2s3", [
+[2, "In the fluid mosaic model, what does 'mosaic' mean?", ["Proteins are scattered in the phospholipid bilayer like tiles in a mosaic", "The membrane is made of many coloured layers", "The membrane is rigid like a tiled floor", "Water flows through it freely"], "Picture tiles in a floor.", "Proteins are interspersed in the bilayer like mosaic tiles. 'Fluid' means the molecules can move sideways."],
+[3, "Why can O₂ cross the membrane directly, but ions cannot?", ["O₂ is small and non-polar; ions are charged so they need channel or carrier proteins", "Ions are too small to be noticed", "O₂ is pumped by active transport", "Ions dissolve in the phospholipid tails"], "Oily middle vs charge.", "The hydrophobic tails block charged particles. Small non-polar molecules like O₂ and CO₂ pass straight through."],
+[4, "Which statement about prokaryotic cells is correct?", ["They have no nuclear membrane and no membrane-bound organelles", "They have mitochondria but no ribosomes", "Their DNA is inside a nucleus", "They are larger than eukaryotic cells"], "Pro = before (the nucleus).", "Prokaryotes (e.g. bacteria) have DNA free in the cytoplasm and no membrane-bound organelles, but they do have ribosomes."],
+[5, "Why is the fluid mosaic model called a 'model'?", ["It explains a structure too small to observe directly, and it can be refined with new evidence", "It is a plastic toy used in lessons", "It has been proved to be 100% correct", "It was guessed without evidence"], "Nature of science.", "Models explain things that cannot be observed directly, and they are refined when new evidence appears."]
+]);
+KB("t3s1", [
+[2, "Which process moves glucose into a red blood cell?", ["Facilitated diffusion through a carrier protein", "Simple diffusion through the phospholipid bilayer", "Active transport using ATP", "Osmosis"], "Down the gradient, but needs a protein.", "Glucose moves down its concentration gradient through carrier proteins: facilitated diffusion. No ATP is needed."],
+[3, "Which statement about facilitated diffusion is correct?", ["It uses carrier or channel proteins but needs no ATP", "It needs energy because it uses proteins", "It moves substances against a concentration gradient", "It only moves water"], "Proteins ≠ energy.", "Facilitated diffusion is passive: substances still move down the gradient, so no ATP is needed."],
+[4, "Which change would make diffusion into a cell FASTER?", ["A steeper concentration gradient", "A thicker membrane", "A smaller surface area", "A lower temperature"], "What makes molecules spread faster?", "A steeper gradient, larger surface area, shorter distance and higher temperature all increase the rate of diffusion."]
+]);
+KB("t3s2", [
+[2, "What is osmosis?", ["The net movement of water across a differentially permeable membrane from higher to lower water potential", "The movement of water from high water concentration to low water concentration", "The movement of any substance down a gradient", "The movement of water using ATP"], "Two key words: net, water potential.", "Osmosis is the net movement of water across a differentially permeable membrane, from a region of higher to lower water potential.", "Never write 'water concentration': the marker only accepts water potential."],
+[2, "A plant cell is put in distilled water. What happens?", ["Water enters by osmosis and the cell becomes turgid; the cell wall stops it bursting", "Water enters and the cell bursts", "Water leaves and the cell is plasmolysed", "Nothing happens"], "The cell wall resists.", "The vacuole gains water and pushes on the cell wall, which resists: the cell becomes turgid, not burst."],
+[3, "A red blood cell is put in distilled water. What happens?", ["Water enters by osmosis; with no cell wall it swells and bursts (haemolysis)", "It becomes turgid", "It shrinks and becomes crenated", "It becomes plasmolysed"], "Animal cells have no cell wall.", "Distilled water has a higher water potential than the cell, so water enters. No cell wall ➔ the cell bursts: haemolysis."],
+[4, "In an isotonic solution, what happens to water?", ["Water moves in both directions, but there is no NET movement", "No water molecules move at all", "Water only moves into the cell", "Water only moves out of the cell"], "Same water potential inside and out.", "Water molecules still move both ways, but equally, so there is no net movement."],
+[5, "A student says a plasmolysed cell is dead. Which is the best judgement?", ["Wrong: plasmolysis is reversible; in pure water the cell becomes turgid again", "Correct: plasmolysed cells always die", "Correct: the cell wall breaks", "Wrong: plasmolysis only happens in animal cells"], "Can it recover?", "Plasmolysis is reversible. If the cell is put back in water, water enters by osmosis and it becomes turgid again."]
+]);
+KB("t3s3", [
+[2, "Which process can make a cell collect a substance to a HIGHER concentration than outside?", ["Active transport", "Simple diffusion", "Facilitated diffusion", "Osmosis"], "Only one process goes uphill.", "Only active transport moves substances against a concentration gradient, using carrier proteins and ATP."],
+[4, "Root cells are given a respiratory inhibitor. What happens to the uptake of mineral ions?", ["It slows down or stops: less respiration ➔ less ATP ➔ less active transport", "It speeds up", "No change: ions enter by diffusion", "Only water uptake stops"], "Follow the chain: respiration ➔ ATP ➔ ...", "Ions are taken up by active transport, which needs ATP from respiration. Less respiration ➔ less ATP ➔ uptake slows or stops."],
+[4, "The soil around roots becomes waterlogged (no oxygen). What happens to mineral uptake?", ["It falls: no oxygen ➔ less aerobic respiration ➔ less ATP for active transport", "It rises because water carries the ions in", "No change", "Only oxygen uptake stops"], "Oxygen ➔ respiration ➔ ATP.", "Without oxygen the root cells make much less ATP, so active transport of mineral ions slows down."],
+[3, "Which process do white blood cells use to take in bacteria?", ["Phagocytosis: the membrane folds around the bacterium to form a vacuole", "Osmosis", "Simple diffusion", "Facilitated diffusion"], "Cell eating.", "In phagocytosis the membrane engulfs a large particle, forming a food vacuole. It needs energy."]
+]);
+KB("t4s1", [
+[2, "What happens during interphase?", ["The cell grows, makes organelles and replicates its DNA", "Nothing: it is a resting phase", "Chromosomes line up at the equator", "The cytoplasm divides"], "It is NOT a rest.", "Interphase is very active: DNA replication, growth and synthesis of organelles."],
+[3, "How does cytokinesis differ in plant cells?", ["A cell plate forms across the middle, because the cell wall is rigid", "A cleavage furrow pinches the cell in two", "Plant cells don't do cytokinesis", "The nucleus divides twice"], "The wall can't pinch in.", "Plant cells build a cell plate. Animal cells form a cleavage furrow."],
+[3, "What are sister chromatids?", ["The two identical halves of one duplicated chromosome, joined at the centromere", "A pair of chromosomes, one from each parent", "Two different genes", "The spindle fibres"], "One 'X' shape.", "After DNA replication, each chromosome has two identical sister chromatids joined at the centromere."],
+[4, "A DNA-content graph rises, then drops ONCE. Which division is shown?", ["Mitosis", "Meiosis", "Fertilisation", "DNA replication only"], "Count the drops.", "One drop = one division = mitosis. Meiosis has two drops (two divisions)."]
+]);
+KB("t4s2", [
+[2, "In which stage do homologous chromosomes pair up and cross over?", ["Prophase I of meiosis", "Prophase of mitosis", "Anaphase II", "Interphase"], "Pairing only happens in meiosis.", "Homologous chromosomes pair up and cross over in prophase I of meiosis. They never pair in mitosis."],
+[3, "Crossing over happens between…", ["non-sister chromatids of homologous chromosomes", "sister chromatids of one chromosome", "two different cells", "the spindle fibres"], "Swapping between mum's and dad's copies.", "Crossing over swaps DNA between non-sister chromatids of a homologous pair ➔ new combinations of alleles."],
+[3, "When does independent assortment happen?", ["Metaphase I, when homologous pairs line up randomly at the equator", "Prophase I", "Anaphase II", "Interphase"], "M for middle.", "In metaphase I, each pair lines up randomly, so gametes get random mixtures of chromosomes."],
+[4, "What separates in meiosis I?", ["Homologous chromosomes", "Sister chromatids", "Centromeres divide", "Nothing separates"], "XX ➔ X and X.", "Meiosis I separates homologous chromosomes (centromeres do not divide). Meiosis II separates sister chromatids."]
+]);
+KB("t4s3", [
+[2, "How many cells does meiosis make, and what kind?", ["Four genetically different haploid cells", "Two identical diploid cells", "Two haploid cells", "Four identical diploid cells"], "Two divisions.", "Meiosis has two divisions ➔ four genetically different haploid (n) cells."],
+[3, "Where does meiosis take place in humans?", ["Only in the gonads (testes and ovaries)", "In all body cells", "In the skin", "In the liver"], "Making gametes.", "Meiosis only happens in the gonads, to make gametes."],
+[4, "Why must gametes be haploid?", ["So that fertilisation restores the diploid number and the chromosome number stays constant each generation", "So that they can swim faster", "So that they have more genes", "So that they are identical"], "n + n = 2n.", "If gametes were diploid, the chromosome number would double every generation. Haploid gametes fuse to restore the diploid number."],
+[5, "A student says mitosis produces the cells for sexual reproduction. Which is the best judgement?", ["Wrong: mitosis is for growth, repair and asexual reproduction; gametes come from meiosis", "Correct", "Correct only in plants", "Wrong: sexual reproduction needs no cell division"], "Photocopier vs lucky-draw machine.", "Mitosis gives identical cells for growth, repair and asexual reproduction. Meiosis makes the haploid gametes."]
+]);
+KB("t5s1", [
+[2, "How does an enzyme speed up a reaction?", ["It lowers the activation energy", "It gives energy to the reaction", "It is used up in the reaction", "It raises the temperature"], "The energy 'hill'.", "Enzymes are biological catalysts that lower the activation energy. They do not provide energy and are not used up."],
+[3, "Which describes the shapes in the lock-and-key hypothesis?", ["The active site is complementary to the substrate", "The active site has the same shape as the substrate", "The substrate changes the enzyme permanently", "Any substrate fits any enzyme"], "Key and lock fit together, but are not the same shape.", "The active site's shape is complementary to the substrate, forming an enzyme–substrate complex.", "Say 'complementary', never 'same shape'."],
+[3, "Why is a small amount of enzyme enough for a large amount of substrate?", ["Enzymes are not used up, so each one can be reused many times", "Enzymes multiply during the reaction", "The substrate becomes an enzyme", "Enzymes work without a substrate"], "Catalysts are unchanged at the end.", "An enzyme is unchanged at the end of the reaction, so the same molecule can catalyse the reaction again and again."],
+[4, "What is the difference between catabolism and anabolism?", ["Catabolism breaks large molecules down (releases energy); anabolism builds them up (absorbs energy)", "They are the same", "Catabolism builds molecules up", "Anabolism only happens in plants"], "Cata = down.", "Metabolism = catabolism (breakdown, e.g. respiration) + anabolism (synthesis, e.g. protein synthesis)."]
+]);
+KB("t5s2", [
+[2, "What happens to an enzyme at a very high temperature?", ["It is denatured: the active site changes shape permanently", "It is killed", "It works faster forever", "It becomes inactive but recovers when cooled"], "Enzymes are not alive.", "High temperature breaks the bonds holding the 3-D shape, so the active site changes shape permanently: denatured.", "Never write 'killed' or 'destroyed' for an enzyme."],
+[3, "An enzyme is kept at 4 °C. What happens?", ["It becomes inactive, but works again when warmed (reversible)", "It is denatured permanently", "It is killed", "It works at its maximum rate"], "Cold = frozen lock, not melted lock.", "At low temperature the molecules have little kinetic energy, so there are few effective collisions. The active site is unchanged, so it recovers."],
+[3, "What is the optimum pH of pepsin in the stomach?", ["About pH 2", "About pH 7", "About pH 9", "About pH 12"], "The stomach is very acidic.", "Pepsin works best in the acidic stomach (about pH 2). Salivary amylase works best at about pH 7."],
+[5, "The rate of an enzyme reaction levels off even though the enzyme is still at its optimum temperature. Why?", ["All the substrate is used up, or all the active sites are occupied", "The enzyme is denatured", "The enzyme is used up", "The temperature is too low"], "It isn't the enzyme's fault.", "The curve levels off because the substrate runs out or the active sites are saturated, not because the enzyme is denatured."]
+]);
+KB("t5s3", [
+[3, "A boiled enzyme is cooled back to 37 °C. Will it work again?", ["No: denaturation is irreversible", "Yes: cooling repairs the active site", "Yes, but twice as fast", "Only if more substrate is added"], "Melted lock.", "Denaturation permanently changes the shape of the active site, so cooling does not restore activity."],
+[4, "In an enzyme experiment, why do we set up a tube with boiled enzyme?", ["As a control, to show the change is caused by the active enzyme only", "To make the reaction faster", "To kill bacteria", "To keep the temperature constant"], "What does a control show?", "The boiled (denatured) enzyme is a control: it shows the result is caused by the active enzyme and not by other factors."],
+[4, "Why must we keep the pH and substrate concentration the same when testing the effect of temperature on an enzyme?", ["So that temperature is the only variable changed: a fair (valid) test", "To make the results more reliable by repeating", "To denature the enzyme", "Because pH has no effect"], "Controlled variables.", "Only the independent variable (temperature) is changed; other variables are kept constant so any difference is due to temperature."]
+]);
+KB("t8s1", [
+[2, "What is a balanced diet?", ["All food substances in the right proportions for that person", "The same amount of every food", "Only fruit and vegetables", "Food with no fat at all"], "It depends on age, sex and activity.", "A balanced diet contains all food substances in the right proportions, which differ with age, sex and activity."],
+[3, "Which pairing of deficiency and disease is correct?", ["Lack of vitamin C ➔ scurvy", "Lack of calcium ➔ anaemia", "Lack of iron ➔ rickets", "Lack of fibre ➔ scurvy"], "Match the job to the disease.", "Vitamin C ➔ scurvy; iron ➔ anaemia; calcium/vitamin D ➔ rickets; fibre ➔ constipation."],
+[4, "Food label: 10 g fat and 20 g carbohydrate. Which gives more energy?", ["The fat: 10 × 9 = 90 kcal vs 20 × 4 = 80 kcal", "The carbohydrate, because there are more grams", "They are equal", "Neither gives energy"], "Multiply by 9 and 4.", "Fat ≈ 9 kcal/g ➔ 90 kcal. Carbohydrate ≈ 4 kcal/g ➔ 80 kcal. The most grams is not always the most energy."]
+]);
+KB("t8s2", [
+[2, "What does bile do?", ["It emulsifies lipids into small droplets, increasing the surface area for lipase", "It digests fats into fatty acids and glycerol", "It contains lipase", "It digests protein"], "Washing-up liquid, not an enzyme.", "Bile contains no enzymes. It emulsifies lipids, breaking large droplets into small ones ➔ larger surface area for lipase.", "Writing 'bile digests fat' scores zero."],
+[3, "What is the job of hydrochloric acid in the stomach?", ["It gives pepsin its acidic optimum pH and kills bacteria", "It digests protein", "It emulsifies fat", "It absorbs water"], "HCl helps an enzyme.", "HCl does not digest protein itself: pepsin does. HCl provides the acidic pH for pepsin and kills bacteria in food."],
+[3, "Why is pancreatic juice alkaline?", ["To neutralise the acidic chyme from the stomach", "To kill bacteria", "To digest cellulose", "To emulsify fat"], "The duodenum enzymes need a different pH.", "Pancreatic juice is alkaline: it neutralises the acidic chyme so pancreatic enzymes can work at their optimum pH."],
+[4, "What is chemical digestion?", ["Breaking large, complex, insoluble molecules into small, simple, soluble molecules using enzymes", "Breaking food into smaller pieces by chewing", "Absorbing food into the blood", "Moving food along the gut"], "Chemical bonds are broken.", "Chemical digestion uses enzymes to break bonds: large, complex, insoluble ➔ small, simple, soluble. Chewing is physical digestion."],
+[5, "A patient has the gall bladder removed. What is the likely effect?", ["Less bile reaches the duodenum at mealtimes, so lipid digestion becomes slower", "Protein cannot be digested", "Starch digestion stops", "No effect on digestion"], "Normal job ➔ what's missing ➔ effect.", "The gall bladder stores bile. Without it, less bile is released after a fatty meal ➔ less emulsification ➔ smaller surface area for lipase ➔ slower lipid digestion."]
+]);
+KB("t8s3", [
+[2, "Which part of the villus is one cell thick?", ["The epithelium", "The villus wall", "The lacteal", "The capillary network"], "Name the layer.", "The epithelium covering the villus is one cell thick ➔ short diffusion distance ➔ rapid absorption.", "Write 'the epithelium is one cell thick', not 'the villus wall'."],
+[3, "Where are fatty acids and glycerol absorbed?", ["Into the lacteal", "Into the blood capillaries", "Into the hepatic vein", "Into the large intestine"], "Two roads out of the villus.", "Water-soluble products enter the capillaries; fatty acids and glycerol enter the lacteal (lymph)."],
+[3, "Which vessel carries absorbed glucose from the small intestine to the liver?", ["The hepatic portal vein", "The hepatic vein", "The hepatic artery", "The lacteal"], "Portal = gateway to the liver.", "The hepatic portal vein goes from the small intestine to the liver. The hepatic vein takes blood from the liver to the vena cava."],
+[4, "What happens to excess amino acids?", ["They are deaminated in the liver to form urea", "They are stored in the liver", "They are stored as glycogen", "They are excreted unchanged"], "Amino acids cannot be stored.", "Excess amino acids cannot be stored: the liver removes the amino group (deamination), forming urea, which the kidneys excrete."],
+[4, "Where is most water absorbed in the gut?", ["The small intestine", "The large intestine only", "The stomach", "The mouth"], "Most, not the rest.", "Most water is absorbed in the small intestine; the large intestine absorbs the rest."]
+]);
+KB("t6s1", [
+[2, "Why do stomata open in the day?", ["To let CO₂ in for photosynthesis; water loss is a side effect", "To let water evaporate out", "To let oxygen in for respiration only", "To let light in"], "What does photosynthesis need?", "Stomata open to let carbon dioxide diffuse in for photosynthesis. Losing water by transpiration is an unavoidable consequence."],
+[3, "Which leaf cells in the epidermis have chloroplasts?", ["Only the guard cells", "All epidermal cells", "None at all", "Only the cuticle"], "The epidermis lets light through.", "The epidermis has no chloroplasts except in the guard cells, so light passes through to the mesophyll."],
+[3, "How is the spongy mesophyll adapted?", ["Loosely packed cells with large air spaces ➔ rapid diffusion of gases", "Closely packed cells with many chloroplasts ➔ maximum light absorption", "A waxy layer ➔ less water loss", "Dead lignified cells ➔ support"], "Spongy = holes.", "Air spaces between loosely packed spongy cells allow the rapid diffusion of gases."],
+[4, "At the compensation point, what is true?", ["The rate of photosynthesis equals the rate of respiration, so there is no net gas exchange", "Photosynthesis stops", "Respiration stops", "The plant only photosynthesises"], "Both still run.", "Both processes still happen; their rates are equal, so there is no net uptake or release of CO₂ or O₂."],
+[5, "In bright light, what is the best description of a leaf's gas exchange?", ["Net uptake of CO₂ and net release of O₂, because photosynthesis is faster than respiration", "It takes in CO₂ and gives out O₂ only; it doesn't respire in the day", "Net release of CO₂", "No gas exchange"], "The word that earns the mark.", "Plants respire all the time. In bright light the rate of photosynthesis is higher than respiration ➔ NET uptake of CO₂ and NET release of O₂.", "Always say 'net' and compare the two rates."]
+]);
+KB("t6s2", [
+[2, "Which colours of light does chlorophyll absorb most?", ["Red and blue", "Green", "Yellow only", "All colours equally"], "Leaves look green for a reason.", "Chlorophyll absorbs mainly red and blue light and reflects green light."],
+[3, "Why are thylakoids stacked into grana?", ["To give a large surface area for chlorophyll to absorb light", "To store starch", "To hold the Calvin cycle enzymes", "To make the chloroplast stronger"], "More membrane, more pigment.", "Stacks of thylakoid membranes (grana) give a large surface area for chlorophyll and the light stage enzymes."],
+[3, "A plant lacks magnesium. What symptom appears?", ["Chlorosis (yellow leaves), because chlorophyll cannot be made", "Stunted growth, because proteins cannot be made", "Purple leaves", "Wilting"], "Magnesium is in chlorophyll.", "Lack of magnesium ➔ less chlorophyll ➔ chlorosis. Lack of nitrate ➔ fewer proteins ➔ stunted growth."]
+]);
+KB("t6s3", [
+[2, "Where does the oxygen released in photosynthesis come from?", ["Water, split by photolysis", "Carbon dioxide", "Glucose", "The air spaces"], "Photo-lysis = light splitting.", "Light energy splits water (photolysis): hydrogen goes to NADP and oxygen is released as a by-product."],
+[3, "What are the products of the photochemical reactions?", ["ATP, NADPH and oxygen", "Glucose and oxygen", "Triose phosphate", "CO₂ and water"], "The light stage makes the 'batteries'.", "On the thylakoid membranes, light makes ATP (photophosphorylation), NADPH and O₂."],
+[4, "Where do the photochemical (light-dependent) reactions happen?", ["On the thylakoid membranes", "In the stroma", "In the cytoplasm", "In the mitochondria"], "Solar panels.", "The light stage is on the thylakoid membranes; the Calvin cycle is in the stroma."]
+]);
+KB("t6s4", [
+[2, "In the Calvin cycle, what do ATP and NADPH each provide?", ["ATP provides energy; NADPH provides hydrogen (reducing power)", "ATP provides hydrogen; NADPH provides energy", "Both provide carbon", "Both provide oxygen"], "One is energy, one is hydrogen.", "ATP gives the energy and NADPH gives the hydrogen to reduce the 3-C compound to triose phosphate."],
+[3, "What is the first sugar made in photosynthesis?", ["Triose phosphate", "Glucose", "Sucrose", "Starch"], "A 3-carbon sugar.", "Triose phosphate (3-C) is made first; two combine to make glucose."],
+[4, "Does the Calvin cycle only happen at night?", ["No: it needs no light directly, but it needs ATP and NADPH from the light stage, so it runs in the light", "Yes: light stops it", "Yes: it needs darkness", "No: it happens only in roots"], "Where do its ATP and NADPH come from?", "The Calvin cycle is light-independent, not a night reaction. It stops soon after dark because ATP and NADPH run out."],
+[5, "Why do plants store excess glucose as starch?", ["Starch is insoluble, so it does not change the water potential of the cell", "Starch is sweeter", "Starch can move in the phloem", "Starch dissolves easily in cell sap"], "Osmotically inactive.", "Starch is insoluble and osmotically inactive, so storing it does not lower the water potential and make cells take in too much water."]
+]);
+KB("t6s5", [
+[3, "As light intensity increases, the rate of photosynthesis rises and then levels off. What does the levelling off mean?", ["Light is no longer the limiting factor; CO₂ concentration or temperature is", "Light intensity is still limiting", "Photosynthesis has stopped", "The enzymes are denatured"], "Rising part vs flat part.", "Where the curve rises, light is limiting. Where it levels off, another factor (CO₂ or temperature) limits the rate."],
+[4, "Why does temperature affect the rate of photosynthesis?", ["It affects the enzymes of the Calvin cycle", "It changes the colour of chlorophyll", "It affects the amount of light", "It changes the size of the stomata only"], "Enzymes are involved.", "The Calvin cycle is catalysed by enzymes, so temperature affects their activity."]
+]);
+KB("t6s6", [
+[2, "Why is a plant kept in the dark for 48 hours before a starch experiment?", ["To destarch it, so any starch found later was made during the experiment", "To kill the plant", "To make more chlorophyll", "To open the stomata"], "Destarching.", "In darkness the stored starch is used up or converted to sucrose and transported away. Any starch detected later is new."],
+[3, "Why is a leaf put into hot alcohol in the starch test?", ["To remove the chlorophyll, so the iodine colour change is seen clearly", "To kill the cells", "To add starch", "To soften the leaf"], "Boiling water breaks membranes; alcohol does something else.", "Hot alcohol (in a water bath, as it is flammable) removes chlorophyll so the blue-black colour is easy to see."],
+[4, "Why is potassium hydroxide put in a flask with a leaf in a photosynthesis experiment?", ["It absorbs CO₂, to show CO₂ is needed", "It supplies CO₂", "It removes oxygen", "It tests for starch"], "Remove one requirement.", "KOH absorbs carbon dioxide, so the leaf has no CO₂. No starch forms ➔ CO₂ is needed for photosynthesis."]
+]);
+KB("t7s1", [
+[2, "Where does glycolysis happen?", ["In the cytoplasm", "In the mitochondrial matrix", "On the cristae", "In the nucleus"], "Before the mitochondrion.", "Glycolysis happens in the cytoplasm. Only pyruvate enters the mitochondrion; glucose does not."],
+[3, "What is the role of oxygen in aerobic respiration?", ["It is the final electron acceptor, forming water", "It combines with carbon to form CO₂", "It splits glucose", "It makes pyruvate"], "Where does inhaled oxygen end up?", "Oxygen accepts electrons and H⁺ at the end of the electron transport chain, forming water. NAD is then regenerated."],
+[3, "Why is the inner mitochondrial membrane folded into cristae?", ["To increase the surface area for enzymes of oxidative phosphorylation", "To store glucose", "To make the mitochondrion stronger", "To hold the DNA"], "More membrane, more enzymes.", "Cristae give a large surface area so more enzymes of the electron transport chain can be packed in."],
+[4, "In which stages is CO₂ released?", ["The link reaction and the Krebs cycle", "Glycolysis", "Oxidative phosphorylation", "All stages"], "Not in the cytoplasm.", "CO₂ is released in the link reaction and the Krebs cycle (matrix). No CO₂ is released in glycolysis."],
+[5, "A student says 'respiration produces energy'. Which is the best correction?", ["Respiration releases energy stored in food; energy cannot be produced", "Respiration uses up energy", "Respiration is breathing", "Correct as written"], "Energy can't be made from nothing.", "Energy cannot be created. Respiration releases the chemical energy stored in food; part is stored in ATP, the rest is lost as heat."]
+]);
+KB("t7s2", [
+[2, "What does muscle make in anaerobic respiration?", ["Lactic acid only (no CO₂)", "Ethanol and CO₂", "Lactic acid and CO₂", "Water and CO₂"], "Muscle ≠ yeast.", "Muscle: glucose ➔ lactic acid + 2 ATP. No CO₂. Yeast makes ethanol + CO₂."],
+[3, "How much ATP is made per glucose in anaerobic respiration?", ["2 ATP", "38 ATP", "34 ATP", "0 ATP"], "Only glycolysis runs.", "Only glycolysis happens, giving a net 2 ATP. Much energy remains locked in lactic acid or ethanol."],
+[4, "What happens to lactic acid after exercise?", ["Extra oxygen is taken in (oxygen debt); lactic acid is converted back to pyruvate, mainly in the liver", "It is excreted in urine", "It is stored in muscles forever", "It turns into CO₂ straight away"], "Oxygen debt.", "After exercise we breathe in extra oxygen to oxidise lactic acid back to pyruvate, mainly in the liver."],
+[4, "Why can glycolysis continue in anaerobic respiration?", ["Pyruvate accepts hydrogen from NADH, so NAD is regenerated", "Oxygen is still present", "The Krebs cycle keeps running", "ATP is not needed"], "NAD must be recycled.", "Pyruvate is reduced to lactic acid (or ethanol + CO₂), regenerating NAD so glycolysis can keep making a little ATP."]
+]);
+KB("t7s3", [
+[3, "In a respirometer, why is soda lime (or KOH) added?", ["To absorb CO₂, so the liquid movement shows O₂ uptake only", "To test for CO₂", "To supply oxygen", "To kill the seeds"], "It absorbs, it doesn't test.", "Soda lime/KOH absorbs CO₂, so the volume change (liquid movement) is due to O₂ being taken in."],
+[3, "Why are boiled seeds used in a respiration experiment?", ["As a control: boiled seeds do not respire", "Boiled seeds respire faster", "To kill microorganisms only", "To supply heat"], "Dead seeds.", "Boiled (dead) seeds do not respire, so any change in the experimental set-up is caused by respiration of the living seeds."],
+[4, "Why are seeds surface-sterilised before a respiration experiment?", ["To kill microorganisms, so their respiration does not affect the results", "To make the seeds germinate faster", "To remove water", "To stop the seeds respiring"], "Other living things respire too.", "Microorganisms on the seed coat also respire; sterilising removes them so only the seeds' respiration is measured."]
+]);
+
+KB("t9s1", [
+[2, "What is an allele?", ["An alternative form of a gene, at the same locus", "The same as a gene", "A whole chromosome", "A type of cell"], "Gene for height: T or t.", "A gene controls a characteristic; alleles are its different forms (e.g. T and t) at the same locus."],
+[3, "A plant is Tt (T = tall, dominant). What is its phenotype?", ["Tall", "Half tall, half short", "Short", "Medium height"], "Dominant is expressed in the heterozygote.", "T is dominant, so a Tt plant is tall. It is not 'half and half'."],
+[3, "How many alleles of each gene does a gamete carry?", ["One", "Two", "Four", "None"], "Law of Segregation.", "The two alleles separate at meiosis, so each haploid gamete gets only one allele of each gene."],
+[4, "A tall plant of unknown genotype is crossed with a short (tt) plant. Some offspring are short. What was the tall parent's genotype?", ["Tt (heterozygous)", "TT (homozygous dominant)", "tt", "It cannot be known"], "Test cross logic.", "A short (tt) offspring must get a t from each parent, so the tall parent must be Tt."],
+[5, "Two heterozygous parents have one child with the recessive condition. What is the chance their NEXT child also has it?", ["1/4", "0, because they already had one", "1/2", "1"], "Each birth is independent.", "Each birth is an independent event, so the chance is still 1/4 every time."]
+]);
+KB("t9s2", [
+[2, "What is the genotype of blood group O?", ["ii", "IᴬIᴮ", "Iᴬi", "IᴮIᴮ"], "O has no antigen.", "Group O is homozygous recessive: ii."],
+[3, "Which antibodies are in the plasma of a person with group AB?", ["No anti-A and no anti-B", "Anti-A and anti-B", "Anti-A only", "Anti-B only"], "AB has both antigens.", "Group AB has both A and B antigens, so it has neither antibody. That's why AB is the universal recipient."],
+[3, "Why is red-green colour blindness more common in males?", ["Males have only one X chromosome, so one recessive allele is enough", "The allele is on the Y chromosome", "Males have two X chromosomes", "Females cannot inherit it"], "XY vs XX.", "The allele is on the X. Males (XY) show it with one copy; females (XX) need two copies."],
+[4, "A colour-blind father (XᵇY) and a normal (XᴮXᴮ) mother. What about their sons?", ["No son will be colour-blind: sons get their X from their mother", "All sons will be colour-blind", "Half the sons will be colour-blind", "All daughters will be colour-blind"], "Where does a son's X come from?", "A father passes Y to his sons, so the sons get the normal X from the mother. All daughters will be carriers."],
+[4, "In a pedigree, two unaffected parents have an affected child. What does this show?", ["The trait is recessive and both parents are heterozygous carriers", "The trait is dominant", "The trait is caused by the environment", "One parent must be affected"], "Hidden in the parents.", "The parents must each carry a hidden recessive allele, so the trait is recessive."],
+[3, "Which statement about Iᴬ and Iᴮ is correct?", ["They are co-dominant: both are fully expressed in IᴬIᴮ", "Iᴬ is dominant over Iᴮ", "Iᴮ is recessive to i", "They are on the Y chromosome"], "Group AB.", "Iᴬ and Iᴮ are co-dominant, giving group AB; both are dominant to i."]
+]);
+KB("t9s3", [
+[2, "Which is an example of continuous variation?", ["Height", "ABO blood group", "Tongue rolling", "Free or attached earlobes"], "A range with in-between values.", "Height has a continuous range, controlled by many genes plus the environment. The others fall into a few distinct groups."],
+[3, "What is the ultimate source of new alleles?", ["Mutation", "Independent assortment", "Crossing over", "Random fertilisation"], "The others only shuffle existing alleles.", "Mutation makes new alleles. Crossing over, independent assortment and random fertilisation only recombine existing ones."],
+[3, "What ratio do you expect from Aa × aa?", ["1 : 1", "3 : 1", "9 : 3 : 3 : 1", "All dominant"], "A test cross.", "Aa × aa gives Aa and aa in equal numbers: 1 : 1."],
+[4, "Who decides the sex of a human baby?", ["The sperm: it can carry an X or a Y chromosome", "The mother", "The egg: it can carry X or Y", "The environment"], "All eggs carry X.", "All ova carry X; half the sperm carry X and half carry Y. So the sperm decides the sex, with a 50% chance each time."]
+]);
+KB("t10s1", [
+[2, "Which bases pair in DNA?", ["A with T, and C with G", "A with U, and C with G", "A with C, and T with G", "A with G, and C with T"], "U is only in RNA.", "In DNA, A pairs with T and C pairs with G by hydrogen bonds. U replaces T in RNA."],
+[3, "Which sugar is found in DNA?", ["Deoxyribose", "Ribose", "Glucose", "Sucrose"], "D for DNA.", "DNA has deoxyribose; RNA has ribose."],
+[4, "How does DNA control a characteristic?", ["Base sequence ➔ amino acid sequence ➔ protein ➔ characteristic", "DNA becomes the protein itself", "DNA makes energy", "Each base is one characteristic"], "Follow the chain.", "The base sequence of a gene decides the amino acid sequence of a polypeptide, so the protein made, which decides the characteristic."]
+]);
+KB("t10s2", [
+[2, "Where does transcription happen?", ["In the nucleus", "At the ribosomes", "In the mitochondria", "In the cell membrane"], "DNA can't leave the nucleus.", "Transcription (DNA ➔ mRNA) happens in the nucleus. Translation happens at the ribosomes."],
+[3, "Where is a codon found?", ["On mRNA", "On tRNA", "On DNA only", "On a ribosome"], "Anticodon is on tRNA.", "A codon is three bases on mRNA. The anticodon (on tRNA) pairs with it."],
+[3, "The DNA template strand reads TAC. What is the mRNA codon?", ["AUG", "ATG", "TAC", "UAC"], "Complementary, and use U not T.", "mRNA is complementary to the template strand: T➔A, A➔U, C➔G. So TAC ➔ AUG (the start codon)."],
+[4, "One base is DELETED near the start of a gene. What is the usual effect?", ["A frameshift: all the amino acids after it may change", "Only one amino acid changes", "No effect at all", "The DNA doubles"], "Reading in threes.", "A deletion shifts the reading frame, so every codon after it changes ➔ the protein changes shape and usually stops working."],
+[4, "A substitution changes one DNA base, but the protein is unchanged. Why?", ["The new codon codes for the same amino acid (the code is degenerate)", "Substitutions never change proteins", "The ribosome ignores the change", "The mRNA is not made"], "More than one codon per amino acid.", "The genetic code is degenerate: several codons code for the same amino acid, so some substitutions have no effect."],
+[5, "What causes Down syndrome?", ["A chromosome mutation: an extra chromosome 21 from non-disjunction in meiosis", "A gene mutation in haemoglobin", "An infection", "A deletion of one base"], "47 chromosomes.", "Non-disjunction gives a gamete with an extra chromosome 21. After fertilisation the zygote has 47 chromosomes."]
+]);
+KB("t10s3", [
+[2, "Which enzyme cuts DNA at a specific sequence?", ["Restriction enzyme", "DNA ligase", "RNA polymerase", "Amylase"], "Scissors.", "Restriction enzymes cut DNA at specific base sequences. DNA ligase is the 'glue' that joins fragments."],
+[3, "Why are the gene and the plasmid cut with the SAME restriction enzyme?", ["So the cut ends are complementary and can be joined", "To make the plasmid bigger", "To kill the bacteria", "Different enzymes would work better"], "The ends must match.", "The same restriction enzyme gives matching (complementary) ends, so DNA ligase can join the gene into the plasmid."],
+[3, "Why does a human gene work inside a bacterium?", ["The genetic code is universal", "Bacteria have a nucleus", "Bacteria are human cells", "The gene changes into bacterial DNA"], "Same codons everywhere.", "The genetic code is universal: the same codons code for the same amino acids, so bacteria make the same human protein."],
+[4, "In gel electrophoresis, which DNA fragments travel furthest?", ["The shortest fragments", "The longest fragments", "They all travel the same distance", "Only the positive fragments"], "Small ones slip through the gel.", "DNA is negative, so it moves to the positive terminal. Shorter fragments move faster through the gel's pores, so they travel further."],
+[5, "In a paternity test, how should the child's DNA fingerprint compare with the parents'?", ["Every band in the child matches a band in either the mother or the father", "The child's pattern is identical to the father's", "The child's pattern is identical to the mother's", "No bands match"], "Half from each parent.", "Half the genetic material comes from each parent, so each of the child's bands must be found in the mother or the father."],
+[4, "Why is GM human insulin better than insulin from animals?", ["It is identical to human insulin, pure, and made in large amounts quickly", "It is stronger than human insulin", "It can be swallowed as a tablet", "It lasts forever"], "Compare yield, structure, safety.", "GM insulin has the same structure as human insulin (less rejection), is pure (low infection risk) and is made in large amounts in fermenters."]
+]);
+KB("t11s1", [
+[2, "How is a scientific name written?", ["Homo sapiens: genus with a capital letter, species with a small letter, in italics", "Homo Sapiens", "homo sapiens", "HOMO SAPIENS"], "Binomial nomenclature.", "Genus starts with a capital letter, species is all small letters; italics in print, underlined by hand."],
+[3, "Which pair is more closely related?", ["Two species in the same genus", "Two species only in the same family", "Two species only in the same order", "Two species only in the same kingdom"], "The lower the shared level…", "Species in the same genus share a more recent common ancestor than those only in the same family, order or kingdom."],
+[3, "Why are fungi NOT put in Kingdom Plantae?", ["They have no chlorophyll and their cell wall is not made of cellulose", "They are too small", "They can move", "They have no cells"], "Two key features.", "Fungi cannot photosynthesise and their cell walls are not cellulose, so they are a separate kingdom."],
+[4, "A whale lives in the sea and has fins. Why is it classified as a mammal?", ["It breathes with lungs, has mammary glands and gives birth to live young", "It has scales and gills", "It lays shelled eggs", "It is cold-blooded"], "Look at the defining features.", "Mammals have hair, mammary glands and lungs, and most give birth to live young. Whales have these features."],
+[4, "Which feature is best for one step of a dichotomous key?", ["Has wings / has no wings", "Big / small", "Pretty / ugly", "Light brown / dark brown"], "Clear, observable, constant.", "Keys should use clear yes/no features that do not vary, not size or subtle colour."],
+[5, "Why did scientists move from 5 kingdoms to 3 domains?", ["New evidence from rRNA sequences showed Archaea are closer to eukaryotes than to bacteria", "Bacteria were discovered to be plants", "There were too many kingdoms to remember", "Microscopes stopped working"], "Science is tentative.", "Woese compared rRNA sequences: Archaea are a separate domain. New technology gives new evidence, so classification changes."]
+]);
+KB("t11s2", [
+[2, "In natural selection, what does 'fittest' mean?", ["Best adapted to that environment", "The strongest", "The fastest runner", "The biggest"], "Not about the gym.", "The fittest individuals are the best adapted to their environment, so they are more likely to survive and reproduce."],
+[3, "Mosquitoes become resistant to an insecticide. What is the best explanation?", ["Some resistant mosquitoes already existed; the insecticide selected them", "The insecticide made the mosquitoes mutate", "The mosquitoes decided to become resistant", "Each mosquito learned to survive"], "Selection, not cause.", "Mutations are random and already there. The insecticide is a selection pressure: resistant ones survive and reproduce, so their proportion rises."],
+[4, "Which statement about evolution is correct?", ["Populations evolve over many generations; individuals do not", "Each individual evolves during its life", "Acquired characters are passed on to offspring", "Animals change because they need to"], "Darwin, not Lamarck.", "Evolution is a change in the allele frequencies of a population over generations. Acquired characters are not inherited."],
+[5, "Why is the sickle-cell allele common in places with malaria?", ["Heterozygotes are less likely to get malaria and do not suffer sickle-cell anaemia, so they have a selection advantage", "People with sickle-cell anaemia survive malaria best", "Malaria causes the mutation", "The allele protects against all diseases"], "Heterozygote advantage.", "Heterozygotes resist malaria and don't have sickle-cell anaemia, so they survive and reproduce more, keeping the allele common."]
+]);
+KB("t11s3", [
+[2, "What are homologous structures?", ["Structures with the same basic plan but different functions, e.g. the pentadactyl limb", "Structures with the same function but different plans", "Structures that are identical in every way", "Fossils of the same animal"], "Same bones, different jobs.", "Human arms, bat wings and whale flippers have the same bone arrangement but different functions ➔ common ancestor."],
+[3, "Which rock layer usually has the oldest fossils?", ["The lowest layer", "The top layer", "The middle layer", "All layers are the same age"], "Layers build up over time.", "Sedimentary rocks form layer by layer, so the lowest layer is the oldest."],
+[3, "A fossil has 1/4 of its original ¹⁴C left. The half-life is 5730 years. How old is it?", ["About 11 460 years", "About 5730 years", "About 17 190 years", "About 22 920 years"], "1/2 then 1/4.", "1/4 left = two half-lives = 2 × 5730 = 11 460 years."],
+[4, "Which statement about humans and chimpanzees is correct?", ["They share a recent common ancestor", "Humans evolved from chimpanzees", "Chimpanzees evolved from humans", "They are the same species"], "Cousins, not parents.", "Humans and chimpanzees share a common ancestor; both species are still evolving."],
+[5, "What must happen for isolated populations to become new species?", ["Gene flow stops, different mutations and selection pressures act, until they cannot interbreed to give fertile offspring", "They only need to look different", "Isolation alone is enough", "They must live in the same place"], "Isolation is only the start.", "After isolation, different mutations and selection change allele frequencies until the groups can no longer interbreed to produce fertile offspring."]
+]);
+KB("t12s1", [
+[3, "How are most mineral ions absorbed by root hair cells?", ["Active transport, against the concentration gradient, using ATP", "Simple diffusion", "Osmosis", "Phagocytosis"], "Soil has fewer ions than the cell.", "Most ions are taken up by active transport, using ATP from root respiration."],
+[3, "A plant lacks nitrate. What symptom appears?", ["Stunted growth, because too few proteins are made", "Yellow leaves only, because chlorophyll isn't made", "Bigger flowers", "Faster growth"], "Nitrate ➔ protein.", "Nitrate is used to make proteins; lack ➔ stunted growth. Lack of magnesium ➔ chlorosis."],
+[4, "How is a root hair cell adapted for absorption?", ["It is long and thin, giving a large surface area", "It has many chloroplasts", "It has a thick waxy cuticle", "It is dead and hollow"], "Surface area.", "The long, thin extension increases the surface area for absorbing water (osmosis) and minerals (active transport)."]
+]);
+KB("t12s2", [
+[2, "Where does water evaporate from in a leaf?", ["From the surfaces of the mesophyll cells into the air spaces; the vapour then diffuses out through the stomata", "Directly from the stomata", "From the cuticle", "From the xylem only"], "Two steps, two verbs.", "Water evaporates from mesophyll cell surfaces, then the water vapour diffuses out through the stomata."],
+[3, "What does a potometer actually measure?", ["The rate of water uptake, assumed to be about equal to the rate of transpiration", "The exact rate of transpiration", "The rate of photosynthesis", "The amount of water in the leaves"], "State the assumption.", "It measures water uptake. We assume this is about equal to transpiration because very little water is used in photosynthesis."],
+[3, "Why is the shoot cut under water when setting up a potometer?", ["To stop air entering and breaking the continuous water column", "To keep the leaves cool", "To kill bacteria", "To make the stem longer"], "An air bubble blocks the xylem.", "Air would break the continuous water column in the xylem, so the shoot is cut under water."],
+[4, "Does the transpiration pull need ATP from the plant?", ["No: it is passive; the energy comes from the sun, which evaporates the water", "Yes: xylem cells use ATP to pump water", "Yes: root cells push the water up", "Only at night"], "Xylem is dead.", "Evaporation (powered by the sun's heat) creates the transpiration pull. Xylem is dead and uses no ATP."],
+[4, "Which condition INCREASES the rate of transpiration?", ["Low humidity", "High humidity", "No wind", "Low temperature"], "Water vapour gradient.", "In dry (low-humidity) air, the gradient of water vapour between leaf and air is steeper, so water vapour diffuses out faster."]
+]);
+KB("t12s3", [
+[2, "Which statement about phloem is correct?", ["It is living tissue (sieve tubes and companion cells) that carries sucrose both ways", "It is dead and hollow like xylem", "It carries water upwards only", "It carries starch"], "Living vs dead.", "Phloem is living and carries sucrose by translocation in both directions. Xylem is dead and carries water up."],
+[3, "Why is sugar transported as sucrose, not glucose?", ["Sucrose is soluble but non-reactive, so it isn't used up on the journey", "Sucrose is insoluble", "Glucose is too big", "Sucrose is a protein"], "Soluble but non-reactive.", "Glucose is reactive and would be respired along the way. Sucrose is soluble but non-reactive, so it is a good transport form."],
+[4, "A ring of bark is removed from a tree. The stem swells just ABOVE the ring. Why?", ["Sugars build up above the ring ➔ lower water potential ➔ water enters by osmosis ➔ swelling", "Water piles up because xylem is removed", "Sugars physically pile up like sand", "The tree grows a new branch"], "Ring-barking removes phloem.", "Phloem is removed, so sucrose collects above the ring. This lowers the water potential, so water enters by osmosis and the tissue swells."],
+[4, "How is a woody plant supported?", ["Thick lignified walls of xylem stop it collapsing", "Turgidity of dead xylem cells", "Its roots push it up", "The phloem is hard"], "Lignin.", "Lignified xylem walls give mechanical support. Non-woody plants rely on the turgidity of living cells (e.g. the cortex)."]
+]);
+KB("t13s1", [
+[2, "What is the job of cilia in the trachea?", ["They sweep mucus (with trapped dust and bacteria) towards the throat", "They trap dust and bacteria", "They absorb oxygen", "They keep the trachea open"], "Cilia sweep; mucus traps.", "Mucus traps dust and bacteria; cilia sweep the mucus up to the throat. C-shaped cartilage keeps the trachea open."],
+[3, "What is the order of events when oxygen enters the blood in an air sac?", ["It dissolves in the water film, then diffuses across the epithelium and capillary endothelium", "It diffuses into the capillary first, then dissolves", "It is pumped by active transport", "It passes through the cilia"], "Dissolve first.", "Oxygen dissolves in the moist lining first, then diffuses across the one-cell-thick epithelium and endothelium, then binds to haemoglobin."],
+[4, "How is a steep concentration gradient of oxygen kept at the air sacs?", ["Continuous ventilation AND continuous blood flow", "Continuous blood flow only", "Thick air sac walls", "Mucus on the air sac"], "Two things keep moving.", "Ventilation brings in fresh air; blood flow carries oxygen away. Both keep the gradient steep."],
+[3, "Which is correct?", ["Respiration happens in the mitochondria of every cell; the lungs carry out ventilation and gas exchange", "The lungs carry out respiration to take in oxygen", "Breathing and respiration mean the same", "Respiration only happens in the lungs"], "Breathing ≠ respiration.", "Respiration is a chemical process in all cells. The lungs ventilate and exchange gases."]
+]);
+KB("t13s2", [
+[2, "What happens to the diaphragm during inhalation?", ["The diaphragm muscle contracts and the diaphragm flattens", "The diaphragm relaxes and flattens", "The diaphragm contracts and domes upwards", "Nothing happens"], "Muscles contract to act.", "The diaphragm muscle contracts, pulling the diaphragm down so it flattens."],
+[3, "Which is the correct order in inhalation?", ["Muscles contract ➔ thoracic volume increases ➔ pressure falls below atmospheric ➔ air is drawn in", "Air rushes in ➔ the chest gets bigger ➔ muscles contract", "Pressure rises ➔ air is drawn in", "The rib cage expands like a balloon ➔ air is pushed in"], "Volume changes first.", "The volume change comes first; the pressure change is the result; then air moves in."],
+[3, "How does the rib cage move during inhalation?", ["Upwards and outwards", "It expands in size", "Downwards and inwards", "It does not move"], "Bone can't stretch.", "External intercostal muscles contract and pull the rib cage upwards and outwards. Bone cannot 'expand'.", "Write 'upwards and outwards', never 'the rib cage expands'."],
+[5, "A knife punctures the chest wall. Why does the lung collapse?", ["Air enters the pleural cavity, so its low pressure is lost and the lung recoils by its own elasticity", "Air leaks out of the lung through the hole", "The diaphragm stops working", "The trachea closes"], "Pleural cavity.", "The pleural cavity is below atmospheric pressure. Air rushes into it, the pressure difference is lost, and the elastic lung collapses."]
+]);
+KB("t13s3", [
+[3, "How does tar in cigarette smoke lead to lung infections?", ["Tar paralyses the cilia, so mucus and bacteria build up", "Tar kills all the cilia instantly", "Tar blocks the stomata", "Tar is a virus"], "Cilia stop sweeping.", "Tar paralyses the cilia, so they can't sweep mucus away. Mucus and bacteria accumulate ➔ infections."],
+[4, "In emphysema, why do patients become breathless?", ["Air sac walls are destroyed, so the total surface area for gas exchange falls", "The trachea gets wider", "More air sacs are made", "The blood carries more oxygen"], "Surface area.", "Damaged air sac walls ➔ smaller surface area ➔ slower diffusion of O₂ into the blood."],
+[4, "Which substance in cigarette smoke reduces the oxygen carried by the blood?", ["Carbon monoxide", "Nicotine", "Tar", "Water vapour"], "It binds haemoglobin.", "Carbon monoxide binds to haemoglobin, reducing oxygen transport. Nicotine raises heart rate; tar is a carcinogen."]
+]);
+KB("t14s1", [
+[2, "Which vessel carries deoxygenated blood away from the heart?", ["The pulmonary artery", "The aorta", "The pulmonary vein", "The vena cava"], "The odd artery.", "The pulmonary artery is the only artery carrying deoxygenated blood (to the lungs)."],
+[3, "Which statement about veins is correct?", ["Veins have a thinner muscular wall than arteries, a large lumen and valves", "Veins have no muscular wall", "Veins carry blood away from the heart", "Veins have thick elastic walls for high pressure"], "Thinner, not none.", "Veins have a thinner wall than arteries (not no muscle), a large lumen and valves to prevent backflow.", "'Veins have no muscular wall' scores zero."],
+[3, "Why do capillaries slow blood down?", ["They are highly branched, so the total cross-sectional area is large", "They have valves", "Their walls are thick", "The heart pumps weakly into them"], "Many branches.", "Huge total cross-sectional area ➔ lower flow rate ➔ more time for exchange."],
+[4, "What carries oxygen in the blood, and how is most CO₂ carried?", ["O₂ as oxyhaemoglobin in red blood cells; CO₂ mostly as hydrogencarbonate ions in the plasma", "Both are mainly dissolved in plasma", "O₂ in plasma; CO₂ in red blood cells", "Both as oxyhaemoglobin"], "Oxygen is poorly soluble.", "Haemoglobin carries O₂ as oxyhaemoglobin; most CO₂ travels as hydrogencarbonate ions in plasma."]
+]);
+KB("t14s2", [
+[2, "What do heart valves do?", ["They prevent the backflow of blood", "They push blood forward", "They make the heart beat", "They carry oxygen"], "One-way doors.", "Valves only prevent backflow. The heart muscle pumps the blood."],
+[3, "Why is the wall of the left ventricle thicker than the right?", ["To generate a higher pressure to pump blood all round the body", "To withstand the high pressure", "Because it holds more blood", "To pump blood to the lungs"], "Create, not withstand.", "The thicker muscle contracts to generate a higher pressure, pumping blood a longer distance to the whole body."],
+[4, "The ventricles contract. Why does the bicuspid valve close?", ["Pressure in the ventricle rises above pressure in the atrium", "The ventricle muscle pulls it shut", "The valve contracts", "Pressure in the atrium rises above the ventricle"], "Name the two places.", "When ventricular pressure is higher than atrial pressure, the bicuspid (and tricuspid) valve closes, preventing backflow into the atria."],
+[4, "Which vessel supplies the heart muscle itself?", ["The coronary artery", "The aorta directly through the ventricle", "The pulmonary vein", "The vena cava"], "The heart feeds itself separately.", "Cardiac muscle gets oxygen and nutrients only from the coronary arteries, not from the blood inside its chambers."]
+]);
+KB("t14s3", [
+[3, "How do nutrients reach body cells from the blood?", ["They pass from the capillary into tissue fluid, then into the cells", "Directly from the capillary into the cells", "Through the lymph first", "Through the veins"], "Never skip tissue fluid.", "Nutrients diffuse from capillaries into the tissue fluid that bathes the cells, then into the cells."],
+[4, "Why is tissue fluid formed at the arteriole end of a capillary?", ["High hydrostatic (blood) pressure forces plasma out", "Red blood cells squeeze out", "Osmosis draws water out", "The heart pumps it out directly"], "Pressure pushes.", "High hydrostatic pressure forces some plasma out. Red blood cells, platelets and large plasma proteins stay in."],
+[4, "What moves lymph along the lymph vessels?", ["Contraction of skeletal muscles squeezing the vessels, with valves preventing backflow", "The heart", "Gravity only", "Cilia"], "Not the heart.", "Lymph moves when skeletal muscles squeeze the lymph vessels; valves stop it flowing backwards."],
+[5, "A coronary artery is blocked by a plaque. What happens?", ["Less oxygen and nutrients reach the cardiac muscle; the cells can't respire aerobically and may die (heart attack)", "Blood in the ventricle can't reach the heart muscle", "The valves stop working", "The lungs stop working"], "Coronary = heart's own supply.", "Plaque narrows the coronary artery ➔ less blood flow ➔ cardiac muscle lacks O₂ ➔ cells die."]
+]);
+KB("t15s1", [
+[2, "What is pollination?", ["Transfer of pollen grains from the anther to the stigma", "Fusion of male and female gametes", "Growth of the pollen tube", "Spreading of seeds"], "Transfer, not fusion.", "Pollination is only the transfer of pollen. Fertilisation is the fusion of gamete nuclei."],
+[3, "Is a pollen grain a male gamete?", ["No: it carries / produces the male gamete", "Yes: it is the male gamete", "It is the female gamete", "It is a seed"], "Spacecraft and astronaut.", "The pollen grain carries the male gamete; the gamete travels down the pollen tube."],
+[3, "What does the ovary become after fertilisation?", ["The fruit", "The seed", "The testa", "The embryo"], "Ovary ➔ fruit; ovule ➔ seed.", "The ovary becomes the fruit and each ovule becomes a seed."],
+[4, "Whose genes are in the fruit wall of an apple?", ["Only the mother plant's, because it develops from the ovary wall", "Both parents'", "Only the pollen's", "None"], "Mother's own tissue.", "The fruit wall comes from the ovary wall, which is the mother's tissue. The seeds contain genes from both parents."],
+[4, "How does a pollen tube reach the ovule?", ["It grows down the style by secreting enzymes, then enters through the micropyle", "The pollen grain swims down the style", "Wind carries it", "It needs water to reach the ovule"], "The grain stays on the stigma.", "The grain germinates on the stigma; the tube grows down the style (digesting it with enzymes) and enters the micropyle. No water is needed."]
+]);
+KB("t15s2", [
+[2, "Where does fertilisation usually happen in humans?", ["In the oviduct", "In the uterus", "In the vagina", "In the ovary"], "Before implantation.", "Fertilisation happens in the oviduct; the embryo then implants in the uterus lining."],
+[3, "Where do sperm mature and get stored?", ["In the epididymis", "In the testis", "In the vas deferens", "In the prostate"], "Made in one place, matured in another.", "Sperm are made in the testis but mature and are stored in the epididymis."],
+[3, "What does amniotic fluid do?", ["It is a shock absorber that protects the foetus", "It gives the foetus nutrients and oxygen", "It carries blood", "It makes hormones"], "Cushion only.", "Amniotic fluid protects against mechanical injury. Nutrients and oxygen come via the placenta."],
+[4, "Why must maternal and foetal blood never mix?", ["The mother's high blood pressure could damage foetal vessels, and different blood groups could clump", "Mixing would make the baby grow too fast", "Blood cannot move in the placenta", "Foetal blood has no cells"], "Two reasons.", "Separate blood protects the foetus from the mother's high pressure and prevents clumping of incompatible blood."],
+[4, "How do contraceptive pills work?", ["Synthetic hormones inhibit ovulation", "They kill sperm", "They block the oviduct", "They stop menstruation only"], "The pill never kills sperm.", "The pill contains hormones that stop ovulation, so no ovum is released."],
+[3, "How many chromosomes are in a human sperm?", ["23 single chromosomes (haploid)", "23 pairs", "46 single chromosomes", "46 pairs"], "One set.", "A gamete has 23 individual chromosomes (one set). Fertilisation restores 46 (23 pairs)."]
+]);
+KB("t15s3", [
+[2, "Why is dry mass better than fresh mass for measuring plant growth?", ["Fresh mass changes with water content, so it is unreliable", "Dry mass is easier to measure", "Fresh mass is always zero", "Dry mass keeps the plant alive"], "Water comes and goes.", "Fresh mass fluctuates with water content. Dry mass measures the organic matter, so it is more reliable (but the plant is killed)."],
+[3, "Why does the dry mass of a germinating seed fall at first?", ["Stored food is broken down and used in respiration, and there are no leaves yet to photosynthesise", "The seed loses water", "The seed photosynthesises", "The cotyledons grow"], "Respiration uses stored food.", "Enzymes hydrolyse stored food, which is respired to release energy. Dry mass rises only once leaves photosynthesise faster than respiration."],
+[3, "What does primary growth increase?", ["Length only", "Thickness only", "Both length and thickness", "Leaf number only"], "Apical meristem.", "Primary growth (apical meristems) increases length. Secondary growth (vascular cambium) increases thickness."],
+[4, "Which is NOT growth?", ["A raisin swelling in water", "A baby getting heavier over months", "A seedling getting taller", "A tree trunk getting thicker"], "Growth is irreversible.", "Growth is an irreversible increase in size and dry mass. Swelling by taking in water is reversible, so it is not growth."]
+]);
+KB("t16s1", [
+[2, "Which part of the eye does MOST of the refraction?", ["The cornea", "The lens", "The pupil", "The retina"], "The lens does fine focusing.", "The cornea refracts most of the light; the lens fine-tunes the focus."],
+[3, "Looking at a near object, what happens?", ["Ciliary muscles contract, suspensory ligaments slacken, the lens becomes thicker", "Suspensory ligaments contract and the lens gets thinner", "Ciliary muscles relax and the lens gets thicker", "The pupil contracts"], "Only muscles contract.", "Ciliary muscles contract ➔ tension in the ligaments decreases ➔ the elastic lens becomes thicker ➔ more refraction.", "Ligaments slacken or tighten; they never contract."],
+[3, "In bright light, what happens to the iris?", ["Circular muscles contract, radial muscles relax, the pupil constricts", "The pupil contracts", "Radial muscles contract", "Both muscles relax"], "Name the two muscles.", "Circular muscles contract and radial muscles relax, so the pupil constricts and less light enters."],
+[3, "Which cells are found at the yellow spot?", ["Cone cells only", "Rod cells only", "Both equally", "No photoreceptors"], "Sharpest, colour vision.", "The yellow spot has many cone cells and no rods, giving the sharpest colour vision."],
+[4, "Does an image form on the blind spot?", ["Yes, but there are no photoreceptors, so no impulses are sent", "No image forms there", "Only in dim light", "Only in colour"], "Where the optic nerve leaves.", "Light still falls there, but with no rods or cones no impulses are produced, so it isn't seen."],
+[4, "What is the job of the semicircular canals?", ["Detecting head movement for balance", "Hearing sound", "Amplifying vibrations", "Equalising air pressure"], "Not for sound.", "Semicircular canals detect head movement. The cochlea detects sound; the Eustachian tube equalises pressure."],
+[4, "Which part changes sound vibrations into nerve impulses?", ["Sensory hair cells in the cochlea", "The eardrum", "The ear bones", "The oval window"], "The receptors.", "The eardrum vibrates and the ossicles amplify, but sensory hair cells in the cochlea generate the nerve impulses."]
+]);
+KB("t16s2", [
+[2, "How does a message cross a synapse?", ["A neurotransmitter diffuses across the synaptic cleft and binds to receptors on the next neurone", "Electricity jumps across the gap", "The two neurones touch", "Blood carries it across"], "Chemical across the gap.", "Neurotransmitter is released from vesicles, diffuses across the cleft, binds to receptors, and a new impulse starts."],
+[3, "Why do impulses travel in one direction only across a synapse?", ["Neurotransmitter is only released from the axon ending", "The myelin sheath blocks one side", "Impulses are too weak to go back", "Dendrons have no membrane"], "Vesicles are only on one side.", "Only the synaptic knob has vesicles of neurotransmitter, so transmission is one-way."],
+[3, "Which reflex has only TWO neurones (no interneurone)?", ["The knee jerk reflex", "The withdrawal reflex", "The pupil reflex", "Every reflex"], "Stretch receptor straight to motor.", "The knee jerk: sensory ➔ motor, with no interneurone."],
+[4, "Which part of the brain controls breathing and heart beat?", ["The medulla oblongata", "The cerebellum", "The cerebrum", "The spinal cord"], "The Breather.", "The medulla controls breathing and heart beat. The cerebellum controls balance and smooth movement."],
+[4, "Do reflex actions involve the brain?", ["They don't involve the cerebrum, but cranial reflexes use the medulla", "Never", "Always the cerebrum", "Only the cerebellum"], "Reflex = no cerebrum.", "Spinal reflexes use the spinal cord; cranial reflexes (blinking, swallowing, pupil) use the medulla. The cerebrum isn't needed."],
+[4, "Where are the cell bodies of sensory neurones found?", ["In the dorsal root ganglion", "In the grey matter of the spinal cord", "In the ventral root", "In the muscle"], "The swelling on the dorsal root.", "Sensory cell bodies are in the dorsal root ganglion. Motor and interneurone cell bodies are in the grey matter."]
+]);
+KB("t16s3", [
+[2, "How do hormones travel to their target organs?", ["In the blood, from ductless endocrine glands", "Through ducts", "Along neurones", "In the lymph only"], "Endocrine = ductless.", "Endocrine glands secrete hormones directly into the blood."],
+[3, "Why does a hormone act only on certain organs?", ["Only target organs have specific receptors for it", "It only reaches those organs", "Other organs destroy it", "It is too big for other cells"], "Receptors.", "Hormones reach the whole body in the blood, but only cells with specific receptors respond."],
+[3, "A shoot is lit from one side. Where do the auxins go?", ["To the shaded side, which elongates more, so the shoot bends towards light", "They are destroyed on the lit side", "To the lit side", "They stay at the tip"], "Light moves auxins.", "Unilateral light makes auxins move to the shaded side; those cells elongate more, so the shoot bends towards the light."],
+[4, "What does a clinostat do in a tropism experiment?", ["Rotates the plant so light or gravity acts evenly, giving straight growth", "Measures growth", "Makes auxin", "Kills the tip"], "It removes the one-sided effect.", "Rotation removes the unilateral effect, so auxin is evenly spread and the plant grows straight."],
+[4, "Compare nervous and hormonal coordination.", ["Nervous: fast, localised, short-lived. Hormonal: slow, widespread, long-lasting", "Both are fast and short-lived", "Hormonal is faster", "Nervous uses the blood"], "Text message vs radio broadcast.", "Nerves send fast, local, brief impulses. Hormones travel in the blood: slower, widespread and longer-lasting."]
+]);
+KB("t16s4", [
+[2, "What joins muscle to bone?", ["A tendon, which is inelastic", "A ligament, which is elastic", "Cartilage", "Synovial fluid"], "TM / LB.", "Tendons join muscle to bone and are inelastic, so the whole pull reaches the bone. Ligaments join bone to bone."],
+[3, "When you bend your arm, what do the biceps and triceps do?", ["Biceps contracts, triceps relaxes", "Both contract", "Triceps contracts, biceps relaxes", "Both relax"], "Opposing muscles.", "The biceps (flexor) contracts and the triceps (extensor) relaxes to bend the arm."],
+[3, "Which joint moves in only one plane?", ["The elbow (hinge joint)", "The shoulder", "The hip", "The ball-and-socket joint"], "Like a door.", "The elbow and knee are hinge joints; the shoulder and hip are ball-and-socket joints."],
+[4, "What secretes synovial fluid?", ["The synovial membrane", "The cartilage", "The ligament", "The bone marrow"], "The oil factory.", "The synovial membrane secretes synovial fluid, which lubricates the joint and nourishes the cartilage."],
+[4, "Can a muscle push?", ["No: muscles only pull by contracting, so they work in opposing pairs", "Yes: the triceps pushes the arm straight", "Only the biceps pushes", "Only the heart pushes"], "Pull only.", "Muscles can only contract (pull). The triceps contracts to straighten the arm."]
+]);
+KB("t17s1", [
+[2, "What does 'negative' mean in negative feedback?", ["The response is opposite to the change, bringing it back to the set point", "The body responds badly", "The level always falls", "Nothing happens"], "Opposite.", "A change from the set point triggers a response that reverses it."],
+[3, "What does insulin do?", ["It stimulates liver and muscle cells to take up glucose and convert it into glycogen", "It converts glucose into glycogen itself", "It raises blood glucose", "It digests glucose"], "Hormones are messengers.", "Insulin is a messenger: it stimulates liver cells to convert glucose to glycogen. It doesn't do the converting.", "Write 'insulin stimulates liver cells to…'."],
+[3, "Which organ detects a change in blood glucose?", ["The pancreas", "The liver", "The kidney", "The stomach"], "The control centre.", "Cells in the pancreas (islets) detect glucose level and release insulin or glucagon. The liver is an effector."],
+[4, "In type 2 diabetes, what is wrong?", ["Insulin is made but body cells are insensitive to it", "No insulin is made", "Too much glucagon is made", "The liver has no glycogen"], "Type 1 vs type 2.", "Type 1: too little or no insulin. Type 2: cells don't respond properly to insulin."],
+[4, "Why can't insulin be taken as a tablet?", ["It is a protein, so it would be digested by proteases in the gut", "It is too sweet", "It dissolves in water", "Tablets are too slow"], "What is insulin made of?", "Insulin is a protein; swallowing it would let proteases digest it, so it is injected."],
+[3, "Which is correct?", ["Glucagon is a hormone; glycogen is a stored carbohydrate", "Glucagon and glycogen are the same", "Glycogen is a hormone", "Glucagon is stored in the liver"], "Similar names, different things.", "Glucagon (hormone) stimulates liver cells to break down glycogen (storage carbohydrate) into glucose."]
+]);
+KB("t17s2", [
+[3, "Why is body temperature kept near 37 °C?", ["To keep enzyme activity and the metabolic rate steady", "To keep the skin soft", "To make more sweat", "To store energy"], "Enzymes.", "Enzymes work best near 37 °C, so a steady temperature keeps metabolism steady."],
+[4, "Does homeostasis keep the body EXACTLY constant?", ["No: levels fluctuate within a narrow range around the set point", "Yes, exactly constant", "It keeps levels always rising", "It only works at night"], "A narrow range.", "Negative feedback keeps levels close to the set point, fluctuating within a narrow range."]
+]);
+KB("t18s1", [
+[2, "What is a population?", ["All the organisms of one species living in an area", "All the species in an area", "The place where an organism lives", "The non-living factors"], "One species.", "A population is one species; a community is all the populations in an area."],
+[3, "Two species need the same limited food. Which relationship is this?", ["Competition (− / −)", "Mutualism (+ / +)", "Commensalism (+ / 0)", "Predation (+ / −)"], "Both lose out.", "Competition harms both species because the resource is limited."],
+[3, "Which relationship is shown by barnacles living on a whale?", ["Commensalism: barnacles benefit, the whale is unaffected", "Parasitism", "Mutualism", "Competition"], "+ / 0.", "The barnacles get a home and food; the whale is not harmed."],
+[4, "Why does a predator population rise AFTER the prey population rises?", ["More food becomes available, so more predators survive and reproduce, which takes time", "Predators eat more when there are fewer prey", "Prey attract predators with smells", "Both rise at exactly the same time"], "The lag.", "More prey ➔ more food ➔ more predator offspring survive. Reproduction takes time, so there is a lag."]
+]);
+KB("t18s2", [
+[2, "Where does a food chain start?", ["With a producer", "With the sun", "With a decomposer", "With a herbivore"], "The sun is the energy source.", "Food chains start with a producer. The sun is the energy source, not part of the chain."],
+[3, "Why is less energy available at each higher trophic level?", ["Energy is lost as heat in respiration, and in faeces, excretory products and uneaten parts", "Energy is used up", "Energy is destroyed", "Energy is recycled"], "Name the loss routes.", "Energy is lost as heat, and in faeces, excretory products and uneaten parts. Only a small fraction passes on.", "Never write 'energy is used up'."],
+[3, "Which bacteria convert ammonium compounds into nitrates?", ["Nitrifying bacteria", "Nitrogen-fixing bacteria", "Denitrifying bacteria", "Decomposers"], "Nitr-ify ➔ nitr-ate.", "Nitrifying bacteria: ammonium ➔ nitrite ➔ nitrate. Nitrogen-fixing bacteria change N₂ into ammonium."],
+[4, "Which process makes the soil POORER in nitrates?", ["Denitrification, in poorly aerated soil", "Nitrification", "Nitrogen fixation", "Decomposition"], "N₂ gas escapes.", "Denitrifying bacteria turn nitrates into nitrogen gas, removing nitrogen from the soil."],
+[4, "Why can a pyramid of biomass in the sea be inverted?", ["Phytoplankton reproduce very fast (high turnover), so a small biomass supports more zooplankton", "Energy is gained at each level", "Zooplankton are producers", "Phytoplankton are very large"], "Turnover rate.", "At any moment phytoplankton biomass is small, but they reproduce so fast that they can support a larger zooplankton biomass."],
+[3, "Is energy recycled in an ecosystem?", ["No: energy flows one way and leaves as heat; only materials are recycled", "Yes, like carbon", "Yes, by decomposers", "Only in the sea"], "Energy flows, materials cycle.", "Energy enters as light and leaves as heat. Carbon and nitrogen are recycled."]
+]);
+KB("t18s3", [
+[3, "Which method is best for estimating a population of grasshoppers?", ["Mark-and-recapture", "Quadrat", "Line transect", "Counting every individual"], "They move fast.", "Mark-and-recapture is used for mobile animals: population = x × y ÷ z."],
+[4, "30 snails were marked and released. Later, 40 were caught and 10 of them were marked. Estimate the population.", ["120", "70", "30", "400"], "x × y ÷ z.", "Population = 30 × 40 ÷ 10 = 120."],
+[3, "Why are quadrats placed randomly and many times?", ["So the sample is representative and the result reliable", "To save time", "To find the biggest plant", "Because one throw is enough"], "Avoid bias.", "Random, repeated quadrats avoid bias; taking a mean gives a more reliable result."],
+[4, "What are the pioneer organisms in PRIMARY succession on bare rock?", ["Lichens", "Grasses", "Trees", "Shrubs"], "No soil yet.", "Lichens colonise bare rock, help break it down and add organic matter, so soil forms for mosses, then grasses."]
+]);
+KB("t19s1", [
+[2, "In malaria, what is the mosquito?", ["The vector that carries the pathogen", "The pathogen", "The host that becomes ill", "The antibiotic"], "The driver, not the culprit.", "The mosquito is the vector. The pathogen is the protist Plasmodium."],
+[3, "Why don't antibiotics work against viruses?", ["Viruses have no cell wall and no metabolism of their own for antibiotics to attack", "Viruses are too big", "Viruses are killed by the immune system first", "Antibiotics only work in the lungs"], "What do antibiotics target?", "Antibiotics attack bacterial cell walls, membranes or enzymes. Viruses have none of these."],
+[4, "How does antibiotic resistance spread?", ["Some bacteria are already resistant; the antibiotic kills the others, so resistant ones survive, reproduce and increase", "Antibiotics cause bacteria to mutate", "The patient's body becomes resistant", "Each bacterium learns to resist"], "Selection pressure.", "Resistant bacteria already exist. The antibiotic selects them, so their proportion increases. Bacteria, not people, become resistant."],
+[3, "Why does penicillin not harm human cells?", ["Human cells have no cell wall", "Human cells are too big", "Penicillin can't enter the blood", "Human cells make penicillin"], "What does penicillin stop being made?", "Penicillin stops bacterial cell walls forming, so bacteria burst by osmosis. Human cells have no cell wall."],
+[4, "Clearing stagnant water in flowerpots helps prevent dengue. Why?", ["It removes mosquito breeding places, so fewer vectors spread the virus", "It kills the dengue virus in people", "It is a vaccine", "It stops bacteria growing"], "Break the transmission route.", "Aedes mosquitoes breed in stagnant water. Fewer mosquitoes (vectors) ➔ less transmission."]
+]);
+KB("t19s2", [
+[2, "Which cells release antibodies?", ["Plasma cells, formed from B cells", "Phagocytes", "Killer T cells", "Red blood cells"], "B cells change first.", "Activated B cells become plasma cells, which release antibodies."],
+[3, "How do antibodies help destroy bacteria?", ["They cause agglutination (clumping) so phagocytes engulf them, cause lysis or neutralise toxins", "They kill bacteria directly like a weapon", "They eat the bacteria", "They are a type of white blood cell"], "Handcuffs and labels.", "Antibodies bind to antigens: agglutination helps phagocytosis; they also cause lysis and act as antitoxins.", "Never write 'antibodies kill bacteria'."],
+[4, "Why is the secondary immune response faster and stronger?", ["Memory cells recognise the antigen and quickly divide into plasma cells", "Antibodies from the first infection are still at a high level", "The pathogen is weaker the second time", "Phagocytes learn the pathogen"], "Memory cells.", "Memory cells recognise the same antigen, divide and differentiate quickly: shorter lag, more antibodies, longer-lasting."],
+[4, "Why does an antivenom (serum) give only short-term protection?", ["It gives ready-made antibodies (passive immunity); no memory cells are made and the antibodies are broken down", "It contains weakened venom", "It makes memory cells that die quickly", "It only works in children"], "Vaccine vs serum.", "Serum = passive immunity: immediate but short, because no memory cells form."],
+[3, "Which is a non-specific defence?", ["The skin", "Antibodies", "Memory B cells", "Killer T cells"], "Works against everything.", "Skin, mucus, lysozyme and phagocytosis act against all pathogens. Lymphocytes give specific defence."],
+[4, "What does HIV attack, and why does this cause AIDS?", ["Helper T cells, so fewer B cells and killer T cells are activated", "Red blood cells", "Phagocytes only", "The skin"], "Helpers activate the others.", "HIV destroys helper T cells, which normally activate B and killer T cells, so the immune system fails."]
+]);
+KB("t19s3", [
+[2, "What is cancer?", ["Mutations cause uncontrolled mitotic cell division, forming a malignant tumour that can spread", "Uncontrolled meiosis", "An infection caught from others", "A lack of vitamins"], "Mitosis out of control.", "Mutations in genes controlling cell division ➔ uncontrolled mitosis ➔ tumour. Malignant tumours invade and metastasise."],
+[3, "Is cancer infectious?", ["No: metastasis is spread within one person; cancer cannot pass between people", "Yes, because it spreads", "Only lung cancer is", "Yes, by droplets"], "Spread within vs between.", "Metastasis spreads cancer inside one body. Cancer itself is non-infectious."],
+[3, "How does tar in cigarette smoke increase the risk of lung cancer?", ["Tar is a carcinogen that induces mutations in airway cells", "Tar blocks the air sacs", "Tar raises the heart rate", "Tar lowers oxygen in the blood"], "Carcinogen ➔ mutation.", "Tar causes mutations in the DNA of airway cells, which can lead to uncontrolled cell division."],
+[4, "Which statement about a benign tumour is correct?", ["It is enclosed and does not invade or spread", "It always spreads to other organs", "It is cancer", "It is caused by bacteria"], "Benign = kind.", "Benign tumours stay enclosed. Only malignant tumours invade nearby tissue and metastasise."],
+[5, "Data show that smokers have more heart disease. Why is this alone not enough to prove smoking causes it?", ["Correlation is not cause: other factors may differ, so a biological mechanism is needed", "Graphs are always wrong", "Heart disease is infectious", "Smokers are younger"], "Correlation vs cause.", "Other factors (diet, exercise, genes) may differ. We need a mechanism, e.g. carbon monoxide lowers O₂ transport; nicotine causes clots."]
+]);
+
+/* ============================================================
    5b. ⚡ Cell Rush banks (quick mixed questions)
    ============================================================ */
 const TF_BANK = [
@@ -3566,7 +4009,7 @@ const ODD_BANK = [
   ["Which enzyme does NOT digest protein?", ["Pepsin", "Trypsin", "Peptidase", "Lipase"], 3, "Lipase digests fats."]
 ];
 const CLOZE_BANK = [
-  ["Water moves by osmosis from a ___ solution to a more concentrated one.", ["dilute", "concentrated"], 0],
+  ["Water moves by osmosis from a region of ___ water potential to lower water potential.", ["higher", "lower"], 0],
   ["A red blood cell in pure water will ___.", ["burst", "shrink"], 0],
   ["Active transport moves substances ___ a concentration gradient.", ["against", "down"], 0],
   ["Mitosis produces ___ daughter cells.", ["two", "four"], 0],
@@ -4224,28 +4667,42 @@ function lungSim(root) {
 }
 function thoraxSvg(v, dv) {
   const sx = 1 + .1 * v, sy = 1 + .13 * v, side = 300 + 12 * v, center = 262 + 38 * v, ctrl = 2 * center - side;
-  const lung = `<path d="M188 104 C142 98 94 140 94 212 C94 252 110 278 150 282 C176 284 192 270 192 248 Z" fill="#F7A8B8" stroke="${CO}" stroke-width="3"/><path d="M160 150 q-18 24 -26 60 M176 170 q-8 30 -24 58" stroke="#E27893" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  const tree = `<path d="M188 110 Q172 128 160 150 Q150 172 140 200 M160 150 Q170 176 168 212 M172 128 Q142 134 120 152 M140 200 l-14 22 M140 200 l6 26 M168 212 l-10 24 M168 212 l10 20 M120 152 l-16 12 M120 152 l-2 24 M150 172 l-18 4" fill="none" stroke="#C45C75" stroke-width="2.4" stroke-linecap="round" opacity=".75"/>`;
+  const lung = `<path d="M188 104 C142 98 94 140 94 212 C94 252 110 278 150 282 C176 284 192 270 192 248 Z" fill="url(#lgF)" stroke="#9A4A5E" stroke-width="2.4"/>
+    ${[[120, 130], [140, 160], [112, 190], [150, 230], [124, 250], [170, 190], [106, 226]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="none" stroke="#E7A2B3" stroke-width="1.2"/>`).join("")}
+    <path d="M104 198 Q140 176 188 184" fill="none" stroke="#9A4A5E" stroke-width="1.3" opacity=".7"/>${tree}`;
   const lungs = `<g transform="translate(190 104) scale(${sx} ${sy}) translate(-190 -104)">${lung}</g><g transform="translate(420 0) scale(-1 1)"><g transform="translate(190 104) scale(${sx} ${sy}) translate(-190 -104)">${lung}</g></g>`;
   let ribs = "";
   for (let i = 0; i < 6; i++) {
     const y0 = 112 + i * 29 - 6 * v, reach = 96 + 20 * v + i * 3, drop = 24 - 14 * v;
-    [-1, 1].forEach(s => { ribs += `<path d="M${210 + s * 14} ${y0} Q${210 + s * (reach - 14)} ${y0 - 10} ${210 + s * reach} ${y0 + drop}" fill="none" stroke="${CO}" stroke-width="9" stroke-linecap="round" opacity=".85"/><path d="M${210 + s * 14} ${y0} Q${210 + s * (reach - 14)} ${y0 - 10} ${210 + s * reach} ${y0 + drop}" fill="none" stroke="#FFF6E4" stroke-width="5.5" stroke-linecap="round"/>`; });
-    if (i < 5) [-1, 1].forEach(s => { ribs += `<path d="M${210 + s * (reach - 30)} ${y0 + drop - 6} l${s * 8} 18" stroke="${dv > .03 ? "#E0457B" : "#C9A0A0"}" stroke-width="${dv > .03 ? 4 : 2.5}" stroke-linecap="round"/>`; });
+    [-1, 1].forEach(s => {
+      const d = `M${210 + s * 14} ${y0} Q${210 + s * (reach - 14)} ${y0 - 10} ${210 + s * reach} ${y0 + drop}`;
+      ribs += `<path d="${d}" fill="none" stroke="#8C7A66" stroke-width="10" stroke-linecap="round" opacity=".9"/><path d="${d}" fill="none" stroke="#F3E8D2" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M${210 + s * 14} ${y0} L${210 + s * 38} ${y0 - 3}" stroke="#D5E3EE" stroke-width="6.5" stroke-linecap="round"/>`;
+    });
+    if (i < 5) [-1, 1].forEach(s => { for (let k = 0; k < 3; k++) ribs += `<path d="M${210 + s * (reach - 44 + k * 10)} ${y0 + drop - 8} l${s * 7} 17" stroke="${dv > .03 ? "#D2455F" : "#C9A0A0"}" stroke-width="${dv > .03 ? 3 : 2}" stroke-linecap="round"/>`; });
   }
   const flow = clamp(dv * 1.6, -1, 1), inF = flow > .05, outF = flow < -.05;
   const arrow = inF ? `<path d="M210 -4 v26 m-10 -10 l10 12 l10 -12" stroke="#5B8FE0" stroke-width="5" fill="none" stroke-linecap="round" opacity="${Math.min(1, Math.abs(flow) + .3)}"/>`
     : outF ? `<path d="M210 24 v-26 m-10 10 l10 -12 l10 12" stroke="#E07A3F" stroke-width="5" fill="none" stroke-linecap="round" opacity="${Math.min(1, Math.abs(flow) + .3)}"/>` : "";
   const dTxt = dv > .03 ? "Diaphragm contracts → flattens" : dv < -.03 ? "Diaphragm relaxes → domes up" : "Diaphragm";
   const rTxt = dv > .03 ? "Ribs move up and out" : dv < -.03 ? "Ribs move down and in" : "Ribs";
+  const dia = `M58 ${side} Q210 ${ctrl} 362 ${side}`;
   return `<svg viewBox="0 -10 420 360" role="img" aria-label="Chest model: lung volume ${Math.round(v * 100)}%">
+    <defs><radialGradient id="lgF" cx=".45" cy=".4" r=".75"><stop offset="0" stop-color="#FAD0D9"/><stop offset="1" stop-color="#E38EA3"/></radialGradient>
+      <clipPath id="dCT"><rect x="165" y="200" width="90" height="140"/></clipPath></defs>
     <path d="M60 330 C40 220 60 110 120 80 Q210 50 300 80 C360 110 380 220 360 330Z" fill="#FFF1E6" stroke="#E6CBB0" stroke-width="3"/>
-    <rect x="202" y="16" width="16" height="84" rx="6" fill="#F4D6DC" stroke="${CO}" stroke-width="3"/>${[30, 44, 58, 72, 86].map(y => `<path d="M204 ${y} h12" stroke="${CO}" stroke-width="2"/>`).join("")}
-    ${lungs}<path d="M210 98 Q200 112 176 126 M210 98 Q220 112 244 126" stroke="#F4D6DC" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M210 98 Q200 112 176 126 M210 98 Q220 112 244 126" stroke="${CO}" stroke-width="2" fill="none" opacity=".4"/>
-    ${ribs}<rect x="202" y="104" width="16" height="150" rx="6" fill="#FFF6E4" stroke="${CO}" stroke-width="3"/>
-    <path d="M58 ${side} Q210 ${ctrl} 362 ${side}" fill="none" stroke="#C0564B" stroke-width="12" stroke-linecap="round"/><path d="M58 ${side} Q210 ${ctrl} 362 ${side}" fill="none" stroke="${CO}" stroke-width="2" opacity=".5"/>
+    <rect x="202" y="16" width="16" height="84" rx="6" fill="#F4D6DC" stroke="#9A4A5E" stroke-width="2.4"/>${[26, 36, 46, 56, 66, 76, 86].map(y => `<path d="M203 ${y} h14" stroke="#FFFFFF" stroke-width="3"/><path d="M203 ${y + 1.5} h14" stroke="#C9A0AA" stroke-width="1"/>`).join("")}
+    ${lungs}
+    <path d="M196 176 Q176 160 180 196 Q188 230 214 244 Q240 226 246 196 Q250 164 228 172 Q214 158 196 176Z" fill="#B84A43" stroke="#7A2A26" stroke-width="2" opacity=".92"/><path d="M204 180 Q214 196 212 230" fill="none" stroke="#7A2A26" stroke-width="1.2" opacity=".6"/>
+    <path d="M210 98 Q200 112 176 126 M210 98 Q220 112 244 126" stroke="#F4D6DC" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M210 98 Q200 112 176 126 M210 98 Q220 112 244 126" stroke="#9A4A5E" stroke-width="1.6" fill="none" opacity=".5"/>
+    ${ribs}<rect x="202" y="104" width="16" height="150" rx="6" fill="#F3E8D2" stroke="#8C7A66" stroke-width="2.4"/>
+    <path d="${dia}" fill="none" stroke="#9E3B33" stroke-width="13" stroke-linecap="round"/><path d="${dia}" fill="none" stroke="#C9574B" stroke-width="9" stroke-linecap="round"/>
+    <path d="${dia}" fill="none" stroke="#EFE3CF" stroke-width="9" clip-path="url(#dCT)"/>
+    ${[80, 110, 140, 280, 310, 340].map(x => { const t = (x - 58) / 304, y = (1 - t) * (1 - t) * side + 2 * t * (1 - t) * ctrl + t * t * side; return `<path d="M${x} ${y - 4} l3 8" stroke="#7A2A26" stroke-width="1" opacity=".6"/>`; }).join("")}
     ${arrow}
     <g font-size="13" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">
-      <text x="230" y="30">Trachea</text><text x="6" y="200">Lung</text><text x="6" y="96">${rTxt}</text>
+      <text x="230" y="30">Trachea</text><text x="6" y="200">Lung</text><text x="6" y="96">${rTxt}</text><text x="252" y="240" font-size="11">Heart</text>
       <text x="210" y="${side + 30}" text-anchor="middle">${dTxt}</text>
       <text x="210" y="-2" text-anchor="middle" fill="${inF ? "#5B8FE0" : outF ? "#E07A3F" : CO}" transform="translate(70 0)">${inF ? "Air in" : outF ? "Air out" : ""}</text></g>
   </svg>`;
@@ -4314,12 +4771,19 @@ function eyeFrontSvg(L, r) {
   return `<svg viewBox="0 0 360 240" role="img" aria-label="Eye with pupil diameter ${(r / 44 * 8).toFixed(1)} millimetres">
     <rect width="360" height="240" rx="16" fill="${bg}"/>
     ${L > 60 ? `<g opacity="${(L - 60) / 40}">${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `<path d="M${40 + i * 40} 0 L${60 + i * 40} 30" stroke="#FFE27A" stroke-width="6" stroke-linecap="round"/>`).join("")}</g>` : ""}
-    <path d="M20 120 Q180 -8 340 120 Q180 248 20 120Z" fill="#FFFDF8" stroke="${CO}" stroke-width="3.5"/>
+    <path d="M6 120 Q180 -34 354 120 Q180 268 6 120Z" fill="#F2CDB4" opacity=".85"/>
+    <path d="M20 120 Q180 -8 340 120 Q180 248 20 120Z" fill="#FFFDF8" stroke="#7A5040" stroke-width="3.5"/>
+    <path d="M40 112 Q70 104 96 110 M300 110 Q320 116 334 122 M48 132 Q72 138 92 132 M296 134 Q314 132 330 126" fill="none" stroke="#E8A0A0" stroke-width="1.2"/>
     <clipPath id="eyeClip"><path d="M20 120 Q180 -8 340 120 Q180 248 20 120Z"/></clipPath>
-    <g clip-path="url(#eyeClip)"><circle cx="180" cy="120" r="72" fill="#7FA7D9" stroke="${CO}" stroke-width="3"/>
+    <g clip-path="url(#eyeClip)"><circle cx="180" cy="120" r="72" fill="url(#irisG)"/>
       <path d="${fib}" stroke="${bright ? "#5A7FB0" : "#C0392B"}" stroke-width="${bright ? 1.4 : 2.4}" opacity=".9"/>
       ${[5, 10, 15].map(d => `<circle cx="180" cy="120" r="${r + d}" fill="none" stroke="${bright ? "#C0392B" : "#5A7FB0"}" stroke-width="${bright ? 2.6 : 1.2}" opacity=".9"/>`).join("")}
-      <circle cx="180" cy="120" r="${r}" fill="#15121A"/><circle cx="${180 + r * .35}" cy="${120 - r * .4}" r="${Math.max(3, r * .22)}" fill="#fff" opacity=".85"/></g>
+      ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(k => { const a = k / 12 * Math.PI * 2 + .2, rr = r + 12 + (k % 3) * 9; return `<ellipse cx="${(180 + rr * Math.cos(a)).toFixed(1)}" cy="${(120 + rr * Math.sin(a)).toFixed(1)}" rx="4" ry="2.2" fill="#3F5F8C" opacity=".45" transform="rotate(${(a * 57.3).toFixed(0)} ${(180 + rr * Math.cos(a)).toFixed(1)} ${(120 + rr * Math.sin(a)).toFixed(1)})"/>`; }).join("")}
+      <circle cx="180" cy="120" r="72" fill="none" stroke="#243A5C" stroke-width="5"/><circle cx="180" cy="120" r="${r}" fill="#15121A"/><circle cx="${180 + r * .35}" cy="${120 - r * .4}" r="${Math.max(3, r * .22)}" fill="#fff" opacity=".85"/></g>
+    <path d="M20 120 Q180 -8 340 120" fill="none" stroke="#5A3A2E" stroke-width="5" stroke-linecap="round"/>
+    ${Array.from({ length: 22 }, (_, k) => { const t = .08 + k * .04, x = (1 - t) * (1 - t) * 20 + 2 * t * (1 - t) * 180 + t * t * 340, y = (1 - t) * (1 - t) * 120 + 2 * t * (1 - t) * -8 + t * t * 120; return `<path d="M${x.toFixed(1)} ${y.toFixed(1)} q${(t - .5) * 14} -12 ${(t - .5) * 22} -14" fill="none" stroke="#3A2A24" stroke-width="1.8" stroke-linecap="round"/>`; }).join("")}
+    <path d="M40 60 Q180 -22 320 60" fill="none" stroke="#C99A80" stroke-width="2" opacity=".7"/>
+    <defs><radialGradient id="irisG" cx=".5" cy=".5" r=".5"><stop offset=".25" stop-color="#9A7B4A"/><stop offset=".45" stop-color="#6F97C9"/><stop offset=".85" stop-color="#4E78AE"/><stop offset="1" stop-color="#2F4E7A"/></radialGradient></defs>
     <g font-size="12" font-weight="800" font-family="system-ui, sans-serif" fill="${L < 35 ? "#fff" : CO}"><text x="14" y="228">Iris</text><text x="346" y="228" text-anchor="end">Pupil: ${bright ? "constricted" : "dilated"}</text></g>
   </svg>`;
 }
@@ -4399,7 +4863,11 @@ function eyeSideSvg(st, rays, D, xf) {
     <rect width="640" height="300" rx="14" fill="#FBF7EE"/>
     ${far ? `<g transform="translate(${objX} ${CY - 34})"><rect x="11" y="30" width="8" height="30" fill="#8C5A3C"/><circle cx="15" cy="22" r="20" fill="#7CC47A" stroke="${CO}" stroke-width="2"/></g><text x="${objX}" y="${CY + 52}" font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">far away</text>`
       : `<g transform="translate(${objX} ${CY - 16})"><rect x="0" y="0" width="16" height="32" rx="2" fill="#E0457B" stroke="${CO}" stroke-width="2"/><path d="M4 8 h8 M4 14 h8 M4 20 h8" stroke="#fff" stroke-width="2"/></g><text x="${objX}" y="${CY + 34}" font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">25 cm (not to scale)</text>`}
-    <ellipse cx="${cx}" cy="${CY}" rx="${rx}" ry="118" fill="#FFFDF8" stroke="${CO}" stroke-width="3"/>
+    <path d="M${XR - 4} ${CY + 30} C${XR + 30} ${CY + 40} ${XR + 40} ${CY + 80} 640 ${CY + 96}" stroke="#B8902E" stroke-width="22" fill="none"/><path d="M${XR - 4} ${CY + 30} C${XR + 30} ${CY + 40} ${XR + 40} ${CY + 80} 640 ${CY + 96}" stroke="#F2D06B" stroke-width="16" fill="none"/>
+    <ellipse cx="${cx}" cy="${CY}" rx="${rx}" ry="118" fill="#FFFDF8" stroke="#A8998A" stroke-width="7"/>
+    <ellipse cx="${cx}" cy="${CY}" rx="${rx - 5}" ry="113" fill="rgba(230,242,255,.55)" stroke="#5A3A2E" stroke-width="2.5"/>
+    <path d="M${XE - 10} ${CY - 60} V${CY - 38} M${XE - 10} ${CY + 38} V${CY + 60}" stroke="#4E78AE" stroke-width="6" stroke-linecap="round"/>
+    <g font-size="10" font-weight="700" fill="#7A6A66" font-family="system-ui, sans-serif"><text x="${XE - 14}" y="${CY - 104}" text-anchor="end">iris</text><text x="${cx}" y="${CY - 100}" text-anchor="middle">vitreous humour</text><text x="${XR - 20}" y="${CY + 112}" text-anchor="end">optic nerve →</text><text x="${cx + 60}" y="${CY - 124}">sclera</text></g>
     <path d="M${XR - 6} ${CY - 100} Q${XR + 6} ${CY} ${XR - 6} ${CY + 100}" fill="none" stroke="#E0457B" stroke-width="7" opacity=".55"/><text x="${Math.min(XR, 600)}" y="${CY + 136}" font-size="11" font-weight="800" fill="${CO}" text-anchor="middle" font-family="system-ui, sans-serif">retina</text>
     <path d="M${ex0 + 4} ${CY - 60} Q${ex0 - 22} ${CY} ${ex0 + 4} ${CY + 60}" fill="rgba(211,228,255,.6)" stroke="${CO}" stroke-width="2.5"/><text x="${ex0 - 16}" y="${CY - 66}" font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">cornea</text>
     ${lig(-1)}${lig(1)}${cil(-1)}${cil(1)}
@@ -4477,26 +4945,39 @@ function earSim(root) {
 function earSvg(st, A) {
   const v = Math.sin(st.ph) * A, d = v * 5, lam = 70 - 50 * st.fv / 100;
   let waves = "";
-  for (let x = 96; x < 246; x += 5) { const o = .5 + .5 * Math.cos(2 * Math.PI * (x - st.ph / (2 * Math.PI) * lam) / lam); waves += `<path d="M${x} 126 v28" stroke="#5B8FE0" stroke-width="2.4" opacity="${(A * o * .9).toFixed(2)}"/>`; }
+  for (let x = 98; x < 244; x += 5) { const o = .5 + .5 * Math.cos(2 * Math.PI * (x - st.ph / (2 * Math.PI) * lam) / lam); waves += `<path d="M${x} 128 v24" stroke="#5B8FE0" stroke-width="2.4" opacity="${(A * o * .9).toFixed(2)}"/>`; }
   const lab = (x, y, t, a = "start") => `<text x="${x}" y="${y}" text-anchor="${a}">${t}</text>`;
-  let spiral = "M430 172"; for (let a = 0; a < 5.2 * Math.PI; a += .2) { const r = 40 - a * 2.2; spiral += ` L${(430 + r * Math.cos(a)).toFixed(1)} ${(172 + r * Math.sin(a)).toFixed(1)}`; }
-  return `<svg viewBox="0 0 640 300" role="img" aria-label="Diagram of the ear">
+  let spiral = ""; for (let a2 = 0; a2 < 5.2 * Math.PI; a2 += .18) { const r = 38 - a2 * 2.05; spiral += `${spiral ? "L" : "M"}${(440 + r * Math.cos(a2)).toFixed(1)} ${(174 + r * Math.sin(a2)).toFixed(1)} `; }
+  const bone = Array.from({ length: 60 }, (_, i) => `<circle cx="${112 + (i * 67) % 480}" cy="${14 + (i * 41) % 270}" r="1.3" fill="#D8C6A6"/>`).join("");
+  return `<svg viewBox="0 0 640 300" role="img" aria-label="Cross-section of the ear">
+    <defs><linearGradient id="erC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBE2D4"/><stop offset="1" stop-color="#EFC4AE"/></linearGradient>
+      <radialGradient id="erK" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#EAF4FF"/><stop offset="1" stop-color="#BFD8F2"/></radialGradient></defs>
     <rect width="640" height="300" rx="14" fill="#FBF7EE"/>
-    <path d="M60 40 C10 60 10 150 40 190 C60 220 90 250 110 230 C120 214 96 200 92 180 L92 150" fill="#F6C7A8" stroke="${CO}" stroke-width="3"/>
-    <path d="M92 124 H250 V156 H92Z" fill="#FDE6D6" stroke="${CO}" stroke-width="2.5"/>${waves}
-    <rect x="250" y="84" width="118" height="112" rx="26" fill="#FFF6E4" stroke="${CO}" stroke-width="2.5"/>
-    <path d="M320 190 Q350 250 400 284" stroke="#F6C7A8" stroke-width="16" fill="none" stroke-linecap="round"/><path d="M320 190 Q350 250 400 284" stroke="${CO}" stroke-width="2" fill="none" opacity=".5"/>
-    <ellipse cx="${252 + d}" cy="140" rx="4" ry="30" fill="#F2A7C8" stroke="${CO}" stroke-width="2.5"/>
-    <g transform="translate(${d * .7} 0)"><path d="M${256 + d * .3} 132 L292 104 L318 116" fill="none" stroke="#EFE3CC" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M318 116 L346 140" stroke="#EFE3CC" stroke-width="7" stroke-linecap="round"/><path d="M${256 + d * .3} 132 L292 104 L318 116 L346 140" fill="none" stroke="${CO}" stroke-width="2" stroke-linejoin="round" opacity=".6"/><path d="M340 132 v16 M352 132 v16" stroke="#EFE3CC" stroke-width="5"/></g>
-    <ellipse cx="${366 + d * .6}" cy="140" rx="4" ry="12" fill="#A0C4FF" stroke="${CO}" stroke-width="2"/>
-    <g fill="none" stroke="${CO}" stroke-width="7" opacity=".25"><ellipse cx="398" cy="70" rx="22" ry="30"/><ellipse cx="432" cy="62" rx="28" ry="18"/><ellipse cx="416" cy="92" rx="26" ry="14"/></g>
-    <g fill="none" stroke="#C9C3F0" stroke-width="5"><ellipse cx="398" cy="70" rx="22" ry="30"/><ellipse cx="432" cy="62" rx="28" ry="18"/><ellipse cx="416" cy="92" rx="26" ry="14"/></g>
-    <circle cx="430" cy="172" r="${46 + Math.abs(v) * 2}" fill="#E7F3FF" stroke="${CO}" stroke-width="2.5"/><path d="${spiral}" fill="none" stroke="#5B8FE0" stroke-width="4" stroke-linecap="round"/>
-    <path d="M470 176 C520 176 540 190 600 190" stroke="#F2C84B" stroke-width="8" fill="none" stroke-linecap="round"/>
-    ${st.imp.map(x => `<circle cx="${470 + x * 130}" cy="${176 + x * x * 14}" r="5" fill="#FF6B6B"/>`).join("")}
+    <path d="M110 0 H640 V300 H110 Q120 150 110 0Z" fill="#F2E7D2"/>${bone}
+    <path d="M78 34 C28 40 12 104 24 152 C34 198 62 236 96 248 C114 252 120 234 108 220 C96 204 86 196 90 176 L94 158 L94 122 C100 92 110 60 78 34Z" fill="#F2C4A8" stroke="#B07A5C" stroke-width="2.4"/>
+    <path d="M70 58 C44 70 38 122 50 160 C58 184 72 196 82 190" fill="none" stroke="#D59C7E" stroke-width="3" stroke-linecap="round"/><path d="M76 96 C62 110 64 140 80 150" fill="none" stroke="#D59C7E" stroke-width="2.2"/>
+    <path d="M92 122 H250 V158 H92Z" fill="url(#erC)" stroke="#B07A5C" stroke-width="2"/>${[100, 108, 116].map(x => `<path d="M${x} 124 l3 6 M${x + 2} 156 l3 -6" stroke="#8C6A52" stroke-width="1"/>`).join("")}<circle cx="132" cy="154" r="2.2" fill="#C9A24A"/><circle cx="146" cy="126" r="1.8" fill="#C9A24A"/>${waves}
+    <path d="M250 84 Q306 76 368 86 Q380 140 368 196 Q306 206 250 196Z" fill="#F7E3E6" stroke="#B89A8C" stroke-width="2"/>
+    <path d="M318 196 Q340 250 396 288" stroke="#E8B9C2" stroke-width="16" fill="none" stroke-linecap="round"/><path d="M318 196 Q340 250 396 288" stroke="#B07A8A" stroke-width="1.5" fill="none" opacity=".6"/>
+    <path d="M${252 + d} 106 Q${238 + d * 1.6} 140 ${252 + d} 174" fill="none" stroke="#B790A0" stroke-width="5"/><path d="M${252 + d} 106 Q${238 + d * 1.6} 140 ${252 + d} 174" fill="none" stroke="#F4E6EE" stroke-width="2"/>
+    <g transform="translate(${d * .7} 0)" fill="#FFF6E4" stroke="#8C7A66" stroke-width="1.6" stroke-linejoin="round">
+      <path d="M${248 + d * .3} 146 L262 112 Q262 98 273 96 Q284 98 282 110 Q278 119 267 117 L${254 + d * .3} 148Z"/>
+      <path d="M276 100 Q292 90 306 99 Q313 110 302 118 L313 136 Q308 141 301 133 Q289 121 280 114Z"/>
+      <path d="M313 134 Q334 118 356 126 L356 154 Q334 160 313 140" fill="none" stroke-width="3.2"/><rect x="354" y="124" width="7" height="32" rx="2"/></g>
+    <ellipse cx="${367 + d * .6}" cy="140" rx="3.5" ry="14" fill="#A0C4FF" stroke="#5B7FB0" stroke-width="1.5"/><ellipse cx="370" cy="178" rx="3" ry="9" fill="#C9DDF5" stroke="#5B7FB0" stroke-width="1.2"/><path d="M366 154 L300 248" stroke="${CO}" stroke-width="1.4"/><circle cx="366" cy="154" r="2.4" fill="${CO}"/>
+    <g fill="none"><ellipse cx="398" cy="64" rx="18" ry="30" stroke="#7A6AA8" stroke-width="9"/><ellipse cx="398" cy="64" rx="18" ry="30" stroke="#E2D8F6" stroke-width="5.5"/>
+      <ellipse cx="436" cy="74" rx="30" ry="11" stroke="#7A6AA8" stroke-width="9"/><ellipse cx="436" cy="74" rx="30" ry="11" stroke="#E2D8F6" stroke-width="5.5"/>
+      <ellipse cx="418" cy="52" rx="24" ry="14" stroke="#7A6AA8" stroke-width="9" transform="rotate(35 418 52)"/><ellipse cx="418" cy="52" rx="24" ry="14" stroke="#E2D8F6" stroke-width="5.5" transform="rotate(35 418 52)"/></g>
+    <ellipse cx="404" cy="112" rx="24" ry="16" fill="#E2D8F6" stroke="#7A6AA8" stroke-width="2"/>
+    <circle cx="440" cy="174" r="${46 + Math.abs(v) * 2}" fill="url(#erK)" stroke="#5B7FB0" stroke-width="2.4"/>
+    <path d="${spiral}" fill="none" stroke="#4A6FA8" stroke-width="11" stroke-linecap="round"/><path d="${spiral}" fill="none" stroke="#9EC3EC" stroke-width="7" stroke-linecap="round"/>
+    <path d="M420 118 C450 140 460 160 466 178" stroke="#E0B44A" stroke-width="5" fill="none"/>
+    <path d="M466 178 C520 176 552 186 604 190" stroke="#B8902E" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M466 178 C520 176 552 186 604 190" stroke="#F2D06B" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M470 176 C520 174 552 184 602 188 M470 181 C520 179 552 189 602 193" stroke="#D9B24A" stroke-width="1" fill="none"/>
+    ${st.imp.map(x => `<circle cx="${466 + x * 136}" cy="${178 + x * 12}" r="5" fill="#FF6B6B" stroke="#fff" stroke-width="1.5"/>`).join("")}
     <g font-size="12" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">
-      ${lab(20, 30, "Pinna")}${lab(120, 118, "Ear canal")}${lab(236, 80, "Eardrum", "middle")}${lab(300, 98, "Ossicles", "middle")}${lab(372, 206, "Oval window")}
-      ${lab(454, 36, "Semicircular canals")}${lab(430, 238, "Cochlea", "middle")}${lab(604, 206, "Auditory nerve →", "end")}${lab(610, 184, "🧠", "end")}${lab(390, 296, "Eustachian tube", "end")}</g>
+      ${lab(14, 24, "Pinna")}${lab(120, 116, "Ear canal")}${lab(236, 78, "Eardrum", "middle")}${lab(300, 72, "Ossicles", "middle")}${lab(296, 256, "Oval window", "end")}
+      ${lab(454, 30, "Semicircular canals")}${lab(440, 240, "Cochlea", "middle")}${lab(604, 212, "Auditory nerve →", "end")}${lab(612, 184, "🧠", "end")}${lab(388, 298, "Eustachian tube", "end")}${lab(160, 30, "Temporal bone")}</g>
   </svg>`;
 }
 function cochleaSvg(st, A, pos, heard) {
@@ -4530,7 +5011,7 @@ const MEM_PARTS = {
 };
 const MEM_MOVE = {
   o2: { l: "🫧 O₂ / CO₂", c: "#E9573F", how: "Simple diffusion: small, non-polar molecules slip straight through the phospholipid bilayer, from high to low concentration. No energy needed." },
-  water: { l: "💧 Water (osmosis)", c: "#5B8FE0", how: "Osmosis: water molecules diffuse across the membrane (a lot of them through channel proteins) from a dilute solution to a more concentrated one." },
+  water: { l: "💧 Water (osmosis)", c: "#5B8FE0", how: "Osmosis: water molecules diffuse across the membrane (a lot of them through channel proteins) from a region of higher water potential to a region of lower water potential." },
   glucose: { l: "🍬 Glucose", c: "#F2A900", how: "Facilitated diffusion: glucose is too large and polar for the bilayer, so a carrier protein binds it, changes shape and releases it. Down the gradient, no ATP." },
   ion: { l: "⚡ Ions (channel)", c: "#3FA06B", how: "Facilitated diffusion through a channel protein: ions are charged, so they can't cross the hydrophobic tails. They pass through the water-filled pore." },
   active: { l: "🔋 Active transport", c: "#8E44C8", how: "Active transport: a carrier protein uses energy from ATP (made in respiration) to move ions from LOW to HIGH concentration, against the gradient." },
@@ -4629,6 +5110,96 @@ function membraneSvg(lip, st, PX, fl, hot) {
 }
 
 /* ============================================================
+   5g. 📖 Study mode: a calm series of questions for one stage (no escape room, no timer, no penalties).
+   Wrong answers show the explanation and come back once at the end. Finishing the series completes the stage.
+   ============================================================ */
+function startStudy(id) {
+  const room = ROOMS[roomIndex(id)];
+  stopRush(); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null;
+  renderNav(false); renderTools(); MUSIC.setMode("calm"); closeModal();
+  S.current_room = room.id; save();
+  const qs = pickRun(room).map(qid => room.pool.find(p => p.id === qid)).filter(Boolean);
+  const ST = { room, queue: qs.map(p => ({ p, retry: false })), at: 0, total: qs.length, firsts: 0, right: 0, retried: 0 };
+  const T = TOPICS[room.t];
+  const next = () => {
+    if (ST.at >= ST.queue.length) return finishStudy(ST);
+    const { p, retry } = ST.queue[ST.at], done = ST.at, n = ST.queue.length;
+    $app.innerHTML = `
+      <section class="rushhead studyhead"><div class="status"><div class="av ${frameCls()}">${avatar("chiikawa", "normal")}</div>
+        <div style="min-width:0"><div class="rtopic" style="color:var(--yellow)">📖 Study · ${T.icon} Topic ${T.no}</div><div class="rt">${esc(room.name)}</div>
+        <div class="small" style="color:#EDE6F7">${room.boss ? "⚔️ Boss stage" : `Stage ${room.s}`} · ${esc(room.focus)}</div></div></div>
+        <div style="display:grid;justify-items:end;gap:6px"><span class="combo">${Math.min(done + 1, n)} / ${n}</span><span class="small" style="color:#EDE6F7">✅ ${ST.firsts} first try</span></div></section>
+      <div class="studybar" aria-hidden="true"><i style="width:${Math.round(100 * done / n)}%"></i></div>
+      <section class="card">
+        <span class="kicker">${retry ? "🔁 Second chance · " : ""}Question ${done + 1} ${diffChip(p.b)}</span>
+        <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
+        <div id="stAns"></div>
+        <div class="row simbtns"><button class="btn blue" id="stHint">💡 Hint</button><button class="btn plain" id="stJ">📓 Notes</button><button class="btn plain" id="stQuit">✕ Stop</button></div>
+        <div id="stFb"></div></section>`;
+    let hinted = false;
+    document.getElementById("stHint").onclick = () => { SFX.hint(); hinted = true; document.getElementById("stFb").innerHTML = say("hachiware", `💡 ${esc(p.hint)}`, "normal", "hint"); };
+    document.getElementById("stJ").onclick = () => { SFX.tap(); openJournal(room.id, termsIn(room, p)); };
+    document.getElementById("stQuit").onclick = () => { SFX.tap(); homeTab = "home"; renderMap(); };
+    miniQuiz(document.getElementById("stAns"), p, ok => {
+      const pid = `${room.id}:${p.id}`, first = ok && !retry && !hinted;
+      if (ok) {
+        ST.right++; S.stats.correct += 1; if (first) { ST.firsts++; if (!S.mastered_puzzles.includes(pid)) S.mastered_puzzles.push(pid); }
+        if (p.type === "spell" || p.gen) S.stats.spellRight += 1; if (p.graph && first) S.stats.graphFirst += 1;
+        S.stats.run = first ? S.stats.run + 1 : 0; S.stats.bestRun = Math.max(S.stats.bestRun, S.stats.run);
+        noteRight(room.id, p.id, first); SFX.right(); if (first) confetti(18);
+      } else {
+        S.stats.run = 0; noteMistake(room.id, p.id); SFX.wrong();
+        if (!retry) { ST.queue.push({ p, retry: true }); ST.retried++; }
+      }
+      recomputeMastery(); save();
+      const [w, m, t] = ok ? (first ? pick(REACT.right) : ["chiikawa", "happy", "Phew... got it! 🥹"]) : ["chiikawa", "cry", retry ? "Uu... still tricky. Let's read it together. 📖" : "Not quite! Let's read why. It will come back once at the end. 🌱"];
+      document.getElementById("stFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${say(w, t, m)}<p>${esc(p.explain)}</p>${p.tip ? `<p class="tip"><b>📝 Top tip:</b> ${esc(p.tip)}</p>` : ""}
+        <div class="row"><button class="btn big" id="stNext">${ST.at + 1 < ST.queue.length ? "Next →" : "Finish 🎉"}</button></div></div>`;
+      const nb = document.getElementById("stNext"); nb.onclick = () => { SFX.tap(); ST.at++; next(); window.scrollTo({ top: 0 }); }; nb.focus({ preventScroll: true });
+      setTimeout(checkTrophies, 800);
+    });
+    window.scrollTo({ top: 0 });
+  };
+  next();
+}
+function finishStudy(ST) {
+  const { room } = ST, T = TOPICS[room.t], first = !S.completed_rooms.includes(room.id);
+  if (first) { S.completed_rooms.push(room.id); S.inventory.push(room.item); }
+  const topicDone = first && stagesDone(room.t) === topicRooms(room.t).length && !S.chiikawa_badges.includes(T.badge);
+  if (topicDone) S.chiikawa_badges.push(T.badge);
+  const n = ST.firsts, stars = n >= 13 ? 3 : n >= 9 ? 2 : 1;
+  S.room_stars[room.id] = Math.max(S.room_stars[room.id] || 0, stars);
+  if (!first) S.stats.replays += 1;
+  const revise = !first && S.last_revise_day !== today(); if (revise) S.last_revise_day = today();
+  const earned = withStreak(first ? (room.boss ? 25 : 15) : revise ? 20 : 5); S.coins += earned;
+  const caps = first ? (room.boss ? 2 : 1) : Math.random() < .4 ? 1 : 0; S.coll.pending += caps;
+  S.stats.studyClears = (S.stats.studyClears || 0) + 1;
+  if (new Date().getHours() >= 21) S.stats.night += 1;
+  const gotSick = maybeGetSick(.12);
+  S.room_run[room.id] = freshRun(); S.room_progress[room.id] = [];
+  const ni = nextRoomIndex(); S.current_room = ni === -1 ? room.id : ROOMS[ni].id; const nxt = ni === -1 ? null : ROOMS[ni];
+  recomputeMastery(); save(true); SFX.fanfare(); confetti(topicDone ? 240 : 150);
+  renderNav(false);
+  $app.innerHTML = `<section class="card">
+    <span class="kicker">📖 Study complete · ${esc(stageLabel(room))}</span>
+    <h2>🎉 You studied ${esc(room.name)}!</h2>
+    <div class="cast" style="margin:0">${["usagi", "chiikawa", "hachiware"].map(w => `<div class="fig" style="width:90px">${figure(w, w === "chiikawa" ? "sparkle" : "happy")}</div>`).join("")}</div>
+    <div class="row" style="justify-content:center;font-size:1.8rem" aria-label="${stars} / 3 ★">${starStr(stars)}</div>
+    <p style="text-align:center"><b>${ST.firsts}/${ST.total}</b> right first try${ST.retried ? ` · 🔁 ${ST.retried} second chance${ST.retried > 1 ? "s" : ""}` : ""}</p>
+    <p style="text-align:center"><span class="pill coinpill">+${earned} 🌰${revise ? " · 📚 daily revision bonus" : ""}${multTag()}</span>${caps ? ` <span class="pill rpill">🎁 +${caps} capsule${caps > 1 ? "s" : ""}</span>` : ""}</p>
+    ${topicDone ? say("momonga", `TOPIC ${T.no} CLEARED! You earned <b>${esc(T.badge)}</b>! 💜🥹`, "sparkle") : first ? say("momonga", `You earned <b>${esc(room.item)}</b>! 💜`, "happy") : say("kurimanju", "Revision complete. Practice makes the brain strong. 🍵", "happy")}
+    ${gotSick ? say("chiikawa", "Achoo...! I don't feel so good... 🤒 Can we visit Dr Koma on the Home screen?", "sick") : ""}
+    <section class="card cream jsec"><h3>📖 Textbook recap: ${esc(room.focus)}</h3><ul>${room.notes.map(x => `<li>${x}</li>`).join("")}</ul></section>
+    <div class="row">${caps ? `<button class="btn pink" id="sdCap">🎁 Open capsule</button>` : ""}${nxt ? `<button class="btn big" id="sdNext">▶ Next stage</button>` : ""}<button class="btn plain" id="sdAgain">🔁 Study again</button><button class="btn plain" id="sdHome">🏠 Home</button></div>
+  </section>`;
+  const sc = document.getElementById("sdCap"); if (sc) sc.onclick = () => { SFX.tap(); homeTab = "home"; renderMap(); openCapsule(); };
+  const sn = document.getElementById("sdNext"); if (sn) sn.onclick = () => { SFX.tap(); enterRoom(nxt.id); };
+  document.getElementById("sdAgain").onclick = () => { SFX.tap(); startStudy(room.id); };
+  document.getElementById("sdHome").onclick = () => { SFX.tap(); homeTab = "home"; renderMap(); };
+  window.scrollTo({ top: 0 }); setTimeout(checkTrophies, 1500); lbSubmit(true);
+}
+
+/* ============================================================
    5d. Home screens: Mochi-style tabs with a bottom navigation bar, so students rarely scroll.
    Tabs: 🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🏆 Rewards
    ============================================================ */
@@ -4650,7 +5221,7 @@ const isStudy = () => S.playMode === "study";
 function modeSwitch() {
   return `<div class="modeswitch" role="radiogroup" aria-label="How do you want to play?">
     <button role="radio" data-pm="escape" aria-checked="${!isStudy()}"><b>⏱️ Escape</b><span>Timer, penalties, surprises</span></button>
-    <button role="radio" data-pm="study" aria-checked="${isStudy()}"><b>📖 Study</b><span>No timer, no penalties</span></button></div>`;
+    <button role="radio" data-pm="study" aria-checked="${isStudy()}"><b>📖 Study</b><span>Question series, no timer</span></button></div>`;
 }
 function wireModeSwitch(root) {
   root.querySelectorAll("[data-pm]").forEach(b => b.onclick = () => { SFX.tap(); S.playMode = b.dataset.pm; save(); toast(isStudy() ? "📖 Study mode: take your time, no timer or penalties." : "⏱️ Escape mode: beat the clock!"); renderMap(); });
@@ -6094,6 +6665,7 @@ const akey = i => `${i}_${stepOf(i)}`;
 function stopTimer() { if (timerId) clearInterval(timerId); timerId = null; }
 
 function enterRoom(id) {
+  if (S.playMode === "study") return startStudy(id);   // 📖 Study mode: a calm question series instead of the room
   stopRush();
   const room = ROOMS[roomIndex(id)];
   const replay = S.completed_rooms.includes(room.id);
