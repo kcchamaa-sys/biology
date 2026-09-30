@@ -74,7 +74,7 @@ const ODD_BANK = [
   ["Which enzyme does NOT digest protein?", ["Pepsin", "Trypsin", "Peptidase", "Lipase"], 3, "Lipase digests fats."]
 ];
 const CLOZE_BANK = [
-  ["Water moves by osmosis from a ___ solution to a more concentrated one.", ["dilute", "concentrated"], 0],
+  ["Water moves by osmosis from a region of ___ water potential to lower water potential.", ["higher", "lower"], 0],
   ["A red blood cell in pure water will ___.", ["burst", "shrink"], 0],
   ["Active transport moves substances ___ a concentration gradient.", ["against", "down"], 0],
   ["Mitosis produces ___ daughter cells.", ["two", "four"], 0],

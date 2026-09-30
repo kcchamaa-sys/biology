@@ -1209,6 +1209,7 @@ const akey = i => `${i}_${stepOf(i)}`;
 function stopTimer() { if (timerId) clearInterval(timerId); timerId = null; }
 
 function enterRoom(id) {
+  if (S.playMode === "study") return startStudy(id);   // 📖 Study mode: a calm question series instead of the room
   stopRush();
   const room = ROOMS[roomIndex(id)];
   const replay = S.completed_rooms.includes(room.id);

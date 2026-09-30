@@ -21,7 +21,7 @@ const isStudy = () => S.playMode === "study";
 function modeSwitch() {
   return `<div class="modeswitch" role="radiogroup" aria-label="How do you want to play?">
     <button role="radio" data-pm="escape" aria-checked="${!isStudy()}"><b>⏱️ Escape</b><span>Timer, penalties, surprises</span></button>
-    <button role="radio" data-pm="study" aria-checked="${isStudy()}"><b>📖 Study</b><span>No timer, no penalties</span></button></div>`;
+    <button role="radio" data-pm="study" aria-checked="${isStudy()}"><b>📖 Study</b><span>Question series, no timer</span></button></div>`;
 }
 function wireModeSwitch(root) {
   root.querySelectorAll("[data-pm]").forEach(b => b.onclick = () => { SFX.tap(); S.playMode = b.dataset.pm; save(); toast(isStudy() ? "📖 Study mode: take your time, no timer or penalties." : "⏱️ Escape mode: beat the clock!"); renderMap(); });

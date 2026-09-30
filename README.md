@@ -16,11 +16,17 @@ Every topic is open, so students can jump to the one their class is on (the map 
 | III. Organisms and Environment | 11 Life Processes in Plants (3) · 12 Nutrition in Humans (3) · 13 Gas Exchange in Humans (3) · 14 Transport in Humans (3) · 15 Reproduction, Growth and Development (3) · 16 Coordination and Response (4) · 17 Homeostasis (2) · 18 Ecosystems (3) |
 | IV. Health and Diseases | 19 Health and Diseases (3) |
 
+## Question quality
+
+- 262 extra questions were written from a core knowledge base (compulsory part, 30 chapters). Wrong options use real student mistakes (e.g. "bile digests fat", "antibodies kill bacteria", "the rib cage expands"), and correct answers use the wording markers accept (water potential, denatured, complementary, epithelium/endothelium one cell thick, net gas exchange).
+- Existing questions and notes were checked against the list of rejected wording and corrected where needed.
+- Diagrams and simulations use a textbook-illustration style (real structures, shading and detail) so students can link them to real specimens and exam diagrams; characters and pets stay cute.
+
 ## Rooms and questions
 
 - **8 room scenes** (library, science lab, greenhouse, inside a cell, kitchen, underwater pond, secret garden, clinic), so stages feel different.
 - **Each lock needs 3 questions in a row** (15 per visit), climbing in difficulty. Students see friendly labels (🌱 Easy, 🌿 Medium, 🔥 Hard, ⭐ Expert) instead of Bloom's levels. Progress on a half-open lock is saved.
-- **981 core questions** (15–20 per stage) including **78 graph-reading questions** (drawn to scale: potato-strip osmosis, enzyme curves, absorption spectra, GP/RuBP, lactic acid, and more).
+- **1,243 core questions** (15–20 per stage) including **78 graph-reading questions** (drawn to scale: potato-strip osmosis, enzyme curves, absorption spectra, GP/RuBP, lactic acid, and more).
 - **Spelling practice**: every stage's key terms become "type the word" locks and "which spelling is correct?" checks (British and American spellings are both accepted, e.g. haemoglobin / hemoglobin). Up to 3 per visit; also a Spelling bee round in Cell Rush.
 - 📓 **Study Journal:** summary, key rules and key terms for every stage.
 
@@ -29,7 +35,7 @@ Every topic is open, so students can jump to the one their class is on (the map 
 - **Mochi-style home with a bottom tab bar** (🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🏆 Rewards), so each screen is short and students rarely scroll. Home shows Mochi in a cosy room, today's one stage, the streak and the chat card.
 - **Art style:** characters are soft, squishy one-piece blobs with thin warm-brown outlines, big blush, nub arms and sparkles (in the style of the Mochi Science Pals game).
 - **👗 Dress up:** a fitting room with 7 slots (hats, wigs, glasses, outfits, accessories, hand items, frames). Tap to try on for free, tap again to buy with 🌰. 35 items, including 🔥 trend / meme items (Pop-Star Swoop wig, Moonwalk jacket + fedora + sparkly glove, Six-seven signs, Deal-with-it shades, Blind-box monster hood, Dubai chocolate, Aura +1000 chain, idol twin-tails, wolf cut, ballerina cappuccino tutu…) and 🇭🇰 Hong Kong items (pineapple-bun hat, milk tea, ding-ding tram tee, lucky mahjong tile).
-- **⏱️ Escape or 📖 Study mode:** a switch on Home and Stages. Study mode has no timer, no penalties, no power-ups and no spooky incidents; after a second wrong answer it shows the explanation. Progress, stars and mastery still count.
+- **⏱️ Escape or 📖 Study mode:** a switch on Home and Stages. Study mode skips the escape room: students answer the stage's 15 questions as a calm series with no time limit. Every answer shows the explanation; wrong ones come back once as a second chance at the end. Finishing the series completes the stage (stars come from first-try answers), and mistakes go to the Mistake Notebook.
 
 ## 🎧 Words and fun facts
 

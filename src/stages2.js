@@ -56,7 +56,7 @@ ROOMS.push(
       "Sugar and phosphate form the backbone. Bases pair by <b>complementary base pairing</b>: <b>A–T</b> and <b>C–G</b>, held by hydrogen bonds.",
       "In a DNA molecule, amount of A = amount of T and amount of C = amount of G.",
       "A <b>gene</b> is a sequence of bases that codes for a polypeptide. The <b>genome</b> is all the DNA of an organism.",
-      "DNA is packed with proteins into <b>chromosomes</b> in the nucleus. Humans have 23 pairs.",
+      "DNA is packed with proteins into <b>chromosomes</b> in the nucleus. Human body cells have 23 pairs (46); gametes have 23 single chromosomes.",
       "<b>DNA replication</b> (before cell division): the helix unzips, each strand acts as a template, and new complementary strands are built, so each new molecule has one old and one new strand (<b>semi-conservative</b>)."
     ],
     rules: ["Nucleotide = deoxyribose + phosphate + base", "A–T · C–G (complementary base pairing)", "Replication is semi-conservative: one old strand + one new strand"],
@@ -183,7 +183,7 @@ ROOMS.push(
       "Air path: <b>nasal cavity</b> → pharynx → larynx → <b>trachea</b> → <b>bronchi</b> → <b>bronchioles</b> → <b>alveoli</b>.",
       "The nasal cavity warms, moistens and filters air. <b>Mucus</b> traps dust and germs; <b>cilia</b> sweep mucus up to the throat.",
       "C-shaped <b>cartilage</b> rings keep the trachea open.",
-      "<b>Alveoli</b> are adapted for gas exchange: huge total <b>surface area</b>; walls <b>one cell thick</b> (short diffusion distance); <b>moist</b> lining (gases dissolve); dense <b>capillary network</b> (steep concentration gradient).",
+      "<b>Alveoli</b> are adapted for gas exchange: huge total <b>surface area</b>; the <b>epithelium</b> is <b>one cell thick</b> (short diffusion distance); <b>moist</b> lining (gases dissolve); dense <b>capillary network</b> (steep concentration gradient).",
       "O₂ diffuses from alveolar air into the blood; CO₂ diffuses from the blood into the alveoli."
     ],
     rules: ["Nose → trachea → bronchi → bronchioles → alveoli", "Alveoli: large area · thin · moist · rich blood supply", "O₂: alveoli → blood · CO₂: blood → alveoli"],
@@ -227,9 +227,9 @@ ROOMS.push(
       "<b>White blood cells</b> defend the body: <b>phagocytes</b> engulf germs; <b>lymphocytes</b> make antibodies. <b>Platelets</b> help <b>blood clotting</b>.",
       "<b>Arteries</b> carry blood <b>away</b> from the heart at high pressure: thick, muscular, elastic walls, small lumen.",
       "<b>Veins</b> carry blood <b>to</b> the heart at low pressure: thin walls, large lumen, <b>valves</b> stop backflow.",
-      "<b>Capillaries</b>: walls <b>one cell thick</b>, very narrow; exchange substances with body cells."
+      "<b>Capillaries</b>: the <b>endothelium</b> is <b>one cell thick</b>, very narrow; exchange substances with body cells."
     ],
-    rules: ["Artery: away, thick elastic wall, high pressure", "Vein: to heart, thin wall, valves, low pressure", "Capillary: one cell thick → exchange"],
+    rules: ["Artery: away, thick elastic wall, high pressure", "Vein: to heart, thin wall, valves, low pressure", "Capillary: endothelium one cell thick → exchange"],
     terms: [["plasma", "liquid part of blood"], ["red blood cell", "cell with haemoglobin that carries oxygen"], ["white blood cell", "cell that defends the body against pathogens"], ["platelet", "cell fragment that helps blood clot"], ["artery", "vessel carrying blood away from the heart"], ["vein", "vessel carrying blood back to the heart"], ["capillary", "tiny vessel with walls one cell thick"], ["lumen", "the space inside a blood vessel"]] },
   { id: "t14s2", t: "t14", s: 2, name: "The Heart Pump House", focus: "The heart and double circulation", scene: "cellworld",
     special: "heart", specialName: "Beating heart", specialLine: "Ba-dum! Ba-dum! A giant heart beats... one chamber holds a riddle.",

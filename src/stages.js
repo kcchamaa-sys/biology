@@ -41,7 +41,7 @@ const ROOMS = [
       "Water has a high <b>specific heat capacity</b>, so body temperature stays steady. <b>Evaporation of sweat</b> removes heat and cools us.",
       "Water gives <b>support</b>: turgid plant cells hold up soft stems and leaves. It also <b>lubricates</b> (e.g. mucus, synovial fluid).",
       "Inorganic ions: <b>Mg²⁺</b> for chlorophyll · <b>Fe²⁺</b> for haemoglobin · <b>Ca²⁺</b> for bones, teeth and blood clotting · <b>nitrate</b> for making proteins · <b>phosphate</b> for DNA, ATP and phospholipids.",
-      "Lack of Fe → <b>anaemia</b> (tired, pale). Lack of Mg or nitrate in plants → <b>yellow leaves</b> (chlorosis) and poor growth."
+      "Lack of Fe → <b>anaemia</b> (tired, pale). In plants: lack of Mg → <b>yellow leaves</b> (chlorosis); lack of nitrate → <b>stunted growth</b>."
     ],
     rules: ["Water: solvent · transport medium · reactant · temperature control · support · lubricant", "Mg → chlorophyll · Fe → haemoglobin · Ca → bones & clotting", "N (nitrate) → proteins · P (phosphate) → DNA, ATP, phospholipids"],
     terms: [["solvent", "a liquid that other substances dissolve in"], ["specific heat capacity", "energy needed to warm a substance; high in water, so temperature changes slowly"], ["hydrolysis", "breaking a large molecule into smaller ones by adding water"], ["inorganic ion", "a charged mineral particle, e.g. Ca²⁺, Fe²⁺, Mg²⁺"], ["haemoglobin", "red protein in red blood cells that carries oxygen; contains iron"], ["chlorophyll", "green pigment that absorbs light; contains magnesium"], ["anaemia", "lack of haemoglobin, e.g. from too little iron"], ["chlorosis", "yellowing of leaves, e.g. from lack of magnesium or nitrate"]] },
@@ -146,7 +146,7 @@ const ROOMS = [
       "<b>Visking tubing</b> (dialysis tubing) acts like a differentially permeable membrane in experiments."
     ],
     rules: ["Water moves: dilute (high water potential) → concentrated (low water potential)", "Animal cell in water → bursts · plant cell in water → turgid (wall stops bursting)", "Plant cell in strong solution → flaccid → plasmolysed"],
-    terms: [["osmosis", "net movement of water through a differentially permeable membrane from dilute to concentrated solution"], ["water potential", "tendency of water to move out; high in dilute solutions"], ["turgid", "firm plant cell full of water, pressing on its wall"], ["flaccid", "soft plant cell that has lost water"], ["plasmolysis", "cell membrane pulling away from the cell wall after water loss"], ["haemolysis", "bursting of red blood cells in a dilute solution"], ["Visking tubing", "artificial differentially permeable membrane"]] },
+    terms: [["osmosis", "net movement of water through a differentially permeable membrane from higher to lower water potential"], ["water potential", "how free water is to move; pure water is highest (never say water concentration)"], ["turgid", "firm plant cell full of water, pressing on its wall"], ["flaccid", "soft plant cell that has lost water"], ["plasmolysis", "cell membrane pulling away from the cell wall after water loss"], ["haemolysis", "bursting of red blood cells in a dilute solution"], ["Visking tubing", "artificial differentially permeable membrane"]] },
   { id: "t3s3", t: 2, s: 3, name: "The Energy Pump Station", focus: "Active transport and phagocytosis", scene: "cellworld",
     special: "pump", specialName: "Uphill pump", specialLine: "A pump pushes little balls UPHILL... it needs a battery to work!",
     tint: "#F2B6A0", floor: "#C98C77", dim: .72, code: "38461", item: "🔋 Pump-battery sticker",
@@ -419,7 +419,7 @@ const ROOMS = [
     intro: [["rakko", "brave", "Final boss of nutrition. Absorb the knowledge... or be absorbed. ⚔️"], ["chiikawa", "cry", "The villi are tickling me... uuu... 🥺"], ["hachiware", "happy", "Last stage of the topic! It'll work out~! We can do it! ✨"]],
     notes: [
       "Most digested food is absorbed in the <b>small intestine</b> (ileum). Adaptations: very <b>long</b>; inner wall folded with millions of <b>villi</b>, and <b>microvilli</b> on epithelial cells → huge <b>surface area</b>.",
-      "Villus wall is <b>one cell thick</b> (short diffusion distance) with a dense <b>capillary network</b> (keeps a steep concentration gradient) and a central <b>lacteal</b>.",
+      "The <b>epithelium</b> of the villus is <b>one cell thick</b> (short diffusion distance) with a dense <b>capillary network</b> (keeps a steep concentration gradient) and a central <b>lacteal</b>.",
       "<b>Glucose, amino acids</b>, minerals and water-soluble vitamins enter the <b>blood capillaries</b> by diffusion and active transport, then travel in the <b>hepatic portal vein</b> to the <b>liver</b>.",
       "<b>Fatty acids and glycerol</b> recombine into fats and enter the <b>lacteal</b> (lymphatic system).",
       "The <b>large intestine</b> (colon) absorbs most of the remaining <b>water</b> and minerals. Undigested material (faeces) leaves through the anus: <b>egestion</b>.",
