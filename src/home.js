@@ -4,7 +4,7 @@
    Tabs: 🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🏆 Rewards
    ============================================================ */
 let homeTab = "home", dressSlot = "hat", dressTry = null;
-const NAV_TABS = [["home", "🏠", "Home"], ["stages", "🗺️", "Stages"], ["play", "🎮", "Practice"], ["dress", "👗", "Dress up"], ["pets", "🐾", "Pets"], ["rewards", "🏆", "Rewards"]];
+const NAV_TABS = [["home", "🏠", "Home"], ["stages", "🗺️", "Stages"], ["play", "🎮", "Practice"], ["dress", "👗", "Dress up"], ["pets", "🐾", "Pets"], ["rewards", "🏆", "Rewards"], ["lab", "🔬", "Lab"]];
 function renderNav(active) {
   const nav = document.getElementById("bnav"); if (!nav) return;
   $app.className = active ? "tab-" + active : "";
@@ -56,6 +56,7 @@ function greeting() {
 function renderMap() {
   stopRush(); MUSIC.setMode("map"); stopTimer(); lbSubmit(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; recomputeMastery(); save(); renderTools();
   if (!NAV_TABS.some(t => t[0] === homeTab)) homeTab = "home";
+  if (homeTab === "lab") return renderSims();
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni];
   if (mapPart === null) mapPart = nr ? TOPICS[nr.t].p : 0;
   $app.innerHTML = { home: homeHtml, stages: stagesHtml, play: playHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml }[homeTab]();
@@ -135,7 +136,6 @@ function playHtml() {
         <button class="mode rush" id="mRush"><h3>⚡ Cell Rush</h3><span class="muted small">60 seconds of quick mixed questions. Earn 🌰 chestnuts.</span><span class="small">Best: <b>${S.rush.best}</b> pts ${S.rush.lastDay !== today() ? "· <b>×2 today!</b>" : ""}</span></button>
         <button class="mode note" id="mNote"><h3>📕 Mistake Notebook</h3><span class="muted small">Fix the questions you got wrong. Right twice = cleared.</span><span class="small"><b>${mistakeKeys().length}</b> to fix · ${S.mistakes_cleared || 0} cleared</span></button>
         <button class="mode dict-mode" id="mDict"><h3>🎧 Word Dictation</h3><span class="muted small">Hear key terms in a British accent and spell them.</span><span class="small">${nw ? `<b>${nw}</b> missed words to practise` : `Best round: <b>${S.dict.best}</b>/${DICT_N}`}</span></button>
-        <button class="mode sim-mode" id="mSim"><h3>🔬 Simulation Lab</h3><span class="muted small">Play with living models: breathing and lung pressure, the pupil reflex, and focusing with glasses.</span><span class="small"><b>${Object.keys(S.sims || {}).length}</b>/3 tried</span></button>
         <button class="mode" id="mLb"><h3>🏅 Leaderboard</h3><span class="muted small">The 10 most dedicated players.</span><span class="small">Your points: <b>${dedication()}</b></span></button>
       </div>
     </section>
@@ -149,7 +149,6 @@ function wirePlay() {
   document.getElementById("mRush").onclick = () => { SFX.init(); SFX.tap(); rushIntro(); };
   document.getElementById("mNote").onclick = () => { SFX.init(); SFX.tap(); renderNotebook(); };
   document.getElementById("mLb").onclick = () => { SFX.init(); SFX.tap(); openLeaderboard(); };
-  document.getElementById("mSim").onclick = () => { SFX.init(); SFX.tap(); renderSims(); };
   document.getElementById("mDict").onclick = () => { SFX.init(); SFX.tap(); DT = null; renderDictation(); };
 }
 

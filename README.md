@@ -38,13 +38,15 @@ Every topic is open, so students can jump to the one their class is on (the map 
 - 💬 **Chat card** on the map: the characters share biology fun facts (many with Hong Kong examples) and personal encouragement (streak, mistakes to fix, next stage). It changes every 20 s; the same facts appear as 💡 *Did you know?* in the Journal.
 - 🔥 **Streak bonus:** chestnut rewards grow 5% per streak day, up to ×1.5.
 
-## 🔬 Simulation Lab (Practice tab)
+## 🔬 Simulation Lab (🔬 Lab tab in the bottom bar)
 
-Three interactive models, each with a 2-question quick check (+3 🌰 the first time):
+Five interactive models, each with a 2-question quick check (+3 🌰 the first time):
 
 - **🫁 Breathing:** an animated chest (ribs, intercostal muscles, diaphragm, lungs, trachea) with auto or hand-controlled breathing and an exercise mode. A live graph plots **pressure in the lungs against time** (relative to atmospheric, with lung volume as an option), and the steps of inhalation/exhalation update as they happen.
 - **👁️ Pupil reflex:** a light slider (dark room → bright sun, plus a torch flash). The pupil changes size after a short reflex delay; circular vs radial muscles light up, the reflex arc animates, and a bar shows how much light reaches the retina.
 - **🔍 Focusing and glasses:** a ray diagram of the eye (cornea, lens, ciliary muscles, suspensory ligaments, retina) for a distant tree or a near book. The lens thickens or thins by accommodation; choose a normal, short-sighted or long-sighted eye and a concave or convex lens. The focus point, a verdict (in front of / on / behind the retina) and a blurred or clear "What Mochi sees" view update live. Calculated with real paraxial ray tracing.
+- **👂 Hearing:** a labelled ear (pinna, canal, eardrum, ossicles, oval window, cochlea, semicircular canals, auditory nerve, Eustachian tube). Pitch and loudness sliders (with presets and a real tone to hear); sound waves, eardrum and ossicles vibrate, and an uncoiled cochlea shows which hair cells respond (high pitch at the base, low at the apex) with impulses to the brain. A hearing-damage switch shows why loud music can take away high pitches.
+- **🫧 Cell membrane (fluid mosaic model):** a moving phospholipid bilayer with channel and carrier proteins, a glycoprotein and cholesterol (tap a part to learn it). Send O₂, water, glucose, ions, an active-transport ion (with ATP) or a big protein molecule and watch the route each takes; counters show outside vs inside. A temperature slider changes fluidity, and above 50 °C proteins denature and the membrane leaks.
 
 ## 🎵 Music
 

@@ -9,26 +9,27 @@ let simTab = "lung", SIM = null;
 const SIMS = [
   ["lung", "🫁", "Breathing", "Topic 13 · Gas exchange in humans"],
   ["pupil", "👁️", "Pupil reflex", "Topic 16 · Coordination and response"],
-  ["lens", "🔍", "Focusing & glasses", "Topic 16 · Coordination and response"]
+  ["lens", "🔍", "Focusing & glasses", "Topic 16 · Coordination and response"],
+  ["ear", "👂", "Hearing", "Topic 16 · Coordination and response"],
+  ["membrane", "🫧", "Cell membrane", "Topics 2–3 · Cells and movement across membranes"]
 ];
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const segBtns = (name, opts, cur) => `<div class="simseg" role="radiogroup">${opts.map(([v, l]) => `<button role="radio" aria-checked="${v === cur}" data-${name}="${v}">${l}</button>`).join("")}</div>`;
 
 function renderSims(tab) {
   if (tab) simTab = tab;
-  stopRush(); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; MUSIC.setMode("calm"); renderTools(); renderNav("play");
+  stopRush(); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; MUSIC.setMode("calm"); renderTools(); homeTab = "lab"; renderNav("lab");
   S.sims = S.sims || {}; if (!S.sims[simTab]) { S.sims[simTab] = today(); save(); checkTrophies(); }
   const info = SIMS.find(x => x[0] === simTab);
   $app.innerHTML = `
     <section class="card simhead">
-      <div class="row" style="justify-content:space-between"><h2 style="margin:0">🔬 Simulation Lab</h2><button class="btn plain" id="simBack">🎮 Practice</button></div>
+      <h2 style="margin:0">🔬 Simulation Lab</h2>
       <div class="slottabs" role="tablist">${SIMS.map(([id, ic, nm]) => `<button role="tab" aria-selected="${id === simTab}" data-sim="${id}"><span aria-hidden="true">${ic}</span>${nm}</button>`).join("")}</div>
       <p class="small muted" style="margin:0">${info[1]} ${info[2]} · ${info[3]}</p>
     </section>
     <div id="simBody"></div>`;
   $app.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { SFX.tap(); renderSims(b.dataset.sim); });
-  document.getElementById("simBack").onclick = () => { SFX.tap(); goTab("play"); };
-  ({ lung: lungSim, pupil: pupilSim, lens: lensSim })[simTab](document.getElementById("simBody"));
+  ({ lung: lungSim, pupil: pupilSim, lens: lensSim, ear: earSim, membrane: membraneSim })[simTab](document.getElementById("simBody"));
   window.scrollTo({ top: 0 });
 }
 /* One animation loop per open simulation; it stops itself when the page changes */
@@ -74,11 +75,11 @@ function lungSim(root) {
   root.innerHTML = `<div class="simgrid">
     <section class="card"><div id="lungSvg" class="simsvg"></div>
       <div class="row">${segBtns("lmode", [["auto", "▶ Auto breathing"], ["manual", "✋ I control it"]], "auto")}</div>
-      <div class="row" id="lungManual" hidden><button class="btn blue" id="lIn">⬇️ Breathe in</button><button class="btn yellow" id="lOut">⬆️ Breathe out</button></div>
-      <label class="small row"><input type="checkbox" id="lDeep"> 🏃 Exercise (deeper, faster breathing)</label></section>
+      <div class="row simbtns" id="lungManual" hidden><button class="btn blue" id="lIn">⬇️ Breathe in</button><button class="btn yellow" id="lOut">⬆️ Breathe out</button></div>
+      <label class="small chk"><input type="checkbox" id="lDeep"> 🏃 Exercise (deeper, faster breathing)</label></section>
     <section class="card"><h3 style="margin:0">📈 Pressure in the lungs vs time</h3>
       <div id="lungGraph" class="simsvg"></div>
-      <label class="small row"><input type="checkbox" id="lVol" checked> Show lung volume too</label>
+      <label class="small chk"><input type="checkbox" id="lVol" checked> Show lung volume too</label>
       <div id="lungSteps" class="simsteps"></div></section></div>
     ${simQuiz("lung")}`;
   const $s = root.querySelector("#lungSvg"), $g = root.querySelector("#lungGraph"), $steps = root.querySelector("#lungSteps");
@@ -311,4 +312,210 @@ function viewSvg(obj, blur) {
       ? `<rect x="0" y="100" width="220" height="40" fill="#A8D5A2"/><rect x="100" y="64" width="14" height="40" fill="#8C5A3C"/><circle cx="107" cy="54" r="32" fill="#5FB35C"/><circle cx="178" cy="28" r="14" fill="#FFE27A"/>`
       : `<rect x="30" y="16" width="160" height="108" rx="6" fill="#fff" stroke="${CO}" stroke-width="2"/><text x="110" y="52" text-anchor="middle" font-size="18" font-weight="900" fill="${CO}" font-family="system-ui, sans-serif">Biology</text>${[70, 84, 98, 112].map(y => `<path d="M48 ${y} h124" stroke="#9A8C88" stroke-width="4" stroke-linecap="round"/>`).join("")}`}</g>
   </svg>`;
+}
+
+/* ---------------- 4. 👂 Hearing ---------------- */
+SIM_Q.ear = [["Which structure contains the receptors (hair cells) that detect sound?", ["The cochlea", "The eardrum", "The ear ossicles", "The semicircular canals"], "Hair cells in the cochlea are the receptors; they turn vibrations into nerve impulses."],
+  ["What is the function of the ear ossicles?", ["To amplify vibrations and pass them to the oval window", "To detect movement of the head", "To equalise air pressure on both sides of the eardrum", "To change vibrations into nerve impulses"], "The hammer, anvil and stirrup act as levers that amplify the vibrations of the eardrum."]];
+SIM_Q.membrane = [["Why is the model called 'fluid'?", ["The phospholipids and proteins can move sideways within the membrane", "The membrane is made mostly of water", "Water flows freely through every part of it", "It is liquid at every temperature"], "Molecules drift and swap places sideways, so the membrane is flexible, not a rigid wall."],
+  ["How is active transport different from facilitated diffusion?", ["It moves substances against the concentration gradient, using energy (ATP) from respiration", "It does not need any membrane proteins", "It only moves water", "It moves substances down the concentration gradient"], "Both can use carrier proteins, but only active transport uses ATP to move substances from low to high concentration."]];
+const EAR_STEPS = ["Pinna collects sound waves", "Waves travel along the ear canal", "Eardrum vibrates", "Ossicles (hammer, anvil, stirrup) amplify the vibrations", "Stirrup pushes the oval window", "Fluid in the cochlea vibrates", "Hair cells (receptors) are stimulated → nerve impulses", "Auditory nerve carries impulses to the brain → we hear!"];
+let earAudio = null;
+function playTone(f, loud) {
+  try {
+    earAudio = earAudio || new (window.AudioContext || window.webkitAudioContext)();
+    const o = earAudio.createOscillator(), g = earAudio.createGain(), t = earAudio.currentTime, v = .015 + .09 * loud / 100;
+    o.frequency.value = f; o.type = "sine"; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .05); g.gain.setValueAtTime(v, t + 1.1); g.gain.linearRampToValueAtTime(0, t + 1.3);
+    o.connect(g).connect(earAudio.destination); o.start(t); o.stop(t + 1.35);
+  } catch (e) {}
+}
+function earSim(root) {
+  const st = { fv: 50, f: 632, loud: 60, on: true, dmg: false, ph: 0, imp: [], step: 0, stepT: 0 };
+  root.innerHTML = `<div class="simgrid wide">
+    <section class="card"><div id="earSvg" class="simsvg"></div><div id="cochSvg" class="simsvg"></div></section>
+    <section class="card"><h3 style="margin:0">🎚️ Sound controls</h3>
+      <label class="small"><b>Pitch (frequency): <span id="eF"></span></b><input type="range" id="eFreq" min="0" max="100" value="50" style="width:100%"></label>
+      <div class="row simbtns"><button class="btn plain" data-ef="100">🥁 Drum 100 Hz</button><button class="btn plain" data-ef="500">🗣️ Voice 500 Hz</button><button class="btn plain" data-ef="4000">🐦 Bird 4 kHz</button><button class="btn plain" data-ef="15000">📱 Ringtone 15 kHz</button></div>
+      <label class="small"><b>Loudness: <span id="eL"></span></b><input type="range" id="eLoud" min="0" max="100" value="60" style="width:100%"></label>
+      <div class="row simbtns"><button class="btn yellow" id="ePlay">🎵 Hear it</button><button class="btn plain" id="eOn">⏸ Pause sound waves</button></div>
+      <label class="small chk"><input type="checkbox" id="eDmg"> 🎧 Hearing damage (years of very loud music)</label>
+      <p class="small muted" style="margin:0">Keep your volume low. Humans hear about 20 Hz to 20,000 Hz; the top of the range drops as we get older.</p>
+      <div id="earSteps" class="earsteps"></div><div id="earNote"></div></section></div>
+    ${simQuiz("ear")}`;
+  const fS = root.querySelector("#eFreq"), lS = root.querySelector("#eLoud");
+  const setF = v => { st.fv = v; st.f = Math.round(20 * Math.pow(1000, v / 100)); fS.value = v; root.querySelector("#eF").textContent = st.f >= 1000 ? (st.f / 1000).toFixed(1) + " kHz" : st.f + " Hz"; };
+  const setL = v => { st.loud = v; lS.value = v; root.querySelector("#eL").textContent = `${Math.round(20 + v * .8)} dB ${v > 85 ? "⚠️ can damage hair cells!" : ""}`; };
+  fS.oninput = () => setF(Number(fS.value)); lS.oninput = () => setL(Number(lS.value));
+  root.querySelectorAll("[data-ef]").forEach(b => b.onclick = () => { SFX.tap(); setF(100 * Math.log(Number(b.dataset.ef) / 20) / Math.log(1000)); });
+  root.querySelector("#ePlay").onclick = () => { st.on = true; root.querySelector("#eOn").textContent = "⏸ Pause sound waves"; playTone(st.f, st.loud); };
+  root.querySelector("#eOn").onclick = () => { SFX.tap(); st.on = !st.on; root.querySelector("#eOn").textContent = st.on ? "⏸ Pause sound waves" : "▶ Start sound waves"; };
+  root.querySelector("#eDmg").onchange = e => { st.dmg = e.target.checked; };
+  setF(50); setL(60); wireSimQuiz(root);
+  let lastNote = "";
+  simLoop(root, dt => {
+    const A = st.on ? st.loud / 100 : 0, rate = 1.2 + 2.6 * st.fv / 100;          // visual vibration rate (slowed down to be seen)
+    st.ph += dt * rate * Math.PI * 2;
+    const pos = 1 - st.fv / 100, dead = st.dmg && pos < .32, heard = A > .02 && !dead;
+    if (heard && Math.random() < dt * (2 + 14 * A)) st.imp.push(0);
+    st.imp = st.imp.map(x => x + dt * .9).filter(x => x < 1);
+    if (A > .02) { st.stepT += dt; if (st.stepT > .55) { st.stepT = 0; st.step = (st.step + 1) % (heard ? 8 : 7); } }
+    root.querySelector("#earSvg").innerHTML = earSvg(st, A);
+    root.querySelector("#cochSvg").innerHTML = cochleaSvg(st, A, pos, heard);
+    root.querySelector("#earSteps").innerHTML = `<ol class="small">${EAR_STEPS.map((s, i) => `<li class="${A > .02 && i === st.step ? "on" : ""} ${!heard && i >= 6 && A > .02 ? "off" : ""}">${s}</li>`).join("")}</ol>`;
+    const note = A <= .02 ? "🤫 Silence: nothing vibrates, so no impulses are sent." : dead ? "❌ The hair cells for this high pitch are damaged, so no impulses reach the brain: this pitch can't be heard. Damaged hair cells do not grow back!" : `✅ ${pos < .33 ? "High" : pos > .66 ? "Low" : "Medium"} pitch: hair cells near the <b>${pos < .33 ? "base" : pos > .66 ? "tip (apex)" : "middle"}</b> of the cochlea vibrate most. ${A > .85 ? "Very loud sounds make many more impulses per second, and can damage hair cells." : "Louder sounds → more impulses per second."}`;
+    if (note !== lastNote) { lastNote = note; root.querySelector("#earNote").innerHTML = `<p class="lensres ${dead || A <= .02 ? "no" : "ok"}" style="font-weight:600">${note}</p>`; }
+  });
+}
+function earSvg(st, A) {
+  const v = Math.sin(st.ph) * A, d = v * 5, lam = 70 - 50 * st.fv / 100;
+  let waves = "";
+  for (let x = 96; x < 246; x += 5) { const o = .5 + .5 * Math.cos(2 * Math.PI * (x - st.ph / (2 * Math.PI) * lam) / lam); waves += `<path d="M${x} 126 v28" stroke="#5B8FE0" stroke-width="2.4" opacity="${(A * o * .9).toFixed(2)}"/>`; }
+  const lab = (x, y, t, a = "start") => `<text x="${x}" y="${y}" text-anchor="${a}">${t}</text>`;
+  let spiral = "M430 172"; for (let a = 0; a < 5.2 * Math.PI; a += .2) { const r = 40 - a * 2.2; spiral += ` L${(430 + r * Math.cos(a)).toFixed(1)} ${(172 + r * Math.sin(a)).toFixed(1)}`; }
+  return `<svg viewBox="0 0 640 300" role="img" aria-label="Diagram of the ear">
+    <rect width="640" height="300" rx="14" fill="#FBF7EE"/>
+    <path d="M60 40 C10 60 10 150 40 190 C60 220 90 250 110 230 C120 214 96 200 92 180 L92 150" fill="#F6C7A8" stroke="${CO}" stroke-width="3"/>
+    <path d="M92 124 H250 V156 H92Z" fill="#FDE6D6" stroke="${CO}" stroke-width="2.5"/>${waves}
+    <rect x="250" y="84" width="118" height="112" rx="26" fill="#FFF6E4" stroke="${CO}" stroke-width="2.5"/>
+    <path d="M320 190 Q350 250 400 284" stroke="#F6C7A8" stroke-width="16" fill="none" stroke-linecap="round"/><path d="M320 190 Q350 250 400 284" stroke="${CO}" stroke-width="2" fill="none" opacity=".5"/>
+    <ellipse cx="${252 + d}" cy="140" rx="4" ry="30" fill="#F2A7C8" stroke="${CO}" stroke-width="2.5"/>
+    <g transform="translate(${d * .7} 0)"><path d="M${256 + d * .3} 132 L292 104 L318 116" fill="none" stroke="#EFE3CC" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M318 116 L346 140" stroke="#EFE3CC" stroke-width="7" stroke-linecap="round"/><path d="M${256 + d * .3} 132 L292 104 L318 116 L346 140" fill="none" stroke="${CO}" stroke-width="2" stroke-linejoin="round" opacity=".6"/><path d="M340 132 v16 M352 132 v16" stroke="#EFE3CC" stroke-width="5"/></g>
+    <ellipse cx="${366 + d * .6}" cy="140" rx="4" ry="12" fill="#A0C4FF" stroke="${CO}" stroke-width="2"/>
+    <g fill="none" stroke="${CO}" stroke-width="7" opacity=".25"><ellipse cx="398" cy="70" rx="22" ry="30"/><ellipse cx="432" cy="62" rx="28" ry="18"/><ellipse cx="416" cy="92" rx="26" ry="14"/></g>
+    <g fill="none" stroke="#C9C3F0" stroke-width="5"><ellipse cx="398" cy="70" rx="22" ry="30"/><ellipse cx="432" cy="62" rx="28" ry="18"/><ellipse cx="416" cy="92" rx="26" ry="14"/></g>
+    <circle cx="430" cy="172" r="${46 + Math.abs(v) * 2}" fill="#E7F3FF" stroke="${CO}" stroke-width="2.5"/><path d="${spiral}" fill="none" stroke="#5B8FE0" stroke-width="4" stroke-linecap="round"/>
+    <path d="M470 176 C520 176 540 190 600 190" stroke="#F2C84B" stroke-width="8" fill="none" stroke-linecap="round"/>
+    ${st.imp.map(x => `<circle cx="${470 + x * 130}" cy="${176 + x * x * 14}" r="5" fill="#FF6B6B"/>`).join("")}
+    <g font-size="12" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">
+      ${lab(20, 30, "Pinna")}${lab(120, 118, "Ear canal")}${lab(236, 80, "Eardrum", "middle")}${lab(300, 98, "Ossicles", "middle")}${lab(372, 206, "Oval window")}
+      ${lab(454, 36, "Semicircular canals")}${lab(430, 238, "Cochlea", "middle")}${lab(604, 206, "Auditory nerve →", "end")}${lab(610, 184, "🧠", "end")}${lab(390, 296, "Eustachian tube", "end")}</g>
+  </svg>`;
+}
+function cochleaSvg(st, A, pos, heard) {
+  const x0 = 60, x1 = 600, n = 44;
+  let mem = "", hairs = "";
+  for (let i = 0; i <= 80; i++) { const p = i / 80, env = Math.exp(-Math.pow((p - pos) / .09, 2)), y = 70 - A * 22 * env * Math.sin(st.ph - p * 18); mem += `${i ? "L" : "M"}${(x0 + p * (x1 - x0)).toFixed(1)} ${y.toFixed(1)} `; }
+  for (let i = 0; i < n; i++) {
+    const p = (i + .5) / n, x = x0 + p * (x1 - x0), env = Math.exp(-Math.pow((p - pos) / .09, 2)), dead = st.dmg && p < .32, act = !dead && A > .02 && env > .45;
+    const y = 70 - A * 22 * env * Math.sin(st.ph - p * 18);
+    hairs += dead ? `<path d="M${x} ${y - 2} l-6 -6" stroke="#A89F9A" stroke-width="3" stroke-linecap="round"/>` : `<path d="M${x} ${y - 2} v-11" stroke="${act ? "#FF6B6B" : "#8FB8E8"}" stroke-width="${act ? 4 : 2.5}" stroke-linecap="round"/>`;
+  }
+  return `<svg viewBox="0 0 640 132" role="img" aria-label="Uncoiled cochlea">
+    <rect width="640" height="132" rx="14" fill="#E7F3FF"/>
+    <text x="320" y="20" text-anchor="middle" font-size="12" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">The cochlea, uncoiled: which hair cells vibrate?</text>
+    <path d="${mem}" fill="none" stroke="${CO}" stroke-width="3"/>${hairs}
+    ${st.dmg ? `<rect x="${x0}" y="96" width="${.32 * (x1 - x0)}" height="8" rx="4" fill="#A89F9A" opacity=".6"/>` : ""}
+    <g font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif"><text x="${x0}" y="118">Base · HIGH pitch</text><text x="${x1}" y="118" text-anchor="end">Apex (tip) · LOW pitch</text>
+      <text x="320" y="118" text-anchor="middle" fill="${heard ? "#C0392B" : "#7A6A66"}">${heard ? "⚡ impulses to the brain" : A > .02 ? "no impulses" : ""}</text></g>
+  </svg>`;
+}
+
+/* ---------------- 5. 🫧 Cell membrane: the fluid mosaic model ---------------- */
+const MEM_PARTS = {
+  phospholipid: ["Phospholipid", "The main building block. Two layers of phospholipids form the bilayer."],
+  head: ["Hydrophilic head", "The phosphate 'head' is water-loving, so heads face the watery outside and the cytoplasm."],
+  tail: ["Hydrophobic tails", "Two fatty-acid 'tails' are water-hating, so they point inwards, away from water. Water-soluble substances and ions can't pass through this oily middle easily."],
+  channel: ["Channel protein", "A protein with a water-filled pore. Specific ions and water molecules pass through it by diffusion (facilitated diffusion)."],
+  carrier: ["Carrier protein", "Binds a specific molecule (like glucose), changes shape and releases it on the other side. Used in facilitated diffusion and in active transport (with ATP)."],
+  glyco: ["Glycoprotein", "A protein with a carbohydrate chain on the outside. Used for cell recognition, like a name tag."],
+  chol: ["Cholesterol", "Sits between phospholipid tails and keeps the membrane from becoming too fluid or too stiff."]
+};
+const MEM_MOVE = {
+  o2: { l: "🫧 O₂ / CO₂", c: "#E9573F", how: "Simple diffusion: small, non-polar molecules slip straight through the phospholipid bilayer, from high to low concentration. No energy needed." },
+  water: { l: "💧 Water (osmosis)", c: "#5B8FE0", how: "Osmosis: water molecules diffuse across the membrane (a lot of them through channel proteins) from a dilute solution to a more concentrated one." },
+  glucose: { l: "🍬 Glucose", c: "#F2A900", how: "Facilitated diffusion: glucose is too large and polar for the bilayer, so a carrier protein binds it, changes shape and releases it. Down the gradient, no ATP." },
+  ion: { l: "⚡ Ions (channel)", c: "#3FA06B", how: "Facilitated diffusion through a channel protein: ions are charged, so they can't cross the hydrophobic tails. They pass through the water-filled pore." },
+  active: { l: "🔋 Active transport", c: "#8E44C8", how: "Active transport: a carrier protein uses energy from ATP (made in respiration) to move ions from LOW to HIGH concentration, against the gradient." },
+  big: { l: "🥩 Protein molecule", c: "#8C8478", how: "Too big and not lipid-soluble, and there's no carrier for it: it can't cross. The membrane is differentially (selectively) permeable." }
+};
+function membraneSim(root) {
+  const PX = { channel: 170, carrier: 330, glyco: 490 };
+  const lip = [];
+  for (let x = 24; x < 630; x += 19) if (!Object.values(PX).some(p => Math.abs(x - p) < 30)) [0, 1].forEach(l => lip.push({ x, l, o: 0, v: 0 }));
+  const st = { T: 37, parts: [], busy: 0, atp: 0, hl: null, labels: true, t: 0, move: "o2" };
+  for (let i = 0; i < 8; i++) st.parts.push({ k: "active", x: 40 + Math.random() * 560, y: 248 + Math.random() * 48, ph: "in", vx: 0, vy: 0 });
+  root.innerHTML = `<div class="simgrid wide">
+    <section class="card"><div id="memSvg" class="simsvg"></div>
+      <div class="row simbtns">${Object.entries(MEM_MOVE).map(([k, m]) => `<button class="btn plain" data-mv="${k}">${m.l}</button>`).join("")}</div>
+      <label class="small"><b>🌡️ Temperature: <span id="mT"></span></b><input type="range" id="mTemp" min="0" max="70" value="37" style="width:100%"></label>
+      <label class="small chk"><input type="checkbox" id="mLab" checked> Show labels</label></section>
+    <section class="card"><h3 style="margin:0">🔎 Tap a part</h3>
+      <div class="row simbtns">${Object.entries(MEM_PARTS).map(([k, [n]]) => `<button class="btn plain" data-mp="${k}">${n}</button>`).join("")}</div>
+      <div id="memInfo"></div><div id="memCount"></div></section></div>
+    ${simQuiz("membrane")}`;
+  const tS = root.querySelector("#mTemp"), info = root.querySelector("#memInfo");
+  const setT = v => { st.T = v; root.querySelector("#mT").textContent = `${v} °C ${v < 10 ? "(cold: less fluid)" : v > 50 ? "(too hot: proteins denature, membrane leaks!)" : v >= 30 && v <= 40 ? "(body temperature)" : ""}`; };
+  tS.oninput = () => setT(Number(tS.value)); setT(37);
+  const showInfo = html => { info.innerHTML = `<div class="chart" style="margin-top:8px">${html}</div>`; };
+  root.querySelectorAll("[data-mp]").forEach(b => b.onclick = () => { SFX.tap(); st.hl = b.dataset.mp; st.hlT = 3; const [n, d] = MEM_PARTS[st.hl]; showInfo(`<b>${n}</b><br>${d}`); });
+  root.querySelectorAll("[data-mv]").forEach(b => b.onclick = () => {
+    SFX.click(); const k = b.dataset.mv; st.move = k; showInfo(`<b>${MEM_MOVE[k].l}</b><br>${MEM_MOVE[k].how}`);
+    for (let i = 0; i < 5; i++) st.parts.push({ k, x: 40 + Math.random() * 560, y: 20 + Math.random() * 60, ph: "go", d: i * .35, ex: 0 });
+  });
+  root.querySelector("#mLab").onchange = e => { st.labels = e.target.checked; };
+  showInfo(`<b>The fluid mosaic model</b><br>The membrane is a <b>phospholipid bilayer</b> with <b>proteins</b> scattered in it like tiles in a mosaic. Everything can drift sideways: it's <b>fluid</b>. Try sending molecules across with the buttons!`);
+  wireSimQuiz(root);
+  let lastCount = "";
+  simLoop(root, dt => {
+    st.t += dt; st.hlT = Math.max(0, (st.hlT || 0) - dt); st.atp = Math.max(0, st.atp - dt); st.busy = Math.max(0, st.busy - dt);
+    const fl = clamp(st.T / 37, .1, 2), hot = st.T > 50;
+    lip.forEach(p => { p.v += (Math.random() - .5) * 60 * fl * dt - p.o * 3 * dt; p.v *= .9; p.o = clamp(p.o + p.v * dt * 10, -6 * fl, 6 * fl); });
+    st.parts.forEach(p => stepParticle(p, dt, st, PX, fl, hot));
+    st.parts = st.parts.filter(p => p.ph !== "gone");
+    root.querySelector("#memSvg").innerHTML = membraneSvg(lip, st, PX, fl, hot);
+    const cnt = {}; st.parts.forEach(p => { cnt[p.k] = cnt[p.k] || [0, 0]; cnt[p.k][p.y > 220 ? 1 : 0]++; });
+    const c = Object.entries(cnt).map(([k, [o, i]]) => `<tr><td>${MEM_MOVE[k].l}</td><td>${o}</td><td>${i}</td></tr>`).join("");
+    if (c !== lastCount) { lastCount = c; root.querySelector("#memCount").innerHTML = c ? `<table class="tterms small" style="margin-top:8px"><tbody><tr><th></th><th>Outside</th><th>Inside</th></tr>${c}</tbody></table>` : ""; }
+  });
+}
+function stepParticle(p, dt, st, PX, fl, hot) {
+  const sp = 70 * (.5 + .5 * fl);
+  if (p.d > 0) { p.d -= dt; return; }
+  if (p.ph === "in" || p.ph === "out") {       // wander in the cytoplasm or outside fluid
+    p.vx = (p.vx || 0) * .95 + (Math.random() - .5) * 40 * dt * 10; p.vy = (p.vy || 0) * .95 + (Math.random() - .5) * 40 * dt * 10;
+    p.x = clamp(p.x + p.vx * dt, 12, 628); p.y = p.ph === "in" ? clamp(p.y + p.vy * dt, 236, 300) : clamp(p.y + p.vy * dt, 14, 104); return;
+  }
+  const route = hot ? "leak" : { o2: "bilayer", water: Math.random() < .5 ? "channel" : "bilayer", glucose: "carrier", ion: "channel", active: "carrier", big: "bounce" }[p.k];
+  if (p.ph === "go") {
+    if (!p.ex) { p.route = route; p.ex = p.route === "channel" ? PX.channel + (Math.random() - .5) * 6 : p.route === "carrier" ? PX.carrier : (() => { let x; do { x = 30 + Math.random() * 580; } while (Object.values(PX).some(q => Math.abs(x - q) < 34)); return x; })(); }
+    const dx = p.ex - p.x, dy = 108 - p.y, dd = Math.hypot(dx, dy);
+    if (dd < 3) { if (p.route === "bounce") { p.ph = "bounce"; SFX.tap && 0; } else if (p.route === "carrier") { if (st.busy <= 0) { st.busy = .9; st.cargo = p.k; if (p.k === "active") st.atp = 1; p.ph = "cross"; } } else p.ph = "cross"; return; }
+    p.x += dx / dd * sp * dt; p.y += dy / dd * sp * dt;
+  } else if (p.ph === "cross") {
+    p.y += (p.route === "bilayer" ? .45 : p.route === "carrier" ? 1.3 : 1) * sp * dt; p.x += Math.sin(p.y / 6) * .3;
+    if (p.y > 236) { p.ph = "in"; p.vx = 0; p.vy = 0; }
+  } else if (p.ph === "bounce") {
+    p.y -= sp * dt; if (p.y < 60) { p.ph = "out"; }
+  }
+}
+function membraneSvg(lip, st, PX, fl, hot) {
+  const hl = st.hlT > 0 ? st.hl : null, glow = k => hl === k ? `stroke="#E0457B" stroke-width="4"` : `stroke="${CO}" stroke-width="2"`;
+  const pw = Math.sin(st.t * 3) * 3 * fl;
+  let s = `<rect width="640" height="310" rx="14" fill="#EAF6FF"/><rect y="220" width="640" height="90" rx="14" fill="#FFF3E6"/>`;
+  s += `<g font-size="12" font-weight="800" fill="#7A6A66" font-family="system-ui, sans-serif"><text x="12" y="22">OUTSIDE the cell</text><text x="12" y="302">INSIDE (cytoplasm)</text></g>`;
+  lip.forEach(p => {
+    const x = p.x + p.o, top = p.l === 0, hy = top ? 124 : 216, ty = top ? 168 : 172, dir = top ? 1 : -1, tw = hl === "tail" ? "#E0457B" : "#E0B44A";
+    s += `<path d="M${x - 3} ${hy + dir * 6} Q${x - 6} ${(hy + ty) / 2} ${x - 3} ${ty} M${x + 3} ${hy + dir * 6} Q${x + 6} ${(hy + ty) / 2} ${x + 3} ${ty}" stroke="${tw}" stroke-width="${hl === "tail" ? 3.5 : 2.6}" fill="none" stroke-linecap="round"/>`;
+    s += `<circle cx="${x}" cy="${hy}" r="8" fill="${hl === "head" || hl === "phospholipid" ? "#FF8FB1" : "#7FB2FF"}" ${hl === "phospholipid" ? `stroke="#E0457B" stroke-width="3"` : `stroke="${CO}" stroke-width="1.5"`}/>`;
+  });
+  [100, 255, 410, 575].forEach((x, i) => { s += `<rect x="${x - 4}" y="${i % 2 ? 176 : 142}" width="8" height="24" rx="4" fill="#F7E36D" ${glow("chol")}/>`; });
+  const dn = hot ? `fill="#C9C0B8"` : "", jig = hot ? ` rotate(${Math.sin(st.t * 7) * 8})` : "";
+  s += `<g transform="translate(${PX.channel + pw} 0)${jig}"><rect x="-28" y="108" width="20" height="124" rx="10" ${dn || `fill="#9ED39B"`} ${glow("channel")}/><rect x="8" y="108" width="20" height="124" rx="10" ${dn || `fill="#9ED39B"`} ${glow("channel")}/></g>`;
+  const open = st.busy > .45 ? "top" : st.busy > 0 ? "bottom" : "top";
+  s += `<g transform="translate(${PX.carrier - pw} 0)${jig}"><path d="${open === "top" ? "M-26 108 L-8 128 L8 128 L26 108 L28 222 Q0 238 -28 222Z" : "M-28 110 Q0 96 28 110 L26 232 L8 212 L-8 212 L-26 232Z"}" ${dn || `fill="#F7B267"`} ${glow("carrier")}/>
+    ${st.busy > 0 ? `<circle cx="0" cy="${open === "top" ? 150 : 196}" r="7" fill="${MEM_MOVE[st.cargo] ? MEM_MOVE[st.cargo].c : "#999"}" stroke="${CO}" stroke-width="1.5"/>` : ""}
+    ${st.atp > 0 ? `<g opacity="${st.atp}"><circle cx="0" cy="250" r="${22 - st.atp * 8}" fill="#FFE27A" stroke="#E0B44A" stroke-width="2"/><text x="0" y="254" text-anchor="middle" font-size="11" font-weight="900" fill="${CO}" font-family="system-ui, sans-serif">ATP</text></g>` : ""}</g>`;
+  s += `<g transform="translate(${PX.glyco + pw * .7} 0)${jig}"><rect x="-20" y="110" width="40" height="120" rx="18" ${dn || `fill="#C9A0FF"`} ${glow("glyco")}/><path d="M0 110 V88 M0 96 l-12 -10 M0 88 l10 -12 M-12 86 l-6 -10" stroke="#3FA06B" stroke-width="3.5" stroke-linecap="round"/>${[[0, 88], [-12, 86], [10, 76], [-18, 76]].map(([x, y]) => `<polygon points="${x - 5},${y} ${x - 2.5},${y - 4.3} ${x + 2.5},${y - 4.3} ${x + 5},${y} ${x + 2.5},${y + 4.3} ${x - 2.5},${y + 4.3}" fill="#B9F3C9" stroke="${CO}" stroke-width="1.2"/>`).join("")}</g>`;
+  if (hot) s += [60, 260, 440].map(x => `<ellipse cx="${x}" cy="170" rx="10" ry="40" fill="#EAF6FF" opacity=".85"/>`).join("");
+  st.parts.forEach(p => {
+    if (p.d > 0) return;
+    const c = MEM_MOVE[p.k].c;
+    s += p.k === "big" ? `<circle cx="${p.x}" cy="${p.y}" r="13" fill="${c}" stroke="${CO}" stroke-width="2"/><path d="M${p.x - 7} ${p.y} q7 -6 14 0" stroke="#fff" stroke-width="2" fill="none"/>`
+      : p.k === "glucose" ? `<polygon points="${[0, 1, 2, 3, 4, 5].map(i => `${(p.x + 7 * Math.cos(i * Math.PI / 3)).toFixed(1)},${(p.y + 7 * Math.sin(i * Math.PI / 3)).toFixed(1)}`).join(" ")}" fill="${c}" stroke="${CO}" stroke-width="1.5"/>`
+      : `<circle cx="${p.x}" cy="${p.y}" r="${p.k === "water" ? 4.5 : 5.5}" fill="${c}" stroke="${CO}" stroke-width="1.2"/>${p.k === "ion" || p.k === "active" ? `<text x="${p.x}" y="${p.y + 3}" text-anchor="middle" font-size="8" font-weight="900" fill="#fff">+</text>` : ""}`;
+  });
+  if (st.labels) s += `<g font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">
+    <text x="${PX.channel}" y="102" text-anchor="middle">channel protein</text><text x="${PX.carrier}" y="102" text-anchor="middle">carrier protein</text>
+    <text x="${PX.glyco + 22}" y="70">glycoprotein</text><text x="628" y="150" text-anchor="end">phospholipid</text><text x="628" y="164" text-anchor="end">bilayer</text><text x="104" y="210" text-anchor="middle">cholesterol</text></g>`;
+  return `<svg viewBox="0 0 640 310" role="img" aria-label="Fluid mosaic model of the cell membrane">${s}</svg>`;
 }

@@ -412,8 +412,8 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .itag.hk { background: #FFC2C2; }
 @media (prefers-reduced-motion: reduce) { .squish, .twinkle, .tear, .streakcard .flame { animation: none; } }
 /* Pets and clinic */
-.bnav .nav-in { grid-template-columns: repeat(6, 1fr); }
-@media (max-width: 400px) { .bnav button { font-size: .7rem; } }
+.bnav .nav-in { grid-template-columns: repeat(7, 1fr); }
+@media (max-width: 440px) { .bnav button { font-size: .64rem; padding-left: 0; padding-right: 0; } .bnav button .ni { font-size: 1.3rem; } }
 .rpet { position: absolute; left: 6%; bottom: 10px; width: 26%; max-width: 110px; background: none; border: 0; padding: 0; cursor: pointer; animation: capbob 2.2s ease-in-out infinite; }
 .rpet svg { width: 100%; height: auto; display: block; overflow: visible; }
 .rpet.hop { animation: pethop .5s ease-out; }
@@ -471,8 +471,13 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .lensres { font-weight: 800; border-radius: 12px; padding: 8px 12px; margin: 8px 0; }
 .lensres.ok { background: #E3F9E9; } .lensres.no { background: #FFF0F0; }
 .simq .choices { margin: 6px 0; }
+.earsteps ol { margin: 6px 0; padding-left: 20px; }
+.earsteps li { border-radius: 8px; padding: 1px 6px; transition: background .2s; }
+.earsteps li.on { background: #FFE27A; font-weight: 800; }
+.earsteps li.off { opacity: .4; text-decoration: line-through; }
 .simq .choice.right { background: var(--green); }
 .sqfb { min-height: 1.2em; }
+.chk { display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; } .chk input { flex: 0 0 auto; width: 18px; height: 18px; }
 .simbtns { gap: 6px; } .simbtns .btn { min-height: 38px; padding: 4px 10px; font-size: .88rem; }
 /* Anti-guessing */
 .jam { border: var(--line); border-radius: 16px; background: #2B2433; color: #fff; padding: 12px; display: grid; gap: 6px; text-align: center; }
