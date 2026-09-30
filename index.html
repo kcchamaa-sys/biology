@@ -443,6 +443,37 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .med .mi { font-size: 1.5rem; }
 .med.tried { opacity: .45; text-decoration: line-through; box-shadow: none; }
 @media (prefers-reduced-motion: reduce) { .rpet { animation: none; } }
+/* Simulation Lab */
+.mode.sim-mode { background: linear-gradient(135deg, #E6F7FF, #F3EAFF); }
+.simgrid { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+.simgrid.wide { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+@media (max-width: 820px) { .simgrid, .simgrid.wide { grid-template-columns: 1fr; } }
+.simsvg svg { width: 100%; height: auto; display: block; }
+.simseg { display: inline-flex; flex-wrap: wrap; gap: 4px; background: #F4EEE8; border-radius: 14px; padding: 4px; }
+.simseg button { border: 0; background: none; font: inherit; font-weight: 800; font-size: .85rem; padding: 8px 12px; border-radius: 10px; cursor: pointer; min-height: 40px; color: var(--ink); }
+.simseg button[aria-checked="true"] { background: #fff; box-shadow: 0 0 0 2px var(--ink); }
+.simctl { display: grid; gap: 8px; }
+.simctl > div { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.simctl > div > b { min-width: 58px; }
+.simsteps ol { margin: 4px 0 0; padding-left: 20px; }
+.simsteps li { animation: chatpop .4s ease-out backwards; }
+.simsteps li:nth-child(2) { animation-delay: .1s; } .simsteps li:nth-child(3) { animation-delay: .2s; } .simsteps li:nth-child(4) { animation-delay: .3s; } .simsteps li:nth-child(5) { animation-delay: .4s; }
+.pupscene svg { border-radius: 16px; }
+.musc { display: grid; gap: 6px; margin: 6px 0; }
+.musc span { border: 2px solid #E6DCD4; border-radius: 12px; padding: 6px 10px; font-size: .9rem; }
+.musc span.on { border-color: #C0392B; background: #FFF0F0; }
+.arc { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.arcstep { border: 2px solid var(--ink); border-radius: 12px; padding: 4px 8px; font-size: .78rem; font-weight: 800; line-height: 1.2; text-align: center; background: #fff; transition: background .2s, transform .2s; }
+.arcstep small { font-weight: 600; color: var(--ink-soft); }
+.arcstep.on { background: #FFE27A; transform: scale(1.08); }
+.arcgo { font-weight: 900; color: var(--ink-soft); }
+.lensview svg { width: 100%; max-width: 320px; height: auto; display: block; margin: 0 auto; border: var(--line); border-radius: 14px; }
+.lensres { font-weight: 800; border-radius: 12px; padding: 8px 12px; margin: 8px 0; }
+.lensres.ok { background: #E3F9E9; } .lensres.no { background: #FFF0F0; }
+.simq .choices { margin: 6px 0; }
+.simq .choice.right { background: var(--green); }
+.sqfb { min-height: 1.2em; }
+.simbtns { gap: 6px; } .simbtns .btn { min-height: 38px; padding: 4px 10px; font-size: .88rem; }
 /* Anti-guessing */
 .jam { border: var(--line); border-radius: 16px; background: #2B2433; color: #fff; padding: 12px; display: grid; gap: 6px; text-align: center; }
 .jam .jt { color: var(--led); font-weight: 800; font-size: 1.6rem; font-variant-numeric: tabular-nums; text-shadow: 0 0 8px rgba(255,107,107,.8); }
@@ -4072,6 +4103,320 @@ const DAILY_LIFE = [
 ];
 
 /* ============================================================
+   5f. 🔬 Simulation Lab: interactive biology models
+   1. Breathing: lung ventilation with a live lung-pressure graph
+   2. Pupil reflex: bright vs dark light
+   3. Accommodation: lens thickness, ray diagram, short/long sight and glasses
+   ============================================================ */
+let simTab = "lung", SIM = null;
+const SIMS = [
+  ["lung", "🫁", "Breathing", "Topic 13 · Gas exchange in humans"],
+  ["pupil", "👁️", "Pupil reflex", "Topic 16 · Coordination and response"],
+  ["lens", "🔍", "Focusing & glasses", "Topic 16 · Coordination and response"]
+];
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const segBtns = (name, opts, cur) => `<div class="simseg" role="radiogroup">${opts.map(([v, l]) => `<button role="radio" aria-checked="${v === cur}" data-${name}="${v}">${l}</button>`).join("")}</div>`;
+
+function renderSims(tab) {
+  if (tab) simTab = tab;
+  stopRush(); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; MUSIC.setMode("calm"); renderTools(); renderNav("play");
+  S.sims = S.sims || {}; if (!S.sims[simTab]) { S.sims[simTab] = today(); save(); checkTrophies(); }
+  const info = SIMS.find(x => x[0] === simTab);
+  $app.innerHTML = `
+    <section class="card simhead">
+      <div class="row" style="justify-content:space-between"><h2 style="margin:0">🔬 Simulation Lab</h2><button class="btn plain" id="simBack">🎮 Practice</button></div>
+      <div class="slottabs" role="tablist">${SIMS.map(([id, ic, nm]) => `<button role="tab" aria-selected="${id === simTab}" data-sim="${id}"><span aria-hidden="true">${ic}</span>${nm}</button>`).join("")}</div>
+      <p class="small muted" style="margin:0">${info[1]} ${info[2]} · ${info[3]}</p>
+    </section>
+    <div id="simBody"></div>`;
+  $app.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { SFX.tap(); renderSims(b.dataset.sim); });
+  document.getElementById("simBack").onclick = () => { SFX.tap(); goTab("play"); };
+  ({ lung: lungSim, pupil: pupilSim, lens: lensSim })[simTab](document.getElementById("simBody"));
+  window.scrollTo({ top: 0 });
+}
+/* One animation loop per open simulation; it stops itself when the page changes */
+function simLoop(root, step) {
+  const me = SIM = { root, last: performance.now() };
+  const f = now => {
+    if (SIM !== me || !root.isConnected) return;
+    const dt = Math.min(.05, (now - me.last) / 1000); me.last = now;
+    if (!document.hidden) step(dt);
+    requestAnimationFrame(f);
+  };
+  requestAnimationFrame(f);
+}
+/* Quick check: 2 questions per simulation, no penalties, a few chestnuts the first time */
+const SIM_Q = {
+  lung: [["During inhalation, what happens to the air pressure inside the lungs?", ["It falls below atmospheric pressure, so air flows in", "It rises above atmospheric pressure, so air flows in", "It stays equal to atmospheric pressure", "It falls to zero"], "Volume ↑ → pressure ↓ below atmospheric → air moves in down the pressure gradient."],
+    ["Which change happens when you breathe out at rest?", ["The diaphragm relaxes and domes upwards", "The diaphragm contracts and flattens", "The external intercostal muscles contract", "The ribs move upwards and outwards"], "At rest, breathing out is mostly passive: the muscles relax, the chest volume falls and pressure rises."]],
+  pupil: [["In bright light, which muscles of the iris contract?", ["The circular muscles", "The radial muscles", "The ciliary muscles", "The suspensory ligaments"], "Circular muscles contract (radial relax) → the pupil gets smaller → less light enters, protecting the retina."],
+    ["In the pupil reflex, what is the effector?", ["The muscles of the iris", "The retina", "The optic nerve", "The brain"], "Retina (receptor) → sensory neurone → brain → motor neurone → iris muscles (effector)."]],
+  lens: [["When you look at a near object, what happens?", ["Ciliary muscles contract, suspensory ligaments slacken, the lens becomes thicker", "Ciliary muscles relax, suspensory ligaments tighten, the lens becomes thinner", "Ciliary muscles contract, suspensory ligaments tighten, the lens becomes thinner", "The pupil gets bigger and the lens stays the same"], "A thicker, more convex lens refracts light more, so the image of a near object focuses on the retina."],
+    ["A short-sighted person sees distant objects blurred. Which lens corrects this?", ["A concave (diverging) lens", "A convex (converging) lens", "No lens: they should squint", "A thicker eye lens"], "The image forms in front of the retina, so a concave lens spreads the rays out a little before they enter the eye."]]
+};
+function simQuiz(id) {
+  S.simq = S.simq || {};
+  return `<section class="card"><h3>🧠 Quick check</h3>${SIM_Q[id].map(([q, ch, why], i) => {
+    const order = shuffle(ch.map((_, k) => k)), done = S.simq[id + i];
+    return `<div class="simq" data-q="${i}"><p><b>${i + 1}. ${esc(q)}</b></p><div class="choices">${order.map((k, n) => `<button class="choice" data-sq="${id}|${i}|${k}"><b>${"ABCD"[n]}</b><span>${esc(ch[k])}</span></button>`).join("")}</div><div class="small sqfb" id="sqfb${i}">${done ? "✅ Already answered correctly." : ""}</div></div>`; }).join("")}</section>`;
+}
+function wireSimQuiz(root) {
+  root.querySelectorAll("[data-sq]").forEach(b => b.onclick = () => {
+    const [id, i, k] = b.dataset.sq.split("|"), [, , why] = SIM_Q[id][i], ok = Number(k) === 0, fb = root.querySelector("#sqfb" + i);
+    if (ok) {
+      SFX.right(); b.classList.add("right"); b.parentNode.querySelectorAll("button").forEach(x => x.disabled = true);
+      const first = !S.simq[id + i]; S.simq[id + i] = 1; if (first) { S.coins += 3; S.stats.correct += 1; save(true); renderTools(); }
+      fb.innerHTML = `✅ ${esc(why)}${first ? " <b>+3 🌰</b>" : ""}`;
+    } else { SFX.wrong(); b.classList.add("wrong"); b.disabled = true; fb.innerHTML = "Not quite. Watch the simulation again and think! 🌱"; }
+  });
+}
+
+/* ---------------- 1. 🫁 Breathing ---------------- */
+function lungSim(root) {
+  const st = { t: 0, v: .2, vPrev: .2, auto: true, deep: false, target: null, from: 0, to: 0, k: 0, showVol: true, hist: [] };
+  root.innerHTML = `<div class="simgrid">
+    <section class="card"><div id="lungSvg" class="simsvg"></div>
+      <div class="row">${segBtns("lmode", [["auto", "▶ Auto breathing"], ["manual", "✋ I control it"]], "auto")}</div>
+      <div class="row" id="lungManual" hidden><button class="btn blue" id="lIn">⬇️ Breathe in</button><button class="btn yellow" id="lOut">⬆️ Breathe out</button></div>
+      <label class="small row"><input type="checkbox" id="lDeep"> 🏃 Exercise (deeper, faster breathing)</label></section>
+    <section class="card"><h3 style="margin:0">📈 Pressure in the lungs vs time</h3>
+      <div id="lungGraph" class="simsvg"></div>
+      <label class="small row"><input type="checkbox" id="lVol" checked> Show lung volume too</label>
+      <div id="lungSteps" class="simsteps"></div></section></div>
+    ${simQuiz("lung")}`;
+  const $s = root.querySelector("#lungSvg"), $g = root.querySelector("#lungGraph"), $steps = root.querySelector("#lungSteps");
+  root.querySelectorAll("[data-lmode]").forEach(b => b.onclick = () => {
+    SFX.tap(); st.auto = b.dataset.lmode === "auto"; st.target = null;
+    root.querySelectorAll("[data-lmode]").forEach(x => x.setAttribute("aria-checked", x === b));
+    root.querySelector("#lungManual").hidden = st.auto;
+  });
+  const go = to => { SFX.tap(); st.target = true; st.from = st.v; st.to = to; st.k = 0; };
+  root.querySelector("#lIn").onclick = () => go(st.deep ? 1 : .8);
+  root.querySelector("#lOut").onclick = () => go(st.deep ? 0 : .2);
+  root.querySelector("#lDeep").onchange = e => { st.deep = e.target.checked; };
+  root.querySelector("#lVol").onchange = e => { st.showVol = e.target.checked; };
+  wireSimQuiz(root);
+  let lastPhase = "";
+  simLoop(root, dt => {
+    st.t += dt; st.vPrev = st.v;
+    if (st.auto) {
+      const T = st.deep ? 2.6 : 4.2, a = st.deep ? .95 : .55, base = st.deep ? .03 : .2;
+      st.ph = (st.ph || 0) + dt / T;
+      st.v = base + a * (1 - Math.cos(2 * Math.PI * st.ph)) / 2;
+    } else if (st.target) {
+      st.k = Math.min(1, st.k + dt / (st.deep ? 1 : 1.7));
+      st.v = st.from + (st.to - st.from) * (1 - Math.cos(Math.PI * st.k)) / 2;
+      if (st.k >= 1) st.target = null;
+    }
+    const dv = (st.v - st.vPrev) / Math.max(dt, 1e-3), P = clamp(-.5 * dv, -.6, .6);
+    st.hist.push([st.t, P, st.v]); while (st.hist.length && st.t - st.hist[0][0] > 10) st.hist.shift();
+    const phase = dv > .03 ? "in" : dv < -.03 ? "out" : "rest";
+    $s.innerHTML = thoraxSvg(st.v, dv);
+    $g.innerHTML = pressureGraph(st.hist, st.t, st.showVol);
+    if (phase !== lastPhase) { lastPhase = phase; $steps.innerHTML = lungSteps(phase); }
+  });
+}
+function thoraxSvg(v, dv) {
+  const sx = 1 + .1 * v, sy = 1 + .13 * v, side = 300 + 12 * v, center = 262 + 38 * v, ctrl = 2 * center - side;
+  const lung = `<path d="M188 104 C142 98 94 140 94 212 C94 252 110 278 150 282 C176 284 192 270 192 248 Z" fill="#F7A8B8" stroke="${CO}" stroke-width="3"/><path d="M160 150 q-18 24 -26 60 M176 170 q-8 30 -24 58" stroke="#E27893" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  const lungs = `<g transform="translate(190 104) scale(${sx} ${sy}) translate(-190 -104)">${lung}</g><g transform="translate(420 0) scale(-1 1)"><g transform="translate(190 104) scale(${sx} ${sy}) translate(-190 -104)">${lung}</g></g>`;
+  let ribs = "";
+  for (let i = 0; i < 6; i++) {
+    const y0 = 112 + i * 29 - 6 * v, reach = 96 + 20 * v + i * 3, drop = 24 - 14 * v;
+    [-1, 1].forEach(s => { ribs += `<path d="M${210 + s * 14} ${y0} Q${210 + s * (reach - 14)} ${y0 - 10} ${210 + s * reach} ${y0 + drop}" fill="none" stroke="${CO}" stroke-width="9" stroke-linecap="round" opacity=".85"/><path d="M${210 + s * 14} ${y0} Q${210 + s * (reach - 14)} ${y0 - 10} ${210 + s * reach} ${y0 + drop}" fill="none" stroke="#FFF6E4" stroke-width="5.5" stroke-linecap="round"/>`; });
+    if (i < 5) [-1, 1].forEach(s => { ribs += `<path d="M${210 + s * (reach - 30)} ${y0 + drop - 6} l${s * 8} 18" stroke="${dv > .03 ? "#E0457B" : "#C9A0A0"}" stroke-width="${dv > .03 ? 4 : 2.5}" stroke-linecap="round"/>`; });
+  }
+  const flow = clamp(dv * 1.6, -1, 1), inF = flow > .05, outF = flow < -.05;
+  const arrow = inF ? `<path d="M210 -4 v26 m-10 -10 l10 12 l10 -12" stroke="#5B8FE0" stroke-width="5" fill="none" stroke-linecap="round" opacity="${Math.min(1, Math.abs(flow) + .3)}"/>`
+    : outF ? `<path d="M210 24 v-26 m-10 10 l10 -12 l10 12" stroke="#E07A3F" stroke-width="5" fill="none" stroke-linecap="round" opacity="${Math.min(1, Math.abs(flow) + .3)}"/>` : "";
+  const dTxt = dv > .03 ? "Diaphragm contracts → flattens" : dv < -.03 ? "Diaphragm relaxes → domes up" : "Diaphragm";
+  const rTxt = dv > .03 ? "Ribs move up and out" : dv < -.03 ? "Ribs move down and in" : "Ribs";
+  return `<svg viewBox="0 -10 420 360" role="img" aria-label="Chest model: lung volume ${Math.round(v * 100)}%">
+    <path d="M60 330 C40 220 60 110 120 80 Q210 50 300 80 C360 110 380 220 360 330Z" fill="#FFF1E6" stroke="#E6CBB0" stroke-width="3"/>
+    <rect x="202" y="16" width="16" height="84" rx="6" fill="#F4D6DC" stroke="${CO}" stroke-width="3"/>${[30, 44, 58, 72, 86].map(y => `<path d="M204 ${y} h12" stroke="${CO}" stroke-width="2"/>`).join("")}
+    ${lungs}<path d="M210 98 Q200 112 176 126 M210 98 Q220 112 244 126" stroke="#F4D6DC" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M210 98 Q200 112 176 126 M210 98 Q220 112 244 126" stroke="${CO}" stroke-width="2" fill="none" opacity=".4"/>
+    ${ribs}<rect x="202" y="104" width="16" height="150" rx="6" fill="#FFF6E4" stroke="${CO}" stroke-width="3"/>
+    <path d="M58 ${side} Q210 ${ctrl} 362 ${side}" fill="none" stroke="#C0564B" stroke-width="12" stroke-linecap="round"/><path d="M58 ${side} Q210 ${ctrl} 362 ${side}" fill="none" stroke="${CO}" stroke-width="2" opacity=".5"/>
+    ${arrow}
+    <g font-size="13" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">
+      <text x="230" y="30">Trachea</text><text x="6" y="200">Lung</text><text x="6" y="96">${rTxt}</text>
+      <text x="210" y="${side + 30}" text-anchor="middle">${dTxt}</text>
+      <text x="210" y="-2" text-anchor="middle" fill="${inF ? "#5B8FE0" : outF ? "#E07A3F" : CO}" transform="translate(70 0)">${inF ? "Air in" : outF ? "Air out" : ""}</text></g>
+  </svg>`;
+}
+function pressureGraph(hist, t, showVol) {
+  const x = s => 46 + (s - (t - 10)) / 10 * 360, y = P => 110 - P / .6 * 84, yv = v => 196 - v * 170;
+  const line = hist.map(([s, P], i) => `${i ? "L" : "M"}${x(s).toFixed(1)} ${y(P).toFixed(1)}`).join(" ");
+  const vline = hist.map(([s, , v], i) => `${i ? "L" : "M"}${x(s).toFixed(1)} ${yv(v).toFixed(1)}`).join(" ");
+  const last = hist[hist.length - 1] || [t, 0, 0];
+  return `<svg viewBox="0 0 420 230" role="img" aria-label="Graph of lung pressure against time">
+    <rect x="46" y="26" width="360" height="84" fill="#EAF3FF"/><rect x="46" y="110" width="360" height="84" fill="#FFF1E6"/>
+    <g font-size="11" font-weight="800" fill="#7A6A66" font-family="system-ui, sans-serif">
+      <text x="400" y="42" text-anchor="end">above atmospheric → air flows OUT</text><text x="400" y="186" text-anchor="end">below atmospheric → air flows IN</text>
+      <text x="40" y="30" text-anchor="end">+0.6</text><text x="40" y="114" text-anchor="end">0</text><text x="40" y="198" text-anchor="end">−0.6</text>
+      <text x="226" y="222" text-anchor="middle">Time (s) →</text><text x="12" y="112" transform="rotate(-90 12 112)" text-anchor="middle">Pressure (kPa, relative)</text></g>
+    <path d="M46 110 H406" stroke="${CO}" stroke-width="2" stroke-dasharray="6 4"/><text x="50" y="104" font-size="10" fill="${CO}" font-family="system-ui, sans-serif">atmospheric pressure</text>
+    <path d="M46 26 V194 H406" fill="none" stroke="${CO}" stroke-width="2.5"/>
+    ${showVol ? `<path d="${vline}" fill="none" stroke="#3FA06B" stroke-width="3" opacity=".55" stroke-dasharray="2 3"/><text x="404" y="${yv(last[2]) - 6}" text-anchor="end" font-size="11" font-weight="800" fill="#3FA06B" font-family="system-ui, sans-serif">lung volume</text>` : ""}
+    <path d="${line}" fill="none" stroke="#C0392B" stroke-width="3.5" stroke-linejoin="round"/>
+    <circle cx="${x(last[0])}" cy="${y(last[1])}" r="6" fill="#C0392B" stroke="#fff" stroke-width="2"/>
+  </svg>`;
+}
+function lungSteps(phase) {
+  const IN = ["Diaphragm muscles contract: the diaphragm flattens (moves down)", "External intercostal muscles contract: ribs move upwards and outwards", "Volume of the chest cavity and lungs increases", "Pressure in the lungs falls below atmospheric pressure", "Air flows in through the trachea"];
+  const OUT = ["Diaphragm muscles relax: the diaphragm domes upwards", "External intercostal muscles relax: ribs move downwards and inwards", "Volume of the chest cavity and lungs decreases", "Pressure in the lungs rises above atmospheric pressure", "Air flows out through the trachea"];
+  if (phase === "rest") return `<p class="small"><b>⏸ Between breaths:</b> the pressure in the lungs equals atmospheric pressure, so no air moves (the graph sits on the dashed line).</p>`;
+  return `<p class="small" style="margin:0"><b>${phase === "in" ? "⬇️ Inhalation" : "⬆️ Exhalation"}</b></p><ol class="small">${(phase === "in" ? IN : OUT).map(s => `<li>${s}</li>`).join("")}</ol>`;
+}
+
+/* ---------------- 2. 👁️ Pupil reflex ---------------- */
+function pupilSim(root) {
+  const st = { light: 50, r: 28, target: 28, delay: 0, pulse: 0, flash: 0 };
+  root.innerHTML = `<div class="simgrid">
+    <section class="card"><div id="pupScene" class="simsvg pupscene"></div>
+      <label class="small"><b>💡 Light intensity</b> <input type="range" id="pLight" min="0" max="100" value="50" style="width:100%"></label>
+      <div class="row simbtns"><button class="btn plain" data-pl="3">🌑 Dark room</button><button class="btn plain" data-pl="50">💡 Classroom</button><button class="btn plain" data-pl="100">☀️ Bright sun</button><button class="btn yellow" id="pTorch">🔦 Torch flash</button></div></section>
+    <section class="card"><h3 style="margin:0">🧠 What's happening?</h3><div id="pupInfo"></div>
+      <div class="arc" id="pupArc">${["👁️ Receptor<br><small>retina (light-sensitive cells)</small>", "⚡ Sensory neurone<br><small>optic nerve</small>", "🧠 Brain<br><small>(involuntary: no thinking)</small>", "⚡ Motor neurone", "💪 Effector<br><small>iris muscles</small>"].map((s, i) => `<span class="arcstep" data-arc="${i}">${s}</span>`).join('<span class="arcgo">→</span>')}</div>
+      <p class="small muted">Try it in real life: cover one eye with your hand for 10 seconds, then uncover it while looking in a mirror. Watch the pupil shrink! 👀</p></section></div>
+    ${simQuiz("pupil")}`;
+  const slider = root.querySelector("#pLight");
+  const setLight = L => { st.light = L; slider.value = L; st.target = 44 - 32 * Math.pow(L / 100, .7); st.delay = .25; st.pulse = 1.2; };
+  slider.oninput = () => setLight(Number(slider.value));
+  root.querySelectorAll("[data-pl]").forEach(b => b.onclick = () => { SFX.tap(); setLight(Number(b.dataset.pl)); });
+  root.querySelector("#pTorch").onclick = () => { SFX.click(); st.flash = 1.4; st.prevLight = st.light; setLight(100); };
+  wireSimQuiz(root);
+  setLight(50); st.r = st.target;
+  simLoop(root, dt => {
+    if (st.flash > 0) { st.flash -= dt; if (st.flash <= 0) setLight(st.prevLight); }
+    if (st.delay > 0) st.delay -= dt; else st.r += (st.target - st.r) * Math.min(1, dt / .35);
+    st.pulse = Math.max(0, st.pulse - dt);
+    root.querySelector("#pupScene").innerHTML = eyeFrontSvg(st.light, st.r);
+    const bright = st.target < 28, into = Math.round(100 * (.08 + .92 * st.light / 100) * (st.r * st.r) / (44 * 44));
+    root.querySelector("#pupInfo").innerHTML = `<div class="musc"><span class="${bright ? "on" : ""}">⭕ Circular muscles: <b>${bright ? "contract" : "relax"}</b></span><span class="${bright ? "" : "on"}">✳️ Radial muscles: <b>${bright ? "relax" : "contract"}</b></span></div>
+      <p class="small">Pupil <b>${bright ? "constricts (smaller)" : "dilates (bigger)"}</b> → <b>${bright ? "less" : "more"}</b> light enters the eye. ${bright ? "This protects the retina from damage." : "This helps us see in dim light."}</p>
+      <div class="small"><b>Light reaching the retina</b></div><div class="tprog"><i style="width:${clamp(into, 3, 100)}%"></i></div><p class="small muted">Pupil diameter ≈ ${(st.r / 44 * 8).toFixed(1)} mm</p>`;
+    const k = st.pulse > 0 ? Math.floor((1.2 - st.pulse) / .24) : -1;
+    root.querySelectorAll("[data-arc]").forEach((e, i) => e.classList.toggle("on", i === k));
+  });
+}
+function eyeFrontSvg(L, r) {
+  const bg = `hsl(45, ${20 + L * .6}%, ${8 + L * .85}%)`;
+  let fib = "";
+  for (let i = 0; i < 40; i++) { const a = i / 40 * Math.PI * 2, c = Math.cos(a), s = Math.sin(a); fib += `M${(180 + (r + 3) * c).toFixed(1)} ${(120 + (r + 3) * s).toFixed(1)} L${(180 + 70 * c).toFixed(1)} ${(120 + 70 * s).toFixed(1)} `; }
+  const bright = r < 28;
+  return `<svg viewBox="0 0 360 240" role="img" aria-label="Eye with pupil diameter ${(r / 44 * 8).toFixed(1)} millimetres">
+    <rect width="360" height="240" rx="16" fill="${bg}"/>
+    ${L > 60 ? `<g opacity="${(L - 60) / 40}">${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `<path d="M${40 + i * 40} 0 L${60 + i * 40} 30" stroke="#FFE27A" stroke-width="6" stroke-linecap="round"/>`).join("")}</g>` : ""}
+    <path d="M20 120 Q180 -8 340 120 Q180 248 20 120Z" fill="#FFFDF8" stroke="${CO}" stroke-width="3.5"/>
+    <clipPath id="eyeClip"><path d="M20 120 Q180 -8 340 120 Q180 248 20 120Z"/></clipPath>
+    <g clip-path="url(#eyeClip)"><circle cx="180" cy="120" r="72" fill="#7FA7D9" stroke="${CO}" stroke-width="3"/>
+      <path d="${fib}" stroke="${bright ? "#5A7FB0" : "#C0392B"}" stroke-width="${bright ? 1.4 : 2.4}" opacity=".9"/>
+      ${[5, 10, 15].map(d => `<circle cx="180" cy="120" r="${r + d}" fill="none" stroke="${bright ? "#C0392B" : "#5A7FB0"}" stroke-width="${bright ? 2.6 : 1.2}" opacity=".9"/>`).join("")}
+      <circle cx="180" cy="120" r="${r}" fill="#15121A"/><circle cx="${180 + r * .35}" cy="${120 - r * .4}" r="${Math.max(3, r * .22)}" fill="#fff" opacity=".85"/></g>
+    <g font-size="12" font-weight="800" font-family="system-ui, sans-serif" fill="${L < 35 ? "#fff" : CO}"><text x="14" y="228">Iris</text><text x="346" y="228" text-anchor="end">Pupil: ${bright ? "constricted" : "dilated"}</text></g>
+  </svg>`;
+}
+
+/* ---------------- 3. 🔍 Focusing, short sight, long sight and glasses ---------------- */
+const EYE_D = { normal: 17, short: 18.3, long: 16.3 };      // eyeball length (mm) from lens to retina
+const P_MIN = 1000 / 17, P_MAX = P_MIN + 4.3;               // eye lens power range (dioptres): relaxed → fully accommodated
+const GLASS = { none: 0, concave: -4.4, convex: 2.46 };      // spectacle power (D), 12 mm in front of the eye
+function lensSim(root) {
+  const st = { obj: "far", eye: "normal", gl: "none", P: P_MIN };
+  root.innerHTML = `<div class="simgrid wide">
+    <section class="card"><div id="lensSvg" class="simsvg"></div>
+      <div class="simctl"><div><b class="small">Look at</b>${segBtns("lo", [["far", "🌳 Distant tree"], ["near", "📖 Book (25 cm)"]], st.obj)}</div>
+        <div><b class="small">Eye</b>${segBtns("le", [["normal", "🙂 Normal"], ["short", "👓 Short sight"], ["long", "🔭 Long sight"]], st.eye)}</div>
+        <div><b class="small">Glasses</b>${segBtns("lg", [["none", "None"], ["concave", "Concave )("], ["convex", "Convex ()"]], st.gl)}</div></div></section>
+    <section class="card"><h3 style="margin:0">👀 What Mochi sees</h3><div id="lensView" class="lensview"></div><div id="lensInfo"></div></section></div>
+    ${simQuiz("lens")}`;
+  const seg = (name, key) => root.querySelectorAll(`[data-${name}]`).forEach(b => b.onclick = () => { SFX.tap(); st[key] = b.dataset[name]; root.querySelectorAll(`[data-${name}]`).forEach(x => x.setAttribute("aria-checked", x === b)); });
+  seg("lo", "obj"); seg("le", "eye"); seg("lg", "gl");
+  wireSimQuiz(root);
+  let key = "";
+  simLoop(root, dt => {
+    const D = EYE_D[st.eye], Pg = GLASS[st.gl];
+    const trace = (P, y0) => {       // paraxial ray trace in mm: returns heights and slopes
+      const u = 250, xg = 12;
+      let y = y0, th = st.obj === "far" ? 0 : y0 / (u - xg);
+      const yg = y; if (Pg) th -= yg * Pg / 1000;
+      const ye = yg + th * xg; th -= ye * P / 1000;
+      return { yg, ye, th, yr: ye + th * D, xf: ye / -th };
+    };
+    const probe = trace(P_MIN, 2), th1 = (probe.ye - probe.yg) / 12;     // slope of the ray entering the eye
+    const need = 1000 * (th1 / probe.ye + 1 / D);                          // lens power that would focus it on the retina
+    const want = clamp(need, P_MIN, P_MAX);
+    st.P += (want - st.P) * Math.min(1, dt / .45);
+    const rays = [2.4, 1.2, -1.2, -2.4].map(y => trace(st.P, y)), xf = rays[0].xf, off = xf - D, blur = Math.abs(rays[0].yr);
+    root.querySelector("#lensSvg").innerHTML = eyeSideSvg(st, rays, D, xf);
+    const k = [st.obj, st.eye, st.gl, Math.round(st.P * 10), Math.round(off * 20)].join();
+    if (k === key) return; key = k;
+    const acc = (st.P - P_MIN) / (P_MAX - P_MIN), sharp = Math.abs(off) < .08;
+    root.querySelector("#lensView").innerHTML = viewSvg(st.obj, Math.min(8, blur * 6));
+    const thick = acc > .15;
+    root.querySelector("#lensInfo").innerHTML = `
+      <p class="lensres ${sharp ? "ok" : "no"}">${sharp ? "✅ Image focused on the retina: clear!" : off < 0 ? "❌ Image focuses in FRONT of the retina: blurred" : "❌ Image focuses BEHIND the retina: blurred"}</p>
+      <ul class="small">
+        <li>Ciliary muscles: <b>${thick ? "contract" : "relax"}</b></li>
+        <li>Suspensory ligaments: <b>${thick ? "slacken (loose)" : "tighten (pulled)"}</b></li>
+        <li>Lens: <b>${thick ? "thicker, more convex" : "thinner, less convex"}</b> → <b>${thick ? "more" : "less"}</b> refraction</li>
+        ${st.P >= P_MAX - .01 && need > P_MAX + .05 ? `<li>⚠️ The lens is already as thick as it can get, but it's still not enough!</li>` : ""}
+        ${st.P <= P_MIN + .01 && need < P_MIN - .05 ? `<li>⚠️ The lens is already as thin as it can get, but it still bends the light too much!</li>` : ""}
+      </ul>
+      ${eyeTip(st, sharp)}`;
+  });
+}
+function eyeTip(st, sharp) {
+  if (st.eye === "short") return `<p class="small">👓 <b>Short sight (myopia):</b> the eyeball is a bit too long (or the lens too strong), so light from <b>distant</b> objects focuses in front of the retina. ${st.gl === "concave" ? (sharp ? "The <b>concave lens</b> diverges the rays first, so they focus on the retina. ✨" : "") : st.gl === "convex" ? "A convex lens makes it even worse! Try a concave lens." : "Try a <b>concave (diverging)</b> lens."}</p>`;
+  if (st.eye === "long") return `<p class="small">🔭 <b>Long sight (hyperopia):</b> the eyeball is a bit too short (or the lens too weak), so light from <b>near</b> objects focuses behind the retina. ${st.gl === "convex" ? (sharp ? "The <b>convex lens</b> converges the rays first, so they focus on the retina. ✨" : "") : st.gl === "concave" ? "A concave lens makes it even worse! Try a convex lens." : "Try a <b>convex (converging)</b> lens."}</p>`;
+  return `<p class="small">🙂 A normal eye changes the thickness of its lens (accommodation) to focus both distant and near objects on the retina. ${st.gl === "none" ? "" : sharp ? "With glasses on, the lens has to change shape more to cope. A normal eye doesn't need glasses." : "It can't make up for these glasses here, so the image is blurred. A normal eye doesn't need glasses!"}</p>`;
+}
+function eyeSideSvg(st, rays, D, xf) {
+  const S = 15, XE = 330, CY = 150, XR = XE + D * S, XG = XE - 12 * S, Y = y => CY - y * 13;
+  const thick = 7 + 13 * clamp((st.P - P_MIN) / (P_MAX - P_MIN), 0, 1), acc = thick > 9;
+  const ex0 = XE - 34, cx = (ex0 + XR) / 2, rx = (XR - ex0) / 2;
+  const lig = acc ? (s => `<path d="M${XE} ${CY + s * 40} q-4 ${s * 3} 0 ${s * 6} q4 ${s * 3} 0 ${s * 6}" stroke="#B89A7A" stroke-width="2" fill="none"/>`) : (s => `<path d="M${XE} ${CY + s * 40} L${XE} ${CY + s * 54}" stroke="#B89A7A" stroke-width="2"/>`);
+  const cil = s => `<ellipse cx="${XE}" cy="${CY + s * 62}" rx="${acc ? 13 : 9}" ry="${acc ? 10 : 7}" fill="${acc ? "#E0457B" : "#E9A0B0"}" stroke="${CO}" stroke-width="2"/>`;
+  const objX = 18, far = st.obj === "far";
+  let rp = "";
+  rays.forEach(r => {
+    const start = far ? `M${objX + 30} ${Y(r.yg)}` : `M${objX + 16} ${CY}`;
+    const endY = Y(r.yr);
+    rp += `<path d="${start} L${st.gl !== "none" ? `${XG} ${Y(r.yg)} L` : ""}${XE} ${Y(r.ye)} L${XR} ${endY}" fill="none" stroke="#F2A900" stroke-width="2.4" stroke-linejoin="round"/>`;
+    if (xf > D && isFinite(xf)) { const xe = Math.min(640, XE + xf * S); rp += `<path d="M${XR} ${endY} L${xe} ${Y(r.ye + r.th * (xe - XE) / S)}" stroke="#F2A900" stroke-width="2" stroke-dasharray="4 4" opacity=".7"/>`; }
+  });
+  const fx = XE + xf * S, fOK = isFinite(xf) && fx > XE && fx < 640;
+  const glasses = st.gl === "concave" ? `<path d="M${XG - 10} ${CY - 50} Q${XG - 2} ${CY} ${XG - 10} ${CY + 50} L${XG + 10} ${CY + 50} Q${XG + 2} ${CY} ${XG + 10} ${CY - 50}Z" fill="rgba(160,196,255,.5)" stroke="${CO}" stroke-width="2.5"/>`
+    : st.gl === "convex" ? `<path d="M${XG} ${CY - 50} Q${XG - 18} ${CY} ${XG} ${CY + 50} Q${XG + 18} ${CY} ${XG} ${CY - 50}Z" fill="rgba(160,196,255,.5)" stroke="${CO}" stroke-width="2.5"/>` : "";
+  return `<svg viewBox="0 0 640 300" role="img" aria-label="Ray diagram of the eye">
+    <rect width="640" height="300" rx="14" fill="#FBF7EE"/>
+    ${far ? `<g transform="translate(${objX} ${CY - 34})"><rect x="11" y="30" width="8" height="30" fill="#8C5A3C"/><circle cx="15" cy="22" r="20" fill="#7CC47A" stroke="${CO}" stroke-width="2"/></g><text x="${objX}" y="${CY + 52}" font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">far away</text>`
+      : `<g transform="translate(${objX} ${CY - 16})"><rect x="0" y="0" width="16" height="32" rx="2" fill="#E0457B" stroke="${CO}" stroke-width="2"/><path d="M4 8 h8 M4 14 h8 M4 20 h8" stroke="#fff" stroke-width="2"/></g><text x="${objX}" y="${CY + 34}" font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">25 cm (not to scale)</text>`}
+    <ellipse cx="${cx}" cy="${CY}" rx="${rx}" ry="118" fill="#FFFDF8" stroke="${CO}" stroke-width="3"/>
+    <path d="M${XR - 6} ${CY - 100} Q${XR + 6} ${CY} ${XR - 6} ${CY + 100}" fill="none" stroke="#E0457B" stroke-width="7" opacity=".55"/><text x="${Math.min(XR, 600)}" y="${CY + 136}" font-size="11" font-weight="800" fill="${CO}" text-anchor="middle" font-family="system-ui, sans-serif">retina</text>
+    <path d="M${ex0 + 4} ${CY - 60} Q${ex0 - 22} ${CY} ${ex0 + 4} ${CY + 60}" fill="rgba(211,228,255,.6)" stroke="${CO}" stroke-width="2.5"/><text x="${ex0 - 16}" y="${CY - 66}" font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">cornea</text>
+    ${lig(-1)}${lig(1)}${cil(-1)}${cil(1)}
+    <ellipse cx="${XE}" cy="${CY}" rx="${thick.toFixed(1)}" ry="40" fill="rgba(255,236,170,.85)" stroke="${CO}" stroke-width="2.5"/>
+    <g font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif"><text x="${XE + 18}" y="${CY - 64}">ciliary muscle</text><text x="${XE + 18}" y="${CY - 44}">suspensory ligament</text><text x="${XE - 6}" y="${CY + 88}" text-anchor="middle">lens</text></g>
+    ${glasses}${st.gl !== "none" ? `<text x="${XG}" y="${CY + 70}" font-size="11" font-weight="800" fill="${CO}" text-anchor="middle" font-family="system-ui, sans-serif">${st.gl} lens</text>` : ""}
+    <path d="M0 ${CY} H640" stroke="${CO}" stroke-width="1" stroke-dasharray="3 5" opacity=".35"/>
+    ${rp}
+    ${fOK ? `<circle cx="${fx}" cy="${CY}" r="5" fill="#C0392B" stroke="#fff" stroke-width="2"/><text x="${fx}" y="${CY - 10}" font-size="11" font-weight="800" fill="#C0392B" text-anchor="middle" font-family="system-ui, sans-serif">focus</text>` : ""}
+  </svg>`;
+}
+function viewSvg(obj, blur) {
+  const id = "vb" + (++clipN);
+  return `<svg viewBox="0 0 220 140" role="img" aria-label="${blur < .6 ? "Sharp" : "Blurred"} view">
+    <defs><filter id="${id}"><feGaussianBlur stdDeviation="${blur.toFixed(2)}"/></filter></defs>
+    <rect width="220" height="140" rx="12" fill="${obj === "far" ? "#D6ECFA" : "#FFF6E4"}"/>
+    <g filter="url(#${id})">${obj === "far"
+      ? `<rect x="0" y="100" width="220" height="40" fill="#A8D5A2"/><rect x="100" y="64" width="14" height="40" fill="#8C5A3C"/><circle cx="107" cy="54" r="32" fill="#5FB35C"/><circle cx="178" cy="28" r="14" fill="#FFE27A"/>`
+      : `<rect x="30" y="16" width="160" height="108" rx="6" fill="#fff" stroke="${CO}" stroke-width="2"/><text x="110" y="52" text-anchor="middle" font-size="18" font-weight="900" fill="${CO}" font-family="system-ui, sans-serif">Biology</text>${[70, 84, 98, 112].map(y => `<path d="M48 ${y} h124" stroke="#9A8C88" stroke-width="4" stroke-linecap="round"/>`).join("")}`}</g>
+  </svg>`;
+}
+
+/* ============================================================
    5d. Home screens: Mochi-style tabs with a bottom navigation bar, so students rarely scroll.
    Tabs: 🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🏆 Rewards
    ============================================================ */
@@ -4207,6 +4552,7 @@ function playHtml() {
         <button class="mode rush" id="mRush"><h3>⚡ Cell Rush</h3><span class="muted small">60 seconds of quick mixed questions. Earn 🌰 chestnuts.</span><span class="small">Best: <b>${S.rush.best}</b> pts ${S.rush.lastDay !== today() ? "· <b>×2 today!</b>" : ""}</span></button>
         <button class="mode note" id="mNote"><h3>📕 Mistake Notebook</h3><span class="muted small">Fix the questions you got wrong. Right twice = cleared.</span><span class="small"><b>${mistakeKeys().length}</b> to fix · ${S.mistakes_cleared || 0} cleared</span></button>
         <button class="mode dict-mode" id="mDict"><h3>🎧 Word Dictation</h3><span class="muted small">Hear key terms in a British accent and spell them.</span><span class="small">${nw ? `<b>${nw}</b> missed words to practise` : `Best round: <b>${S.dict.best}</b>/${DICT_N}`}</span></button>
+        <button class="mode sim-mode" id="mSim"><h3>🔬 Simulation Lab</h3><span class="muted small">Play with living models: breathing and lung pressure, the pupil reflex, and focusing with glasses.</span><span class="small"><b>${Object.keys(S.sims || {}).length}</b>/3 tried</span></button>
         <button class="mode" id="mLb"><h3>🏅 Leaderboard</h3><span class="muted small">The 10 most dedicated players.</span><span class="small">Your points: <b>${dedication()}</b></span></button>
       </div>
     </section>
@@ -4220,6 +4566,7 @@ function wirePlay() {
   document.getElementById("mRush").onclick = () => { SFX.init(); SFX.tap(); rushIntro(); };
   document.getElementById("mNote").onclick = () => { SFX.init(); SFX.tap(); renderNotebook(); };
   document.getElementById("mLb").onclick = () => { SFX.init(); SFX.tap(); openLeaderboard(); };
+  document.getElementById("mSim").onclick = () => { SFX.init(); SFX.tap(); renderSims(); };
   document.getElementById("mDict").onclick = () => { SFX.init(); SFX.tap(); DT = null; renderDictation(); };
 }
 
@@ -4648,7 +4995,8 @@ const TROPHIES = [
   { id: "dict", cat: "brain", name: "Dictation Star", rar: "gold", who: "hachiware", desc: "Get 10 perfect Word Dictation rounds", prog: () => [S.stats.dictPerfect, 10] },
   { id: "doctor", cat: "fun", name: "Little Doctor", rar: "silver", who: "shisa", desc: "Cure Mochi 5 times with the right treatment", prog: () => [S.stats.cured, 5] },
   { id: "petpal", cat: "adventure", name: "Pet Pal", rar: "gold", who: "momonga", desc: "Adopt 10 pets", prog: () => [Object.keys(S.pets).length, 10] },
-  { id: "hkguard", cat: "adventure", name: "HK Wildlife Guardian", rar: "legend", who: "chiikawa", desc: "Adopt all 5 Hong Kong species", prog: () => [PETS.filter(p => p.hk && S.pets[p.id]).length, 5] }
+  { id: "hkguard", cat: "adventure", name: "HK Wildlife Guardian", rar: "legend", who: "chiikawa", desc: "Adopt all 5 Hong Kong species", prog: () => [PETS.filter(p => p.hk && S.pets[p.id]).length, 5] },
+  { id: "labsci", cat: "brain", name: "Virtual Scientist", rar: "bronze", who: "hachiware", desc: "Try all 3 biology simulations", prog: () => [Object.keys(S.sims || {}).length, 3] }
 ];
 // Rarity palette: [dark metal, light metal, label, card glow]
 const RAR = { bronze: ["#C9824F", "#F7D2AE", "Bronze", "#F7D9BD"], silver: ["#9AA7BC", "#F4F7FB", "Silver", "#E3E9F2"], gold: ["#E0A92A", "#FFF3B0", "Gold", "#FFF1A8"], legend: ["#E27893", "#D7F0FF", "Legendary", "#F8D5E6"] };

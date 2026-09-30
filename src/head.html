@@ -443,6 +443,37 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .med .mi { font-size: 1.5rem; }
 .med.tried { opacity: .45; text-decoration: line-through; box-shadow: none; }
 @media (prefers-reduced-motion: reduce) { .rpet { animation: none; } }
+/* Simulation Lab */
+.mode.sim-mode { background: linear-gradient(135deg, #E6F7FF, #F3EAFF); }
+.simgrid { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+.simgrid.wide { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+@media (max-width: 820px) { .simgrid, .simgrid.wide { grid-template-columns: 1fr; } }
+.simsvg svg { width: 100%; height: auto; display: block; }
+.simseg { display: inline-flex; flex-wrap: wrap; gap: 4px; background: #F4EEE8; border-radius: 14px; padding: 4px; }
+.simseg button { border: 0; background: none; font: inherit; font-weight: 800; font-size: .85rem; padding: 8px 12px; border-radius: 10px; cursor: pointer; min-height: 40px; color: var(--ink); }
+.simseg button[aria-checked="true"] { background: #fff; box-shadow: 0 0 0 2px var(--ink); }
+.simctl { display: grid; gap: 8px; }
+.simctl > div { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.simctl > div > b { min-width: 58px; }
+.simsteps ol { margin: 4px 0 0; padding-left: 20px; }
+.simsteps li { animation: chatpop .4s ease-out backwards; }
+.simsteps li:nth-child(2) { animation-delay: .1s; } .simsteps li:nth-child(3) { animation-delay: .2s; } .simsteps li:nth-child(4) { animation-delay: .3s; } .simsteps li:nth-child(5) { animation-delay: .4s; }
+.pupscene svg { border-radius: 16px; }
+.musc { display: grid; gap: 6px; margin: 6px 0; }
+.musc span { border: 2px solid #E6DCD4; border-radius: 12px; padding: 6px 10px; font-size: .9rem; }
+.musc span.on { border-color: #C0392B; background: #FFF0F0; }
+.arc { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.arcstep { border: 2px solid var(--ink); border-radius: 12px; padding: 4px 8px; font-size: .78rem; font-weight: 800; line-height: 1.2; text-align: center; background: #fff; transition: background .2s, transform .2s; }
+.arcstep small { font-weight: 600; color: var(--ink-soft); }
+.arcstep.on { background: #FFE27A; transform: scale(1.08); }
+.arcgo { font-weight: 900; color: var(--ink-soft); }
+.lensview svg { width: 100%; max-width: 320px; height: auto; display: block; margin: 0 auto; border: var(--line); border-radius: 14px; }
+.lensres { font-weight: 800; border-radius: 12px; padding: 8px 12px; margin: 8px 0; }
+.lensres.ok { background: #E3F9E9; } .lensres.no { background: #FFF0F0; }
+.simq .choices { margin: 6px 0; }
+.simq .choice.right { background: var(--green); }
+.sqfb { min-height: 1.2em; }
+.simbtns { gap: 6px; } .simbtns .btn { min-height: 38px; padding: 4px 10px; font-size: .88rem; }
 /* Anti-guessing */
 .jam { border: var(--line); border-radius: 16px; background: #2B2433; color: #fff; padding: 12px; display: grid; gap: 6px; text-align: center; }
 .jam .jt { color: var(--led); font-weight: 800; font-size: 1.6rem; font-variant-numeric: tabular-nums; text-shadow: 0 0 8px rgba(255,107,107,.8); }

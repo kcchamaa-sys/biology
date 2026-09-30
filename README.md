@@ -38,6 +38,14 @@ Every topic is open, so students can jump to the one their class is on (the map 
 - 💬 **Chat card** on the map: the characters share biology fun facts (many with Hong Kong examples) and personal encouragement (streak, mistakes to fix, next stage). It changes every 20 s; the same facts appear as 💡 *Did you know?* in the Journal.
 - 🔥 **Streak bonus:** chestnut rewards grow 5% per streak day, up to ×1.5.
 
+## 🔬 Simulation Lab (Practice tab)
+
+Three interactive models, each with a 2-question quick check (+3 🌰 the first time):
+
+- **🫁 Breathing:** an animated chest (ribs, intercostal muscles, diaphragm, lungs, trachea) with auto or hand-controlled breathing and an exercise mode. A live graph plots **pressure in the lungs against time** (relative to atmospheric, with lung volume as an option), and the steps of inhalation/exhalation update as they happen.
+- **👁️ Pupil reflex:** a light slider (dark room → bright sun, plus a torch flash). The pupil changes size after a short reflex delay; circular vs radial muscles light up, the reflex arc animates, and a bar shows how much light reaches the retina.
+- **🔍 Focusing and glasses:** a ray diagram of the eye (cornea, lens, ciliary muscles, suspensory ligaments, retina) for a distant tree or a near book. The lens thickens or thins by accommodation; choose a normal, short-sighted or long-sighted eye and a concave or convex lens. The focus point, a verdict (in front of / on / behind the retina) and a blurred or clear "What Mochi sees" view update live. Calculated with real paraxial ray tracing.
+
 ## 🎵 Music
 
 Eight **original** tunes composed for this game in a cheerful Mochi-like mood (marimba, toy-piano bells, flute, plucked strings, soft drums), generated live in the browser. The tune changes with the room type, with special tracks for boss stages, Cell Rush and the Mistake Notebook. The official Mochi soundtrack is not used (copyright).
@@ -70,7 +78,7 @@ Mochi sometimes wakes up sick (30% on a new day) or catches something after a st
 - Every wrong choice explains why it can't work (e.g. antibiotics don't work on viruses, vaccines prevent but don't cure). A cure explains the biology and gives a prevention tip.
 - While sick, chestnut rewards are halved. The chat card also shares biology moments from Mochi's daily life (brushing teeth, sleep and growth hormone, ADH, shivering…).
 
-## 🏆 Trophies (30)
+## 🏆 Trophies (31)
 
 Four shelves (Daily habits, Adventure, Brain power, Just for fun) with Bronze, Silver, Gold and Legendary trophies. Each is a drawn cup with a character inside, a rarity ribbon and a shine; gold and legendary ones glow. The map shows the 4 closest to unlocking. Each trophy gives 🌰 30 and a 🎁 capsule.
 
