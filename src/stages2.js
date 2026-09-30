@@ -94,7 +94,7 @@ ROOMS.push(
   { id: "t11s1", t: "t11", s: 1, name: "The Name-Tag Museum", focus: "Classification and dichotomous keys", scene: "library",
     special: "butterfly", specialName: "Specimen case", specialLine: "A butterfly in a glass case... its name tag is missing!",
     tint: "#E3D5B8", floor: "#BBA98A", dim: .6, code: "40316", item: "🏷️ Name-tag sticker",
-    intro: [K("chiikawa", "cry", "So many creatures and no name tags... 😖"), K("hachiware", "normal", "Let's classify them! Kingdom, phylum, class... down to species."), K("usagi", "happy", "I'm Pom usagi! WOO! 🐰")],
+    intro: [K("chiikawa", "cry", "So many creatures and no name tags... 😖"), K("hachiware", "normal", "Let's classify them! Kingdom, phylum, class... down to species."), K("usagi", "happy", "I'm Pyon usagi! WOO! 🐰")],
     notes: [
       "<b>Biodiversity</b> is the variety of living things. <b>Classification</b> groups organisms by shared features into a <b>hierarchy</b>: Domain → Kingdom → Phylum → Class → Order → Family → Genus → Species.",
       "A <b>species</b> is a group of organisms that can interbreed to produce <b>fertile</b> offspring.",

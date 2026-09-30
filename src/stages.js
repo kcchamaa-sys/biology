@@ -1,7 +1,7 @@
 
 /* ============================================================
    4. Senior secondary Biology compulsory part (S4–S6): 19 topics, each a series of stages.
-   The last stage of every topic is a boss stage guarded by Otto.
+   The last stage of every topic is a boss stage guarded by Ryo.
    Each stage uses one of 8 room scenes: 5 locks (3 questions each) + an exit door.
    ============================================================ */
 // Topics in curriculum order (Parts I–IV of the compulsory part). "no" is the number shown to students.
@@ -48,7 +48,7 @@ const ROOMS = [
   { id: "t1s2", t: 0, s: 2, name: "The Sugar Pantry", focus: "Carbohydrates and lipids", scene: "kitchen",
     special: "jar", specialName: "Candy jar", specialLine: "A giant candy jar... it smells SO sweet. There's a riddle stuck on the lid!",
     tint: "#F3D9B0", floor: "#CBA67B", dim: .55, code: "86053", item: "🍬 Sugar-crystal sticker",
-    intro: [["chiikawa", "sparkle", "Waaa~! A room full of snacks?! ✨🍡"], ["hachiware", "normal", "Wait, Bao! Every snack jar is locked with a carbohydrate or lipid puzzle."], ["usagi", "happy", "Woo! Snack time after we escape! 🐰"]],
+    intro: [["chiikawa", "sparkle", "Waaa~! A room full of snacks?! ✨🍡"], ["hachiware", "normal", "Wait, Mochi! Every snack jar is locked with a carbohydrate or lipid puzzle."], ["usagi", "happy", "Woo! Snack time after we escape! 🐰"]],
     notes: [
       "<b>Carbohydrates</b> contain C, H and O. <b>Monosaccharides</b> (single sugars): glucose, fructose, galactose.",
       "<b>Disaccharides</b> (two sugars joined by <b>condensation</b>): maltose = glucose + glucose · sucrose = glucose + fructose · lactose = glucose + galactose.",
@@ -63,7 +63,7 @@ const ROOMS = [
   { id: "t1s3", t: 0, s: 3, name: "The Protein Factory", focus: "Proteins, nucleic acids and food tests", scene: "lab",
     special: "gears", specialName: "Chain machine", specialLine: "A clanking machine links beads into long chains... like amino acids!",
     tint: "#B7A6D6", floor: "#8C7AAE", dim: .68, code: "30947", item: "⛓️ Peptide-chain sticker",
-    intro: [["rakko", "brave", "...So you've come this far. This is a BOSS stage. Show me what you know about proteins. ⚔️"], ["chiikawa", "cry", "Otto-san is SO strong... uuu... 🥺"], ["hachiware", "happy", "It'll work out~! We studied hard! Let's go! ✨"]],
+    intro: [["rakko", "brave", "...So you've come this far. This is a BOSS stage. Show me what you know about proteins. ⚔️"], ["chiikawa", "cry", "Ryo-san is SO strong... uuu... 🥺"], ["hachiware", "happy", "It'll work out~! We studied hard! Let's go! ✨"]],
     notes: [
       "<b>Proteins</b> contain C, H, O, N (often S). They are made of <b>amino acids</b> (about 20 kinds) joined by <b>peptide bonds</b> in condensation, forming <b>polypeptides</b>.",
       "The <b>sequence</b> of amino acids decides how the chain folds into a specific <b>3-D shape</b>, and the shape decides the function.",
@@ -166,7 +166,7 @@ const ROOMS = [
   { id: "t4s1", t: 3, s: 1, name: "The Copy Room", focus: "Cell cycle and mitosis", scene: "library",
     special: "copier", specialName: "Copy machine", specialLine: "The copier makes perfect twins of everything... just like mitosis!",
     tint: "#C7D3F2", floor: "#98A6CC", dim: .6, code: "71845", item: "📠 Twin-copy sticker",
-    intro: [["chiikawa", "shock", "Th-there are TWO Baos?! Which one is me?! 😱"], ["hachiware", "happy", "Haha, it's a copy machine! Mitosis makes two identical cells, just like this!"], ["usagi", "happy", "Double Pom! WAHOO WAHOO! 🐰🐰"]],
+    intro: [["chiikawa", "shock", "Th-there are TWO Mochis?! Which one is me?! 😱"], ["hachiware", "happy", "Haha, it's a copy machine! Mitosis makes two identical cells, just like this!"], ["usagi", "happy", "Double Pyon! WAHOO WAHOO! 🐰🐰"]],
     notes: [
       "The <b>cell cycle</b> = <b>interphase</b> (the longest phase: the cell grows, makes organelles and <b>replicates its DNA</b>) + <b>mitosis</b> (nuclear division) + <b>cytokinesis</b> (cytoplasm division).",
       "After DNA replication, each chromosome has two identical <b>sister chromatids</b> joined at the <b>centromere</b>.",

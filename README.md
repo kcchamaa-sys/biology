@@ -1,4 +1,4 @@
-# 🧬 Bao Bio Escape
+# 🧬 Mochi Bio Escape
 
 A cosy kawaii-style biology escape-room adventure for **Secondary 4–6**. It is framed as exploring, not exam drilling, but the content follows the local senior secondary Biology curriculum (compulsory part) closely, so teachers can map it to lessons. English only. One file (`index.html`), no install, no build step for players.
 
@@ -7,7 +7,7 @@ A cosy kawaii-style biology escape-room adventure for **Secondary 4–6**. It is
 
 ## 19 topics, 60 stages (escape rooms)
 
-Every topic is open, so students can jump to the one their class is on (the map has Part I–IV tabs). Inside a topic, stages unlock in order; the last stage is a ⚔️ **boss stage** guarded by Otto.
+Every topic is open, so students can jump to the one their class is on (the map has Part I–IV tabs). Inside a topic, stages unlock in order; the last stage is a ⚔️ **boss stage** guarded by Ryo.
 
 | Part | Topics (stages) |
 |------|-----------------|
@@ -26,7 +26,7 @@ Every topic is open, so students can jump to the one their class is on (the map 
 
 ## 🏠 Layout, art and dress-up
 
-- **Mochi-style home with a bottom tab bar** (🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🏆 Rewards), so each screen is short and students rarely scroll. Home shows Bao in a cosy room, today's one stage, the streak and the chat card.
+- **Mochi-style home with a bottom tab bar** (🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🏆 Rewards), so each screen is short and students rarely scroll. Home shows Mochi in a cosy room, today's one stage, the streak and the chat card.
 - **Art style:** characters are soft, squishy one-piece blobs with thin warm-brown outlines, big blush, nub arms and sparkles (in the style of the Mochi Science Pals game).
 - **👗 Dress up:** a fitting room with 7 slots (hats, wigs, glasses, outfits, accessories, hand items, frames). Tap to try on for free, tap again to buy with 🌰. 35 items, including 🔥 trend / meme items (Pop-Star Swoop wig, Moonwalk jacket + fedora + sparkly glove, Six-seven signs, Deal-with-it shades, Blind-box monster hood, Dubai chocolate, Aura +1000 chain, idol twin-tails, wolf cut, ballerina cappuccino tutu…) and 🇭🇰 Hong Kong items (pineapple-bun hat, milk tea, ding-ding tram tee, lucky mahjong tile).
 - **⏱️ Escape or 📖 Study mode:** a switch on Home and Stages. Study mode has no timer, no penalties, no power-ups and no spooky incidents; after a second wrong answer it shows the explanation. Progress, stars and mastery still count.
@@ -40,7 +40,7 @@ Every topic is open, so students can jump to the one their class is on (the map 
 
 ## 🎵 Music
 
-Eight **original** tunes composed for this game in a cheerful Bao-like mood (marimba, toy-piano bells, flute, plucked strings, soft drums), generated live in the browser. The tune changes with the room type, with special tracks for boss stages, Cell Rush and the Mistake Notebook. The official Bao soundtrack is not used (copyright).
+Eight **original** tunes composed for this game in a cheerful Mochi-like mood (marimba, toy-piano bells, flute, plucked strings, soft drums), generated live in the browser. The tune changes with the room type, with special tracks for boss stages, Cell Rush and the Mistake Notebook. The official Mochi soundtrack is not used (copyright).
 
 ## 📕 Mistake Notebook
 
@@ -48,27 +48,27 @@ Every wrong answer (escape rooms, Cell Rush, incidents) is saved on the device. 
 
 ## Characters 🥹
 
-All characters are original: **Bao** (the player, a little white bun-bear), **Sora** (blue-capped cat, gives hints), **Pom** (loud yellow bunny, yells "Wahoo!"), **Lulu** (lavender show-off), **Maron** (chestnut who brings tea), **Leo** (lion-dog shopkeeper and doctor) and **Otto** (otter swordsman who guards every boss stage). Bao reacts with many moods: nervous, crying, shocked, brave, sparkly-eyed and sick.
+All characters are original: **Mochi** (the player, a little white mochi bun-bear), **Ramune** (blue-capped cat, gives hints), **Pyon** (loud yellow bunny, yells "Wahoo!"), **Budo** (lavender show-off), **Kurumi** (chestnut who brings tea), **Koma** (lion-dog shopkeeper and doctor) and **Ryo** (otter swordsman who guards every boss stage). Mochi reacts with many moods: nervous, crying, shocked, brave, sparkly-eyed and sick.
 
 ## Game systems
 
-Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, gentle anti-guessing penalties (no wait or time loss over 15 s: −10 s, reshuffle, short jams, strikes, chestnut fine, and guessing makes the lock **slip back a notch** so students answer one bonus question), random spooky-but-friendly incidents, ⚡ **Cell Rush** (60-second mixed rush with test-tube colours and organelle spotting), Leo's shop (outfits and power-ups), daily streak with shields, daily snack chest and a class leaderboard.
+Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, gentle anti-guessing penalties (no wait or time loss over 15 s: −10 s, reshuffle, short jams, strikes, chestnut fine, and guessing makes the lock **slip back a notch** so students answer one bonus question), random spooky-but-friendly incidents, ⚡ **Cell Rush** (60-second mixed rush with test-tube colours and organelle spotting), Koma's shop (outfits and power-ups), daily streak with shields, daily snack chest and a class leaderboard.
 
 ## 🐾 Pets (25)
 
-Bao can adopt 25 rare animals from across the animal kingdom (mammals, birds, reptiles, amphibians, fish, insects, an arachnid, a crustacean, a mollusc, a cnidarian, an echinoderm, a tardigrade and a horseshoe crab). Each has a Mochi-style drawing, its scientific name, home, conservation status and a **real biology story** linked to a syllabus topic (for example the fennec fox's ears and vasodilation, the octopus's blue haemocyanin, the firefly's luciferase).
+Mochi can adopt 25 rare animals from across the animal kingdom (mammals, birds, reptiles, amphibians, fish, insects, an arachnid, a crustacean, a mollusc, a cnidarian, an echinoderm, a tardigrade and a horseshoe crab). Each has a Mochi-style drawing, its scientific name, home, conservation status and a **real biology story** linked to a syllabus topic (for example the fennec fox's ears and vasodilation, the octopus's blue haemocyanin, the firefly's luciferase).
 
 - **5 Hong Kong species** (👑 Legendary): Chinese white dolphin, black-faced spoonbill, Romer's tree frog, golden coin turtle and Chinese horseshoe crab.
-- **13 pets unlock only in ⏱️ Escape mode** (Escape clears, no-hint escapes, clean escapes, boss wins); the other 12 come from studying, streaks, Dictation, the Mistake Notebook, Cell Rush and curing Bao.
-- The chosen companion lives in Bao's room on Home; tap it to hear a fact. The 🐾 Pets tab has filters (Hong Kong, Escape only, Mine) and progress bars.
+- **13 pets unlock only in ⏱️ Escape mode** (Escape clears, no-hint escapes, clean escapes, boss wins); the other 12 come from studying, streaks, Dictation, the Mistake Notebook, Cell Rush and curing Mochi.
+- The chosen companion lives in Mochi's room on Home; tap it to hear a fact. The 🐾 Pets tab has filters (Hong Kong, Escape only, Mine) and progress bars.
 
-## 🩺 Bao gets sick
+## 🩺 Mochi gets sick
 
-Bao sometimes wakes up sick (30% on a new day) or catches something after a stage (12%), at most once a day. Dr Leo shows the **symptoms** and a **test result**, and students pick from a 13-item medicine cabinet (antibiotics, antivirals, antifungal cream, deworming tablets, antimalarials, rest + paracetamol, ORS, vitamin C, iron, antihistamine, cooling, glucose, vaccine).
+Mochi sometimes wakes up sick (30% on a new day) or catches something after a stage (12%), at most once a day. Dr Koma shows the **symptoms** and a **test result**, and students pick from a 13-item medicine cabinet (antibiotics, antivirals, antifungal cream, deworming tablets, antimalarials, rest + paracetamol, ORS, vitamin C, iron, antihistamine, cooling, glucose, vaccine).
 
 - 13 illnesses: viruses (cold, flu, dengue), bacteria (strep throat, Salmonella), a fungus, a parasitic worm, a protist (malaria), deficiencies (scurvy, anaemia), an allergy and homeostasis problems (heat exhaustion, low blood glucose).
 - Every wrong choice explains why it can't work (e.g. antibiotics don't work on viruses, vaccines prevent but don't cure). A cure explains the biology and gives a prevention tip.
-- While sick, chestnut rewards are halved. The chat card also shares biology moments from Bao's daily life (brushing teeth, sleep and growth hormone, ADH, shivering…).
+- While sick, chestnut rewards are halved. The chat card also shares biology moments from Mochi's daily life (brushing teeth, sleep and growth hormone, ADH, shivering…).
 
 ## 🏆 Trophies (30)
 
@@ -95,4 +95,4 @@ Needs a free Google Sheet: see [`leaderboard/SETUP.md`](leaderboard/SETUP.md), t
 
 The page is assembled from `src/` by `python3 tools/build.py`. Content lives in `src/stages.js` and `src/stages2.js` (notes, rules, terms), `src/scenes.js` (rooms), `src/q_t*.js`, `src/q_graphs.js` and `src/q_graphs2.js` (questions), `src/graphs.js` (graph data) and `src/rush.js`. Check content with `node tools/check_content.js`.
 
-*Educational project with original kawaii-style characters (Bao, Sora, Pom, Lulu, Maron, Leo and Otto).*
+*Educational project with original kawaii-style characters (Mochi, Ramune, Pyon, Budo, Kurumi, Koma and Ryo).*

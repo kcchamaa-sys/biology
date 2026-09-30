@@ -39,32 +39,32 @@ function mouth(m, open, y = 130) {
 }
 const capClip = (d, fill) => { const id = "cc" + (++clipN); return `<clipPath id="${id}"><path d="${BODY}"/></clipPath><path clip-path="url(#${id})" d="${d}" fill="${fill}"/>`; };
 const CHAR = {
-  chiikawa: { name: "Bao", color: "#ffffff",
+  chiikawa: { name: "Mochi", color: "#ffffff",
     back: () => `<circle cx="62" cy="76" r="15" fill="#fff" ${CS}/><circle cx="138" cy="76" r="15" fill="#fff" ${CS}/><circle cx="62" cy="77" r="6.5" fill="#FFD1DA"/><circle cx="138" cy="77" r="6.5" fill="#FFD1DA"/>`,
     face: m => blush(true) + eyes(m) + mouth(m) },
-  hachiware: { name: "Sora", color: "#ffffff", ear: "#9EB9E6",
+  hachiware: { name: "Ramune", color: "#ffffff", ear: "#9EB9E6",
     back: () => `<path d="M48 104 L56 48 L94 70Z" fill="#9EB9E6" ${CS}/><path d="M152 104 L144 48 L106 70Z" fill="#9EB9E6" ${CS}/><path d="M58 88 L61 62 L80 74Z M142 88 L139 62 L120 74Z" fill="#F7C6D4"/>`,
     front: () => capClip("M0 0 H200 V100 H132 L100 70 L68 100 H0Z", "#9EB9E6"),
     face: m => blush(true) + eyes(m) + mouth(m) },
-  usagi: { name: "Pom", color: "#FDF3A8",
+  usagi: { name: "Pyon", color: "#FDF3A8",
     back: () => `<ellipse cx="78" cy="40" rx="14" ry="36" fill="#FDF3A8" ${CS} transform="rotate(-8 78 40)"/><ellipse cx="122" cy="40" rx="14" ry="36" fill="#FDF3A8" ${CS} transform="rotate(8 122 40)"/><ellipse cx="78" cy="42" rx="6" ry="24" fill="#FFB9C8" transform="rotate(-8 78 42)"/><ellipse cx="122" cy="42" rx="6" ry="24" fill="#FFB9C8" transform="rotate(8 122 42)"/>`,
     face: m => blush(true) + eyes(m) + mouth(m, m !== "brave" && m !== "cry") },
-  momonga: { name: "Lulu", color: "#ffffff",
+  momonga: { name: "Budo", color: "#ffffff",
     back: () => `<path d="M150 168 C204 170 210 104 176 88 C188 118 178 146 150 150Z" fill="#C9C3F0" ${CS}/><path d="M176 96 C190 116 188 140 176 152" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7"/><circle cx="58" cy="80" r="15" fill="#C9C3F0" ${CS}/><circle cx="142" cy="80" r="15" fill="#C9C3F0" ${CS}/>`,
     front: () => capClip("M0 0 H200 V98 Q100 74 0 98Z", "#C9C3F0"),
     face: m => blush(false) + eyes(m, { big: true }) + mouth(m) },
-  kurimanju: { name: "Maron", color: "#F2D7AE",
+  kurimanju: { name: "Kurumi", color: "#F2D7AE",
     front: () => capClip("M0 0 H200 V100 Q100 82 0 100Z", "#A8703F") + `<path d="M74 78 Q90 70 104 72" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".45"/>`,
     face: m => blush(false) + eyes(m === "normal" ? "line" : m) + mouth(m) },
-  shisa: { name: "Leo", color: "#FFF1C9",
+  shisa: { name: "Koma", color: "#FFF1C9",
     back: () => [[38, 104], [34, 134], [44, 160], [162, 104], [166, 134], [156, 160], [56, 76], [144, 76], [80, 60], [120, 60]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="17" fill="#F2A36B" ${CS}/>`).join("") + `<circle cx="66" cy="72" r="10" fill="#FFF1C9" ${CS}/><circle cx="134" cy="72" r="10" fill="#FFF1C9" ${CS}/>`,
     face: m => `<path d="M68 98 q6 -7 13 0 M119 98 q7 -7 13 0" stroke="#E07A3F" stroke-width="3.5" fill="none" stroke-linecap="round"/>` + blush(false) + eyes(m) + mouth(m) },
-  rakko: { name: "Otto", color: "#EAD7BC",
+  rakko: { name: "Ryo", color: "#EAD7BC",
     back: () => `<circle cx="60" cy="82" r="11" fill="#EAD7BC" ${CS}/><circle cx="140" cy="82" r="11" fill="#EAD7BC" ${CS}/>`,
     face: m => `<ellipse cx="100" cy="136" rx="20" ry="13" fill="#fff" stroke="${CO}" stroke-width="2.5"/><ellipse cx="100" cy="128" rx="6.5" ry="4.5" fill="${CO}"/>` + blush(false)
       + (m === "normal" || m === "brave" ? `<path d="M73 109 l14 14 M87 109 l-14 14" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>` + eyes("x").replace(/^[\s\S]*?(<ellipse cx="120")/, "$1") : eyes(m)) + mouth(m, false, 142) }
 };
-/* Dress-up layers for Bao (the player). Items live in WARDROBE (engine). */
+/* Dress-up layers for Mochi (the player). Items live in WARDROBE (engine). */
 function dressParts(eq) {
   eq = eq || (typeof S !== "undefined" && S && S.equip);
   const it = k => eq && eq[k] && typeof itemById === "function" ? itemById(eq[k]) : null;
@@ -109,7 +109,7 @@ const FIG_VB = "-14 -6 228 202";
 function figure(who, mood = "normal", eq) {
   return `<svg viewBox="${FIG_VB}" aria-hidden="true"><g class="squish">${charSvg(who, mood, eq, true)}</g></svg>`;
 }
-/* Short emotional reactions: Bao and friends react out loud to what happens */
+/* Short emotional reactions: Mochi and friends react out loud to what happens */
 const REACT = {
   right: [["usagi", "happy", "Wahoo! 🐰"], ["chiikawa", "sparkle", "Ya...! We did it! ✨"], ["hachiware", "happy", "Sugoi! You're so smart! 💙"], ["momonga", "sparkle", "Hmph... that was cute AND correct! 💜"], ["usagi", "happy", "WOO! WOOOO! 🎉"], ["chiikawa", "happy", "Waaai~! 🥹"]],
   wrong: [["chiikawa", "cry", "Wah...! 😭 The lock didn't open..."], ["chiikawa", "shock", "Eh?! EHHH?! 😱"], ["chiikawa", "cry", "Uu... uuu... 🥺"], ["usagi", "shock", "Haa?! 🐰💦"]],
@@ -153,7 +153,7 @@ const SFX = {
 };
 
 /* ============================================================
-   2b. Background music: 8 ORIGINAL cute tunes in a cheerful Bao-like mood,
+   2b. Background music: 8 ORIGINAL cute tunes in a cheerful Mochi-like mood,
    generated live with Web Audio (no audio files, no official soundtrack).
    Each song: 8 bars × 8 eighth-notes. melody/bass are MIDI numbers (0 = rest),
    chords are held pads, drums are 8-step strings (k kick, s snare, h hat, . rest).
@@ -192,8 +192,8 @@ const SONGS = {
     melody: [[79, 0, 79, 81, 83, 0, 79, 0], [76, 0, 79, 0, 76, 0, 74, 0], [72, 0, 76, 0, 79, 0, 76, 0], [74, 0, 78, 0, 81, 0, 0, 0],
              [83, 0, 81, 79, 81, 0, 79, 76], [79, 0, 76, 0, 74, 0, 71, 0], [72, 0, 74, 76, 79, 0, 76, 0], [74, 0, 78, 0, 79, 0, 0, 0]],
     bass: bassBar([43, 40, 36, 38, 43, 40, 36, 38], [0, null, 7, null, 0, 12, 7, null]) },
-  // Boss stages: "Otto's Trial" (D minor, brave and driving)
-  boss: { title: "Otto's Trial", bpm: 118, swing: 0, lead: "pluck", drums: "k.hsk.hs",
+  // Boss stages: "Ryo's Trial" (D minor, brave and driving)
+  boss: { title: "Ryo's Trial", bpm: 118, swing: 0, lead: "pluck", drums: "k.hsk.hs",
     chords: ["Dm", "Bb", "C", "A", "Dm", "Bb", "C", "A"],
     melody: [[74, 0, 74, 77, 76, 0, 74, 0], [70, 0, 74, 0, 77, 0, 74, 0], [72, 0, 76, 0, 79, 77, 76, 0], [73, 0, 76, 0, 81, 0, 0, 0],
              [81, 0, 79, 77, 76, 0, 74, 0], [77, 0, 74, 0, 70, 0, 74, 0], [76, 0, 72, 0, 79, 0, 76, 0], [73, 0, 69, 0, 74, 0, 0, 0]],

@@ -27,7 +27,7 @@ function wireModeSwitch(root) {
   root.querySelectorAll("[data-pm]").forEach(b => b.onclick = () => { SFX.tap(); S.playMode = b.dataset.pm; save(); toast(isStudy() ? "📖 Study mode: take your time, no timer or penalties." : "⏱️ Escape mode: beat the clock!"); renderMap(); });
 }
 
-/* A cosy pastel room with the player's dressed-up Bao, like the Mochi pet room */
+/* A cosy pastel room with the player's dressed-up Mochi, like the Mochi pet room */
 function roomWindow() {
   const h = new Date().getHours(), night = h >= 19 || h < 6;
   return `<svg class="rwin" viewBox="0 0 100 105" aria-hidden="true"><rect x="4" y="4" width="92" height="92" rx="18" fill="${night ? "#6E6590" : "#CFE9F7"}" stroke="#fff" stroke-width="6"/>${night
@@ -71,7 +71,7 @@ function homeHtml() {
     <section class="card roomwrap">${roomCard(greeting(), S.completed_rooms.length ? "happy" : "normal")}
       <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" id="chest" ${chestReady ? "" : "disabled"}>${chestReady ? "🎁 Daily chest" : "🎁 Back tomorrow"}</button></div></section>
     <div class="homeside">
-      ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>Bao is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Bao gets better.</div></div></div>
+      ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>Mochi is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Mochi gets better.</div></div></div>
         <button class="btn big" id="goClinic">🩺 Open the medicine cabinet</button></section>` : ""}
       <section class="card nextcard">
         <span class="kicker">✨ One small thing today</span>
@@ -94,7 +94,7 @@ function wireHome() {
     SFX.init(); SFX.fanfare(); confetti(70);
     const snack = pick(SNACKS); S.inventory.push(snack);
     let extra = ""; if (Math.random() < .2 && S.streak_shields < 3) { S.streak_shields++; extra = " …and a 🛡️ shield!"; }
-    S.last_chest_date = today(); S.stats.chests += 1; S.coll.pending += 1; streakNote = `🎁 Maron opened the chest: ${snack}${extra} …plus a mystery capsule!`; save(true); renderMap(); checkTrophies(); openCapsule();
+    S.last_chest_date = today(); S.stats.chests += 1; S.coll.pending += 1; streakNote = `🎁 Kurumi opened the chest: ${snack}${extra} …plus a mystery capsule!`; save(true); renderMap(); checkTrophies(); openCapsule();
   };
 }
 function wireCommon() {
@@ -237,7 +237,7 @@ function petsHtml() {
   const order = { common: 0, rare: 1, epic: 2, legend: 3 };
   const list = PETS.filter(F[petFilter][1]).slice().sort((a, b) => order[a.rar] - order[b.rar]);
   return `<section class="card">
-      <div class="row" style="justify-content:space-between"><h2>🐾 Bao's pets</h2><span class="pill">${own} / ${PETS.length} adopted · 🇭🇰 ${PETS.filter(p => p.hk && S.pets[p.id]).length} / 5</span></div>
+      <div class="row" style="justify-content:space-between"><h2>🐾 Mochi's pets</h2><span class="pill">${own} / ${PETS.length} adopted · 🇭🇰 ${PETS.filter(p => p.hk && S.pets[p.id]).length} / 5</span></div>
       ${say("chiikawa", act ? `${esc(act.nick)} the ${esc(act.name)} is my companion! Tap a pet to read its real biology story. 🥹` : "Rare animals from all over the world want to live with me! Clear stages to adopt them. Half of them only come in ⏱️ Escape mode! 🐾", "happy")}
       <div class="slottabs" role="tablist">${Object.entries(F).map(([k, [l]]) => `<button role="tab" aria-selected="${k === petFilter}" data-pf="${k}">${l}</button>`).join("")}</div>
       <div class="petgrid">${list.map(p => { const got = !!S.pets[p.id];

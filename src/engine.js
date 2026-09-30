@@ -212,14 +212,14 @@ function checkIn() {
     if (gap === 1) { S.current_streak += 1; streakNote = `🔥 Streak up! ${S.current_streak} days in a row.`; }
     else if (gap > 1) {
       const missed = gap - 1;
-      if (S.streak_shields >= missed) { S.streak_shields -= missed; S.current_streak += 1; streakNote = `🛡️ Sora used ${missed} shield${missed > 1 ? "s" : ""} to protect your streak! Now ${S.current_streak} days.`; }
-      else { S.current_streak = 1; streakNote = "🌱 Welcome back! Bao missed you. 🥹 Your streak restarted at 1."; }
+      if (S.streak_shields >= missed) { S.streak_shields -= missed; S.current_streak += 1; streakNote = `🛡️ Ramune used ${missed} shield${missed > 1 ? "s" : ""} to protect your streak! Now ${S.current_streak} days.`; }
+      else { S.current_streak = 1; streakNote = "🌱 Welcome back! Mochi missed you. 🥹 Your streak restarted at 1."; }
     }
     if (S.current_streak % 7 === 0 && S.streak_shields < 3) { S.streak_shields += 1; streakNote += " 🛡️ 7-day milestone: +1 shield!"; }
   }
   S.longest_streak = Math.max(S.longest_streak || 0, S.current_streak);
   S.last_login_date = t;
-  if (S.stats.days > 1 && maybeGetSick(.3)) streakNote = (streakNote ? streakNote + " " : "") + "🤒 Uh-oh... Bao woke up feeling sick. Visit Dr Leo!";
+  if (S.stats.days > 1 && maybeGetSick(.3)) streakNote = (streakNote ? streakNote + " " : "") + "🤒 Uh-oh... Mochi woke up feeling sick. Visit Dr Koma!";
   save();
   checkTrophies();
 }
@@ -302,7 +302,7 @@ const TROPHIES = [
   { id: "boss5", cat: "adventure", name: "Boss Buster", rar: "gold", who: "rakko", desc: "Beat 5 boss stages", prog: () => [bossesBeaten(), 5] },
   { id: "part", cat: "adventure", name: "Part Champion", rar: "gold", who: "shisa", desc: "Clear every topic in one Part", prog: () => [partsCleared(), 1] },
   { id: "escaper", cat: "adventure", name: "Master Escaper", rar: "gold", who: "chiikawa", desc: `Escape all ${ROOMS.length} stages`, prog: () => [S.completed_rooms.length, ROOMS.length] },
-  { id: "bossall", cat: "adventure", name: "Otto's Respect", rar: "legend", who: "rakko", desc: `Beat all ${TOPICS.length} boss stages`, prog: () => [bossesBeaten(), TOPICS.length] },
+  { id: "bossall", cat: "adventure", name: "Ryo's Respect", rar: "legend", who: "rakko", desc: `Beat all ${TOPICS.length} boss stages`, prog: () => [bossesBeaten(), TOPICS.length] },
   { id: "stars", cat: "adventure", name: "Star Collector", rar: "legend", who: "hachiware", desc: "Collect 120 stars (3★ = 3 stars)", prog: () => [ROOMS.reduce((a, r) => a + roomStars(r), 0), 120] },
   { id: "spell", cat: "brain", name: "Spelling Bee", rar: "silver", who: "usagi", desc: "Spell 30 biology words correctly", prog: () => [S.stats.spellRight, 30] },
   { id: "tidy", cat: "brain", name: "Tidy Notebook", rar: "silver", who: "kurimanju", desc: "Clear 20 questions from your Mistake Notebook", prog: () => [S.mistakes_cleared || 0, 20] },
@@ -314,12 +314,12 @@ const TROPHIES = [
   { id: "practice", cat: "brain", name: "Practice Makes Perfect", rar: "bronze", who: "kurimanju", desc: "Replay escaped stages 10 times", prog: () => [S.stats.replays, 10] },
   { id: "rush1", cat: "fun", name: "Rush Rookie", rar: "bronze", who: "usagi", desc: "Score 100 points in one Cell Rush", prog: () => [S.rush.best, 100] },
   { id: "spooky", cat: "fun", name: "Spooky Survivor", rar: "silver", who: "chiikawa", desc: "Survive 20 random incidents", prog: () => [S.stats.incidents, 20] },
-  { id: "fashion", cat: "fun", name: "Fashion Icon", rar: "silver", who: "momonga", desc: "Own 8 outfits from Leo's shop", prog: () => [S.owned.length, 8] },
+  { id: "fashion", cat: "fun", name: "Fashion Icon", rar: "silver", who: "momonga", desc: "Own 8 outfits from Koma's shop", prog: () => [S.owned.length, 8] },
   { id: "rush2", cat: "fun", name: "Lightning Brain", rar: "gold", who: "usagi", desc: "Score 300 points in one Cell Rush", prog: () => [S.rush.best, 300] },
   { id: "coll", cat: "fun", name: "Collector", rar: "gold", who: "shisa", desc: "Collect 15 different collectibles", prog: () => [collOwned(), 15] },
   { id: "rare", cat: "fun", name: "Rare Hunter", rar: "legend", who: "chiikawa", desc: "Collect all 5 rare collectibles", prog: () => [collOwned(true), 5] },
   { id: "dict", cat: "brain", name: "Dictation Star", rar: "gold", who: "hachiware", desc: "Get 10 perfect Word Dictation rounds", prog: () => [S.stats.dictPerfect, 10] },
-  { id: "doctor", cat: "fun", name: "Little Doctor", rar: "silver", who: "shisa", desc: "Cure Bao 5 times with the right treatment", prog: () => [S.stats.cured, 5] },
+  { id: "doctor", cat: "fun", name: "Little Doctor", rar: "silver", who: "shisa", desc: "Cure Mochi 5 times with the right treatment", prog: () => [S.stats.cured, 5] },
   { id: "petpal", cat: "adventure", name: "Pet Pal", rar: "gold", who: "momonga", desc: "Adopt 10 pets", prog: () => [Object.keys(S.pets).length, 10] },
   { id: "hkguard", cat: "adventure", name: "HK Wildlife Guardian", rar: "legend", who: "chiikawa", desc: "Adopt all 5 Hong Kong species", prog: () => [PETS.filter(p => p.hk && S.pets[p.id]).length, 5] }
 ];
@@ -416,7 +416,7 @@ const COLLECTIBLES = [
   { id: "stomaclip", e: "🍃", name: "Stomata Hair Clip", desc: "Opens in the day, closes when it's dry." },
   { id: "noodles", e: "🍜", name: "Neuron Noodles", desc: "Long, fast and full of impulses." },
   { id: "photocard", rare: true, art: "photocard", name: "Powerhouse Era Holo Photocard", desc: "Holographic idol photocard of Mitochondria. It's in its powerhouse era. ✦" },
-  { id: "blindbox", rare: true, art: "blindbox", name: "Secret Blind-Box: Midnight Bao", desc: "The 1-in-144 secret figure. Collectors everywhere are screaming." },
+  { id: "blindbox", rare: true, art: "blindbox", name: "Secret Blind-Box: Midnight Mochi", desc: "The 1-in-144 secret figure. Collectors everywhere are screaming." },
   { id: "aura", rare: true, art: "aura", name: "Aura +1000 Bag Charm", desc: "Clip it on your bag for instant main-character energy." },
   { id: "matcha", rare: true, art: "matcha", name: "Chloroplast Matcha Latte", desc: "Iced, aesthetic, and it's giving photosynthesis." },
   { id: "flip", rare: true, art: "flip", name: "Y2K Flip-Phone DNA Charm", desc: "Sparkly retro flip phone with a double-helix strap. Y2K core." }
@@ -963,13 +963,13 @@ function renderWelcome() {
   $app.innerHTML = `
     <section class="hero">${starsBg()}
       <span class="kicker" style="color:#fff">${HERO_KICKER}</span>
-      <h1>Bao Bio Escape</h1>
+      <h1>Mochi Bio Escape</h1>
       <p class="sub">${TOPICS.length} topics · ${ROOMS.length} stages · 1 stage a day · about 15–20 minutes</p>
       ${castHtml({ chiikawa: "cry", usagi: "happy", momonga: "shock" })}
     </section>
     <section class="card">
       ${say("chiikawa", "Ya...!! 😭 We fell asleep in the biology lab... and woke up TINY, inside a giant cell world!", "cry")}
-      ${say("hachiware", "Every door is locked with a biology puzzle, from tiny cells all the way to ecosystems and staying healthy. Each topic is a series of stages (Photosynthesis has 6!), and the last one is a <b>boss stage</b> guarded by Otto. Each lock needs <b>3 questions</b> in a row to open. It'll work out~! Will you help us escape? ✨", "normal", "hint")}
+      ${say("hachiware", "Every door is locked with a biology puzzle, from tiny cells all the way to ecosystems and staying healthy. Each topic is a series of stages (Photosynthesis has 6!), and the last one is a <b>boss stage</b> guarded by Ryo. Each lock needs <b>3 questions</b> in a row to open. It'll work out~! Will you help us escape? ✨", "normal", "hint")}
       ${say("usagi", "WAHOO! Let's GO! 🐰💥", "happy")}
       <label for="nm"><b>What should we call you?</b></label>
       <input id="nm" class="name" maxlength="24" placeholder="Your name or nickname" autocomplete="off">
@@ -1245,7 +1245,7 @@ function setLine(who, html, mood = "normal") {
 function setMood(m, ms) {
   if (!R) return; R.mood = m;
   const el = document.getElementById("chiiAv"); if (el) el.innerHTML = avatar("chiikawa", m);
-  const st = document.getElementById("chiiSt"); if (st) st.textContent = { normal: "Bao is ready", happy: "Bao is happy!", cry: "Bao is nervous... 🥺", shock: "Bao is shocked! 😱", sparkle: "Bao is sparkling! ✨", brave: "Bao is being brave! 💪" }[m];
+  const st = document.getElementById("chiiSt"); if (st) st.textContent = { normal: "Mochi is ready", happy: "Mochi is happy!", cry: "Mochi is nervous... 🥺", shock: "Mochi is shocked! 😱", sparkle: "Mochi is sparkling! ✨", brave: "Mochi is being brave! 💪" }[m];
   clearTimeout(moodTimer);
   if (ms) moodTimer = setTimeout(() => R && setMood(S.room_timer[R.room.id] < 120 ? "cry" : "normal"), ms);
 }
@@ -1275,7 +1275,7 @@ function renderRoom() {
         <div style="min-width:0"><div class="rtopic">${TOPICS[room.t].icon} ${topicNo(room.topicNo)}: ${esc(room.topic)}</div>
           <div class="rt">${esc(room.name)} ${room.boss ? `<span class="boss-tag">⚔️ BOSS</span>` : ""}</div>
           <div class="stepper" aria-label="${esc(stageLabel(room))}">${topicRooms(room.t).map(x => `<i class="${x.id === room.id ? "cur" : S.completed_rooms.includes(x.id) ? "on" : ""}"></i>`).join("")}<span class="small">${room.boss ? "Boss stage" : `Stage ${room.s}`} of ${topicRooms(room.t).length} · ${esc(room.focus)}</span></div>
-          <div class="small" id="chiiSt">${"Bao is ready"}</div></div>
+          <div class="small" id="chiiSt">${"Mochi is ready"}</div></div>
       </div>
       <div style="display:grid;justify-items:end;gap:4px">
         ${R.study ? `<div class="timer study" id="timer" title="Study mode: no timer">📖 Study</div>` : `<div class="timer ${t < 0 ? "over" : t < 120 ? "low" : ""}" id="timer" role="timer" aria-label="${"Time left"}">${t >= 0 ? fmt(t) : `${"OVERTIME"} ${fmt(t)}`}</div>`}
@@ -1346,7 +1346,7 @@ function openPuzzle(i) {
     ${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
     <div id="jamBox"></div>
     <div id="ans">${answerUi(p)}</div>
-    <div class="row"><button class="btn blue" id="hint">💡 Hint from Sora</button><button class="btn plain" id="pj">📓 Journal</button></div>
+    <div class="row"><button class="btn blue" id="hint">💡 Hint from Ramune</button><button class="btn plain" id="pj">📓 Journal</button></div>
     <div class="pwr" id="pwr"></div>
     <div id="pfb"></div>`, { wide: true });
   renderPwr(p, i);
@@ -1354,7 +1354,7 @@ function openPuzzle(i) {
   document.getElementById("pj").onclick = () => { SFX.tap(); openJournal(room.id, termsIn(room, p)); };
   wireAnswer(p, box);
   if (R.jam[i] > Date.now()) startJam(i, 0);
-  if (R.noHintUntil > Date.now()) { const h = document.getElementById("hint"); h.disabled = true; h.textContent = "😴 Sora is sleepy..."; }
+  if (R.noHintUntil > Date.now()) { const h = document.getElementById("hint"); h.disabled = true; h.textContent = "😴 Ramune is sleepy..."; }
   if (R.fog) { R.fog = false; fogAnswers(); }
   if (p.type === "spell" && !(R.jam[i] > Date.now())) setTimeout(() => { const s = document.getElementById("spIn"); if (s) s.focus({ preventScroll: true }); }, 60);
 }
@@ -1418,7 +1418,7 @@ function dimLights() {
   const me = R; setTimeout(() => { if (R === me) { const s2 = document.getElementById("scene"); if (s2) s2.style.setProperty("--dim", R.room.dim); } }, MAX_WAIT * 1000);
 }
 function markHint(i) { R.hinted[akey(i)] = true; S.room_run[R.room.id].hints = true; save(); }
-/* Anti-guessing: a lock jams for a while after a guess, and Sora's hint must be read. */
+/* Anti-guessing: a lock jams for a while after a guess, and Ramune's hint must be read. */
 function startJam(i, secs, reason) {
   if (secs) R.jam[i] = Date.now() + secs * 1000;
   const ans = document.getElementById("ans"), jb = document.getElementById("jamBox");
@@ -1430,7 +1430,7 @@ function startJam(i, secs, reason) {
     const left = Math.ceil((R.jam[i] - Date.now()) / 1000);
     if (left <= 0) { ans.inert = false; ans.classList.remove("jammed"); jb.innerHTML = ""; SFX.click(); return; }
     jb.innerHTML = `<div class="jam" role="status"><b>🔒 ${esc(reason || R.jamReason || "Lock jammed!")}</b><span class="jt">${left}s</span>
-      <span class="small">${"Use this time to read Sora's hint below or open the 📓 Journal."}</span></div>`;
+      <span class="small">${"Use this time to read Ramune's hint below or open the 📓 Journal."}</span></div>`;
     setTimeout(tick, 250);
   };
   R.jamReason = reason || R.jamReason;
@@ -1696,7 +1696,7 @@ function escapeRoom() {
       ${room.boss && first ? say("rakko", "...Hmph. Not bad. You have the heart of a true biologist. ⚔️", "happy") : ""}
       ${topicDone ? say("momonga", `TOPIC ${T.no} CLEARED! You earned <b>${esc(T.badge)}</b>! Everyone is crying happy tears! 💜🥹`, "sparkle") : first ? say("momonga", `You earned <b>${esc(room.item)}</b>! 💜`, "happy") : say("kurimanju", "Replay complete. Practice makes the brain strong. 🍵", "happy")}
       <section class="card cream jsec"><h3>📖 Textbook recap: ${esc(room.focus)}</h3><ul>${room.notes.map(x => `<li>${x}</li>`).join("")}</ul></section>
-      ${gotSick ? say("chiikawa", "Achoo...! I don't feel so good... 🤒 Can we visit Dr Leo on the Home screen?", "sick") : ""}
+      ${gotSick ? say("chiikawa", "Achoo...! I don't feel so good... 🤒 Can we visit Dr Koma on the Home screen?", "sick") : ""}
       ${say("hachiware", !nxt ? "That was the final stage of every topic. You've explored every corner of the biology world! 🌟" : `That's today's mission done! 🌱 Rest your brain, or keep going if you feel great. Next: <b>${esc(stageLabel(nxt))}: ${esc(nxt.name)}</b>.`, "happy", "hint")}
       <div class="row">${caps ? `<button class="btn pink" id="eCap">🎁 Open capsule</button>` : ""}<button class="btn big" id="eMap">Back to the map</button>${nxt ? `<button class="btn blue" id="eNext">▶ Next stage</button>` : ""}<button class="btn yellow" id="eCode">🔑 Get my save code</button></div>`, { onClose: renderMap });
     document.getElementById("eMap").onclick = () => { SFX.tap(); closeModal(); renderMap(); };
@@ -1730,11 +1730,11 @@ const INCIDENTS = [
     run() { R.fog = true; } },
   { id: "clock", w: 2, art: "clock", title: ["The clock goes haywire!"], text: ["Tick... tick... TICKTICKTICK! The wall clock's hands start spinning by themselves."], effect: ["⏩ For 30 seconds, time runs twice as fast."],
     run() { R.warpUntil = Date.now() + 30000; } },
-  { id: "spores", w: 2, art: "shroom", title: ["Sleepy spores"], text: ["Glowing mushrooms pop up in the corner and puff out sparkly spores. Sora yawns... and dozes off."], effect: ["😴 Hints are unavailable for 45 seconds."],
+  { id: "spores", w: 2, art: "shroom", title: ["Sleepy spores"], text: ["Glowing mushrooms pop up in the corner and puff out sparkly spores. Ramune yawns... and dozes off."], effect: ["😴 Hints are unavailable for 45 seconds."],
     run() { R.noHintUntil = Date.now() + 45000; } },
   { id: "owl", w: 2, good: true, art: "owl", title: ["A wise night owl appears"], text: ["Hoo... hoo... A big owl lands on the bookshelf, eyes glowing in the dark. It has a riddle for you."], effect: ["🦉 Answer its bonus question for +45 seconds and 5 🌰."],
     run() { setTimeout(owlQuiz, 300); } },
-  { id: "tea", w: 2, good: true, art: null, title: ["Maron's tea break"], text: ["Out of nowhere, Maron pours a cup of warm tea. The room feels calm for a moment."], effect: ["🍵 The timer freezes for 30 seconds. Relax and think!"],
+  { id: "tea", w: 2, good: true, art: null, title: ["Kurumi's tea break"], text: ["Out of nowhere, Kurumi pours a cup of warm tea. The room feels calm for a moment."], effect: ["🍵 The timer freezes for 30 seconds. Relax and think!"],
     run() { R.freezeUntil = Date.now() + 30000; } }
 ];
 function tryIncident(me) {
