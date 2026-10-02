@@ -27,10 +27,12 @@
   --red: #FFADAD;
   --night: #2B2433;
   --led: #FF6B6B;
-  --shadow: 4px 4px 0 var(--ink);
-  --shadow-sm: 3px 3px 0 var(--ink);
-  --line: 3px solid var(--ink);
-  --r: 18px;
+  --shadow: 0 8px 24px rgba(107,74,107,.12), 0 2px 6px rgba(107,74,107,.06);
+  --shadow-sm: 0 3px 10px rgba(107,74,107,.12);
+  --line: 2px solid rgba(107,74,107,.12);
+  --r: 22px;
+  --plum: #6B4A6B;
+  --glass: rgba(255,255,255,.78);
   --font: "M PLUS Rounded 1c", system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
@@ -758,7 +760,11 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 
 /* ================= 🎨 Icons (replace emoji) ================= */
 .icw { display: inline-flex; vertical-align: -0.2em; line-height: 1; }
-.ic { width: 1.2em; height: 1.28em; overflow: visible; flex: 0 0 auto; }
+.ic { width: 1.2em !important; height: 1.28em !important; overflow: visible; flex: 0 0 auto !important; filter: none !important; }
+.cpop { position: fixed; z-index: 99; transform: translate(-50%, 0); font-weight: 900; font-size: 1.1rem; color: #8C5219; background: #FFF3C4; border-radius: 999px; padding: 2px 10px; box-shadow: 0 4px 14px rgba(140,82,25,.3); pointer-events: none; transition: transform .9s cubic-bezier(.4,0,.2,1), opacity .9s; animation: cpopin .3s ease-out; }
+.cpop.neg { color: #D93636; background: #FFE1E1; }
+@keyframes cpopin { from { scale: .4; } 70% { scale: 1.2; } }
+#tCoins.bump { animation: pop .45s ease-out; }
 .btn .icw, .iconbtn .icw, .pill .icw { vertical-align: -0.24em; }
 
 /* ================= 🐾 Study Pals ================= */
@@ -818,6 +824,129 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .featpal .row { flex-wrap: nowrap; gap: 6px; } .featpal #fpGo { flex: 1 1 auto; min-width: 0; font-size: .74rem; line-height: 1.2; } .featpal .fparr { flex: 0 0 auto; padding: 4px 8px; background: #fff; }
 @media (max-width: 420px) { .palhero { grid-template-columns: 92px minmax(0, 1fr); gap: 8px; } .meter { grid-template-columns: 64px minmax(0, 1fr) 28px; } .palgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; } .palcard { padding: 6px 3px 8px; font-size: .8rem; } .palcard .ppic { width: 64px; height: 60px; } .palcard .small { font-size: .7rem; line-height: 1.2; } .palcard .btn.sm { font-size: .72rem; padding: 3px 6px; min-height: 32px; } .pinfo { width: 20px; height: 20px; top: 3px; right: 3px; } .tmatch { grid-template-columns: 1fr; } .subnav button { font-size: .8rem; padding: 6px 4px; } }
 @media (prefers-reduced-motion: reduce) { .pring { animation: none; } }
+
+/* ================= 🔦 Escape 2.0: specimens, Bio-Machine, goals ================= */
+.goals { display: flex; gap: 6px; flex-wrap: wrap; }
+.goal { font-size: .8rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.75); box-shadow: 0 2px 6px rgba(91,75,73,.12); color: var(--ink-soft); }
+.goal.ok { background: #DDF7C8; color: #2F7A00; }
+.spec { position: absolute; z-index: 3; width: 34px; height: 34px; transform: translate(-50%, -50%); border: 0; background: transparent; padding: 0; }
+.spec i { position: absolute; inset: 9px; border-radius: 50%; background: radial-gradient(circle, #fff 0, #FFF3B0 35%, rgba(255,243,176,0) 70%); animation: glint 2.6s ease-in-out infinite; }
+.spec i::before, .spec i::after { content: ""; position: absolute; left: 50%; top: 50%; width: 26px; height: 3px; margin: -1.5px 0 0 -13px; border-radius: 3px; background: #FFE680; }
+.spec i::after { transform: rotate(90deg); }
+@keyframes glint { 0%, 100% { opacity: .18; transform: scale(.6) rotate(0); } 50% { opacity: .75; transform: scale(1) rotate(45deg); } }
+.hs.machine { background: linear-gradient(160deg, #CDE9FF, #8FC9F5); } .hs.machine.on { background: linear-gradient(160deg, #DDF7C8, #89E219); box-shadow: 0 0 18px #89E219; }
+.scene .obj.opened { filter: drop-shadow(0 0 10px rgba(255,236,140,.95)); }
+.scene #doorG.powered .door-light { fill: #CFFFB0; }
+.speccard { display: grid; justify-items: center; gap: 4px; text-align: center; background: linear-gradient(160deg, #FFFDF2, #EAF6FF); border-radius: 18px; padding: 16px; box-shadow: inset 0 0 0 2px #E5EDF7; }
+.speccard b { font-size: 1.4rem; }
+.machinewrap { display: grid; justify-items: center; } .machinesvg { width: min(320px, 100%); height: auto; }
+.machinesvg .lamp { animation: lampglow 1.2s ease-in-out infinite; } .machinesvg .bub { animation: bub 1.6s ease-in infinite; } .machinesvg .b2 { animation-delay: .7s; }
+.machinesvg .tankfill { transition: y .6s ease, height .6s ease; }
+.machinewrap.powered { animation: pop .5s ease-out; }
+@keyframes lampglow { 50% { opacity: .55; } } @keyframes bub { from { transform: translateY(0); opacity: .8; } to { transform: translateY(-80px); opacity: 0; } }
+.wires { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 10px; }
+.wcol { display: grid; gap: 8px; align-content: start; }
+.plug, .sock { text-align: left; border: 0; border-radius: 14px; padding: 10px 12px; min-height: 48px; font-weight: 700; font-size: .88rem; background: #fff; box-shadow: 0 3px 0 #D5DCE8, 0 4px 12px rgba(91,75,73,.08); display: flex; gap: 8px; align-items: center; }
+.plug { font-weight: 900; background: linear-gradient(160deg, #FFF8E0, #FFFFFF); }
+.plug.sel { background: linear-gradient(160deg, #FFE27A, #FFC800); box-shadow: 0 3px 0 #E0A800, 0 0 0 3px rgba(255,200,0,.35); }
+.plug.done, .sock.done { background: linear-gradient(160deg, #DDF7C8, #B7EE8A); box-shadow: 0 3px 0 #89C95A; opacity: .85; }
+.sock.spark { animation: shake .35s; background: #FFE1E1; }
+@media (max-width: 520px) { .wires { grid-template-columns: 1fr; } .spec { width: 40px; height: 40px; } }
+@media (prefers-reduced-motion: reduce) { .spec i, .machinesvg .lamp, .machinesvg .bub { animation: none; opacity: .7; } }
+.buddy { animation: buddy 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes buddy { 0%, 100% { transform: translate(0, 0) rotate(0); } 50% { transform: translate(-6px, -8px) rotate(25deg); } }
+@media (prefers-reduced-motion: reduce) { .buddy { animation: none; } }
+
+/* ================= ✨ UI 3.0: soft panels, glossy primary buttons, decluttered top bar ================= */
+body { background: radial-gradient(1200px 600px at 10% -10%, #FFE9F2 0, transparent 60%), radial-gradient(900px 500px at 110% 10%, #E4F1FF 0, transparent 55%), linear-gradient(#FFFBF3, #FFF6EC); background-attachment: fixed; }
+h2 { font-weight: 900; letter-spacing: -.01em; } h3 { font-weight: 900; }
+.small.muted, .muted.small { font-weight: 600; }
+.card { border: 0; background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.86)); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 20px; box-shadow: var(--shadow); }
+.card.cream { background: linear-gradient(180deg, #FFF9EA, #FFF3DC); }
+/* buttons: one glossy primary style, soft secondary styles, no dark outlines */
+.btn { border: 0; color: #5A2747; background: linear-gradient(180deg, #FFD0DF 0%, #FF9EC2 55%, #FF86B4 100%); text-shadow: 0 1px 0 rgba(255,255,255,.45);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.7), inset 0 -3px 0 rgba(160,40,100,.16), 0 4px 0 #E06A9E, 0 8px 18px rgba(224,106,158,.28); border-radius: 18px; }
+.btn:active:not(:disabled) { transform: translateY(3px); box-shadow: inset 0 2px 0 rgba(255,255,255,.6), inset 0 -2px 0 rgba(160,40,100,.16), 0 1px 0 #E06A9E, 0 3px 8px rgba(224,106,158,.25); }
+.btn.big, .btn.primary { font-size: 1.08rem; padding: 12px 24px; background: linear-gradient(180deg, #FFC9E0 0%, #FF8DBB 50%, #F76DA6 100%); color: #fff; text-shadow: 0 1px 2px rgba(170,40,100,.45); }
+.btn.pink { background: linear-gradient(180deg, #FFD0DF 0%, #FF9EC2 55%, #FF86B4 100%); }
+.btn.blue { color: #12466E; background: linear-gradient(180deg, #D6EEFF 0%, #9ED3FA 55%, #7EC2F3 100%); box-shadow: inset 0 2px 0 rgba(255,255,255,.7), inset 0 -3px 0 rgba(20,80,140,.14), 0 4px 0 #5AA9DE, 0 8px 18px rgba(90,169,222,.25); }
+.btn.yellow { color: #6B4500; background: linear-gradient(180deg, #FFF4B8 0%, #FFE16B 55%, #FFD13D 100%); box-shadow: inset 0 2px 0 rgba(255,255,255,.75), inset 0 -3px 0 rgba(150,100,0,.14), 0 4px 0 #E0A800, 0 8px 18px rgba(224,168,0,.22); }
+.btn.plain { color: var(--ink); background: #fff; text-shadow: none; box-shadow: 0 0 0 1.5px rgba(107,74,107,.1), 0 3px 0 #EADFEA, 0 6px 14px rgba(107,74,107,.08); }
+.btn:disabled { opacity: .45; filter: grayscale(.4); }
+.iconbtn { border: 0; background: #fff; box-shadow: 0 3px 0 #EADFEA, 0 6px 14px rgba(107,74,107,.1); }
+.choice { border: 0; box-shadow: 0 0 0 1.5px rgba(107,74,107,.1), 0 3px 0 #EADFEA, 0 6px 14px rgba(107,74,107,.06); border-radius: 16px; }
+.choice:hover:not(:disabled) { box-shadow: 0 0 0 2px #FFB3D0, 0 3px 0 #F3C6DA, 0 6px 14px rgba(107,74,107,.08); }
+.choice.right { background: linear-gradient(180deg, #E4FBD4, #C9F2A8); box-shadow: 0 0 0 2px #89C95A, 0 3px 0 #89C95A; }
+.choice.wrong { background: linear-gradient(180deg, #FFE6E6, #FFC9C9); box-shadow: 0 0 0 2px #F28B8B, 0 3px 0 #F28B8B; }
+.pill { border: 0; box-shadow: inset 0 0 0 1.5px rgba(107,74,107,.12); }
+.tab, .slottabs button { border: 0; background: #fff; box-shadow: 0 0 0 1.5px rgba(107,74,107,.1), 0 2px 0 #EADFEA; }
+.tab[aria-selected="true"], .slottabs button[aria-selected="true"] { background: linear-gradient(180deg, #FFD6E6, #FFB0CF); box-shadow: 0 2px 0 #E88AB2, 0 4px 12px rgba(232,138,178,.3); }
+input.name, select.name { border: 0; box-shadow: inset 0 0 0 2px rgba(107,74,107,.14); }
+input.name:focus, select.name:focus { box-shadow: inset 0 0 0 2.5px #FF8DBB; outline: none; }
+.modal { border: 0; border-radius: 26px; box-shadow: 0 24px 60px rgba(60,30,70,.3); }
+.overlay { background: rgba(60,40,70,.45); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.hero { border: 0; box-shadow: 0 14px 36px rgba(43,36,51,.25); }
+.bubble { border: 0; box-shadow: 0 4px 14px rgba(107,74,107,.12); }
+.bubble::before { display: none; } .bubble::after { left: -7px; }
+.kicker { color: #A0789A; }
+/* top bar */
+header.top { background: rgba(255,251,246,.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 0; box-shadow: 0 4px 20px rgba(107,74,107,.08); }
+.tools { gap: 8px; flex-wrap: nowrap; }
+.hcur { display: inline-flex; align-items: center; gap: 4px; border: 0; border-radius: 999px; padding: 4px 12px 4px 6px; font-weight: 900; font-size: 1.05rem; min-height: 40px; font-variant-numeric: tabular-nums; }
+.hcur .ci { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; font-size: 1.05rem; }
+.hcur.streak { background: linear-gradient(180deg, #FFF1DA, #FFE0B5); color: #A04E00; box-shadow: inset 0 0 0 1.5px rgba(224,127,0,.18); }
+.hcur.streak .ci { background: #fff; }
+.hcur.coins { background: linear-gradient(180deg, #FFF5D1, #FFE39A); color: #7A4A12; box-shadow: inset 0 2px 0 rgba(255,255,255,.7), 0 3px 0 #E8B84A, 0 6px 14px rgba(232,184,74,.3); cursor: pointer; }
+.hcur.coins .ci { background: radial-gradient(circle at 35% 30%, #fff, #FFEBB0); }
+.hcur.coins .plus { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #58CC02; color: #fff; font-size: .9rem; margin-left: 2px; box-shadow: 0 2px 0 #46A302; }
+.hcur.cap { background: linear-gradient(180deg, #FFE3EE, #FFC4DA); color: #8A2A55; }
+.menubtn { width: 44px; height: 44px; border: 0; border-radius: 14px; background: #fff; box-shadow: 0 3px 0 #EADFEA, 0 6px 14px rgba(107,74,107,.1); display: grid; align-content: center; justify-items: center; gap: 4px; padding: 0; position: relative; }
+.menubtn span { width: 20px; height: 3px; border-radius: 3px; background: var(--plum); }
+.menubtn.warn::after { content: "!"; position: absolute; top: -4px; right: -4px; width: 18px; height: 18px; border-radius: 50%; background: #FF4B4B; color: #fff; font-size: .75rem; font-weight: 900; display: grid; place-items: center; }
+.menugrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.mtile { border: 0; background: #fff; border-radius: 18px; padding: 14px 10px; display: grid; justify-items: center; gap: 2px; text-align: center; box-shadow: 0 0 0 1.5px rgba(107,74,107,.08), 0 3px 0 #EADFEA, 0 6px 14px rgba(107,74,107,.08); }
+.mtile .mi { font-size: 1.8rem; line-height: 1.2; }
+.mtile:active { transform: translateY(2px); }
+/* bottom tab bar: glowing pill behind the active tab */
+.bnav { border-top: 0; background: rgba(255,251,246,.9); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 -6px 24px rgba(107,74,107,.12); }
+.bnav .nav-in { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 1fr; padding: 6px 6px 4px; gap: 4px; }
+.bnav button { border-radius: 18px; padding: 6px 2px 6px; min-height: 58px; transition: background .2s, color .2s; }
+.bnav button[aria-current] { color: #A0336B; background: linear-gradient(180deg, #FFE1EE, #FFC6DD); box-shadow: 0 0 0 1.5px rgba(255,141,187,.35), 0 6px 16px rgba(255,141,187,.45); }
+.bnav button[aria-current]::after { display: none; }
+.bnav button[aria-current] .ni { transform: translateY(-3px) scale(1.18); filter: drop-shadow(0 3px 4px rgba(160,51,107,.3)); }
+/* home room: a full-bleed stage where the pal breaks out of the frame */
+.roomwrap { padding: 0; background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; overflow: visible; gap: 14px; }
+.petroom { height: 330px; border: 0; overflow: visible; border-radius: 28px; box-shadow: 0 14px 36px rgba(107,74,107,.18);
+  background: radial-gradient(circle at 70% 18%, rgba(255,255,255,.9) 0, transparent 38%), radial-gradient(circle, rgba(255,182,206,.35) 1.6px, transparent 2px) 0 0 / 24px 24px, linear-gradient(180deg, #FFEAF2 0%, #FFF4E6 62%, #F6DCC6 62%, #EFCDB2 100%); }
+.petroom .pet { width: 64%; max-width: 290px; bottom: -34px; z-index: 2; filter: drop-shadow(0 10px 14px rgba(107,74,107,.22)); }
+.petroom .rug { bottom: 2px; width: 70%; background: radial-gradient(ellipse, #FFC2D6, #FAD4DC 60%, transparent 72%); opacity: 1; }
+.petroom .pbubble { box-shadow: 0 6px 18px rgba(107,74,107,.16); font-weight: 800; }
+.petroom .rwin { filter: drop-shadow(0 6px 10px rgba(107,74,107,.12)); }
+.roomwrap > .row { margin-top: 30px; }
+.homegrid > .roomwrap + * , .dressgrid > .roomwrap { min-width: 0; }
+.healthtip { border: 0; background: linear-gradient(135deg, #EAFBEF, #F2FFF6); box-shadow: 0 0 0 1.5px rgba(88,204,2,.18); }
+/* panels: readable sub-headings with more air */
+.nextcard h2 { font-size: 1.35rem; } .nextcard .small.muted { font-size: .92rem; font-weight: 700; color: #7E6378; line-height: 1.45; }
+.modeswitch button { border: 0 !important; box-shadow: 0 0 0 1.5px rgba(107,74,107,.1), 0 3px 0 #EADFEA; }
+.modeswitch button[aria-checked="true"] { background: linear-gradient(180deg, #FFE1EE, #FFC6DD) !important; box-shadow: 0 0 0 2px #FF9EC2, 0 3px 0 #E88AB2; }
+.palcard, .fpic, .tm, .subnav, .teaser { border: 0 !important; box-shadow: 0 0 0 1.5px rgba(107,74,107,.08), 0 3px 0 #EADFEA, 0 6px 14px rgba(107,74,107,.08) !important; }
+.subnav button[aria-selected="true"] { background: linear-gradient(180deg, #FFE1EE, #FFC6DD); box-shadow: 0 4px 12px rgba(255,141,187,.35); }
+.palcard.active { box-shadow: 0 0 0 3px #FF9EC2, 0 6px 16px rgba(255,141,187,.35) !important; }
+.mode { border: 0; box-shadow: var(--shadow); }
+.sitem { border: 0 !important; box-shadow: 0 0 0 1.5px rgba(107,74,107,.08), 0 3px 0 #EADFEA !important; }
+.sitem.on { box-shadow: 0 0 0 3px #89C95A, 0 3px 0 #89C95A !important; } .sitem.trying { box-shadow: 0 0 0 3px #FF9EC2, 0 3px 0 #E88AB2 !important; }
+.needmore { font-weight: 900; color: #B4475A; background: #FFE6EC; border-radius: 999px; padding: 6px 12px; }
+.earnguide { background: #FFF8E6; border-radius: 16px; padding: 8px 12px; } .earnguide summary { font-weight: 900; cursor: pointer; } .earnguide ul { margin: 6px 0 0; padding-left: 18px; }
+.hs { border: 0; box-shadow: 0 0 0 3px rgba(255,255,255,.85), 0 6px 16px rgba(0,0,0,.25); }
+.hs .lbl { border: 0; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+/* tablets (iPad) and desktops: use the extra width, keep things centred */
+@media (min-width: 761px) and (max-width: 1100px) { main { max-width: 940px; padding: 18px 22px 40px; } .petroom { height: 360px; } .homegrid { gap: 18px; } }
+@media (min-width: 1101px) { main { max-width: 1120px; } .petroom { height: 380px; } }
+@media (max-width: 760px) { .roomwrap > .row { margin-top: 34px; } }
+@media (max-width: 560px) { .hcur { font-size: .95rem; min-height: 36px; padding: 3px 10px 3px 4px; } .hcur .ci { width: 26px; height: 26px; } .menubtn { width: 40px; height: 40px; } .petroom { height: 280px; } .petroom .pet { width: 66%; bottom: -30px; } .card { padding: 16px; } }
+@media (max-width: 360px) { .hcur.streak .lbl, .hcur.coins .plus { display: none; } }
+.tprog { border: 0 !important; background: #F3E9F0; box-shadow: inset 0 2px 3px rgba(107,74,107,.12); }
+.tbanner { border: 0; background: linear-gradient(160deg, #FFF8D6, #FFE79A); box-shadow: 0 14px 36px rgba(160,110,0,.25); }
 </style>
 </head>
 <body>
@@ -846,13 +975,13 @@ const INK = "#4A3E3D";
 let clipN = 0;
 /* Mochi-style art: one soft squishy blob (head and body in one), thin warm-brown outlines,
    big blush, tiny nub arms and feet, sparkles. All drawn in a 200 × 200 space. */
-const CO = "#5B4B49";
+const CO = "#6B4A6B"; // soft plum line art (instead of dark brown) for a gentler, more polished look
 const CS = `stroke="${CO}" stroke-width="3.5" stroke-linejoin="round"`;
 const BODY = "M100 62 C148 62 170 98 170 130 C170 164 140 178 100 178 C60 178 30 164 30 130 C30 98 52 62 100 62Z";
 const spark4 = (x, y, r, c) => `<path d="M${x} ${y - r} Q${x + r * .22} ${y - r * .22} ${x + r} ${y} Q${x + r * .22} ${y + r * .22} ${x} ${y + r} Q${x - r * .22} ${y + r * .22} ${x - r} ${y} Q${x - r * .22} ${y - r * .22} ${x} ${y - r}Z" fill="${c}"/>`;
 function eyes(m, o = {}) {
   const [x1, x2, y] = [80, 120, o.y || 116], big = o.big ? 1.25 : 1;
-  const dot = x => `<ellipse cx="${x}" cy="${y}" rx="${6 * big}" ry="${7.5 * big}" fill="${CO}"/><circle cx="${x + 2 * big}" cy="${y - 2.8 * big}" r="${2.3 * big}" fill="#fff"/><circle cx="${x - 2 * big}" cy="${y + 3 * big}" r="${1.1 * big}" fill="#fff"/>`;
+  const dot = x => `<ellipse cx="${x}" cy="${y + 3}" rx="${8.8 * big}" ry="${10.6 * big}" fill="url(#eyeG)"/><ellipse cx="${x}" cy="${y + 9.5 * big}" rx="${5.4 * big}" ry="${2.6 * big}" fill="#C7A2E8" opacity=".8"/><circle cx="${x + 3 * big}" cy="${y - 1.6 * big}" r="${3.6 * big}" fill="#fff"/><circle cx="${x - 3.4 * big}" cy="${y + 6 * big}" r="${1.7 * big}" fill="#fff"/><circle cx="${x + 4 * big}" cy="${y + 7 * big}" r="${1 * big}" fill="#fff" opacity=".9"/>`;
   if (m === "happy") return `<path d="M${x1 - 8} ${y + 4} Q${x1} ${y - 8} ${x1 + 8} ${y + 4} M${x2 - 8} ${y + 4} Q${x2} ${y - 8} ${x2 + 8} ${y + 4}" stroke="${CO}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
   if (m === "sparkle") return spark4(x1, y, 11, "#FDD66B") + spark4(x2, y, 11, "#FDD66B") + `<path d="M${x1} ${y - 11} Q${x1 + 2.4} ${y - 2.4} ${x1 + 11} ${y} Q${x1 + 2.4} ${y + 2.4} ${x1} ${y + 11} Q${x1 - 2.4} ${y + 2.4} ${x1 - 11} ${y} Q${x1 - 2.4} ${y - 2.4} ${x1} ${y - 11}Z M${x2} ${y - 11} Q${x2 + 2.4} ${y - 2.4} ${x2 + 11} ${y} Q${x2 + 2.4} ${y + 2.4} ${x2} ${y + 11} Q${x2 - 2.4} ${y + 2.4} ${x2 - 11} ${y} Q${x2 - 2.4} ${y - 2.4} ${x2} ${y - 11}Z" fill="none" stroke="${CO}" stroke-width="2.2" stroke-linejoin="round"/>`;
   if (m === "shock") return `<circle cx="${x1}" cy="${y}" r="9" fill="#fff" stroke="${CO}" stroke-width="3"/><circle cx="${x2}" cy="${y}" r="9" fill="#fff" stroke="${CO}" stroke-width="3"/><circle cx="${x1}" cy="${y}" r="3" fill="${CO}"/><circle cx="${x2}" cy="${y}" r="3" fill="${CO}"/>`;
@@ -880,7 +1009,7 @@ function mouth(m, open, y = 130) {
 const capClip = (d, fill) => { const id = "cc" + (++clipN); return `<clipPath id="${id}"><path d="${BODY}"/></clipPath><path clip-path="url(#${id})" d="${d}" fill="${fill}"/>`; };
 const CHAR = {
   chiikawa: { name: "Mochi", color: "#ffffff",
-    back: () => `<circle cx="62" cy="76" r="15" fill="#fff" ${CS}/><circle cx="138" cy="76" r="15" fill="#fff" ${CS}/><circle cx="62" cy="77" r="6.5" fill="#FFD1DA"/><circle cx="138" cy="77" r="6.5" fill="#FFD1DA"/>`,
+    back: () => `<circle cx="60" cy="75" r="17" fill="#fff" ${CS}/><circle cx="140" cy="75" r="17" fill="#fff" ${CS}/><circle cx="60" cy="77" r="8.5" fill="#FFC2D4"/><circle cx="140" cy="77" r="8.5" fill="#FFC2D4"/><circle cx="57" cy="73" r="3" fill="#fff" opacity=".7"/><circle cx="137" cy="73" r="3" fill="#fff" opacity=".7"/>`,
     face: m => blush(true) + eyes(m) + mouth(m) },
   hachiware: { name: "Ramune", color: "#ffffff", ear: "#9EB9E6",
     back: () => `<path d="M48 104 L56 48 L94 70Z" fill="#9EB9E6" ${CS}/><path d="M152 104 L144 48 L106 70Z" fill="#9EB9E6" ${CS}/><path d="M58 88 L61 62 L80 74Z M142 88 L139 62 L120 74Z" fill="#F7C6D4"/>`,
@@ -918,14 +1047,23 @@ function arms(m, c) {
   if (m === "brave") return a(40, 142, 25) + a(164, 112, 30);
   return a(40, 142, 25) + a(160, 142, -25);
 }
+
+// Soft 2.5D shading: lighter top-left, gentle plum shadow at the bottom, a sheen and a rim light
+const hexMix = (a, b, t) => { const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); const A = p(a), B = p(b); return "#" + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, "0")).join(""); };
+const shadeOf = c => /^#[0-9a-f]{6}$/i.test(c) ? hexMix(c, "#B48FC4", .28) : c;
+const tintOf = c => /^#[0-9a-f]{6}$/i.test(c) ? hexMix(c, "#FFFFFF", .55) : c;
+const EYE_GRAD = `<linearGradient id="eyeG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#3B2440"/><stop offset=".65" stop-color="#5A3A6E"/><stop offset="1" stop-color="#8E6BB8"/></linearGradient>`;
+const bodyShine = sh => { const id = "bs" + (++clipN); return `<clipPath id="${id}"><path d="${BODY}"/></clipPath><g clip-path="url(#${id})"><path d="M30 150 Q100 196 170 150 L170 190 L30 190Z" fill="${sh}" opacity=".35"/><ellipse cx="72" cy="88" rx="24" ry="12" fill="#fff" opacity=".55" transform="rotate(-24 72 88)"/><circle cx="96" cy="76" r="3.2" fill="#fff" opacity=".8"/><path d="M158 112 Q166 134 158 156" stroke="#fff" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/></g>`; };
 function charSvg(who, m = "normal", eq, full = true) {
   const C = CHAR[who], c = C.color, d = who === "chiikawa" ? dressParts(eq) : {};
   const o = d.outfit, armC = (o && o.arm) || c;
   let s = full ? `<ellipse cx="100" cy="184" rx="58" ry="8" fill="rgba(91,75,73,.13)"/>` : "";
   if (d.hair && d.hair.back) s += d.hair.back;
   s += C.back ? C.back() : "";
-  if (full) s += `<ellipse cx="76" cy="176" rx="14" ry="8" fill="${c}" ${CS}/><ellipse cx="124" cy="176" rx="14" ry="8" fill="${c}" ${CS}/>`;
-  s += `<path d="${BODY}" fill="${c}" ${CS}/>`;
+  const gid = "bg" + (++clipN), sh = shadeOf(c);
+  s += `<defs><radialGradient id="${gid}" cx=".36" cy=".3" r=".85"><stop offset="0" stop-color="${tintOf(c)}"/><stop offset=".55" stop-color="${c}"/><stop offset="1" stop-color="${sh}"/></radialGradient>${EYE_GRAD}</defs>`;
+  if (full) s += `<ellipse cx="76" cy="176" rx="14" ry="8" fill="${c}" ${CS}/><ellipse cx="124" cy="176" rx="14" ry="8" fill="${c}" ${CS}/><ellipse cx="72" cy="174" rx="5" ry="2" fill="#fff" opacity=".6"/><ellipse cx="120" cy="174" rx="5" ry="2" fill="#fff" opacity=".6"/>`;
+  s += `<path d="${BODY}" fill="url(#${gid})" ${CS}/>` + bodyShine(sh);
   if (C.front) s += C.front();
   if (o) { const id = "oc" + (++clipN); s += `<clipPath id="${id}"><path d="${BODY}"/></clipPath><g clip-path="url(#${id})">${o.svg}</g><path d="${BODY}" fill="none" ${CS}/>`; }
   s += arms(m, armC);
@@ -939,6 +1077,8 @@ function charSvg(who, m = "normal", eq, full = true) {
   if (d.hand) s += d.hand.svg;
   if (full && who === "rakko") s += `<path d="M170 176 L190 96" stroke="${CO}" stroke-width="9" stroke-linecap="round"/><path d="M170 176 L190 96" stroke="#D3E4FF" stroke-width="4.5" stroke-linecap="round"/><path d="M160 158 h22" stroke="${CO}" stroke-width="6" stroke-linecap="round"/>`;
   if (full && who === "usagi" && m !== "cry") s += `<path d="M14 100 l-10 -8 M18 84 l-6 -12 M186 100 l10 -8" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>`;
+  if (who === "chiikawa" && !d.hat && !d.hair && m !== "sick") s += `<g transform="rotate(-18 128 76)"><path d="M128 66 l3 6.5 l7 .8 l-5.2 4.8 l1.4 7 l-6.2 -3.6 l-6.2 3.6 l1.4 -7 l-5.2 -4.8 l7 -.8Z" fill="#FF8FB8" stroke="${CO}" stroke-width="2" stroke-linejoin="round"/><circle cx="126" cy="72" r="1.6" fill="#fff"/></g>`;
+  if (full && who === "chiikawa") s += `<g class="buddy"><circle cx="178" cy="44" r="9" fill="#FFF6B8" opacity=".55"/>${spark4(178, 44, 7, "#FFD84D")}<circle cx="176" cy="42" r="1.6" fill="#fff"/></g>`;
   if (m === "sparkle" || m === "happy") s += `<g class="twinkle">${spark4(26, 70, 8, "#FFB3C1")}${spark4(176, 60, 7, "#A9D4EE")}</g>`;
   if (m === "sick") s += `<path d="M82 84 v12 M100 80 v14 M118 84 v12" stroke="#8FB8E8" stroke-width="3.5" stroke-linecap="round" opacity=".85"/><ellipse cx="62" cy="132" rx="13" ry="8" fill="#FF8FA3" opacity=".7"/><ellipse cx="138" cy="132" rx="13" ry="8" fill="#FF8FA3" opacity=".7"/>`;
   if (m === "sleepy") s += `<g class="zzz" fill="${CO}" font-family="M PLUS Rounded 1c, sans-serif" font-weight="800"><text x="150" y="72" font-size="20">z</text><text x="166" y="54" font-size="15">z</text><text x="178" y="40" font-size="11">z</text></g>`;
@@ -1391,7 +1531,8 @@ const ICN = (() => {
     circleO: L("M16 4 A12 12 0 1 1 15.99 4", "r", 5),
     asterisk: R(3, 3, 26, 26, 6, "g") + L("M16 8 V24 M9 12 L23 20 M23 12 L9 20", "w", 2.8),
     greencircle: C(16, 16, 12, "g") + H(9, 9, 4, 3, -30),
-    sparkleHeart: heart("k")
+    sparkleHeart: heart("k"),
+    gear: [0, 45, 90, 135, 180, 225, 270, 315].map(a => `<g transform="rotate(${a} 16 16)">${R(13, 1.5, 6, 7, 2, "s")}</g>`).join("") + C(16, 16, 10.5, "s") + fc(16, 16, 4.5, "w") + H(9, 9, 3, 4, 40)
   };
   // faces
   Object.assign(I, {
@@ -1421,7 +1562,7 @@ const EMOJI_ICON = {
   "🦶": "foot", "😮‍💨": "f_exhale", "😵‍💫": "f_dizzy2", "🪥": "toothbrush", "🚶": "footprints", "🌞": "sunface", "🥶": "cold", "🤩": "f_starry", "😊": "f_happy", "🍎": "apple", "🍌": "banana", "🥛": "milk", "🥗": "salad",
   "🥣": "soup", "🥟": "dumpling", "🍢": "oden", "🥧": "pie", "🟢": "greencircle", "👈": "point", "◀": "back", "✋": "hand", "⭕": "circleO", "✳": "asterisk", "🎚": "slider", "🗣": "speakhead", "🐦": "bird", "📱": "phone",
   "🤫": "hush", "🥩": "meat", "⛓": "chain", "🏙": "city", "🥔": "potato", "📠": "fax", "🪞": "mirror", "🧰": "toolbox", "📸": "camera", "🎨": "palette", "🍭": "lolly", "😪": "f_sleepy", "🍗": "drumstick", "🎢": "coaster",
-  "📏": "ruler", "🏷": "tag", "🏝": "island", "🐚": "shell", "🍯": "honey", "🚂": "train", "🎈": "balloon", "🚭": "nosmoke", "👶": "baby", "🍰": "cake", "⛰": "mountain", "🐌": "snail", "🕸": "web", "🔲": "squarebtn", "🧽": "sponge",
+  "📏": "ruler", "🏷": "tag", "🏝": "island", "🐚": "shell", "🍯": "honey", "🚂": "train", "🎈": "balloon", "🚭": "nosmoke", "👶": "baby", "🍰": "cake", "⛰": "mountain", "🐌": "snail", "🕸": "web", "🔲": "squarebtn", "🧽": "sponge", "⚙": "gear",
   "🤩": "f_starry", "🦜": "parrot", "🍙": "onigiri", "🍦": "cake"
 };
 // a few icons are built from others
@@ -4599,8 +4740,8 @@ document.addEventListener("click", e => { const b = e.target.closest && e.target
 
 /* 🔥 Streak bonus: chestnut rewards grow 5% per streak day, up to ×1.5 */
 const streakMult = () => Math.min(1.5, 1 + .05 * Math.max(0, ((S && S.current_streak) || 1) - 1));
-const withStreak = n => Math.round(n * streakMult() * (S && S.ill ? .5 : 1) * perk("coins"));
-const multTag = () => (streakMult() > 1 ? ` · 🔥 ×${streakMult().toFixed(2).replace(/0$/, "")} streak bonus` : "") + (S && S.ill ? ` · 🤒 ×0.5 (${palName()} is sick)` : "") + (S && perk("coins") > 1 ? ` · ✨ ${palName()} +${Math.round((perk("coins") - 1) * 100)}%` : "");
+const withStreak = n => Math.round(n * streakMult() * (S && S.ill ? .8 : 1) * perk("coins"));
+const multTag = () => (streakMult() > 1 ? ` · 🔥 ×${streakMult().toFixed(2).replace(/0$/, "")} streak bonus` : "") + (S && S.ill ? ` · 🤒 ×0.8 (${palName()} is sick)` : "") + (S && perk("coins") > 1 ? ` · ✨ ${palName()} +${Math.round((perk("coins") - 1) * 100)}%` : "");
 
 /* Near-miss check for spelling ("so close!") */
 function lev(a, b) {
@@ -4792,7 +4933,7 @@ function dictEnd() {
   const n = Math.min(DT.i + (DT.done ? 1 : 0), DT.words.length), perfect = n >= 8 && n === DT.words.length && DT.right === n;
   S.stats.dictRounds = (S.stats.dictRounds || 0) + (n ? 1 : 0);
   S.dict.best = Math.max(S.dict.best, DT.right);
-  const coins = Math.round(withStreak(DT.right) * perk("dict")); S.coins += coins;
+  const coins = Math.round(withStreak(DT.right * 2) * perk("dict")); gainCoins(coins);
   if (perfect) { S.stats.dictPerfect += 1; S.coll.pending += 1; }
   save(true); checkTrophies();
   activityDone({ mode: "dict", topic: DT.src === "missed" ? "missed" : "", stage: "Dictation", ans: n, cor: DT.right, wrong: DT.missed.map(x => x.w).join(", ") });
@@ -4945,7 +5086,7 @@ function checkPets() {
 }
 function showPetUnlock() {
   if (!petQueue.length) return;
-  if ($modal.innerHTML || R || RU || document.getElementById("dIn") || document.querySelector(".nb-hero")) { setTimeout(showPetUnlock, 3000); return; }
+  if ($modal.innerHTML || R || RU || document.getElementById("dIn") || document.querySelector(".nb-hero, .dressgrid")) { setTimeout(showPetUnlock, 3000); return; }
   const p = petQueue.shift();
   if ((p.rar === "epic" || p.rar === "legend") && !p.cer && !reduced()) { p.cer = true; petQueue.unshift(p); return giftCeremony(p.rar, showPetUnlock); }
   SFX.fanfare(); confetti(p.rar === "legend" ? 260 : 140);
@@ -5063,7 +5204,7 @@ function openClinic() {
   box.querySelectorAll("[data-med]").forEach(b => b.onclick = () => {
     const m = medById(b.dataset.med), fb = box.querySelector("#clinicFb");
     if (ill.cure.includes(m.id)) {
-      S.ill = null; S.stats.cured += 1; const bonus = 20; S.coins += bonus; save(true); SFX.fanfare(); confetti(120); checkTrophies();
+      S.ill = null; S.stats.cured += 1; const bonus = 20; gainCoins(bonus); save(true); SFX.fanfare(); confetti(120); checkTrophies();
       box.innerHTML = `<span class="kicker">🩺 Dr Koma's clinic</span><h2>🎉 ${esc(palName())} feels better!</h2>
         <div class="petstory"><div class="petpic">${figure("chiikawa", "sparkle")}</div>
           <div><p><b>${esc(ill.name)}</b> is caused by ${esc(ill.agent)} (${TYPE_LABEL[ill.type]}).</p><p>✅ ${esc(ill.why)}</p></div></div>
@@ -5367,7 +5508,7 @@ function adoptPal(id) {
 }
 function showPalUnlock() {
   if (!palQueue.length) return;
-  if ($modal.innerHTML && !$modal.querySelector(".foodgrid") || R || RU) { setTimeout(showPalUnlock, 3000); return; }
+  if ($modal.innerHTML && !$modal.querySelector(".foodgrid") || R || RU || document.querySelector(".dressgrid")) { setTimeout(showPalUnlock, 3000); return; }
   const P = palQueue[0];
   if ((P.rar === "epic" || P.rar === "legend" || P.rar === "myth") && !P._cer && !reduced()) { P._cer = true; closeModal(); return giftCeremony(P.rar, showPalUnlock); }
   palQueue.shift(); delete P._cer; SFX.fanfare(); confetti(P.rar === "myth" || P.rar === "legend" ? 240 : 120);
@@ -6056,12 +6197,12 @@ function startStudy(id) {
     miniQuiz(document.getElementById("stAns"), p, ok => {
       const quick = ok && (Date.now() - shownAt) / 1000 < READ_SECS(p);
       if (quick) ST.guesses++;
-      const pid = `${room.id}:${p.id}`, first = ok && !retry && !hinted && !quick;
+      const pid = `${room.id}:${p.id}`, first = ok && !retry && !hinted && !quick, qc = answerCoins(pid, first);
       if (ok) {
         ST.right++; S.stats.correct += 1; if (first) { ST.firsts++; ST.firstIds.push(p.id); if (!S.mastered_puzzles.includes(pid)) S.mastered_puzzles.push(pid); }
         if (p.type === "spell" || p.gen) S.stats.spellRight += 1; if (p.graph && first) S.stats.graphFirst += 1;
         S.stats.run = first ? S.stats.run + 1 : 0; S.stats.bestRun = Math.max(S.stats.bestRun, S.stats.run);
-        noteRight(room.id, p.id, first); SFX.right(); if (first) confetti(18);
+        noteRight(room.id, p.id, first); SFX.right(); if (first) confetti(18); if (qc) setTimeout(() => gainCoins(qc, "", document.querySelector("#stAns .choice.right, #stAns")), 50);
       } else {
         S.stats.run = 0; noteMistake(room.id, p.id); SFX.wrong(); if (!ST.wrongIds.includes(p.id)) ST.wrongIds.push(p.id);
         if (!retry) { ST.queue.push({ p, retry: true }); ST.retried++; }
@@ -6097,7 +6238,7 @@ function whyCheck(ST) {
     $app.querySelectorAll("[data-w]").forEach(b => b.onclick = () => {
       const ok = b.dataset.w === p.id;
       $app.querySelectorAll("[data-w]").forEach(x => { x.disabled = true; if (x.dataset.w === p.id) x.classList.add("right"); });
-      if (ok) { ST.why.right++; S.coins += 5; SFX.right(); } else { b.classList.add("wrong"); SFX.wrong(); noteMistake(room.id, p.id); }
+      if (ok) { ST.why.right++; gainCoins(5, "", b); SFX.right(); } else { b.classList.add("wrong"); SFX.wrong(); noteMistake(room.id, p.id); }
       save();
       document.getElementById("whyFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("usagi", "Yes! You really understand it! +5 🌰 🐰", "happy") : say("chiikawa", "Uu... the answer was right but the reason was tricky. It's in your 📕 Mistake Notebook now, so we can practise it. 🌱", "cry")}
         <div class="row"><button class="btn big" id="whyNext">${i + 1 < qs.length ? "Next →" : "See results 🎉"}</button></div></div>`;
@@ -6116,11 +6257,11 @@ function finishStudy(ST) {
   S.room_stars[room.id] = Math.max(S.room_stars[room.id] || 0, stars);
   if (!first) S.stats.replays += 1;
   const revise = !first && S.last_revise_day !== today(); if (revise) S.last_revise_day = today();
-  const earned = withStreak(first ? (room.boss ? 25 : 15) : revise ? 20 : 5); S.coins += earned;
+  const earned = withStreak(first ? (room.boss ? 50 : 30) : revise ? 25 : 10); S.coins += earned;
   const caps = first ? (room.boss ? 2 : 1) : Math.random() < .4 ? 1 : 0; S.coll.pending += caps;
   S.stats.studyClears = (S.stats.studyClears || 0) + 1;
   if (new Date().getHours() >= 21) S.stats.night += 1;
-  const gotSick = maybeGetSick(.12);
+  const gotSick = maybeGetSick(.08);
   S.room_run[room.id] = freshRun(); S.room_progress[room.id] = [];
   const ni = nextRoomIndex(); S.current_room = ni === -1 ? room.id : ROOMS[ni].id; const nxt = ni === -1 ? null : ROOMS[ni];
   recomputeMastery(); save(true); SFX.fanfare(); confetti(topicDone ? 240 : 150);
@@ -6144,6 +6285,122 @@ function finishStudy(ST) {
   document.getElementById("sdAgain").onclick = () => { SFX.tap(); startStudy(room.id); };
   document.getElementById("sdHome").onclick = () => { SFX.tap(); homeTab = "home"; renderMap(); };
   window.scrollTo({ top: 0 }); setTimeout(checkTrophies, 1500);
+}
+
+/* ============================================================
+   5j. 🔦 Escape room 2.0: discover → manipulate → escape.
+   1. Discovery: 3 hidden specimens shimmer faintly in the dark room. Sweep the torch and tap them.
+      Each specimen card carries a key term from this stage.
+   2. Process: the ⚙️ Bio-Machine. Wire each specimen (term) to its function (meaning).
+      Every right cable fills the machine's tank; a wrong cable sparks (−10 s in Escape mode).
+   3. Escape: the door needs the 5-digit code from the locks AND power from the Bio-Machine.
+   ============================================================ */
+const SPEC_ICONS = ["🧫", "🦠", "🌿", "🧬", "💧", "🫁", "🍃", "🔬"];
+function specRun() {
+  const run = S.room_run[R.room.id], room = R.room;
+  if (!run.spec || !run.spec.terms) {
+    const ok = room.terms.map((t, i) => [t, i]).filter(([[t, m]]) => m.length <= 80 && t.length <= 26);
+    const terms = shuffle(ok).slice(0, 3).map(x => x[1]);
+    const taken = HOTSPOTS.filter(Boolean).map(h => [h.x, h.y]).concat([[DOOR.x, DOOR.y]]);
+    const cand = shuffle([[10, 20], [22, 32], [30, 70], [48, 40], [52, 76], [62, 18], [68, 44], [70, 88], [86, 22], [18, 92], [44, 14], [58, 60], [26, 58], [80, 72]])
+      .filter(([x, y]) => taken.every(([a, b]) => Math.hypot(a - x, (b - y) * .6) > 11));
+    run.spec = { terms, pos: cand.slice(0, 3), found: [], wired: [], power: false };
+    save();
+  }
+  return run.spec;
+}
+function machineSpot() {
+  const taken = HOTSPOTS.filter(Boolean).map(h => [h.x, h.y]).concat([[DOOR.x, DOOR.y]], specRun().pos);
+  return [[58, 90], [8, 90], [8, 10], [58, 8], [76, 90], [30, 8]].map(p => [p, Math.min(...taken.map(([a, b]) => Math.hypot(a - p[0], (b - p[1]) * .6)))]).sort((a, b) => b[1] - a[1])[0][0];
+}
+function specHtml() {
+  const sp = specRun();
+  return sp.pos.map((p, i) => sp.found.includes(i) ? "" : `<button class="spec" data-spec="${i}" style="left:${p[0]}%;top:${p[1]}%" aria-label="Something is shimmering here"><i></i></button>`).join("")
+    + (() => { const [x, y] = machineSpot(); return `<button class="hs machine ${sp.power ? "on" : ""}" data-machine="1" style="left:${x}%;top:${y}%" aria-label="Bio-Machine">⚙️<span class="lbl">Bio-Machine${sp.power ? " ✓" : ""}</span></button>`; })();
+}
+function goalHtml() {
+  const sp = specRun(), solved = (S.room_progress[R.room.id] || []).length;
+  const chip = (ok, txt) => `<span class="goal ${ok ? "ok" : ""}">${ok ? "✓" : "○"} ${txt}</span>`;
+  return `<div class="goals">${chip(sp.found.length === 3, `🔦 Specimens ${sp.found.length}/3`)}${chip(sp.power, `⚙️ Machine ${sp.power ? "on" : "off"}`)}${chip(solved === 5, `🔓 Locks ${solved}/5`)}${chip(false, "🚪 Escape")}</div>`;
+}
+function wireRoom2() {
+  $app.querySelectorAll("[data-spec]").forEach(b => b.onclick = e => { e.stopPropagation(); findSpecimen(Number(b.dataset.spec), b); });
+  const m = $app.querySelector("[data-machine]"); if (m) m.onclick = () => { SFX.init(); openMachine(); };
+  // solved lock objects glow in the scene
+  (S.room_progress[R.room.id] || []).forEach(i => { const o = $app.querySelector(`#scene .obj[data-hs="${i}"]`); if (o) o.classList.add("opened"); });
+  if (specRun().power) { const d = $app.querySelector("#scene #doorG"); if (d) d.classList.add("powered"); }
+}
+function findSpecimen(i, el) {
+  const sp = specRun(); if (sp.found.includes(i)) return;
+  sp.found.push(i); save(); SFX.item(); confetti(30);
+  const [t] = R.room.terms[sp.terms[i]];
+  gainCoins(2, "", el);
+  openModal(`<span class="kicker">🔦 Specimen found · ${sp.found.length} of 3</span><h2>${SPEC_ICONS[(sp.terms[i] + i) % SPEC_ICONS.length]} ${esc(t)}</h2>
+    <div class="speccard"><span class="small muted">Specimen label</span><b>${esc(t)}</b><span class="small">What does it do? Wire it up in the ⚙️ Bio-Machine to find out!</span></div>
+    ${say("chiikawa", sp.found.length === 3 ? "That's all 3 specimens! Let's power up the ⚙️ Bio-Machine! ⚡" : "A specimen! There are more shimmering in the dark... keep sweeping the torch! 🔦", "sparkle")}
+    <div class="row"><button class="btn primary" id="spOk">${sp.found.length === 3 ? "⚙️ To the Bio-Machine" : "Keep searching"}</button></div>`);
+  document.getElementById("spOk").onclick = () => { SFX.tap(); closeModal(); renderRoom(); if (sp.found.length === 3) openMachine(); };
+}
+function machineSvg(fill, power) {
+  const h = 90 * fill, col = power ? "#58CC02" : fill > 0 ? "#1CB0F6" : "#8C98AC";
+  return `<svg viewBox="0 0 320 150" class="machinesvg" aria-hidden="true"><defs><linearGradient id="mtank" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".75"/><stop offset="1" stop-color="${col}"/></linearGradient></defs>
+    <rect x="10" y="30" width="300" height="110" rx="22" fill="#E9EEF7"/><rect x="10" y="30" width="300" height="110" rx="22" fill="none" stroke="#B8C3D6" stroke-width="4"/>
+    <rect x="128" y="10" width="64" height="124" rx="28" fill="#fff" stroke="#B8C3D6" stroke-width="4"/>
+    <clipPath id="mclip"><rect x="132" y="14" width="56" height="116" rx="24"/></clipPath>
+    <g clip-path="url(#mclip)"><rect class="tankfill" x="132" y="${130 - h - 16}" width="56" height="${h + 20}" fill="url(#mtank)"/>${fill > 0 ? `<circle class="bub" cx="148" cy="118" r="4" fill="#fff" opacity=".7"/><circle class="bub b2" cx="170" cy="122" r="3" fill="#fff" opacity=".7"/>` : ""}</g>
+    <rect x="140" y="20" width="8" height="70" rx="4" fill="#fff" opacity=".6"/>
+    ${[0, 1, 2].map(i => `<circle cx="${40 + i * 30}" cy="60" r="9" fill="${fill * 3 > i ? "#FFC800" : "#C9D2E0"}" ${fill * 3 > i ? 'class="lamp"' : ""}/>`).join("")}
+    <path d="M220 60 h70 M220 80 h50 M220 100 h60" stroke="#C9D2E0" stroke-width="6" stroke-linecap="round"/>
+    <path d="M260 40 l-12 26 h14 l-10 26 l26 -34 h-14 l10 -18z" fill="${power ? "#FFC800" : "#C9D2E0"}" ${power ? 'class="lamp"' : ""}/>
+    <text x="70" y="118" text-anchor="middle" font-size="15" font-weight="900" fill="#5B4B49" font-family="M PLUS Rounded 1c, sans-serif">${power ? "POWER ON" : `${Math.round(fill * 100)}%`}</text></svg>`;
+}
+function openMachine() {
+  const sp = specRun(), room = R.room;
+  if (sp.power) { toast("⚙️ The Bio-Machine is already humming. ⚡"); return; }
+  if (sp.found.length < 3) {
+    SFX.wrong();
+    openModal(`<span class="kicker">⚙️ Bio-Machine</span><h2>Missing specimens</h2>${machineSvg(0, false)}
+      ${say("hachiware", `The machine needs <b>3 specimens</b> to run. You have <b>${sp.found.length}</b>. Sweep your torch over the dark room and look for something <b>shimmering</b>. 🔦`, "normal", "hint")}
+      <div class="row"><button class="btn primary" id="mBack">🔦 Keep searching</button></div>`);
+    document.getElementById("mBack").onclick = () => { SFX.tap(); closeModal(); };
+    return;
+  }
+  const terms = sp.terms.map(i => room.terms[i]);
+  const decoy = shuffle(room.terms.filter((_, i) => !sp.terms.includes(i) && room.terms[i][1].length <= 80)).slice(0, 1);
+  const socks = shuffle(terms.map((x, i) => ({ m: x[1], k: i })).concat(decoy.map(x => ({ m: x[1], k: -1 }))));
+  let sel = null;
+  const draw = () => {
+    const fill = sp.wired.length / 3;
+    const box = openModal(`<span class="kicker">⚙️ Bio-Machine · wire the specimens</span><h2>Connect each specimen to its function</h2>
+      <div class="machinewrap">${machineSvg(fill, false)}</div>
+      ${say("chiikawa", sel == null ? "Tap a <b>specimen plug</b> on the left, then the <b>function socket</b> it belongs to. One socket is a trick! ⚡" : `Now tap the function for <b>${esc(terms[sel][0])}</b>...`, "brave")}
+      <div class="wires"><div class="wcol">${terms.map(([t], i) => `<button class="plug ${sp.wired.includes(i) ? "done" : sel === i ? "sel" : ""}" data-plug="${i}" ${sp.wired.includes(i) ? "disabled" : ""}><span>${SPEC_ICONS[(sp.terms[i] + i) % SPEC_ICONS.length]}</span>${esc(t)}</button>`).join("")}</div>
+        <div class="wcol">${socks.map((s, j) => `<button class="sock ${s.k >= 0 && sp.wired.includes(s.k) ? "done" : ""}" data-sock="${j}" ${s.k >= 0 && sp.wired.includes(s.k) ? "disabled" : ""}>${esc(s.m)}</button>`).join("")}</div></div>
+      <div id="mfb"></div>`, { wide: true });
+    box.querySelectorAll("[data-plug]").forEach(b => b.onclick = () => { SFX.click(); sel = Number(b.dataset.plug); draw(); });
+    box.querySelectorAll("[data-sock]").forEach(b => b.onclick = () => {
+      if (sel == null) { toast("Tap a specimen plug first 👈"); return; }
+      const s = socks[Number(b.dataset.sock)];
+      if (s.k === sel) {
+        sp.wired.push(sel); sel = null; save(); SFX.right(); S.stats.correct += 1;
+        if (sp.wired.length === 3) { sp.power = true; save(); gainCoins(5); return powerUp(); }
+        draw();
+      } else {
+        SFX.wrong(); b.classList.add("spark"); setTimeout(() => b.classList.remove("spark"), 500);
+        if (!R.study) { S.room_timer[room.id] -= 10; updateTimerEl(); }
+        const mf = document.getElementById("mfb"); if (mf) mf.innerHTML = say("hachiware", `Bzzt! ⚡ That's not what <b>${esc(terms[sel][0])}</b> does.${R.study ? "" : " (−10 s)"} Check 📓 the notes if you're unsure.`, "normal", "hint");
+      }
+    });
+  };
+  draw();
+}
+function powerUp() {
+  SFX.fanfare(); confetti(120); yaha("Power on!");
+  openModal(`<span class="kicker">⚙️ Bio-Machine</span><h2>⚡ Power on!</h2><div class="machinewrap powered">${machineSvg(1, true)}</div>
+    ${say("usagi", "WAHOO!!! The machine is humming and the door lamp turned GREEN! 🐰⚡", "happy")}
+    <div class="terms">${specRun().terms.map(i => R.room.terms[i]).map(([t, m]) => `<span class="term"><b>${esc(t)}</b><span class="def">${esc(m)}</span></span>`).join("")}</div>
+    <div class="row"><button class="btn primary" id="pwOk">${(S.room_progress[R.room.id] || []).length === 5 ? "🚪 To the exit door" : "🔓 Back to the locks"}</button></div>`);
+  document.getElementById("pwOk").onclick = () => { SFX.tap(); closeModal(); renderRoom(); };
 }
 
 /* ============================================================
@@ -6332,9 +6589,12 @@ function dressHtml() {
   return `${palsSubnav("dress")}<div class="dressgrid">
     <section class="card roomwrap dresspv">${roomCard(line, "happy", tryEq)}
       <div class="row" style="justify-content:center"><span class="pill coinpill">🌰 ${S.coins}</span>
-        ${ti && !S.owned.includes(ti.id) ? `<button class="btn yellow" data-buy="${ti.id}" ${S.coins < ti.price ? "disabled" : ""}>Buy for 🌰 ${ti.price}</button><button class="btn plain" id="dsBack">Stop trying</button>` : ""}
+        ${ti && !S.owned.includes(ti.id) ? (S.coins >= ti.price ? `<button class="btn primary" data-buy="${ti.id}">Buy for 🌰 ${ti.price}</button>` : `<span class="needmore">Need 🌰 ${ti.price - S.coins} more</span><button class="btn yellow" id="dsEarn">⚡ Earn chestnuts</button>`) + `<button class="btn plain" id="dsBack">Stop trying</button>` : ""}
         <button class="btn plain" id="dsRand">🎲 Random look</button><button class="btn plain" id="dsOff">🧼 Take all off</button></div>
-      <p class="small muted" style="text-align:center;margin:0">Earn 🌰 by escaping stages, Cell Rush, Dictation and trophies.</p></section>
+      <details class="earnguide"><summary>🌰 How do I get chestnuts?</summary><ul class="small">
+        <li><b>+3</b> for every question you get right on the <b>first try</b> (+1 if you'd already mastered it)</li>
+        <li><b>+30</b> for clearing a new stage (<b>+50</b> boss) · <b>+25</b> for your first revision stage each day</li>
+        <li>⚡ Cell Rush (×2 the first round each day) · 🎧 Dictation · 📕 Mistake Notebook · 📅 Daily mission <b>+40</b> · 🏆 every trophy <b>+30</b></li></ul></details></section>
     <section class="card dressshop">
       <div class="slottabs" role="tablist">${EQ_KEYS.map(k => `<button role="tab" aria-selected="${k === slot}" data-slot="${k}"><span aria-hidden="true">${SLOT_ICONS[k]}</span>${SLOT_NAMES[k]}</button>`).join("")}<button role="tab" aria-selected="${slot === "power"}" data-slot="power"><span aria-hidden="true">🎒</span>Power-ups</button></div>
       ${slot === "power" ? `<p class="small muted">Power-ups help in ⏱️ Escape mode. Use them from the 🎒 bar in any lock. Hold up to ${MAX_POWER} of each.</p>
@@ -6363,10 +6623,11 @@ function wireDress() {
   $app.querySelectorAll("[data-item]").forEach(b => b.onclick = () => {
     const w = itemById(b.dataset.item);
     if (S.owned.includes(w.id)) { SFX.item(); S.equip[w.slot] = S.equip[w.slot] === w.id ? null : w.id; dressTry = null; save(true); refreshPlayer(); redraw(); return; }
-    if (dressTry && dressTry.id === w.id) { if (S.coins >= w.price) buy(w.id); else { SFX.wrong(); toast(`You need 🌰 ${w.price - S.coins} more chestnuts. Try ⚡ Cell Rush!`); } return; }
+    if (dressTry && dressTry.id === w.id) { if (S.coins >= w.price) buy(w.id); else { SFX.wrong(); toast(`You need 🌰 ${w.price - S.coins} more. Every first-try right answer gives +3 🌰!`); } return; }
     SFX.tap(); dressTry = { slot: w.slot, id: w.id }; redraw();
   });
   $app.querySelectorAll("[data-buy]").forEach(b => b.onclick = () => buy(b.dataset.buy));
+  const earn = document.getElementById("dsEarn"); if (earn) earn.onclick = () => { SFX.tap(); rushIntro(); };
   const back = document.getElementById("dsBack"); if (back) back.onclick = () => { SFX.tap(); dressTry = null; redraw(); };
   document.getElementById("dsOff").onclick = () => { SFX.tap(); EQ_KEYS.forEach(k => { if (k !== "frame") S.equip[k] = null; }); dressTry = null; save(); refreshPlayer(); redraw(); };
   document.getElementById("dsRand").onclick = () => {
@@ -6572,11 +6833,31 @@ function missionProgress(ev) {
   if (!add) return;
   m.prog = Math.min(m.n, m.prog + add);
   if (m.prog >= m.n) {
-    m.done = true; S.coins += 40; S.coll.pending += 1; S.stats.missions = (S.stats.missions || 0) + 1;
-    setTimeout(() => { SFX.fanfare(); confetti(120); toast(`📅 Daily mission complete: ${missionText(m).title}! +40 🌰 and a capsule 🎁`); renderTools(); }, 1600);
+    m.done = true; S.coll.pending += 1; setTimeout(() => gainCoins(40), 1600); S.stats.missions = (S.stats.missions || 0) + 1;
+    setTimeout(() => { SFX.fanfare(); confetti(120); toast(`📅 Daily mission complete: ${missionText(m).title}! +40 🌰 and a capsule 🎁`); }, 1600);
   }
   save();
 }
+
+/* ----- 🌰 Chestnuts: one helper for every reward, so the top-bar counter always updates and a "+N" pops up ----- */
+function gainCoins(n, why, at) {
+  if (!S || !n) return 0;
+  S.coins = Math.max(0, (S.coins || 0) + n); if (n > 0) S.stats.earned = (S.stats.earned || 0) + n;
+  save(); renderTools(); coinPop(n, at); if (why) toast(`${n > 0 ? "+" : ""}${n} 🌰 ${why}`);
+  return n;
+}
+function coinPop(n, at) {
+  if (reduced()) return;
+  const tc = document.getElementById("tCoins"), src = at && at.getBoundingClientRect ? at.getBoundingClientRect() : null, dst = tc ? tc.getBoundingClientRect() : null;
+  const d = document.createElement("div"); d.className = "cpop" + (n < 0 ? " neg" : ""); d.textContent = `${n > 0 ? "+" : ""}${n} 🌰`;
+  const x = src ? src.left + src.width / 2 : dst ? dst.left + dst.width / 2 : innerWidth / 2, y = src ? src.top : dst ? dst.bottom + 10 : 80;
+  d.style.left = x + "px"; d.style.top = y + "px"; document.body.appendChild(d);
+  if (dst && src && n > 0) requestAnimationFrame(() => { d.style.transform = `translate(${dst.left + dst.width / 2 - x}px, ${dst.top - y}px) scale(.6)`; d.style.opacity = ".2"; });
+  setTimeout(() => d.remove(), 1100);
+  if (tc) { tc.classList.remove("bump"); void tc.offsetWidth; tc.classList.add("bump"); }
+}
+// A right answer on the first try pays 3 🌰 for a question you've never mastered, 1 🌰 for one you already know
+const answerCoins = (pid, firstTry) => !firstTry ? 0 : Math.round((S.mastered_puzzles.includes(pid) ? 1 : 3) * (S.ill ? .8 : 1) * perk("coins"));
 
 /* ----- One hook for every finished activity: streak, mission and class records ----- */
 function activityDone(ev) {
@@ -7066,7 +7347,7 @@ function checkIn() {
   streakNote = streakCheck() || (!S.last_login_date ? "🌱 Finish one activity today to start your study streak!" : "");
   S.longest_streak = Math.max(S.longest_streak || 0, S.current_streak);
   S.last_login_date = t;
-  if (S.stats.days > 1 && maybeGetSick(.3)) streakNote = (streakNote ? streakNote + " " : "") + `🤒 Uh-oh... ${palName()} woke up feeling sick. Visit Dr Koma!`;
+  if (S.stats.days > 1 && maybeGetSick(.15)) streakNote = (streakNote ? streakNote + " " : "") + `🤒 Uh-oh... ${palName()} woke up feeling sick. Visit Dr Koma!`;
   save();
   checkTrophies();
 }
@@ -7341,7 +7622,7 @@ function checkTrophies() {
   TROPHIES.forEach(t => {
     if (S.trophies[t.id]) return;
     const [cur, goal] = t.prog();
-    if (cur >= goal) { S.trophies[t.id] = today(); S.coins = (S.coins || 0) + 30; S.coll.pending += 1; trophyQueue.push(t); }
+    if (cur >= goal) { S.trophies[t.id] = today(); setTimeout(() => gainCoins(30), 600); S.coll.pending += 1; trophyQueue.push(t); }
   });
   if (trophyQueue.length) { save(); renderTools(); showTrophyBanner(); }
   checkPets(); checkPals();
@@ -7582,7 +7863,7 @@ function rushEnd() {
   if (r.total > 0) { S.rush.lastDay = today(); S.stats.rushRounds += 1; }
   const best = r.score > S.rush.best; S.rush.best = Math.max(S.rush.best, r.score);
   const rcap = r.score >= 120 ? 1 : 0; S.coll.pending += rcap;
-  S.coins += coins; save(true); checkTrophies();
+  gainCoins(coins); checkTrophies();
   activityDone({ mode: "rush", ans: r.total, cor: r.correct, score: r.score, secs: RUSH_SECONDS, start: r.start });
   SFX.fanfare(); if (r.score > 0) confetti(120);
   openModal(`<span class="kicker">⚡ ${"Cell Rush · Round over"}</span><h2>${best ? "🎉 New best score!" : "Time's up!"}</h2>
@@ -7607,34 +7888,30 @@ const topicNo = n => `Topic ${n}`;
    ============================================================ */
 document.getElementById("brandav").innerHTML = playerAv("happy");
 function renderTools() {
-  const justSaved = Date.now() - savedFlash < 2500;
-  document.getElementById("tools").innerHTML = `
-    ${S ? `<span class="pill" title="Daily streak · chestnut bonus ×${streakMult().toFixed(2)}">🔥 ${S.current_streak}${streakMult() > 1 ? `<span class="lbl"> ×${streakMult().toFixed(2).replace(/0$/, "")}</span>` : ""}</span>` : ""}
-    ${S ? `<span class="pill savepill ${justSaved ? "saved" : ""}" title="${signedIn() ? "Your progress saves on this device and syncs to your class" : "Your progress saves automatically on this device"}">${justSaved ? `✓<span class="lbl"> ${"Saved"}</span>` : `💾<span class="lbl"> ${"Auto-save"}</span>`}</span>` : ""}
-    ${S ? `<button class="iconbtn coinpill" id="tCoins" aria-label="${"Chestnuts"}: ${S.coins}">🌰 ${S.coins}</button>` : ""}
-    ${S ? `<button class="iconbtn" id="tTrophy" aria-label="${"Open the Trophy Cabinet"}">🏆<span class="lbl">${"Trophies"}</span></button>` : ""}
-    ${S && S.coll.pending ? `<button class="iconbtn capbtn" id="tCap" aria-label="Open ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""}">🎁<span class="lbl"> ${S.coll.pending}</span></button>` : ""}
-    ${S ? `<button class="iconbtn acctbtn ${AUTH.stale ? "warn" : ""}" id="tAcc" aria-label="Account: ${esc(signedIn() ? userName() : "Guest mode")}">${AUTH.stale ? "⚠️" : signedIn() ? "🎓" : "👤"}<span class="lbl"> ${esc(signedIn() ? userName().split(" ")[0] : "Guest")}</span></button>` : ""}
-    <button class="iconbtn" id="tJournal" aria-label="${"Open the Study Journal"}">📓<span class="lbl">${"Journal"}</span></button>
-    ${S ? `<button class="iconbtn" id="tSave" aria-label="${"Save and share code"}">🔑<span class="lbl">${"Save code"}</span></button>` : ""}
-    <button class="iconbtn" id="tMus" aria-label="${MUSIC.on ? "Turn music off" : "Turn music on"}" title="Background music: ${esc((SONGS[MUSIC.mode] || SONGS.map).title)}" aria-pressed="${MUSIC.on}" style="${MUSIC.on ? "" : "opacity:.5;text-decoration:line-through"}">🎵<span class="lbl">${MUSIC.on ? "Music on" : "Music off"}</span></button>
-    <button class="iconbtn" id="tSnd" aria-label="${SFX.on ? "Turn sound effects off" : "Turn sound effects on"}" title="${"Sound effects"}">${SFX.on ? "🔊" : "🔇"}</button>`;
-  const ta = document.getElementById("tAcc"); if (ta) ta.onclick = () => { SFX.init(); SFX.tap(); openAccount(); };
-  document.getElementById("tJournal").onclick = () => { SFX.init(); SFX.tap(); openJournal(); };
-  const tc = document.getElementById("tCoins"); if (tc) tc.onclick = () => { SFX.init(); SFX.tap(); openShop(); };
-  const tcap = document.getElementById("tCap"); if (tcap) tcap.onclick = () => { SFX.init(); SFX.tap(); openCapsule(); };
-  const tt = document.getElementById("tTrophy"); if (tt) tt.onclick = () => { SFX.init(); SFX.tap(); openCabinet(); };
-  const ts = document.getElementById("tSave"); if (ts) ts.onclick = () => { SFX.init(); SFX.tap(); openSaveModal(); };
-  document.getElementById("tMus").onclick = () => {
-    MUSIC.on = !MUSIC.on; try { localStorage.setItem(MUSIC_KEY, MUSIC.on ? "on" : "off"); } catch (e) {}
-    MUSIC.on ? MUSIC.start() : MUSIC.stop(); renderTools();
-  };
-  document.getElementById("tSnd").onclick = () => {
-    SFX.on = !SFX.on; try { localStorage.setItem(SOUND_KEY, SFX.on ? "on" : "off"); } catch (e) {}
-    if (SFX.on) { SFX.init(); SFX.tap(); } renderTools();
-  };
-  clearTimeout(renderTools._t);
-  if (justSaved) renderTools._t = setTimeout(renderTools, 2600);
+  // Decluttered top bar: the two game currencies (streak, chestnuts) stay big; everything else lives in the ☰ menu
+  const el = document.getElementById("tools"); if (!el) return;
+  el.innerHTML = S ? `
+    <span class="hcur streak" title="Daily streak · chestnut bonus ×${streakMult().toFixed(2)}"><span class="ci">🔥</span><b>${S.current_streak}</b>${streakMult() > 1 ? `<span class="lbl"> ×${streakMult().toFixed(2).replace(/0$/, "")}</span>` : ""}</span>
+    <button class="hcur coins" id="tCoins" aria-label="Chestnuts: ${S.coins}. Open the shop"><span class="ci">🌰</span><b>${S.coins}</b><span class="plus" aria-hidden="true">+</span></button>
+    ${S.coll.pending ? `<button class="hcur cap capbtn" id="tCap" aria-label="Open ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""}"><span class="ci">🎁</span><b>${S.coll.pending}</b></button>` : ""}
+    <button class="menubtn ${typeof AUTH !== "undefined" && AUTH.stale ? "warn" : ""}" id="tMenu" aria-label="Menu"><span></span><span></span><span></span></button>` : "";
+  const g = id => document.getElementById(id);
+  if (g("tCoins")) g("tCoins").onclick = () => { SFX.init(); SFX.tap(); openShop(); };
+  if (g("tCap")) g("tCap").onclick = () => { SFX.init(); SFX.tap(); openCapsule(); };
+  if (g("tMenu")) g("tMenu").onclick = () => { SFX.init(); SFX.tap(); openMenu(); };
+}
+function openMenu() {
+  const acc = signedIn() ? userName().split(" ")[0] : "Guest";
+  const tiles = [["mTro", "🏆", "Trophies", `${Object.keys(S.trophies).length} / ${TROPHIES.length}`], ["mAcc", signedIn() ? "🎓" : "👤", "Account", acc + (AUTH.stale ? " · sign in again" : "")],
+    ["mJou", "📓", "Journal", "Textbook notes"], ["mSave", "🔑", "Save code", "Move to another device"], ["mLb", "🏆", "Leaderboard", signedIn() ? "Your class" : "Signed-in only"],
+    ["mMus", "🎵", "Music", MUSIC.on ? "On" : "Off"], ["mSnd", SFX.on ? "🔊" : "🔇", "Sound effects", SFX.on ? "On" : "Off"], ["mHome", "🏠", "Home", "Back to Mochi's room"]];
+  const box = openModal(`<span class="kicker">☰ Menu</span><h2>${esc(S.player_name)}'s settings</h2>
+    <div class="menugrid">${tiles.map(([id, ic, t, sub]) => `<button class="mtile" id="${id}"><span class="mi">${ic}</span><b>${t}</b><span class="small muted">${esc(sub)}</span></button>`).join("")}</div>`);
+  const on = (id, f) => { box.querySelector("#" + id).onclick = () => { SFX.tap(); f(); }; };
+  on("mTro", () => { closeModal(); openCabinet(); }); on("mAcc", () => { closeModal(); openAccount(); }); on("mJou", () => { closeModal(); openJournal(); });
+  on("mSave", () => { closeModal(); openSaveModal(); }); on("mLb", () => { closeModal(); openLeaderboard(); }); on("mHome", () => { closeModal(); homeTab = "home"; renderMap(); });
+  on("mMus", () => { MUSIC.on = !MUSIC.on; try { localStorage.setItem(MUSIC_KEY, MUSIC.on ? "on" : "off"); } catch (e) {} MUSIC.on ? MUSIC.start() : MUSIC.stop(); openMenu(); });
+  on("mSnd", () => { SFX.on = !SFX.on; try { localStorage.setItem(SOUND_KEY, SFX.on ? "on" : "off"); } catch (e) {} if (SFX.on) SFX.init(); openMenu(); });
 }
 
 /* ============================================================
@@ -7880,7 +8157,7 @@ function startRevision(ti) {
   const RV = { keys, at: 0, right: 0, cleared: 0, done: 0, start: new Date().toISOString() };
   const next = () => {
     if (RV.at >= RV.keys.length) {
-      const coins = Math.round((RV.cleared * 2 + RV.right) * perk("notebook")); S.coins += coins; save(true); SFX.fanfare(); if (RV.right) confetti(100);
+      const coins = Math.round((RV.cleared * 2 + RV.right) * perk("notebook")); gainCoins(coins); SFX.fanfare(); if (RV.right) confetti(100);
       activityDone({ mode: "notebook", topic: ti == null ? "all" : String(TOPICS[ti].no), stage: "Mistake Notebook", ans: RV.done || 0, cor: RV.right, done: (RV.done || 0) > 0, start: RV.start });
       $app.innerHTML = `<section class="card"><span class="kicker">📕 Revision done</span><h2>${RV.right === RV.keys.length ? "Perfect revision! 🎉" : "Revision complete! 🌱"}</h2>
         <div class="cast" style="margin:0">${["chiikawa", "hachiware", "usagi"].map(w => `<div class="fig" style="width:84px">${figure(w, RV.right ? (w === "chiikawa" ? "sparkle" : "happy") : "normal")}</div>`).join("")}</div>
@@ -8062,7 +8339,7 @@ function playIntro() {
     if (R !== me) return;
     const [w, m, t] = lines[k++];
     setLine(w, t, m);
-    me.introT = setTimeout(k < lines.length ? step : () => R === me && (R.study ? setLine("hachiware", "📖 <b>Study mode:</b> no timer, no penalties, no spooky surprises. Take your time, and tap 📓 for the textbook notes whenever you like. Tap a glowing <b>?</b> to start! 🌱") : setLine("hachiware", "Tap a glowing <b>?</b> to start. ⚠️ Careful: a wrong answer costs <b>10 seconds</b> and shuffles the lock. Guessing makes the lock <b>slip back a notch</b> (one bonus question to climb back), jams it for a few seconds, costs 🌰 chestnuts and can make the lights go dim. Think first! And watch out for strange happenings in the dark... 👀 (Stuck? Tap 📓 for the textbook notes.)")), k < lines.length ? 2600 : 3200);
+    me.introT = setTimeout(k < lines.length ? step : () => R === me && (R.study ? setLine("hachiware", "📖 <b>Study mode:</b> no timer, no penalties, no spooky surprises. Take your time, and tap 📓 for the textbook notes whenever you like. Tap a glowing <b>?</b> to start! 🌱") : setLine("hachiware", "<b>Your mission:</b> 🔦 find 3 shimmering specimens in the dark, wire them into the ⚙️ Bio-Machine, open the 5 <b>?</b> locks, then escape through the 🚪! ⚠️ Careful: a wrong answer costs <b>10 seconds</b> and shuffles the lock. Guessing makes the lock <b>slip back a notch</b> (one bonus question to climb back), jams it for a few seconds, costs 🌰 chestnuts and can make the lights go dim. Think first! And watch out for strange happenings in the dark... 👀 (Stuck? Tap 📓 for the textbook notes.)")), k < lines.length ? 2600 : 3200);
   };
   step();
 }
@@ -8111,6 +8388,7 @@ function renderRoom() {
         <span class="strikes" id="strikes" ${R.study ? "hidden" : ""} title="${"Guess strikes: 3 strikes = −1 star, 6 strikes = −2 stars"}">⚠️ ${"Strikes"} ${S.room_run[room.id].strikes}</span>
       </div>
     </section>
+    ${goalHtml()}
     <div id="line"></div>
     <section class="scene-wrap">
       <div class="scene ${R.blackUntil > Date.now() ? "blackout" : ""}" id="scene" style="--dim:${R.blackUntil > Date.now() ? .94 : room.dim}">
@@ -8122,6 +8400,7 @@ function renderRoom() {
           return `<button class="hs ${done ? "done" : ""}" data-hs="${i}" style="left:${h.x}%;top:${h.y}%" aria-label="${esc(nm)}${done ? " (solved)" : stepOf(i) ? ` (${stepOf(i)} of ${LOCK_Q} questions done)` : ""}">${done ? "✓" : stepOf(i) ? `<small>${stepOf(i)}/${LOCK_Q}</small>` : "?"}<span class="lbl">${esc(nm)}</span></button>`;
         }).join("")}
         ${R.stolen !== null ? `<button class="hs wolv" data-wolf="1" style="left:${R.wolfX}%;top:${R.wolfY}%" aria-label="${"Catch the wolverine"}">🐾<span class="lbl">${"Wolverine!"}</span></button>` : ""}
+        ${specHtml()}
         <button class="hs door" data-hs="door" style="left:${DOOR.x}%;top:${DOOR.y}%" aria-label="${"Exit door"}">🚪<span class="lbl">${"Exit door"}</span></button>
       </div>
     </section>
@@ -8135,10 +8414,11 @@ function renderRoom() {
   scene.addEventListener("pointermove", move); scene.addEventListener("pointerdown", move);
   $app.querySelectorAll("[data-hs]").forEach(el => el.addEventListener("click", () => { SFX.init(); el.dataset.hs === "door" ? openDoor() : openPuzzle(Number(el.dataset.hs)); }));
   const wolf = $app.querySelector("[data-wolf]"); if (wolf) wolf.onclick = () => { SFX.init(); chaseWolverine(); };
+  wireRoom2();
   wireSlots();
   document.getElementById("toMap").onclick = () => { SFX.tap(); save(); renderMap(); };
   document.getElementById("openJ").onclick = () => { SFX.tap(); openJournal(room.id); };
-  setLine("hachiware", "Tap a glowing <b>?</b> to find a puzzle.");
+  setLine("hachiware", "Tap a glowing <b>?</b> to find a puzzle, or sweep the torch for shimmering specimens 🔦.");
 }
 function wireSlots() { $app.querySelectorAll(".slot.full").forEach(el => el.onclick = () => { SFX.tap(); toast(el.dataset.info); }); }
 function itemName(i) { return i === 2 ? R.room.specialName + " charm" : HOTSPOTS[i].itemName; }
@@ -8410,6 +8690,7 @@ function slipLock(i) {
 function solve() {
   const { room } = R, i = R.cur, step = stepOf(i), p = curQ(i), k = akey(i);
   const firstTry = !R.att[k] && !R.hinted[k], pid = `${room.id}:${p.id}`, run = S.room_run[room.id];
+  const qc = answerCoins(pid, firstTry);
   if (firstTry && !S.mastered_puzzles.includes(pid)) S.mastered_puzzles.push(pid);
   if (firstTry && !run.firsts.includes(k)) run.firsts.push(k);
   noteRight(room.id, p.id, firstTry);
@@ -8420,7 +8701,7 @@ function solve() {
   const last = step >= LOCK_Q - 1;
   if (last) { const solved = S.room_progress[room.id] || []; if (!solved.includes(i)) solved.push(i); S.room_progress[room.id] = solved; }
   else run.steps[i] = step + 1;
-  recomputeMastery(); save(true);
+  recomputeMastery(); save(true); if (qc) gainCoins(qc, "", document.querySelector(".modal .choice.right, #mbox h2"));
   SFX.right(); if (last) setTimeout(() => yaha(), 150); setMood(firstTry ? "sparkle" : "happy", 4000);
   const [cw, cm, ct] = S.stats.run >= 3 ? ["momonga", "sparkle", `${S.stats.run} first-try answers in a row?! You're almost as amazing as me! 💜`] : firstTry ? pick(REACT.right) : ["chiikawa", "happy", "Phew... we got it! 🥹"];
   const kt = termsIn(room, p).map(t => room.terms.find(x => x[0] === t));
@@ -8429,7 +8710,7 @@ function solve() {
   document.getElementById("hint").hidden = true;
   const lp = document.querySelector(".lockprog"); if (lp) lp.querySelectorAll("i")[step].className = "on";
   document.getElementById("pfb").innerHTML = `<div class="fb ok">
-    ${say(cw, `${esc(ct)} <b>${firstTry ? "First try! Mastery up 📈" : "Correct! ✔️"}</b>`, cm)}
+    ${say(cw, `${esc(ct)} <b>${firstTry ? `First try! Mastery up 📈 +${qc} 🌰` : "Correct! ✔️ (first-try answers earn 🌰)"}</b>`, cm)}
     <p>${esc(p.explain)}</p>
     ${p.tip ? `<p class="tip"><b>📝 Top tip:</b> ${esc(p.tip)}</p>` : ""}
     ${kt.length ? `<div class="terms">${kt.map(([t, m]) => `<span class="term"><b>${esc(t)}</b><span class="def">${esc(m)}</span></span>`).join("")}</div>` : ""}
@@ -8450,7 +8731,7 @@ function collect(i) {
   document.getElementById("inv").innerHTML = invHtml(i); wireSlots();
   const n = (S.room_progress[R.room.id] || []).length;
   if (n < 5 && R.incidents < 3 && Math.random() < (R.replay ? 0.55 : 0.4)) { const me = R; setTimeout(() => tryIncident(me), 1500); }
-  if (n === 5) setLine("hachiware", "All 5 code digits found! Tap the 🚪 <b>exit door</b> and enter the code!");
+  if (n === 5) setLine("hachiware", specRun().power ? "All 5 code digits found and the power is on! Tap the 🚪 <b>exit door</b>!" : "All 5 code digits found! But the door has no power yet: find the 🔦 specimens and fix the ⚙️ Bio-Machine.");
   else setLine("chiikawa", `Ya...! ${5 - n} more lock${5 - n === 1 ? "" : "s"} to go! 🔍`, "happy");
 }
 
@@ -8460,6 +8741,7 @@ function openDoor() {
   const solved = S.room_progress[room.id] || [];
   if (R.stolen !== null) { SFX.wrong(); setMood("cry", 2000); setLine("chiikawa", `The wolverine still has item #${R.stolen + 1}! Tap the 🐾 to catch it first.`, "cry"); return; }
   if (solved.length < 5) { SFX.wrong(); setMood("cry", 2000); setLine("chiikawa", `The door needs a 5-digit code... We have ${solved.length}/5 digits. Let's open more locks! 🔍`, "cry"); return; }
+  if (!specRun().power) { SFX.wrong(); setMood("shock", 2000); setLine("chiikawa", `The keypad is dark... the door has <b>no power</b>! 😱 Find the 3 shimmering specimens 🔦 (${specRun().found.length}/3) and fix the ⚙️ Bio-Machine.`, "shock"); return; }
   SFX.click();
   const box = openModal(`
     <span class="kicker">${"Exit door · Keypad"}</span>
@@ -8496,10 +8778,10 @@ function escapeRoom() {
   S.room_stars[room.id] = Math.max(S.room_stars[room.id] || 0, stars);
   if (!first) S.stats.replays += 1;
   const revise = !first && S.last_revise_day !== today(); if (revise) S.last_revise_day = today();
-  const earned = withStreak(first ? (room.boss ? 25 : 15) : revise ? 20 : 5); S.coins = (S.coins || 0) + earned; R.done = true; clearTimeout(R.incT);
+  const earned = withStreak(first ? (room.boss ? 50 : 30) : revise ? 25 : 10); S.coins = (S.coins || 0) + earned; R.done = true; clearTimeout(R.incT);
   if (!R.study && tLeft >= 0 && run.strikes === 0) S.stats.cleanEscapes += 1;
   if (!R.study) { S.stats.escClears += 1; if (room.boss) S.stats.escBosses += 1; if (!run.hints) S.stats.escNoHint += 1; }
-  const gotSick = maybeGetSick(.12);
+  const gotSick = maybeGetSick(.08);
   if (!run.hints) S.stats.noHintEscapes += 1;
   if (new Date().getHours() >= 21) S.stats.night += 1;
   const caps = first ? (room.boss ? 2 : 1) : Math.random() < .4 ? 1 : 0; S.coll.pending += caps;
