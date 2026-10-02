@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#2b2433">
-<title>Mochi Bio Escape</title>
+<title>Biology Study Pals</title>
 <meta name="description" content="A cute kawaii-style biology escape-room adventure for Secondary 4–6.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -755,6 +755,69 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .petreveal.legend .aura { background: conic-gradient(rgba(255,210,60,.0), rgba(255,210,60,.7), rgba(255,210,60,0), rgba(255,240,170,.7), rgba(255,210,60,0)); filter: blur(10px); }
 .petreveal.epic .aura { background: conic-gradient(#FFB7C5, #FDFFB6, #B9F3C9, #A0C4FF, #C9A0FF, #FFB7C5); filter: blur(14px); opacity: .7; }
 @media (prefers-reduced-motion: reduce) { .riskcard.urgent, .lgsky span, .lgsky .orb, .island, .island .ifig, .spop, .almost, .petreveal .aura, .acctbtn.warn { animation: none !important; } }
+
+/* ================= 🎨 Icons (replace emoji) ================= */
+.icw { display: inline-flex; vertical-align: -0.2em; line-height: 1; }
+.ic { width: 1.2em; height: 1.28em; overflow: visible; flex: 0 0 auto; }
+.btn .icw, .iconbtn .icw, .pill .icw { vertical-align: -0.24em; }
+
+/* ================= 🐾 Study Pals ================= */
+.subnav { display: flex; gap: 6px; background: #fff; border: var(--line); border-radius: 999px; padding: 4px; box-shadow: 0 3px 0 var(--ink); }
+.subnav button { flex: 1 1 0; border: 0; background: transparent; border-radius: 999px; font-weight: 800; font-size: .88rem; padding: 6px 8px; min-height: 40px; display: flex; gap: 6px; align-items: center; justify-content: center; white-space: nowrap; }
+.subnav button[aria-selected="true"] { background: var(--pink); box-shadow: inset 0 -3px 0 rgba(74,62,61,.15); }
+.palpanel { background: linear-gradient(160deg, #FFF8EC, #FFFFFF 60%); }
+.palpanel.legend { background: linear-gradient(160deg, #FFF3C4, #FFFFFF 60%); } .palpanel.myth { background: linear-gradient(160deg, #FFE3F4, #E9F4FF 60%); }
+.palhero { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; align-items: center; }
+.palbig svg:not(.ic) { width: 100%; height: auto; overflow: visible; }
+.pill.perk { white-space: normal; line-height: 1.3; }
+.palinfo { display: grid; gap: 6px; min-width: 0; }
+.moodchip { background: var(--cream-2); border: 2px solid var(--ink); border-radius: 999px; padding: 0 8px; font-weight: 800; white-space: nowrap; }
+.meter { display: grid; grid-template-columns: 76px minmax(0, 1fr) 34px; gap: 6px; align-items: center; font-size: .8rem; font-weight: 800; }
+.meter b { text-align: right; font-variant-numeric: tabular-nums; }
+.meter.en .tprog i { background: linear-gradient(180deg, #FFE066, #FFC800 55%, #E0A800); }
+.meter.hp .tprog i { background: linear-gradient(180deg, #FF9C9C, #FF4B4B 55%, #D93636); }
+.meter.xp .tprog i { background: linear-gradient(180deg, #A6F06A, #58CC02 55%, #46A302); }
+.rchip2 { display: inline-block; border: 2px solid; border-radius: 999px; padding: 0 8px; font-weight: 800; font-size: .78rem; }
+.btn.sm { min-height: 36px; padding: 4px 10px; font-size: .82rem; }
+.collhead { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tprog.rainbow i { background: linear-gradient(90deg, #FF4B4B, #FF9600, #FFC800, #58CC02, #1CB0F6, #CE82FF); }
+.palstrip { display: flex; flex-wrap: wrap; gap: 0; }
+.palstrip span { width: 34px; height: 34px; display: inline-block; } .palstrip svg:not(.ic) { width: 100%; height: 100%; overflow: visible; }
+.sil svg { filter: brightness(0) opacity(.28); }
+.palgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.palcard { position: relative; display: grid; justify-items: center; gap: 3px; text-align: center; background: #fff; border: var(--line); border-radius: 16px; padding: 8px 6px 10px; box-shadow: 0 3px 0 var(--ink); min-width: 0; }
+.palcard .ppic { position: relative; width: 92px; height: 86px; } .palcard .ppic svg:not(.ic) { width: 100%; height: 100%; overflow: visible; }
+.palcard .plock { position: absolute; right: 0; bottom: 4px; font-size: 1.2rem; }
+.palcard .tprog { width: 100%; height: 10px; }
+.palcard.active { box-shadow: 0 0 0 3px var(--pink), 0 3px 0 var(--ink); }
+.palcard.legend { background: linear-gradient(170deg, #FFF3C4, #fff 55%); } .palcard.legend.locked .sil svg { filter: brightness(0) drop-shadow(0 0 6px #FFC800) opacity(.45); }
+.palcard.myth { background: linear-gradient(170deg, #FFE3F4, #E6F3FF 55%); } .palcard.myth.locked .sil svg { filter: brightness(0) drop-shadow(0 0 6px #FF86D0) opacity(.45); }
+.palcard.epic { background: linear-gradient(170deg, #F3E6FF, #fff 55%); }
+.pinfo { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--ink); background: #fff; font-weight: 900; font-size: .75rem; padding: 0; }
+.pring { animation: spin 14s linear infinite; transform-origin: 100px 118px; transform-box: view-box; }
+/* food */
+.foodgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+.food { position: relative; }
+.fpic { width: 100%; display: grid; justify-items: center; gap: 2px; background: #fff; border: var(--line); border-radius: 14px; padding: 8px 4px; box-shadow: 0 3px 0 var(--ink); text-align: center; }
+.fpic:disabled { opacity: .5; } .fpic .fe { font-size: 2rem; line-height: 1.1; }
+.fnut { position: absolute; top: 4px; right: 4px; border: 2px solid var(--ink); background: var(--cream); border-radius: 50%; width: 30px; height: 30px; padding: 0; }
+.rdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; }
+.ntab { width: 100%; border-collapse: collapse; font-size: .9rem; } .ntab td { padding: 4px 6px; border-top: 2px dashed #E5DCC9; } .ntab td:last-child { width: 40%; }
+.nbar { height: 10px; border-radius: 999px; background: #F1ECE3; overflow: hidden; } .nbar i { display: block; height: 100%; border-radius: 999px; }
+/* term match */
+.tmatch { display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; } .tcol { display: grid; gap: 8px; align-content: start; }
+.tm { border: var(--line); border-radius: 12px; background: #fff; padding: 8px; font-weight: 800; font-size: .86rem; text-align: left; box-shadow: 0 3px 0 var(--ink); min-height: 44px; }
+.tm.m { font-weight: 600; } .tm.sel { background: var(--yellow); } .tm.ok { background: var(--green); opacity: .7; } .tm.shake { animation: shake .35s; }
+@keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+/* featured pal advert */
+.featpal { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 10px; align-items: center; overflow: visible; margin-top: 18px; }
+.featpal.legend { background: linear-gradient(135deg, #FFF0B3, #FFD6A5 60%, #FFF6D6); }
+.featpal.myth { background: linear-gradient(135deg, #FFD6F0, #D6EBFF 50%, #E8FFD6); }
+.featpal .fpfig { margin-top: -38px; } .featpal .fpfig svg { width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 4px 8px rgba(255,200,0,.5)); }
+.featpal .fptext { display: grid; gap: 4px; min-width: 0; }
+.featpal .row { flex-wrap: nowrap; gap: 6px; } .featpal #fpGo { flex: 1 1 auto; min-width: 0; font-size: .74rem; line-height: 1.2; } .featpal .fparr { flex: 0 0 auto; padding: 4px 8px; background: #fff; }
+@media (max-width: 420px) { .palhero { grid-template-columns: 92px minmax(0, 1fr); gap: 8px; } .meter { grid-template-columns: 64px minmax(0, 1fr) 28px; } .palgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; } .palcard { padding: 6px 3px 8px; font-size: .8rem; } .palcard .ppic { width: 64px; height: 60px; } .palcard .small { font-size: .7rem; line-height: 1.2; } .palcard .btn.sm { font-size: .72rem; padding: 3px 6px; min-height: 32px; } .pinfo { width: 20px; height: 20px; top: 3px; right: 3px; } .tmatch { grid-template-columns: 1fr; } .subnav button { font-size: .8rem; padding: 6px 4px; } }
+@media (prefers-reduced-motion: reduce) { .pring { animation: none; } }
 </style>
 </head>
 <body>
@@ -762,7 +825,7 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
   <filter id="sketch"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter>
 </svg>
 <header class="top">
-  <button class="brand" id="home" aria-label="Go to the topic map"><span id="brandav"></span><span class="bt" id="brandText">Mochi Bio Escape</span></button>
+  <button class="brand" id="home" aria-label="Go to the topic map"><span id="brandav"></span><span class="bt" id="brandText">Biology Study Pals</span></button>
   <div class="tools" id="tools"></div>
 </header>
 <main id="app"></main>
@@ -868,6 +931,7 @@ function charSvg(who, m = "normal", eq, full = true) {
   s += arms(m, armC);
   if (who === "chiikawa" && d.acc && d.acc.low) s += d.acc.svg;
   s += C.face(m);
+  if (C.after) s += C.after(m);
   if (d.hair) s += d.hair.svg;
   if (d.face) s += d.face.svg;
   if (d.hat) s += d.hat.svg;
@@ -1068,6 +1132,346 @@ const MUSIC = {
 };
 try { MUSIC.on = localStorage.getItem(MUSIC_KEY) !== "off"; } catch (e) {}
 
+
+/* ============================================================
+   0. 🎨 Icon set: original chunky 2-tone icons (Duolingo-like flat style) that replace every emoji.
+   Each icon is drawn in a 32 × 32 box: a darker "depth" copy sits 2 px below the main shape, plus a white shine.
+   An observer swaps emoji in any text the game shows for these icons, so all devices look the same.
+   ============================================================ */
+const ICN = (() => {
+  const K = { g: ["#58CC02", "#46A302"], b: ["#1CB0F6", "#1899D6"], r: ["#FF4B4B", "#D93636"], y: ["#FFC800", "#E0A800"], o: ["#FF9600", "#DB7B00"], p: ["#CE82FF", "#A75FDB"],
+    k: ["#FF86D0", "#E063B2"], s: ["#AFAFAF", "#8C8C8C"], w: ["#F4F4F4", "#CCCCCC"], n: ["#B66E28", "#8C5219"], d: ["#4B4B4B", "#2F2F2F"], t: ["#2BD4C1", "#17AE9D"],
+    c: ["#FFF1D6", "#EED3A6"], f: ["#FFD3B0", "#EDAE82"], l: ["#89E219", "#6CB80E"], v: ["#7C6BDB", "#5D4EBC"], a: ["#9AD9FF", "#6EC2F2"] };
+  const col = k => K[k] || [k, k];
+  // depth shapes
+  const P = (d, k) => { const [a, b] = col(k); return `<path d="${d}" fill="${b}" transform="translate(0 2)"/><path d="${d}" fill="${a}"/>`; };
+  const C = (x, y, r, k) => { const [a, b] = col(k); return `<circle cx="${x}" cy="${y + 2}" r="${r}" fill="${b}"/><circle cx="${x}" cy="${y}" r="${r}" fill="${a}"/>`; };
+  const E = (x, y, rx, ry, k, rot = 0) => { const [a, b] = col(k), t = rot ? ` transform="rotate(${rot} ${x} ${y})"` : ""; return `<g transform="translate(0 2)"><ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${b}"${t}/></g><ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${a}"${t}/>`; };
+  const R = (x, y, w, h, rx, k) => { const [a, b] = col(k); return `<rect x="${x}" y="${y + 2}" width="${w}" height="${h}" rx="${rx}" fill="${b}"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${a}"/>`; };
+  // flat shapes
+  const f = (d, k) => `<path d="${d}" fill="${col(k)[0]}"/>`;
+  const fc = (x, y, r, k) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${col(k)[0]}"/>`;
+  const fe = (x, y, rx, ry, k) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${col(k)[0]}"/>`;
+  const fr = (x, y, w, h, rx, k) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${col(k)[0]}"/>`;
+  const L = (d, k, w = 3) => `<path d="${d}" fill="none" stroke="${col(k)[0]}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const H = (x, y, w, h, rot = 0) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${Math.min(w, h) / 2}" fill="#fff" opacity=".6"${rot ? ` transform="rotate(${rot} ${x + w / 2} ${y + h / 2})"` : ""}/>`;
+  const star = (cx, cy, R1, R2) => { let d = ""; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? R2 : R1; d += (i ? "L" : "M") + (cx + rr * Math.cos(a)).toFixed(1) + " " + (cy + rr * Math.sin(a)).toFixed(1); } return d + "Z"; };
+  const spark = (cx, cy, r) => `M${cx} ${cy - r} Q${cx + r * .18} ${cy - r * .18} ${cx + r} ${cy} Q${cx + r * .18} ${cy + r * .18} ${cx} ${cy + r} Q${cx - r * .18} ${cy + r * .18} ${cx - r} ${cy} Q${cx - r * .18} ${cy - r * .18} ${cx} ${cy - r}Z`;
+  const HEART = "M16 27 C6 20 2 15 2 10 C2 6 5 3 9 3 C12 3 14.5 5 16 7.5 C17.5 5 20 3 23 3 C27 3 30 6 30 10 C30 15 26 20 16 27Z";
+  const heart = k => P(HEART, k) + H(6, 6, 6, 3.5, -30);
+  // faces: a round mochi face with blush
+  const eyesD = { dot: fe(11, 14, 2, 2.6, "d") + fe(21, 14, 2, 2.6, "d"), arc: L("M8.5 15 Q11 11.5 13.5 15 M18.5 15 Q21 11.5 23.5 15", "d", 2.2), line: L("M8.5 14.5 H13.5 M18.5 14.5 H23.5", "d", 2.2),
+    shock: fc(11, 14, 3.4, "w") + fc(21, 14, 3.4, "w") + fc(11, 14, 1.5, "d") + fc(21, 14, 1.5, "d"), x: L("M9 12 L13 16 M13 12 L9 16 M19 12 L23 16 M23 12 L19 16", "d", 2),
+    star: f(star(11, 14, 3.6, 1.6), "y") + f(star(21, 14, 3.6, 1.6), "y"), spiral: L("M11 14 m-2.5 0 a2.5 2.5 0 1 1 2.5 2.5 a1.4 1.4 0 1 1 1 -1.6 M21 14 m-2.5 0 a2.5 2.5 0 1 1 2.5 2.5 a1.4 1.4 0 1 1 1 -1.6", "d", 1.4),
+    wink: fe(11, 14, 2, 2.6, "d") + L("M18.5 14.5 Q21 12 23.5 14.5", "d", 2.2), shades: P("M5 11 H27 V13 Q27 18 22.5 18 Q18 18 17.5 14 H14.5 Q14 18 9.5 18 Q5 18 5 13Z", "d"),
+    big: fc(11, 14, 3.2, "d") + fc(21, 14, 3.2, "d") + fc(12, 12.8, 1.2, "w") + fc(22, 12.8, 1.2, "w"), squeeze: L("M8.5 12 L12.5 14.5 L8.5 17 M23.5 12 L19.5 14.5 L23.5 17", "d", 2) };
+  const mouthD = { smile: L("M13 20 Q16 23 19 20", "d", 2), open: P("M12 19 Q16 26 20 19Z", "r"), o: fe(16, 21, 2.2, 2.8, "d"), flat: L("M13.5 21 H18.5", "d", 2), wave: L("M11 21 q1.25 -1.5 2.5 0 q1.25 1.5 2.5 0 q1.25 -1.5 2.5 0 q1.25 1.5 2.5 0", "d", 1.8),
+    frown: L("M13 22 Q16 19 19 22", "d", 2), grin: P("M10.5 19 H21.5 Q21 25 16 25 Q11 25 10.5 19Z", "w") + L("M10.5 19 H21.5 Q21 25 16 25 Q11 25 10.5 19Z", "d", 1.6), tiny: fe(16, 21, 1.2, 1, "d"), sh: L("M16 18 V24", "d", 2.4) };
+  const face = (bg, ey, mo, extra = "", blush = true) => C(16, 16, 13.5, bg) + H(7, 5, 7, 3.5, -25) + (blush ? fe(7.5, 19, 2.6, 1.6, "#FFB3C1") + fe(24.5, 19, 2.6, 1.6, "#FFB3C1") : "") + eyesD[ey] + (mouthD[mo] || "") + extra;
+  const tear = (x, y) => P(`M${x} ${y} Q${x - 2.4} ${y + 4} ${x} ${y + 5.5} Q${x + 2.4} ${y + 4} ${x} ${y}Z`, "a");
+  const drop = (x, y, s, k) => P(`M${x} ${y} C${x + 5 * s} ${y + 6 * s} ${x + 6 * s} ${y + 9 * s} ${x + 6 * s} ${y + 11 * s} A${6 * s} ${6 * s} 0 0 1 ${x - 6 * s} ${y + 11 * s} C${x - 6 * s} ${y + 9 * s} ${x - 5 * s} ${y + 6 * s} ${x} ${y}Z`, k);
+  const book = (k, page = "w") => P("M4 6 Q4 4 6 4 H26 Q28 4 28 6 V26 Q28 28 26 28 H6 Q4 28 4 26Z", k) + fr(8, 4, 3, 24, 0, "#00000022") + fr(12, 9, 11, 3, 1.5, page) + fr(12, 14, 8, 2.5, 1.25, page) + H(23, 7, 2.5, 8);
+  const arrow = (rot, k = "b") => `<g transform="rotate(${rot} 16 16)">${P("M16 4 L27 15 H20 V27 Q20 29 18 29 H14 Q12 29 12 27 V15 H5Z", k)}</g>`;
+  const medal = (k, t) => L("M10 3 L16 13 M22 3 L16 13", "b", 4) + C(16, 20, 9, k) + fc(16, 20, 6, col(k)[1]) + `<text x="16" y="23.5" text-anchor="middle" font-size="9" font-weight="900" fill="#fff" font-family="sans-serif">${t}</text>`;
+  const leaf = (k, rot = 0) => `<g transform="rotate(${rot} 16 16)">${P("M5 27 C4 14 12 5 27 4 C28 18 20 27 5 27Z", k)}${L("M6 26 L20 12", col(k)[1], 2)}</g>`;
+  const lock = open => L(open ? "M10 14 V9 A6 6 0 0 1 22 8" : "M10 14 V10 A6 6 0 0 1 22 10 V14", "s", 3.6) + R(6, 13, 20, 15, 4, "y") + fc(16, 19.5, 2.2, "n") + fr(15, 20, 2, 4, 1, "n") + H(9, 15, 3, 7);
+  const person = (k, pose) => C(16, 8, 5, "f") + pose;
+  const bowl = (k) => P("M3 15 H29 Q28 27 16 27 Q4 27 3 15Z", k) + H(7, 17, 6, 2.5);
+  const I = {
+    sparkles: f(spark(12, 15, 10), "y") + f(spark(24, 7, 5), "y") + f(spark(25, 23, 4), "o") + H(10, 9, 2.5, 4),
+    chestnut: P("M16 4 C24 4 29 12 29 19 C29 26 23 29 16 29 C9 29 3 26 3 19 C3 12 8 4 16 4Z", "n") + P("M3 20 C6 25 11 27 16 27 C21 27 26 25 29 20 C29 26 23 29 16 29 C9 29 3 26 3 20Z", "c") + f("M16 4 L13.5 8.5 H18.5Z", "d") + H(8, 9, 4, 6, 30),
+    bunny: E(11, 8, 3.3, 7.5, "#FFF3B0", -10) + E(21, 8, 3.3, 7.5, "#FFF3B0", 10) + fe(11, 8.5, 1.4, 5, "#FFB3C1") + fe(21, 8.5, 1.4, 5, "#FFB3C1") + C(16, 19, 10.5, "#FFF3B0") + fe(12.5, 18, 1.5, 2, "d") + fe(19.5, 18, 1.5, 2, "d") + L("M14.5 22.5 Q16 24 17.5 22.5", "d", 1.6) + fe(9, 21.5, 2, 1.3, "#FFB3C1") + fe(23, 21.5, 2, 1.3, "#FFB3C1"),
+    sprout: L("M16 28 V15", "g", 3.4) + P("M16 17 C10 17 5 13 5 7 C11 7 16 10 16 17Z", "l") + P("M16 14 C16 7 21 3 28 3 C28 10 23 14 16 14Z", "g") + R(9, 24, 14, 5, 2.5, "n"),
+    bolt: P("M19 2 L6 18 H15 L12 30 L26 13 H17Z", "y") + H(13, 8, 3, 6, 40),
+    gift: R(4, 13, 24, 15, 3, "r") + R(3, 9, 26, 6, 3, "k") + fr(14, 9, 4, 19, 0, "y") + P("M16 9 C12 2 6 4 9 8Z M16 9 C20 2 26 4 23 8Z", "y") + H(6, 15, 3, 7),
+    swords: `<g transform="rotate(45 16 16)">${R(14.5, 1, 3, 20, 1.5, "s")}${R(10, 20, 12, 3, 1.5, "n")}${R(14.5, 23, 3, 7, 1.5, "o")}</g><g transform="rotate(-45 16 16)">${R(14.5, 1, 3, 20, 1.5, "w")}${R(10, 20, 12, 3, 1.5, "n")}${R(14.5, 23, 3, 7, 1.5, "o")}</g>`,
+    stopwatch: R(13, 1.5, 6, 4, 2, "s") + C(16, 18, 12, "b") + fc(16, 18, 9, "w") + L("M16 18 V12 M16 18 L20 20", "d", 2.4) + H(8, 10, 3, 5, 30),
+    bookopen: P("M2 7 Q9 4 16 8 Q23 4 30 7 V27 Q23 24 16 28 Q9 24 2 27Z", "b") + f("M4 8 Q10 6 15 9 V25 Q10 22.5 4 24.5Z M28 8 Q22 6 17 9 V25 Q22 22.5 28 24.5Z", "w") + L("M6 12 Q9.5 11 13 12.5 M6 16 Q9.5 15 13 16.5 M19 12.5 Q22.5 11 26 12 M19 16.5 Q22.5 15 26 16", "a", 1.5),
+    key: C(10, 12, 7.5, "y") + fc(10, 12, 3, "#E0A800") + R(15, 10, 14, 4.5, 2, "y") + R(23, 13, 3.5, 6, 1.5, "y") + R(18, 13, 3, 4.5, 1.5, "y") + H(6, 7, 3, 4, 40),
+    party: P("M4 29 L11 9 L23 21Z", "y") + f("M7.5 19.5 L10.5 22.5 M6 24 L8 26", "o") + L("M7 21 L10.5 24.5 M9.5 14.5 L17.5 22.5", "o", 2.5) + L("M17 8 Q19 4 23 5 M22 12 Q26 9 29 12 M24 3 V5", "k", 2.2) + fc(27, 6, 1.8, "b") + fc(14, 4, 1.8, "g") + fc(28, 18, 1.8, "p"),
+    bulb: C(16, 13, 10, "y") + R(11.5, 21, 9, 5, 2, "s") + fr(12.5, 26, 7, 3, 1.5, "#8C8C8C") + L("M13 15 Q16 18 19 15", "#E0A800", 2) + H(10, 7, 3.5, 6, 30),
+    fire: P("M16 2 C22 9 27 13 27 20 C27 26 22 30 16 30 C10 30 5 26 5 20 C5 14 9 11 11 7 C12 11 14 12 15 12 C14 8 15 5 16 2Z", "o") + P("M16 14 C20 18 22 21 22 24 C22 27.5 19 29.5 16 29.5 C13 29.5 10 27.5 10 24 C10 21 12 19 14 17 C14.5 19 15.5 19.5 16.5 19.5 C16 17.5 16 16 16 14Z", "y"),
+    map: P("M3 7 L11 4 L21 7 L29 4 V25 L21 28 L11 25 L3 28Z", "a") + f("M11 4 V25 L21 28 V7Z", "#7FCBF5") + P("M6 14 Q9 11 13 13 Q17 15 19 12 Q22 9 26 11 V17 Q22 15 19 19 Q15 22 12 19 Q9 16 6 19Z", "g") + L("M8 22 L12 21 L15 23 L19 21", "r", 1.6) + C(22, 20, 2, "r"),
+    microscope: R(5, 26, 22, 4, 2, "s") + R(20, 15, 4, 12, 2, "s") + `<g transform="rotate(-30 13 12)">${R(9, 2, 7, 17, 3, "b")}${fr(10, 18, 5, 4, 1, "#1899D6")}</g>` + R(9, 21, 13, 3, 1.5, "d") + H(12, 4, 2, 7, -30),
+    muscle: P("M7 27 C3 22 3 13 9 9 C11 5 15 3 18 5 C20 7 19 10 16 11 C14 12 13 14 15 16 C18 13 23 13 26 16 C29 20 27 27 21 28 Z", "f") + L("M15 16 C17 18 20 18 22 17", "#EDAE82", 2) + H(9, 12, 3, 6, 20),
+    trophy: P("M8 4 H24 V12 C24 18 20 21 16 21 C12 21 8 18 8 12Z", "y") + L("M8 7 H4 V10 C4 14 7 16 9 16 M24 7 H28 V10 C28 14 25 16 23 16", "y", 2.6) + R(14, 20, 4, 5, 1, "y") + R(9, 25, 14, 4, 2, "n") + H(11, 6, 3, 8),
+    snow: L("M16 3 V29 M4.7 9.5 L27.3 22.5 M4.7 22.5 L27.3 9.5", "a", 3.6) + L("M12 5 L16 8.5 L20 5 M12 27 L16 23.5 L20 27 M5 14 L9.5 13.5 L8 9 M27 18 L22.5 18.5 L24 23 M5 18 L9.5 18.5 L8 23 M27 14 L22.5 13.5 L24 9", "b", 2.4) + fc(16, 16, 3, "w"),
+    headphones: L("M6 20 V15 A10 10 0 0 1 26 15 V20", "d", 3.4) + R(3, 17, 7, 11, 3, "k") + R(22, 17, 7, 11, 3, "k") + H(5, 19, 2, 5),
+    warning: P("M16 3 C17.5 3 18.3 4 19 5.2 L29.5 24.5 C30.5 26.5 29.3 28.5 27 28.5 H5 C2.7 28.5 1.5 26.5 2.5 24.5 L13 5.2 C13.7 4 14.5 3 16 3Z", "y") + fr(14.3, 10, 3.4, 10, 1.7, "d") + fc(16, 24, 2, "d"),
+    play: P("M8 4.5 Q8 2.5 10 3.5 L27 14 Q29 16 27 18 L10 28.5 Q8 29.5 8 27.5Z", "g") + H(10.5, 8, 2.5, 8),
+    back: P("M24 4.5 Q24 2.5 22 3.5 L5 14 Q3 16 5 18 L22 28.5 Q24 29.5 24 27.5Z", "b"),
+    cross: `<g transform="rotate(45 16 16)">${R(12.5, 2, 7, 28, 3.5, "r")}${R(2, 12.5, 28, 7, 3.5, "r")}</g>`,
+    check: C(16, 16, 13.5, "g") + L("M9 16.5 L14 21.5 L23.5 11", "w", 4),
+    tick: L("M5 16.5 L12.5 24 L27 8", "g", 5.5),
+    stetho: L("M8 3 V11 A7 7 0 0 0 22 11 V3 M15 18 V22 A5 5 0 0 0 25 22 V19", "s", 3) + C(25, 16, 4.5, "b") + fc(25, 16, 2, "w") + fc(8, 3, 2, "d") + fc(22, 3, 2, "d"),
+    hk: R(2, 6, 28, 20, 4, "r") + `<g transform="translate(16 16)">${[0, 72, 144, 216, 288].map(a => `<path d="M0 0 C-3 -3 -3 -7.5 0 -9 C2 -7.5 2.5 -4 0 0Z" fill="#fff" transform="rotate(${a})"/>`).join("")}${fc(0, 0, 1, "r")}</g>`,
+    backpack: R(5, 8, 22, 21, 7, "g") + L("M11 9 V6 Q11 3 16 3 Q21 3 21 6 V9", "#46A302", 2.6) + R(9, 17, 14, 9, 3, "l") + fr(11, 20, 10, 2, 1, "#46A302") + H(7, 11, 3, 6),
+    brain: P("M16 6 C12 3 6 5 6 10 C2 11 2 18 5 20 C4 25 9 28 13 26 C14 28 16 28 16 28Z M16 6 C20 3 26 5 26 10 C30 11 30 18 27 20 C28 25 23 28 19 26 C18 28 16 28 16 28Z", "k") + L("M16 7 V27 M9 12 Q12 13 12 16 M23 12 Q20 13 20 16 M8 20 Q11 19 12 22 M24 20 Q21 19 20 22", "#E063B2", 1.8),
+    bookred: book("r"), notebook: book("p") + L("M6 9 H9 M6 14 H9 M6 19 H9 M6 24 H9", "w", 1.6), books: R(3, 20, 26, 7, 2, "b") + R(5, 13, 22, 7, 2, "r") + R(4, 6, 24, 7, 2, "g") + fr(8, 22.5, 18, 2, 1, "w") + fr(9, 15.5, 15, 2, 1, "w") + fr(7, 8.5, 18, 2, 1, "w"),
+    starI: P(star(16, 16, 14, 6.5), "y") + H(11, 9, 3, 5, 30),
+    glowstar: f(star(16, 16, 15.5, 8), "#FFE680") + P(star(16, 16, 12, 5.5), "y") + H(12, 10, 2.5, 4, 30),
+    thermo: R(13, 2, 6, 20, 3, "w") + C(16, 23, 6, "r") + fr(14.5, 9, 3, 13, 1.5, "r") + L("M20 7 H22 M20 11 H22 M20 15 H22", "s", 1.6),
+    sick: face("#C8F0A0", "line", "wave") + R(20, 4, 4, 13, 2, "w") + fc(22, 18, 3, "r"),
+    onigiri: P("M16 3 C19 3 29 20 29 24 C29 28 25 29 16 29 C7 29 3 28 3 24 C3 20 13 3 16 3Z", "w") + R(10, 19, 12, 10, 1.5, "d") + H(12, 8, 3, 6, 30),
+    shield: P("M16 2 L28 6 V15 C28 22 23 27 16 30 C9 27 4 22 4 15 V6Z", "b") + f("M16 5 L25 8 V15 C25 20 21.5 24 16 26.5Z", "#1899D6") + H(8, 8, 3, 8),
+    heartR: heart("r"), heartP: heart("p"), heartG: heart("g"), heartB: heart("b"), heartK: heart("k") + f(spark(26, 6, 4), "y") + f(spark(6, 24, 3), "y"), heartBeat: heart("r") + L("M5 14 H11 L13 10 L16 19 L18 13 H27", "w", 2),
+    dress: P("M12 3 H20 L19 9 L27 28 Q16 31 5 28 L13 9Z", "k") + L("M12 3 L10 6 M20 3 L22 6", "k", 2.5) + fr(12.5, 10, 7, 2.5, 1, "#E063B2") + H(13, 14, 2.5, 8, 15),
+    mag: L("M20 20 L28 28", "n", 5) + C(13, 13, 10, "s") + fc(13, 13, 7, "a") + H(8, 8, 3.5, 5, 40),
+    dna: L("M9 3 C9 12 23 12 23 16 C23 20 9 20 9 29", "b", 3.4) + L("M23 3 C23 12 9 12 9 16 C9 20 23 20 23 29", "k", 3.4) + L("M11 7 H21 M13 11 H19 M13 21 H19 M11 25 H21", "s", 1.8),
+    waterdrop: drop(16, 2, 2.3, "b") + H(10.5, 15, 3, 6, 20),
+    torch: `<g transform="rotate(-35 16 16)">${R(12, 12, 8, 17, 3, "s")}${P("M9 5 H23 L20 13 H12Z", "y")}</g>` + L("M24 3 L27 1 M27 8 L30 7 M20 2 L20 0", "y", 2.2),
+    speaker: P("M4 11 H10 L18 4 V28 L10 21 H4Z", "b") + L("M22 11 Q25 16 22 21 M25.5 7.5 Q31 16 25.5 24.5", "b", 2.6),
+    mute: P("M4 11 H10 L18 4 V28 L10 21 H4Z", "s") + L("M22 12 L29 20 M29 12 L22 20", "r", 3),
+    pencil: `<g transform="rotate(45 16 16)">${R(12, 1, 8, 4, 2, "k")}${R(12, 5, 8, 17, 0, "y")}${P("M12 22 H20 L16 30Z", "f")}${f("M14.7 27.5 H17.3 L16 30Z", "d")}${fr(12, 5, 2.5, 17, 0, "#E0A800")}</g>`,
+    scales: R(15, 5, 2.5, 21, 1, "n") + R(8, 26, 16, 3.5, 1.7, "n") + L("M5 8 H27", "n", 2.6) + P("M2 18 L5 9 L8 18Z", "y") + P("M24 18 L27 9 L30 18Z", "y") + P("M1 18 H9 Q9 22 5 22 Q1 22 1 18Z", "y") + P("M23 18 H31 Q31 22 27 22 Q23 22 23 18Z", "y"),
+    blossom: [0, 72, 144, 216, 288].map(a => `<g transform="rotate(${a} 16 16)">${E(16, 8.5, 5, 7.5, "k")}</g>`).join("") + C(16, 16, 4, "y"),
+    flowerY: [0, 72, 144, 216, 288].map(a => `<g transform="rotate(${a} 16 16)">${E(16, 8.5, 5, 7.5, "#FFE066")}</g>`).join("") + C(16, 16, 4, "o"),
+    bubbles: C(12, 18, 9, "a") + C(24, 8, 5, "a") + C(25, 24, 3.5, "a") + H(7, 12, 3, 5, 30) + H(22, 5, 2, 3, 30),
+    user: C(16, 10, 7, "b") + P("M3 29 C3 21 9 18 16 18 C23 18 29 21 29 29Z", "b"),
+    hourglass: R(5, 2, 22, 4, 2, "n") + R(5, 26, 22, 4, 2, "n") + P("M8 6 H24 C24 12 18 14 18 16 C18 18 24 20 24 26 H8 C8 20 14 18 14 16 C14 14 8 12 8 6Z", "a") + f("M11 9 H21 C20 12 16.5 13 16 15 C15.5 13 12 12 11 9Z M10 24.5 C11 21 16 20 16 19 C16 20 21 21 22 24.5Z", "y"),
+    lungs: L("M16 2 V14 M16 12 L12 16 M16 12 L20 16", "s", 2.6) + P("M13 10 C9 6 3 11 3 20 C3 26 6 29 10 28 C13 27 14 24 14 20 V13Z", "k") + P("M19 10 C23 6 29 11 29 20 C29 26 26 29 22 28 C19 27 18 24 18 20 V13Z", "k") + H(6, 14, 2.5, 6),
+    door: R(6, 3, 20, 26, 3, "n") + R(9, 6, 14, 9, 2, "#C98A4B") + R(9, 17, 14, 9, 2, "#C98A4B") + C(21, 16, 1.8, "y"),
+    lockI: lock(false), unlock: lock(true), lockkey: lock(false) + `<g transform="translate(15 13) scale(.55)">${C(10, 12, 7.5, "o")}${R(15, 10, 14, 4.5, 2, "o")}</g>`,
+    card: `<g transform="rotate(-10 16 16)">${R(7, 3, 18, 25, 3, "w")}${f(star(16, 15.5, 6, 2.6), "r")}${fc(10.5, 7.5, 1.5, "r")}${fc(21.5, 24, 1.5, "r")}</g>`,
+    globe: C(16, 16, 13.5, "b") + P("M9 6 C13 8 12 12 9 14 C6 16 8 20 5 21 C3 16 4 9 9 6Z M18 4 C22 5 27 9 28 15 C25 15 23 18 24 22 C21 24 19 20 20 16 C21 13 17 10 18 4Z M12 23 C15 22 17 25 15 28 C13 28 11 26 12 23Z", "g") + H(7, 6, 3, 5, 40),
+    petri: E(16, 19, 14, 7, "a") + fe(16, 17, 12, 5.2, "#E2F5FF") + fc(11, 17, 2, "k") + fc(18, 16, 1.6, "g") + fc(21, 18.5, 2.2, "y") + fc(14, 19, 1.2, "p") + H(7, 15, 4, 2),
+    sweat: drop(10, 6, 1.3, "a") + drop(22, 2, 1.6, "b"),
+    eyes: E(10, 16, 7, 10, "w") + E(22, 16, 7, 10, "w") + fc(12, 18, 3.6, "d") + fc(24, 18, 3.6, "d") + fc(13, 16.5, 1.2, "w") + fc(25, 16.5, 1.2, "w"),
+    eye: P("M2 16 Q16 2 30 16 Q16 30 2 16Z", "w") + C(16, 16, 6.5, "b") + fc(16, 16, 3, "d") + fc(18, 14, 1.4, "w"),
+    teddy: C(8, 8, 4.5, "n") + C(24, 8, 4.5, "n") + C(16, 16, 11.5, "n") + E(16, 20, 5.5, 4.5, "c") + fc(16, 18.5, 1.8, "d") + fc(12, 14, 1.6, "d") + fc(20, 14, 1.6, "d") + fc(8, 8, 2, "c") + fc(24, 8, 2, "c"),
+    peapod: `<g transform="rotate(-25 16 16)">${P("M3 16 C3 9 29 9 29 16 C29 23 3 23 3 16Z", "g")}${fc(9.5, 16, 3.2, "l")}${fc(16, 16, 3.4, "l")}${fc(22.5, 16, 3.2, "l")}</g>`,
+    turtle: E(16, 18, 12, 9, "g") + P("M7 17 C7 9 25 9 25 17Z", "#7A9E3B") + L("M12 11 L14 17 M20 11 L18 17 M9 15 H23", "#5E7E2A", 1.6) + C(28, 18, 3.5, "l") + fc(29, 17, .9, "d"),
+    chart: R(3, 3, 26, 26, 5, "w") + R(7, 18, 4, 7, 1, "b") + R(14, 13, 4, 12, 1, "g") + R(21, 8, 4, 17, 1, "o") + L("M7 13 L14 9 L19 11 L26 5", "r", 2.2),
+    sun: [0, 45, 90, 135, 180, 225, 270, 315].map(a => `<g transform="rotate(${a} 16 16)">${fr(14.5, 0.5, 3, 6, 1.5, "o")}</g>`).join("") + C(16, 16, 9, "y") + H(11, 10, 3, 4, 30),
+    sunface: [0, 45, 90, 135, 180, 225, 270, 315].map(a => `<g transform="rotate(${a} 16 16)">${fr(14.5, 0.5, 3, 6, 1.5, "o")}</g>`).join("") + C(16, 16, 9, "y") + fc(13, 15, 1.3, "d") + fc(19, 15, 1.3, "d") + L("M13.5 19 Q16 21 18.5 19", "d", 1.5),
+    cloud: P("M8 25 C3 25 2 18 7 17 C6 11 13 9 15 13 C17 7 26 8 26 15 C30 15 31 25 25 25Z", "a") + H(9, 16, 6, 2.5),
+    suncloud: [0, 60, 120, 180, 240, 300].map(a => `<g transform="rotate(${a} 12 11)">${fr(10.8, 0.5, 2.4, 4, 1.2, "o")}</g>`).join("") + C(12, 11, 6, "y") + P("M10 27 C5 27 5 21 9 20 C9 15 16 14 17 17 C19 12 27 13 27 19 C31 19 31 27 26 27Z", "w"),
+    crown: P("M3 10 L9 16 L16 5 L23 16 L29 10 L27 26 H5Z", "y") + R(5, 24, 22, 4, 1.5, "o") + fc(16, 18, 2.3, "r") + fc(9.5, 20, 1.6, "b") + fc(22.5, 20, 1.6, "g"),
+    calendar: R(3, 5, 26, 24, 4, "w") + R(3, 5, 26, 8, 4, "r") + fr(3, 10, 26, 3, 0, "r") + fr(8, 2, 3, 6, 1.5, "s") + fr(21, 2, 3, 6, 1.5, "s") + `<text x="16" y="25.5" text-anchor="middle" font-size="11" font-weight="900" fill="#4B4B4B" font-family="sans-serif">7</text>`,
+    sneaker: P("M3 18 C3 14 6 13 8 13 L13 11 L17 16 C21 18 27 17 29 21 V25 H3Z", "b") + fr(3, 23, 26, 4, 2, "w") + L("M11 13 L13 15 M14 12.5 L16 14.5", "w", 1.6),
+    testtube: `<g transform="rotate(30 16 16)">${R(11, 2, 10, 4, 2, "s")}${P("M12 5 H20 V25 A4 4 0 0 1 12 25Z", "w")}${f("M12 16 H20 V25 A4 4 0 0 1 12 25Z", "g")}${fc(15, 21, 1.4, "l")}${fc(17.5, 18, 1, "l")}</g>`,
+    moon: P("M20 3 C12 4 6 10 6 18 C6 25 12 30 19 30 C24 30 27 28 29 25 C21 26 14 20 14 13 C14 8 16 5 20 3Z", "y") + H(10, 13, 2.5, 6),
+    newmoon: C(16, 16, 13, "d") + fc(11, 11, 2.5, "#5F5F5F") + fc(20, 20, 3, "#5F5F5F") + fc(21, 9, 1.5, "#5F5F5F"),
+    herb: L("M16 29 V10", "g", 2.6) + P("M16 22 C9 22 5 18 5 13 C11 13 16 16 16 22Z", "g") + P("M16 17 C23 17 27 13 27 8 C21 8 16 11 16 17Z", "l") + P("M16 11 C12 10 10 7 11 3 C15 4 17 7 16 11Z", "g"),
+    leafI: leaf("g"), leaves: leaf("l", -20) + `<g transform="translate(6 -4) scale(.7)">${leaf("g", 30)}</g>`,
+    ribbon: P("M16 14 C10 6 3 7 4 13 C5 19 11 18 16 14Z", "k") + P("M16 14 C22 6 29 7 28 13 C27 19 21 18 16 14Z", "k") + P("M13 15 L8 28 L12 26 L14 29 L16 16Z M19 15 L24 28 L20 26 L18 29 L16 16Z", "#E063B2") + C(16, 14, 3.4, "#E063B2"),
+    owl: C(16, 17, 12.5, "v") + f("M5 8 L9 13 H5Z M27 8 L23 13 H27Z", "v") + fc(11.5, 15, 5, "w") + fc(20.5, 15, 5, "w") + fc(11.5, 15, 2.3, "d") + fc(20.5, 15, 2.3, "d") + f("M14.5 19 H17.5 L16 22Z", "o") + fe(16, 25, 6, 3, "#A99BEB"),
+    house: P("M16 3 L30 15 H26 V28 H6 V15 H2Z", "w") + P("M16 3 L30 15 H26 L16 7 L6 15 H2Z", "r") + R(13, 19, 6, 9, 1.5, "n") + R(20, 17, 4, 4, 1, "a"),
+    gamepad: P("M8 9 H24 C29 9 31 15 30 21 C29 27 25 27 22 22 H10 C7 27 3 27 2 21 C1 15 3 9 8 9Z", "p") + f("M8 13 V19 M5 16 H11", "w") + L("M8 13 V19 M5 16 H11", "w", 2.4) + fc(22, 14, 1.8, "y") + fc(25, 17, 1.8, "g") + fc(19, 17, 1.8, "b"),
+    candy: P("M10 16 L3 10 V22Z M22 16 L29 10 V22Z", "k") + C(16, 16, 7.5, "k") + L("M11 13 Q16 11 21 13 M11 19 Q16 17 21 19", "w", 1.8),
+    lolly: L("M16 18 V30", "c", 2.6) + C(16, 11, 9, "k") + L("M16 11 m-5 0 a5 5 0 1 1 5 5 a3 3 0 1 1 2 -3", "w", 1.8),
+    bento: R(3, 6, 26, 21, 4, "r") + fr(5, 8, 22, 17, 2.5, "c") + fr(16, 8, 1.6, 17, 0, "r") + fc(10.5, 16.5, 4, "w") + fe(22, 12, 3.5, 2.5, "o") + fc(20, 20, 2.3, "g") + fc(24.5, 20.5, 2, "k"),
+    repeat: L("M7 13 A9 9 0 0 1 24 10 M25 19 A9 9 0 0 1 8 22", "b", 3.6) + P("M27 4 L27 13 L18 12Z", "b") + P("M5 28 L5 19 L14 20Z", "b"),
+    shuffle: L("M3 9 H9 C15 9 17 23 23 23 H26 M3 23 H9 C15 23 17 9 23 9 H26", "b", 3.4) + f("M25 4 L31 9 L25 14Z M25 18 L31 23 L25 28Z", "b"),
+    pause: R(7, 5, 6, 22, 2.5, "b") + R(19, 5, 6, 22, 2.5, "b"),
+    ffwd: P("M3 6 Q3 4 5 5.2 L15 14.5 Q17 16 15 17.5 L5 26.8 Q3 28 3 26Z M16 6 Q16 4 18 5.2 L28 14.5 Q30 16 28 17.5 L18 26.8 Q16 28 16 26Z", "b"),
+    wave: P("M10 30 C5 27 4 21 5 16 L6 10 C6 8 9 8 9 10 L9 15 L10 5 C10 3 13 3 13 5 L13 14 L14 3 C14 1 17 1 17 3 L17 14 L18 5 C18 3 21 3 21 5 L21 17 L23 13 C24 11 27 12 26 14 L23 24 C21 29 15 31 10 30Z", "f") + L("M25 3 Q28 5 29 8 M27 1 Q30 3 31 6", "y", 1.6),
+    hand: P("M10 30 C5 27 4 21 5 16 L6 10 C6 8 9 8 9 10 L9 15 L10 5 C10 3 13 3 13 5 L13 14 L14 3 C14 1 17 1 17 3 L17 14 L18 5 C18 3 21 3 21 5 L21 17 L23 13 C24 11 27 12 26 14 L23 24 C21 29 15 31 10 30Z", "f"),
+    point: P("M30 13 H14 L17 9 C18 7 16 5 14 7 L6 14 C4 16 4 21 6 23 C8 25 11 26 14 26 H22 C24 26 24 23 22 23 H23 C25 23 25 20 23 20 H24 C26 20 26 17 24 17 H30 C32 17 32 13 30 13Z", "f"),
+    pray: P("M15 4 C13 4 12 6 12 8 L8 18 L4 22 L9 29 L14 25 L15.5 20Z M17 4 C19 4 20 6 20 8 L24 18 L28 22 L23 29 L18 25 L16.5 20Z", "f"),
+    pinch: P("M9 29 C5 26 5 20 8 17 L13 11 L12 5 C12 3 15 3 15.5 5 L17 12 L22 6 C23.5 4.5 26 6 24.5 8 L19 15 L20 22 C20 27 14 31 9 29Z", "f") + L("M23 3 L27 3 M25 1 V5", "o", 1.6),
+    shrug: face("y", "dot", "flat") + L("M2 22 L5 18 M30 22 L27 18", "f", 3),
+    leafI2: leaf("g"),
+    flowerW: [0, 72, 144, 216, 288].map(a => `<g transform="rotate(${a} 16 16)">${E(16, 8.5, 5, 7.5, "w")}</g>`).join("") + C(16, 16, 4, "y"),
+    confetti: C(14, 18, 11, "p") + fc(14, 18, 7, "#A75FDB") + L("M21 9 L27 3", "s", 2) + L("M4 6 L6 9 M27 14 L30 12 M24 26 L27 29 M9 29 L7 31", "y", 2) + fc(26, 20, 1.6, "g") + fc(5, 14, 1.6, "b"),
+    clipboard: R(6, 4, 20, 26, 3, "n") + fr(8.5, 7, 15, 20.5, 2, "w") + R(11, 2, 10, 5, 2, "s") + L("M11 13 H21 M11 18 H21 M11 23 H17", "s", 2),
+    boom: P("M16 2 L19 10 L28 6 L23 14 L31 17 L22 20 L26 29 L17 23 L12 31 L11 22 L2 23 L8 16 L2 9 L11 10Z", "o") + f("M16 9 L18 13 L23 12 L20 16 L24 19 L19 19 L18 24 L15 20 L10 22 L12 17 L8 14 L13 13Z", "y"),
+    memo: R(5, 3, 20, 26, 3, "w") + L("M9 9 H20 M9 14 H20 M9 19 H15", "a", 2) + `<g transform="rotate(45 22 22)">${R(19.5, 12, 5, 16, 1.5, "y")}${f("M19.5 28 H24.5 L22 32Z", "f")}</g>`,
+    soap: R(4, 13, 24, 14, 5, "a") + fr(7, 15.5, 18, 3, 1.5, "#BFE7FF") + C(10, 9, 3.5, "w") + C(17, 6, 2.5, "w") + C(23, 9, 2, "w"),
+    rainbow: L("M3 26 A13 13 0 0 1 29 26", "r", 3.5) + L("M7 26 A9 9 0 0 1 25 26", "y", 3.5) + L("M11 26 A5 5 0 0 1 21 26", "b", 3.5) + E(5, 26, 4, 2.6, "w") + E(27, 26, 4, 2.6, "w"),
+    bee: E(16, 19, 11, 8.5, "y") + f("M12 11.5 V26.5 M18 11 V27", "d") + L("M12 11.5 V26.5 M18.5 11 V27", "d", 3) + E(13, 9, 5, 3.5, "a", -30) + E(20, 8, 5, 3.5, "a", 30) + fc(25, 18, 1.4, "d"),
+    gradcap: P("M16 5 L31 12 L16 19 L1 12Z", "d") + P("M8 15 V22 C8 25 24 25 24 22 V15 L16 19Z", "#3A3A3A") + L("M28 13 V21", "y", 2) + fc(28, 22, 2, "y"),
+    strawberry: P("M16 9 C25 9 29 13 27 19 C25 25 20 30 16 30 C12 30 7 25 5 19 C3 13 7 9 16 9Z", "r") + f("M9 5 L13 9 L16 4 L19 9 L23 5 L22 11 H10Z", "g") + [[11, 15], [16, 14], [21, 15], [13, 21], [19, 21], [16, 26]].map(([x, y]) => fe(x, y, .9, 1.3, "#FFE066")).join(""),
+    lion: [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map(a => `<g transform="rotate(${a} 16 16)">${fc(16, 3.5, 4, "o")}</g>`).join("") + C(16, 16, 10, "#FFE3A3") + fc(12.5, 15, 1.5, "d") + fc(19.5, 15, 1.5, "d") + fe(16, 19, 2, 1.4, "n") + L("M14 21 Q16 23 18 21", "d", 1.4),
+    coffee: R(5, 10, 18, 18, 5, "w") + L("M23 14 C29 14 29 22 23 22", "w", 3) + fe(14, 12, 8, 2.5, "n") + L("M10 3 Q12 6 10 8 M15 2 Q17 5 15 7", "s", 1.6),
+    tea: R(5, 12, 20, 15, 5, "w") + L("M25 15 C30 15 30 22 25 22", "w", 3) + fe(15, 14, 9, 2.6, "g") + L("M12 4 Q14 7 12 10 M18 4 Q20 7 18 10", "s", 1.6) + E(15, 29, 13, 2, "s"),
+    note: L("M12 24 V5 L25 2 V20", "p", 3) + C(9, 24, 4.5, "p") + C(22, 21, 4.5, "p"),
+    fog: L("M4 9 H24 M8 15 H28 M4 21 H22 M10 27 H26", "s", 3.6),
+    ghost: P("M6 29 V14 C6 6 11 3 16 3 C21 3 26 6 26 14 V29 L22.5 26 L19 29 L16 26 L13 29 L9.5 26Z", "w") + fe(12, 14, 2, 3, "d") + fe(20, 14, 2, 3, "d") + fe(16, 20, 2, 2.5, "d"),
+    medalG: medal("y", "1"), medalS: medal("s", "2"), medalB: medal("n", "3"),
+    dice: R(4, 4, 24, 24, 6, "w") + [[10, 10], [22, 10], [16, 16], [10, 22], [22, 22]].map(([x, y]) => fc(x, y, 2.4, "r")).join(""),
+    parrot: P("M18 4 C25 4 28 10 26 17 C25 22 22 25 18 26 L14 30 L13 25 C8 23 7 16 9 11 C11 6 14 4 18 4Z", "g") + P("M9 11 C11 6 14 4 18 4 C16 6 14 9 13 13 C11 14 9 13 9 11Z", "r") + fc(19, 11, 2, "w") + fc(19.5, 11, 1, "d") + P("M24 10 C29 10 30 14 27 16 C26 14 25 13 24 13Z", "y") + P("M14 20 C17 20 20 22 21 26 L17 25Z", "b"),
+    gem: P("M8 4 H24 L30 12 L16 29 L2 12Z", "a") + f("M2 12 H30 L16 29Z", "#6EC2F2") + f("M11 12 L16 29 L21 12Z", "#9AD9FF") + L("M8 4 L11 12 L16 4 L21 12 L24 4", "w", 1.4),
+    worm: L("M4 22 C8 14 12 26 16 18 C20 10 24 22 28 14", "k", 6) + fc(28, 14, 1, "d"),
+    mosquito: E(18, 18, 8, 3.5, "s", -20) + E(13, 10, 6, 3, "a", -40) + E(20, 9, 6, 3, "a", 20) + C(9, 21, 3.5, "d") + L("M7 23 L2 28 M14 21 L11 29 M18 21 L18 29 M22 19 L26 27", "d", 1.2),
+    syringe: `<g transform="rotate(-45 16 16)">${R(11, 6, 10, 16, 2, "w")}${fr(12.5, 12, 7, 9, 1, "a")}${R(9, 22, 14, 3, 1.5, "s")}${R(14.5, 25, 3, 5, 1, "s")}${fr(15.3, 0, 1.4, 6, .7, "s")}${R(9, 4, 14, 3, 1.5, "s")}</g>`,
+    hot: face("o", "line", "open") + drop(27, 2, .8, "a") + L("M4 3 Q6 5 4 7", "r", 1.6),
+    cold: face("#9AD9FF", "squeeze", "grin") + L("M3 4 L6 7 M29 4 L26 7", "w", 2),
+    rice: bowl("w") + fe(16, 15, 12, 5, "w") + P("M3 15 H29 Q28 27 16 27 Q4 27 3 15Z", "b") + fe(16, 14, 11, 4.5, "#F7F7F7") + [[10, 13], [15, 12], [20, 13], [12, 15.5], [18, 15.5], [23, 14.5]].map(([x, y]) => fe(x, y, 1.6, .9, "#E5E5E5")).join("") + H(7, 18, 5, 2),
+    broccoli: R(13, 17, 6, 12, 2, "l") + C(10, 13, 6, "g") + C(22, 13, 6, "g") + C(16, 8, 6.5, "g") + H(13, 4, 3, 3),
+    fish: P("M4 16 C8 8 20 7 25 16 C20 25 8 24 4 16Z", "b") + P("M24 16 L31 10 V22Z", "b") + fc(10, 14.5, 1.8, "d") + L("M15 11 Q17 16 15 21", "#1899D6", 1.6),
+    ear: P("M20 3 C27 3 29 9 28 14 C27 18 23 19 22 23 C21 28 16 30 12 28 C9 26 10 22 12 21 C14 20 13 17 12 15 C9 7 14 3 20 3Z", "f") + L("M15 15 C14 9 22 7 23 12 C24 16 19 16 19 20", "#EDAE82", 2.2),
+    down: arrow(180), up: arrow(0),
+    tree: R(13.5, 18, 5, 12, 2, "n") + C(16, 12, 10, "g") + C(9, 17, 5.5, "g") + C(23, 17, 5.5, "g") + H(10, 5, 3.5, 4, 30),
+    glasses: L("M3 12 H29", "d", 2) + C(9, 16, 6, "a") + C(23, 16, 6, "a") + L("M15 16 Q16 14 17 16", "d", 2) + H(6, 13, 2, 3),
+    shades: L("M3 12 H29", "d", 2) + P("M3 12 H15 V15 C15 20 12 21 9 21 C5 21 3 18 3 15Z M17 12 H29 V15 C29 18 27 21 23 21 C20 21 17 20 17 15Z", "d") + H(5, 13.5, 4, 2),
+    telescope: `<g transform="rotate(-25 16 14)">${R(4, 10, 20, 7, 3, "b")}${R(22, 9, 6, 9, 2, "#1899D6")}${R(1, 11, 4, 5, 1.5, "s")}</g>` + L("M15 18 L9 29 M15 18 L21 29", "n", 2.4),
+    drum: E(16, 10, 12, 4.5, "w") + P("M4 10 V22 C4 28 28 28 28 22 V10 C28 15 4 15 4 10Z", "r") + L("M6 14 L11 24 L16 15 L21 24 L26 14", "y", 1.6) + L("M3 3 L12 9 M29 3 L20 9", "n", 2.4),
+    battery: R(3, 9, 23, 14, 3, "s") + fr(26, 13, 3, 6, 1.5, "s") + fr(5.5, 11.5, 14, 9, 1.5, "g") + H(7, 13, 6, 2),
+    scroll: R(5, 4, 22, 24, 3, "c") + C(6, 6, 3, "#EED3A6") + C(26, 26, 3, "#EED3A6") + L("M10 11 H22 M10 16 H22 M10 21 H18", "n", 1.8),
+    blood: drop(16, 2, 2.3, "r") + H(10.5, 15, 3, 6, 20),
+    postbox: R(8, 4, 16, 24, 7, "r") + fr(10, 11, 12, 3, 1.5, "d") + fr(14, 28, 4, 3, 0, "d") + H(10, 7, 3, 2),
+    ballet: P("M4 20 C4 15 9 13 13 16 L16 18 C18 19 18 23 15 24 L8 25 C5 25 4 23 4 20Z", "k") + P("M15 17 C15 12 20 10 24 13 L27 15 C29 16 29 20 26 21 L19 22 C16 22 15 20 15 17Z", "k") + L("M10 15 L14 4 M21 12 L24 3", "#E063B2", 1.8),
+    detective: P("M4 14 C4 8 10 5 16 5 C22 5 28 8 28 14Z", "n") + R(2, 13, 28, 4, 2, "#8C5219") + C(19, 23, 5.5, "s") + fc(19, 23, 3.6, "a") + L("M15 27 L11 31", "n", 3),
+    hospital: R(4, 6, 24, 23, 3, "w") + R(13, 2, 6, 6, 1.5, "w") + R(13.5, 11, 5, 12, 1.5, "r") + R(10, 14.5, 12, 5, 1.5, "r") + R(13, 25, 6, 4, 0, "a"),
+    broom: `<g transform="rotate(30 16 16)">${R(14.5, 1, 3, 17, 1.5, "n")}${P("M9 18 H23 L26 30 H6Z", "y")}${L("M11 21 L10 29 M16 21 V29 M21 21 L22 29", "#E0A800", 1.5)}</g>`,
+    radio: R(3, 10, 26, 18, 4, "o") + L("M8 10 L22 3", "s", 2) + C(11, 19, 5, "d") + fc(11, 19, 2, "s") + fr(19, 15, 7, 2, 1, "w") + fr(19, 19, 7, 2, 1, "w") + fr(19, 23, 5, 2, 1, "w"),
+    envelope: R(3, 7, 26, 19, 3, "w") + f("M3 9 L16 19 L29 9 V10 L16 21 L3 10Z", "#DCDCDC") + L("M4 9 L16 18 L28 9", "b", 2),
+    duck: C(11, 11, 6.5, "y") + P("M5 19 C5 14 9 13 13 15 C17 17 23 14 27 16 C29 23 24 28 16 28 C9 28 5 25 5 19Z", "y") + f("M4 11 L0 13 L4 14Z", "o") + fc(10, 9.5, 1.3, "d"),
+    zzz: `<text x="3" y="28" font-size="15" font-weight="900" fill="#1CB0F6" font-family="sans-serif">Z</text><text x="15" y="18" font-size="11" font-weight="900" fill="#CE82FF" font-family="sans-serif">Z</text><text x="23" y="10" font-size="8" font-weight="900" fill="#FF86D0" font-family="sans-serif">Z</text>`,
+    yoga: C(16, 6, 4.5, "f") + P("M10 13 H22 L24 22 H8Z", "p") + P("M2 26 C6 21 11 22 16 24 C21 22 26 21 30 26 C26 29 20 28 16 27 C12 28 6 29 2 26Z", "p") + L("M10 14 L5 20 M22 14 L27 20", "f", 2.4),
+    refresh: L("M26 16 A10 10 0 1 1 22 8", "g", 3.6) + P("M18 2 L27 6 L20 13Z", "g"),
+    tophat: R(9, 3, 14, 18, 2, "d") + fr(9, 15, 14, 3.5, 0, "r") + R(3, 21, 26, 5, 2.5, "d"),
+    scissors: C(8, 23, 4.5, "r") + fc(8, 23, 2, "w") + C(20, 25, 4.5, "r") + fc(20, 25, 2, "w") + L("M10 20 L26 4 M18 21 L12 4", "s", 2.6),
+    tshirt: P("M10 4 L4 8 L1 14 L6 17 L8 14 V29 H24 V14 L26 17 L31 14 L28 8 L22 4 C21 7 19 8 16 8 C13 8 11 7 10 4Z", "b") + H(10, 12, 2.5, 8),
+    framepic: R(3, 5, 26, 22, 3, "n") + fr(6, 8, 20, 16, 1.5, "a") + f("M6 24 L13 15 L18 20 L21 17 L26 23 V24Z", "g") + fc(21, 12, 2.2, "y"),
+    floppy: R(4, 4, 24, 24, 3, "b") + fr(9, 4, 13, 8, 1, "w") + fr(17, 5.5, 3, 5, 1, "#1899D6") + fr(8, 17, 16, 11, 1.5, "w"),
+    compass: C(16, 16, 13, "s") + fc(16, 16, 10, "w") + f("M16 7 L19 16 L16 25 L13 16Z", "#DCDCDC") + f("M16 7 L19 16 H13Z", "r") + fc(16, 16, 1.6, "d"),
+    abc: R(2, 6, 28, 20, 5, "b") + `<text x="16" y="21" text-anchor="middle" font-size="11" font-weight="900" fill="#fff" font-family="sans-serif">abc</text>`,
+    cyclone: L("M16 16 m-2 0 a2 2 0 1 1 4 0 a4 4 0 1 1 -8 0 a6 6 0 1 1 12 0 a8 8 0 1 1 -16 0 a10 10 0 1 1 20 0", "b", 2.6),
+    pill: `<g transform="rotate(-40 16 16)">${R(5, 11, 22, 10, 5, "r")}${fr(16, 11, 11, 10, 5, "w")}${fr(16, 11, 3, 10, 0, "w")}</g>`,
+    lotion: R(9, 11, 14, 18, 4, "k") + R(12, 6, 8, 6, 1.5, "w") + R(14, 2, 8, 4, 1.5, "s") + fr(11.5, 16, 9, 7, 2, "w"),
+    bed: R(2, 15, 28, 8, 2, "b") + R(2, 8, 5, 19, 2, "n") + R(4, 12, 8, 5, 2.5, "w") + R(10, 11, 18, 5, 2, "a") + fr(25, 23, 3, 4, 1, "n"),
+    cupdrink: P("M8 9 H24 L22 29 H10Z", "r") + R(6, 6, 20, 4, 2, "w") + L("M18 7 L21 1", "y", 2.4) + H(11, 12, 2.5, 8),
+    orange: C(16, 17, 12, "o") + P("M16 6 C17 2 21 1 24 3 C21 5 19 6 16 6Z", "g") + H(9, 11, 3, 5, 30) + fc(19, 21, .9, "#DB7B00") + fc(13, 22, .9, "#DB7B00"),
+    greens: P("M16 29 C8 29 4 22 5 14 C7 7 12 4 16 3 C20 4 25 7 27 14 C28 22 24 29 16 29Z", "l") + L("M16 28 V8 M16 14 L11 10 M16 19 L21 14 M16 23 L11 19", "g", 2),
+    ice: R(4, 6, 18, 18, 4, "a") + R(12, 12, 16, 16, 4, "#C9ECFF") + H(7, 9, 4, 2) + H(15, 15, 4, 2),
+    foot: P("M10 29 C6 29 6 24 7 20 C8 15 7 10 9 7 C11 4 16 5 17 8 C18 12 17 16 18 20 C19 24 17 29 10 29Z", "f") + fc(20, 7, 2.2, "f") + fc(23.5, 9.5, 2, "f") + fc(25.5, 13, 1.8, "f") + fc(26, 17, 1.6, "f"),
+    toothbrush: `<g transform="rotate(-40 16 16)">${R(14, 10, 4, 21, 2, "b")}${R(13, 1, 6, 10, 2, "w")}${L("M14 3 H18 M14 6 H18 M14 9 H18", "a", 1.4)}</g>`,
+    footprints: P("M8 30 C5 30 5 26 6 23 C7 20 6 16 8 14 C10 12 13 14 13 17 C13 21 12 25 12 27 C12 29 10 30 8 30Z", "s") + P("M22 18 C19 18 19 14 20 11 C21 8 20 4 22 2 C24 0 27 2 27 5 C27 9 26 13 26 15 C26 17 24 18 22 18Z", "s"),
+    apple: P("M16 9 C20 6 28 7 28 16 C28 24 22 30 19 29 C17.5 28.5 16 28 16 28 C16 28 14.5 28.5 13 29 C10 30 4 24 4 16 C4 7 12 6 16 9Z", "r") + L("M16 9 Q16 5 18 2", "n", 2.2) + P("M17 6 C19 2 24 2 25 4 C23 7 19 7 17 6Z", "g") + H(7, 12, 3, 6, 15),
+    banana: P("M4 9 C3 20 11 29 24 27 C28 26 29 23 27 22 C17 24 9 18 8 9 C8 6 4 6 4 9Z", "y") + f("M4 9 C4 6 7 5.5 8 8Z", "n") + L("M7 13 C9 19 15 23 23 24", "#E0A800", 1.4),
+    milk: P("M9 10 L12 5 H20 L23 10 V28 Q23 30 21 30 H11 Q9 30 9 28Z", "w") + fr(9, 15, 14, 9, 0, "b") + f("M12 5 H20 L18 2 H14Z", "a") + `<text x="16" y="22" text-anchor="middle" font-size="5.5" font-weight="900" fill="#fff" font-family="sans-serif">MILK</text>`,
+    salad: bowl("w") + C(10, 13, 5, "g") + C(17, 11, 5.5, "l") + C(23, 13, 4.5, "g") + fc(13, 14, 2.4, "r") + fc(21, 14.5, 2, "y") + P("M3 15 H29 Q28 27 16 27 Q4 27 3 15Z", "a"),
+    soup: P("M3 13 H29 Q28 27 16 27 Q4 27 3 13Z", "o") + fe(16, 13, 13, 3, "c") + fc(11, 13, 1.6, "w") + fc(19, 12.6, 1.4, "g") + L("M21 3 L13 13 M25 3 L17 13", "n", 1.8),
+    dumpling: P("M3 21 C3 13 9 8 16 8 C23 8 29 13 29 21 C29 25 24 26 16 26 C8 26 3 25 3 21Z", "w") + L("M8 13 Q10 16 11 11 Q13 15 15 10 Q17 15 19 10 Q20 15 22 11 Q23 16 25 13", "#DCDCDC", 1.6) + fc(16, 9, 2, "o"),
+    oden: L("M16 2 V30", "n", 2.2) + C(16, 8, 5, "c") + C(16, 17, 5, "#E8C38A") + C(16, 25, 4.5, "c") + L("M12 17 H20", "o", 1.6),
+    pie: P("M3 16 H29 L26 26 H6Z", "n") + fe(16, 16, 13, 4.5, "#FFD966") + L("M5 16 Q7 13 9 16 Q11 13 13 16 Q15 13 17 16 Q19 13 21 16 Q23 13 25 16 Q27 13 28 16", "#E0A800", 1.6),
+    meat: P("M5 18 C2 10 10 3 19 5 C27 7 30 15 26 21 C22 27 9 27 5 18Z", "r") + P("M9 17 C8 12 13 8 18 9 C23 10 24 15 21 18 C18 21 11 21 9 17Z", "#FF8080") + C(24, 22, 3.5, "w"),
+    potato: P("M5 17 C3 10 10 5 17 6 C25 7 30 13 27 20 C25 26 17 28 11 26 C7 25 6 21 5 17Z", "#D9A55B") + fc(11, 14, 1, "n") + fc(19, 12, 1, "n") + fc(21, 20, 1, "n") + fc(13, 21, 1, "n"),
+    drumstick: P("M13 19 C7 21 3 15 6 9 C9 3 18 2 22 8 C25 12 22 17 18 18 L23 23 C26 22 29 24 28 27 C27 30 23 29 23 27 C21 29 18 27 19 24Z", "o") + H(8, 7, 3, 5, 40),
+    honey: R(7, 9, 18, 19, 5, "o") + R(9, 4, 14, 6, 2, "n") + f("M7 15 H25 V19 C22 19 22 22 19 22 C16 22 17 19 13 19 C10 19 10 17 7 17Z", "y") + H(9, 21, 2.5, 4),
+    cake: R(4, 15, 24, 13, 3, "k") + P("M4 15 C4 11 28 11 28 15 V18 C25 21 23 17 20 19 C17 21 15 17 12 19 C9 21 7 17 4 18Z", "w") + fr(15, 4, 2.4, 7, 1, "b") + f("M16 0 C18 2 17.5 4 16 4 C14.5 4 14 2 16 0Z", "o") + fc(10, 23, 1.5, "w") + fc(22, 23, 1.5, "w"),
+    pudding: P("M7 12 H25 L27 26 H5Z", "y") + P("M7 12 C7 8 25 8 25 12 V14 C21 17 19 12 16 15 C13 17 11 13 7 14Z", "n") + E(16, 28, 13, 2.5, "w") + fc(16, 5, 2.5, "r"),
+    egg: E(16, 17, 10, 13, "c") + H(10, 9, 3, 6, 20),
+    friedegg: P("M5 18 C2 11 9 4 16 6 C22 3 30 9 28 17 C30 25 21 30 15 27 C8 30 3 25 5 18Z", "w") + C(16, 16, 5.5, "y") + H(13, 13, 2, 2),
+    pan: L("M22 22 L30 30", "d", 4) + C(14, 14, 11, "d") + P("M7 14 C5 9 10 6 14 7 C18 5 22 9 21 14 C22 19 17 21 14 20 C10 22 6 19 7 14Z", "w") + C(14, 14, 3.5, "y"),
+    cracker: E(16, 17, 13, 11, "#E0A563") + fr(4, 17, 24, 10, 0, "d") + fe(16, 17, 13, 4, "#E0A563") + fc(11, 13, 1, "n") + fc(20, 12, 1, "n"),
+    waffle: R(4, 4, 24, 24, 5, "y") + L("M4 12 H28 M4 20 H28 M12 4 V28 M20 4 V28", "#E0A800", 2.2),
+    pineapple: f("M16 9 L11 1 L16 5 L21 1Z", "g") + E(16, 19, 10, 12, "y") + L("M8 13 L24 25 M8 25 L24 13 M10 19 L22 19", "#E0A800", 1.4),
+    donut: C(16, 16, 13, "#E0A563") + P("M4 15 C4 7 10 3 16 3 C22 3 28 7 28 15 C27 20 24 18 22 20 C19 23 17 18 14 20 C10 23 9 18 4 15Z", "k") + fc(16, 15, 4.5, "#FFFFFF00") + `<circle cx="16" cy="15" r="4.5" fill="#fff"/>` + [[9, 9, "y"], [21, 8, "b"], [24, 13, "g"], [10, 15, "w"]].map(([x, y, k]) => fr(x, y, 3, 1.4, .7, k)).join(""),
+    grapes: [[11, 11], [21, 11], [16, 12], [13.5, 18], [18.5, 18], [16, 24]].map(([x, y]) => C(x, y, 4.5, "p")).join("") + P("M16 7 C16 3 19 1 23 2 C21 5 19 6 16 7Z", "g"),
+    jelly: P("M5 16 C5 8 10 4 16 4 C22 4 27 8 27 16 Z", "p") + L("M8 17 Q6 22 9 26 M13 17 Q11 23 14 29 M19 17 Q21 23 18 29 M24 17 Q26 22 23 26", "p", 2) + fc(12, 11, 1.4, "d") + fc(20, 11, 1.4, "d") + H(9, 7, 3, 4),
+    shell: P("M16 3 C24 3 30 11 28 21 L16 29 L4 21 C2 11 8 3 16 3Z", "k") + L("M16 5 V27 M10 6 L13 26 M22 6 L19 26 M5 13 L10 23 M27 13 L22 23", "#E063B2", 1.6),
+    snail: C(18, 15, 9, "o") + L("M18 15 m-3 0 a3 3 0 1 1 3 3 a5 5 0 1 1 5 -5", "#DB7B00", 2) + P("M2 25 C2 21 6 20 10 21 H28 C30 21 30 25 28 25Z", "#C8F0A0") + L("M4 21 L2 14 M7 21 L7 14", "#89E219", 1.6),
+    web: L("M16 2 V30 M2 16 H30 M6 6 L26 26 M26 6 L6 26", "s", 1.2) + L("M16 9 L21 11 L23 16 L21 21 L16 23 L11 21 L9 16 L11 11Z M16 4.5 L24 8 L27.5 16 L24 24 L16 27.5 L8 24 L4.5 16 L8 8Z", "s", 1.2),
+    squarebtn: R(4, 4, 24, 24, 5, "s") + fr(8, 8, 16, 16, 3, "w"),
+    sponge: R(4, 8, 24, 18, 4, "y") + [[9, 13], [15, 17], [21, 12], [10, 21], [22, 20]].map(([x, y]) => fc(x, y, 1.6, "#E0A800")).join("") + C(26, 6, 2.5, "a"),
+    baby: C(16, 17, 12, "f") + P("M16 5 C18 5 19 3 18 2", "f") + L("M16 5 C18 5 19 3 18 2", "n", 1.6) + fc(12, 16, 1.5, "d") + fc(20, 16, 1.5, "d") + C(16, 22, 3, "a") + fe(9.5, 19, 2, 1.3, "#FFB3C1") + fe(22.5, 19, 2, 1.3, "#FFB3C1"),
+    mountain: P("M1 28 L12 8 L18 18 L22 12 L31 28Z", "s") + f("M12 8 L15.5 14.5 L13.5 13.5 L11.5 15 L9.5 13Z", "w") + f("M22 12 L24.8 17 L22.5 16 L20.5 17Z", "w"),
+    city: R(3, 12, 8, 17, 1.5, "b") + R(12, 4, 9, 25, 1.5, "v") + R(22, 15, 7, 14, 1.5, "a") + [[14, 8], [17.5, 8], [14, 13], [17.5, 13], [14, 18], [17.5, 18], [5, 16], [5, 21], [24, 19], [24, 23]].map(([x, y]) => fr(x, y, 2, 2.5, .5, "y")).join(""),
+    island: E(16, 26, 14, 4, "a") + P("M5 25 C8 20 24 20 27 25Z", "y") + L("M16 23 C16 16 17 11 19 7", "n", 2.4) + P("M19 7 C14 3 8 5 6 9 C11 7 15 8 19 7Z M19 7 C24 3 29 6 30 10 C26 8 22 8 19 7Z M19 7 C18 2 22 0 26 1 C23 3 21 5 19 7Z", "g"),
+    train: R(5, 5, 22, 20, 5, "r") + fr(8, 8, 16, 7, 2, "a") + fc(11, 20, 2, "y") + fc(21, 20, 2, "y") + L("M9 25 L6 30 M23 25 L26 30", "s", 2.4),
+    balloon: E(16, 12, 10, 11.5, "r") + f("M14 23 H18 L16 26Z", "r") + L("M16 26 Q13 28 16 31", "s", 1.4) + H(9, 6, 3, 6, 30),
+    nosmoke: C(16, 16, 13.5, "r") + fc(16, 16, 10.5, "w") + fr(6, 14, 17, 4, 1, "s") + fr(23, 14, 3, 4, 1, "o") + L("M8 8 L24 24", "r", 3.4),
+    phone: R(8, 2, 16, 28, 4, "d") + fr(10, 5, 12, 20, 2, "a") + fc(16, 27.5, 1.2, "w"),
+    chain: `<g transform="rotate(-45 16 16)">${L("M7 11 H14 A5 5 0 0 1 14 21 H7 A5 5 0 0 1 7 11Z", "s", 3)}${L("M18 11 H25 A5 5 0 0 1 25 21 H18 A5 5 0 0 1 18 11Z", "s", 3)}</g>`,
+    fax: R(3, 13, 26, 15, 4, "s") + R(8, 3, 16, 12, 1.5, "w") + L("M11 7 H21 M11 10 H18", "a", 1.6) + fr(7, 19, 3, 3, 1, "g") + fr(13, 19, 3, 3, 1, "w") + fr(19, 19, 3, 3, 1, "w"),
+    mirror: E(16, 13, 10, 11, "n") + fe(16, 13, 7.5, 8.5, "a") + R(14, 23, 4, 8, 1.5, "n") + H(11, 8, 2.5, 6, 20),
+    toolbox: R(3, 11, 26, 17, 3, "r") + L("M11 11 V7 H21 V11", "s", 2.6) + fr(3, 17, 26, 2.5, 0, "#D93636") + fr(13, 15, 6, 6, 1.5, "s"),
+    camera: R(2, 9, 28, 19, 4, "d") + R(9, 5, 9, 6, 2, "d") + C(16, 18, 7, "s") + fc(16, 18, 4.5, "b") + fc(25, 13, 1.6, "y"),
+    palette: P("M16 3 C24 3 30 8 30 15 C30 21 25 22 22 21 C19 20 18 23 19 25 C20 28 18 30 15 30 C8 30 2 24 2 16 C2 8 8 3 16 3Z", "c") + fc(10, 11, 2.5, "r") + fc(16, 8, 2.5, "y") + fc(23, 11, 2.5, "g") + fc(9, 19, 2.5, "b"),
+    coaster: L("M2 26 C6 4 10 4 14 18 C17 28 21 8 25 6 C28 5 29 10 30 12", "r", 3) + L("M6 28 V15 M14 28 V20 M22 28 V12 M28 28 V12", "s", 1.6),
+    ruler: `<g transform="rotate(-35 16 16)">${R(2, 11, 28, 10, 2, "y")}${L("M6 11 V15 M10 11 V17 M14 11 V15 M18 11 V17 M22 11 V15 M26 11 V17", "d", 1.2)}</g>`,
+    tag: P("M3 6 Q3 3 6 3 H16 L29 16 Q30 17 29 18 L18 29 Q17 30 16 29 L3 16Z", "o") + fc(9, 9, 2.4, "w"),
+    slider: L("M5 4 V28 M16 4 V28 M27 4 V28", "s", 2.4) + R(2, 17, 6, 4, 2, "b") + R(13, 8, 6, 4, 2, "g") + R(24, 21, 6, 4, 2, "o"),
+    speakhead: P("M4 28 C4 22 6 20 6 16 C6 9 10 4 16 4 C22 4 24 9 24 13 L26 17 L23 18 V22 C23 24 21 25 18 24 V28Z", "s") + L("M26 9 Q29 12 26 15 M28 6 Q32 12 28 18", "b", 1.8),
+    hearthands: P("M15 4 C13 4 12 6 12 8 L8 18 L4 22 L9 29 L14 25 L15.5 20Z M17 4 C19 4 20 6 20 8 L24 18 L28 22 L23 29 L18 25 L16.5 20Z", "f"),
+    hush: face("y", "line", "sh") + L("M16 18 V27", "f", 3.2),
+    circleO: L("M16 4 A12 12 0 1 1 15.99 4", "r", 5),
+    asterisk: R(3, 3, 26, 26, 6, "g") + L("M16 8 V24 M9 12 L23 20 M23 12 L9 20", "w", 2.8),
+    greencircle: C(16, 16, 12, "g") + H(9, 9, 4, 3, -30),
+    sparkleHeart: heart("k")
+  };
+  // faces
+  Object.assign(I, {
+    f_shock: face("w", "shock", "o", L("M23 3 V8", "a", 2)), f_teary: face("w", "arc", "smile", tear(9, 16) + tear(23, 16)), f_plead: face("w", "big", "frown"), f_cry: face("w", "line", "wave", tear(9.5, 15) + tear(22.5, 15) + tear(9.5, 22) + tear(22.5, 22)),
+    f_sleep: face("w", "line", "o", `<text x="22" y="9" font-size="8" font-weight="900" fill="#1CB0F6" font-family="sans-serif">z</text>`), f_scrunch: face("w", "squeeze", "wave"), f_dizzy: face("w", "x", "o"), f_dizzy2: face("w", "spiral", "wave"),
+    f_smile: face("y", "dot", "smile"), f_flush: face("w", "shock", "tiny", fe(7.5, 19, 3.6, 2.4, "#FF8FA3") + fe(24.5, 19, 3.6, 2.4, "#FF8FA3")), f_wink: face("y", "wink", "smile"), f_yawn: face("w", "line", "o"),
+    f_cool: face("y", "shades", "smile"), f_persevere: face("w", "squeeze", "frown"), f_nausea: face("#C8F0A0", "line", "wave"), f_exhale: face("w", "line", "tiny", L("M20 21 Q25 20 28 22 M21 24 Q25 24 27 26", "s", 1.6)),
+    f_starry: face("y", "star", "open"), f_happy: face("w", "arc", "smile"), f_think: face("y", "dot", "flat", P("M20 26 C22 22 26 23 26 26 C26 29 22 30 20 28Z", "f")), f_sleepy: face("w", "line", "tiny", drop(23, 17, .45, "a"))
+  });
+  return I;
+})();
+const EMOJI_ICON = {
+  "✨": "sparkles", "🌰": "chestnut", "🐰": "bunny", "🌱": "sprout", "⚡": "bolt", "🎁": "gift", "⚔": "swords", "⏱": "stopwatch", "📖": "bookopen", "💜": "heartP", "🐾": "paw", "😱": "f_shock", "🔑": "key", "🎉": "party",
+  "🥹": "f_teary", "💡": "bulb", "🔥": "fire", "🥺": "f_plead", "🗺": "map", "🍵": "tea", "🔬": "microscope", "💪": "muscle", "🏆": "trophy", "❄": "snow", "🎧": "headphones", "⚠": "warning", "▶": "play", "❌": "cross",
+  "🩺": "stetho", "🇭🇰": "hk", "🎒": "backpack", "🧠": "brain", "📕": "bookred", "⭐": "starI", "🤒": "thermoFace", "🍙": "onigiri", "🛡": "shield", "📓": "notebook", "❤": "heartR", "😭": "f_cry", "✅": "check", "👗": "dress",
+  "🔍": "mag", "🔎": "mag", "🦋": "butterfly", "🧬": "dna", "💧": "waterdrop", "🔦": "torch", "😴": "f_sleep", "🔊": "speaker", "✏": "pencil", "⚖": "scales", "🌸": "blossom", "🫧": "bubbles", "👤": "user", "⏳": "hourglass",
+  "🫁": "lungs", "🚪": "door", "🔒": "lockI", "🔓": "unlock", "🃏": "card", "🌍": "globe", "🧫": "petri", "💦": "sweat", "👀": "eyes", "🧸": "teddy", "🫛": "peapod", "🐢": "turtle", "📈": "chart", "😖": "f_scrunch",
+  "☀": "sun", "😵": "f_dizzy", "👁": "eye", "☁": "cloud", "📚": "books", "🌟": "glowstar", "👑": "crown", "📅": "calendar", "🏃": "sneaker", "🧪": "testtube", "🌙": "moon", "🌿": "herb", "🍜": "noodles", "🧋": "boba",
+  "🎀": "ribbon", "🦉": "owl", "🏠": "house", "🎮": "gamepad", "🍬": "candy", "🍱": "bento", "🔁": "repeat", "⏸": "pause", "🤔": "f_think", "👋": "wave", "🌤": "suncloud", "🦠": "microbe", "🍃": "leaves", "💚": "heartG",
+  "🍳": "pan", "🍡": "dango", "🌼": "flowerY", "🎊": "confetti", "📋": "clipboard", "💥": "boom", "📝": "memo", "🙂": "f_smile", "🌑": "newmoon", "🧼": "soap", "🌈": "rainbow", "🤧": "sneeze", "🍞": "bread", "🔐": "lockkey",
+  "🐝": "bee", "🎓": "gradcap", "🍓": "strawberry", "🦁": "lion", "☕": "coffee", "🎵": "note", "🌫": "fog", "🤏": "pinch", "🔙": "back", "👻": "ghost", "🏅": "medalG", "🎲": "dice", "🦜": "parrot", "💎": "gem", "🪱": "worm",
+  "🦟": "mosquito", "💉": "syringe", "🥵": "hot", "🍚": "rice", "😳": "f_flush", "🥦": "broccoli", "🐟": "fish", "👂": "ear", "⬇": "down", "⬆": "up", "🌳": "tree", "👓": "glasses", "🔭": "telescope", "🥁": "drum", "🔋": "battery",
+  "🌡": "thermo", "🗝": "key", "📜": "scroll", "🩸": "blood", "📮": "postbox", "💃": "ballet", "🥈": "medalS", "🥉": "medalB", "💙": "heartB", "😉": "f_wink", "🕵": "detective", "🏥": "hospital", "🧹": "broom", "📻": "radio",
+  "✉": "envelope", "🦆": "duck", "🥱": "f_yawn", "💤": "zzz", "🧘": "yoga", "🍘": "cracker", "🍮": "pudding", "🥚": "egg", "🧇": "waffle", "🍍": "pineapple", "💖": "heartK", "🍩": "donut", "🍇": "grapes", "🪼": "jelly",
+  "💓": "heartBeat", "🙏": "pray", "🔄": "refresh", "🩰": "ballet", "😎": "f_cool", "🤷": "shrug", "🎩": "tophat", "💇": "scissors", "🕶": "shades", "👕": "tshirt", "🖼": "framepic", "💾": "floppy", "🔇": "mute", "🧭": "compass",
+  "🔤": "abc", "🔀": "shuffle", "🌀": "cyclone", "✔": "tick", "⏩": "ffwd", "💊": "pill", "🧴": "lotion", "🛌": "bed", "🥤": "cupdrink", "🍊": "orange", "🥬": "greens", "🧊": "ice", "😣": "f_persevere", "🤢": "f_nausea",
+  "🦶": "foot", "😮‍💨": "f_exhale", "😵‍💫": "f_dizzy2", "🪥": "toothbrush", "🚶": "footprints", "🌞": "sunface", "🥶": "cold", "🤩": "f_starry", "😊": "f_happy", "🍎": "apple", "🍌": "banana", "🥛": "milk", "🥗": "salad",
+  "🥣": "soup", "🥟": "dumpling", "🍢": "oden", "🥧": "pie", "🟢": "greencircle", "👈": "point", "◀": "back", "✋": "hand", "⭕": "circleO", "✳": "asterisk", "🎚": "slider", "🗣": "speakhead", "🐦": "bird", "📱": "phone",
+  "🤫": "hush", "🥩": "meat", "⛓": "chain", "🏙": "city", "🥔": "potato", "📠": "fax", "🪞": "mirror", "🧰": "toolbox", "📸": "camera", "🎨": "palette", "🍭": "lolly", "😪": "f_sleepy", "🍗": "drumstick", "🎢": "coaster",
+  "📏": "ruler", "🏷": "tag", "🏝": "island", "🐚": "shell", "🍯": "honey", "🚂": "train", "🎈": "balloon", "🚭": "nosmoke", "👶": "baby", "🍰": "cake", "⛰": "mountain", "🐌": "snail", "🕸": "web", "🔲": "squarebtn", "🧽": "sponge",
+  "🤩": "f_starry", "🦜": "parrot", "🍙": "onigiri", "🍦": "cake"
+};
+// a few icons are built from others
+Object.assign(ICN, {
+  paw: `<ellipse cx="16" cy="22" rx="8" ry="7" fill="#8C5219" transform="translate(0 2)"/><ellipse cx="16" cy="22" rx="8" ry="7" fill="#B66E28"/>` + [[7, 13, -20], [12.5, 8, -8], [19.5, 8, 8], [25, 13, 20]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y + 2}" rx="3.2" ry="4.2" fill="#8C5219" transform="rotate(${r} ${x} ${y + 2})"/><ellipse cx="${x}" cy="${y}" rx="3.2" ry="4.2" fill="#B66E28" transform="rotate(${r} ${x} ${y})"/>`).join(""),
+  thermoFace: ICN.sick, sneeze: ICN.f_scrunch + `<rect x="18" y="18" width="12" height="10" rx="2" fill="#fff" transform="rotate(-15 24 23)"/>`,
+  butterfly: `<g>${["#CE82FF", "#FF86D0"].map((c, i) => `<path d="M16 16 C${i ? 24 : 8} ${i ? 2 : 2} ${i ? 32 : 0} 8 ${i ? 26 : 6} 16 C${i ? 32 : 0} 22 ${i ? 24 : 8} 30 16 18Z" fill="${c}"/>`).join("")}<rect x="14.8" y="8" width="2.4" height="18" rx="1.2" fill="#4B4B4B"/><path d="M15 9 L12 4 M17 9 L20 4" stroke="#4B4B4B" stroke-width="1.4" stroke-linecap="round"/></g>`,
+  microbe: `<circle cx="16" cy="18" r="11" fill="#46A302"/><circle cx="16" cy="16" r="11" fill="#89E219"/>` + [0, 60, 120, 180, 240, 300].map(a => `<g transform="rotate(${a} 16 16)"><rect x="15" y="1" width="2" height="5" rx="1" fill="#58CC02"/><circle cx="16" cy="1.5" r="1.8" fill="#58CC02"/></g>`).join("") + `<circle cx="12" cy="14" r="2" fill="#4B4B4B"/><circle cx="20" cy="14" r="2" fill="#4B4B4B"/><path d="M13 19 Q16 21.5 19 19" stroke="#4B4B4B" stroke-width="1.6" fill="none" stroke-linecap="round"/>`,
+  noodles: ICN.soup.replace("#FF9600", "#1CB0F6").replace("#DB7B00", "#1899D6") + `<path d="M8 13 Q10 9 12 13 Q14 9 16 13 Q18 9 20 13 Q22 9 24 13" stroke="#FFE066" stroke-width="1.6" fill="none"/>`,
+  boba: `<path d="M8 9 H24 L22 29 H10Z" fill="#DB7B00" transform="translate(0 2)"/><path d="M8 9 H24 L22 29 H10Z" fill="#E8C49A"/><rect x="6" y="6" width="20" height="4" rx="2" fill="#FFF"/><path d="M17 7 L20 1" stroke="#FF86D0" stroke-width="2.6" stroke-linecap="round"/>` + [[12, 25], [16, 26], [20, 25], [14, 22], [18, 22]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.8" fill="#4B4B4B"/>`).join(""),
+  dango: `<path d="M16 2 V30" stroke="#B66E28" stroke-width="2" stroke-linecap="round"/>` + [["#FF86D0", 8], ["#FFFFFF", 16], ["#89E219", 24]].map(([c, y]) => `<circle cx="16" cy="${y + 1.5}" r="5.2" fill="#00000022"/><circle cx="16" cy="${y}" r="5.2" fill="${c}"/>`).join(""),
+  bread: `<path d="M4 16 C4 9 10 6 16 6 C22 6 28 9 28 16 C28 24 23 27 16 27 C9 27 4 24 4 16Z" fill="#DB7B00" transform="translate(0 2)"/><path d="M4 16 C4 9 10 6 16 6 C22 6 28 9 28 16 C28 24 23 27 16 27 C9 27 4 24 4 16Z" fill="#FFC85A"/><path d="M8 12 L24 22 M8 20 L22 10 M12 8 L26 17 M6 16 L16 9" stroke="#E0A800" stroke-width="1.4"/>`,
+  bird: ICN.duck.replace(/#FFC800/g, "#1CB0F6").replace(/#E0A800/g, "#1899D6"),
+  sick: ICN.sick
+});
+const icSvg = k => `<svg class="ic" viewBox="0 0 32 34" aria-hidden="true" focusable="false">${ICN[k] || ICN.sparkles}</svg>`;
+
+/* ----- Emoji → icon swapper (runs on everything the game puts on screen) ----- */
+const EMO_RE = /(?:\p{Regional_Indicator}{2}|\p{Extended_Pictographic}️?(?:‍\p{Extended_Pictographic}️?)*)/gu;
+const EMO_SKIP = /^(?:↔|↑|↓|→|←|➔|⇒|©|®|™)$/;
+function emojiKey(g) { const a = g.replace(/️/g, ""); return EMOJI_ICON[a] || EMOJI_ICON[g] || null; }
+function iconizeText(node) {
+  const t = node.nodeValue; if (!t) return;
+  if (t.includes("{P}") && typeof palName === "function") node.nodeValue = t.replace(/\{P\}/g, palName());
+  const v = node.nodeValue; EMO_RE.lastIndex = 0;
+  // only touch text that holds at least one emoji we have an icon for (never loop on leftover symbols)
+  if (!(v.match(EMO_RE) || []).some(g => !EMO_SKIP.test(g) && emojiKey(g))) return;
+  const par = node.parentNode; if (!par) return;
+  if (par.closest && par.closest("option, optgroup, title, textarea, script, style")) { node.nodeValue = v.replace(EMO_RE, m => (emojiKey(m) ? "" : m)).replace(/^\s+/, ""); return; }
+  const frag = document.createDocumentFragment(); let last = 0; EMO_RE.lastIndex = 0; let m;
+  while ((m = EMO_RE.exec(v))) {
+    if (EMO_SKIP.test(m[0])) continue;
+    if (m.index > last) frag.appendChild(document.createTextNode(v.slice(last, m.index)));
+    const k = emojiKey(m[0]);
+    if (k) { const s = document.createElement("span"); s.className = "icw"; s.innerHTML = icSvg(k); frag.appendChild(s); } else frag.appendChild(document.createTextNode(m[0]));
+    last = m.index + m[0].length;
+  }
+  if (last < v.length) frag.appendChild(document.createTextNode(v.slice(last)));
+  par.replaceChild(frag, node);
+}
+function iconizeTree(root) {
+  if (!root) return;
+  if (root.nodeType === 3) { if (!(root.parentNode && root.parentNode.closest && root.parentNode.closest("svg"))) iconizeText(root); return; }
+  if (root.nodeType !== 1 || root.closest("svg, .icw")) return;
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => (n.parentNode.closest("svg, .icw") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) });
+  const list = []; while (w.nextNode()) list.push(w.currentNode); list.forEach(iconizeText);
+  root.querySelectorAll && root.querySelectorAll("[placeholder]").forEach(el => { const p = el.getAttribute("placeholder"); if (EMO_RE.test(p)) el.setAttribute("placeholder", p.replace(EMO_RE, "").trim()); EMO_RE.lastIndex = 0; });
+}
+const iconObserver = new MutationObserver(ms => { ms.forEach(m => { if (m.type === "characterData") iconizeTree(m.target); else m.addedNodes.forEach(iconizeTree); }); });
+function startIcons() { iconizeTree(document.body); iconObserver.observe(document.body, { childList: true, subtree: true, characterData: true }); }
 
 /* ============================================================
    3. Diagrams: original inline SVGs (labels in English)
@@ -4195,8 +4599,8 @@ document.addEventListener("click", e => { const b = e.target.closest && e.target
 
 /* 🔥 Streak bonus: chestnut rewards grow 5% per streak day, up to ×1.5 */
 const streakMult = () => Math.min(1.5, 1 + .05 * Math.max(0, ((S && S.current_streak) || 1) - 1));
-const withStreak = n => Math.round(n * streakMult() * (S && S.ill ? .5 : 1));
-const multTag = () => (streakMult() > 1 ? ` · 🔥 ×${streakMult().toFixed(2).replace(/0$/, "")} streak bonus` : "") + (S && S.ill ? " · 🤒 ×0.5 (Mochi is sick)" : "");
+const withStreak = n => Math.round(n * streakMult() * (S && S.ill ? .5 : 1) * perk("coins"));
+const multTag = () => (streakMult() > 1 ? ` · 🔥 ×${streakMult().toFixed(2).replace(/0$/, "")} streak bonus` : "") + (S && S.ill ? ` · 🤒 ×0.5 (${palName()} is sick)` : "") + (S && perk("coins") > 1 ? ` · ✨ ${palName()} +${Math.round((perk("coins") - 1) * 100)}%` : "");
 
 /* Near-miss check for spelling ("so close!") */
 function lev(a, b) {
@@ -4237,7 +4641,7 @@ function cheerLines() {
   const nm = mistakeKeys().length; if (nm) out.push(["hachiware", "normal", `📕 ${nm} question${nm > 1 ? "s" : ""} waiting in your Mistake Notebook. Fixing just 3 today makes your brain stronger!`]);
   const nw = Object.keys(S.dict.missed).length; if (nw) out.push(["momonga", "happy", `🎧 ${nw} tricky word${nw > 1 ? "s" : ""} to practise in Word Dictation. I could spell them easily... probably. 💜`]);
   if (ni !== -1) out.push(["hachiware", "normal", `Next right step: <b>${esc(ROOMS[ni].name)}</b>. Just one stage. You've got this! 🌱`]);
-  if (S.ill) out.push(["shisa", "normal", `🤒 Mochi is sick with <b>${esc(illById(S.ill.id).name)}</b>. Open the 🩺 medicine cabinet and pick the right treatment!`]);
+  if (S.ill) out.push(["shisa", "normal", `🤒 ${esc(palName())} is sick with <b>${esc(illById(S.ill.id).name)}</b>. Open the 🩺 medicine cabinet and pick the right treatment!`]);
   out.push(["chiikawa", "happy", esc(pick(DAILY_LIFE))]);
   if (S.coll.pending) out.push(["chiikawa", "sparkle", `🎁 You have ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""} to open! What's inside?!`]);
   out.push(["kurimanju", "happy", "Tired? A 5-minute Cell Rush or a Dictation round still counts. Small steps. *sip* 🍵"]);
@@ -4388,7 +4792,7 @@ function dictEnd() {
   const n = Math.min(DT.i + (DT.done ? 1 : 0), DT.words.length), perfect = n >= 8 && n === DT.words.length && DT.right === n;
   S.stats.dictRounds = (S.stats.dictRounds || 0) + (n ? 1 : 0);
   S.dict.best = Math.max(S.dict.best, DT.right);
-  const coins = withStreak(DT.right); S.coins += coins;
+  const coins = Math.round(withStreak(DT.right) * perk("dict")); S.coins += coins;
   if (perfect) { S.stats.dictPerfect += 1; S.coll.pending += 1; }
   save(true); checkTrophies();
   activityDone({ mode: "dict", topic: DT.src === "missed" ? "missed" : "", stage: "Dictation", ans: n, cor: DT.right, wrong: DT.missed.map(x => x.w).join(", ") });
@@ -4491,7 +4895,7 @@ const PETS = [
     link: "🦋 Classification: mammals have hair and feed their young on milk, even egg-layers.", k: "dict", n: 1, how: "Get a perfect 🎧 Word Dictation round" },
   { id: "tardigrade", name: "Tardigrade (water bear)", nick: "Chonk", sci: "Tardigrada", group: "Tardigrade", rar: "rare", status: "Everywhere!", home: "Moss, lichen and ponds all over the world, maybe even in Hong Kong parks",
     story: "Less than 1 mm long. When it dries out, it curls into a 'tun' and slows its metabolism to less than 0.01% of normal. In this state it survives boiling, freezing, strong radiation and even outer space. A special protein helps protect its DNA from damage.",
-    link: "🔑 Metabolism and 🧫 DNA: protecting enzymes and genes from damage.", k: "cured", n: 3, how: "Cure Mochi 3 times in the 🩺 medicine cabinet" },
+    link: "🔑 Metabolism and 🧫 DNA: protecting enzymes and genes from damage.", k: "cured", n: 3, how: "Cure your Study Pal 3 times in the 🩺 medicine cabinet" },
   { id: "seahorse", name: "Seahorse", nick: "Coral", sci: "Hippocampus kuda", group: "Fish", rar: "rare", status: "Vulnerable", home: "Shallow seagrass and coral reefs, including around Hong Kong",
     story: "The dad gets pregnant! The female puts her eggs into the male's brood pouch, he fertilises them, and weeks later he gives birth to hundreds of tiny babies. It is a fish that swims upright, beating its small back fin very fast.",
     link: "🌸 Reproduction: fertilisation and care of young can be done by either parent.", k: "spell", n: 40, how: "Spell 40 biology words correctly" },
@@ -4545,7 +4949,7 @@ function showPetUnlock() {
   const p = petQueue.shift();
   if ((p.rar === "epic" || p.rar === "legend") && !p.cer && !reduced()) { p.cer = true; petQueue.unshift(p); return giftCeremony(p.rar, showPetUnlock); }
   SFX.fanfare(); confetti(p.rar === "legend" ? 260 : 140);
-  const box = openModal(`<span class="kicker">🐾 New pet!</span><h2>${esc(p.nick)} the ${esc(p.name)} joined Mochi!</h2>
+  const box = openModal(`<span class="kicker">🐾 New pet!</span><h2>${esc(p.nick)} the ${esc(p.name)} joined ${esc(palName())}!</h2>
     <div class="petreveal flipin ${p.rar}">${p.rar === "legend" || p.rar === "epic" ? `<i class="aura" aria-hidden="true"></i>` : ""}${petSvg(p.id)}</div>
     <div class="row" style="justify-content:center">${petChips(p)}</div>
     <p style="text-align:center">${esc(p.story.split(". ")[0])}.</p>
@@ -4558,12 +4962,12 @@ function showPetUnlock() {
 function giftCeremony(rar, done) {
   const d = document.createElement("div"); d.className = `gift ${rar}`; d.setAttribute("aria-hidden", "true");
   d.innerHTML = `<div class="rays"></div>${rar === "legend" ? Array.from({ length: 18 }, (_, i) => `<i class="gold" style="left:${(i * 53) % 100}%;animation-delay:${(i % 6) * .18}s"></i>`).join("") : ""}
-    <svg class="gbox" viewBox="0 0 120 120"><rect x="16" y="50" width="88" height="62" rx="8" fill="${rar === "legend" ? "#FFD25E" : "#C9A0FF"}" stroke="${CO}" stroke-width="4"/>
-      <rect x="10" y="34" width="100" height="22" rx="6" fill="${rar === "legend" ? "#FFE58F" : "#DCC4FF"}" stroke="${CO}" stroke-width="4"/>
+    <svg class="gbox" viewBox="0 0 120 120"><rect x="16" y="50" width="88" height="62" rx="8" fill="${rar === "legend" ? "#FFD25E" : rar === "myth" ? "#FF86D0" : "#C9A0FF"}" stroke="${CO}" stroke-width="4"/>
+      <rect x="10" y="34" width="100" height="22" rx="6" fill="${rar === "legend" ? "#FFE58F" : rar === "myth" ? "#FFC2E8" : "#DCC4FF"}" stroke="${CO}" stroke-width="4"/>
       <rect x="52" y="34" width="16" height="78" fill="#FF8FA3" stroke="${CO}" stroke-width="3.5"/>
       <path d="M60 34 C40 8 22 18 34 32 Z M60 34 C80 8 98 18 86 32 Z" fill="#FF8FA3" stroke="${CO}" stroke-width="3.5" stroke-linejoin="round"/>
       <path d="M24 64 v36" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".6"/></svg>
-    <div class="glabel">${rar === "legend" ? "👑 LEGENDARY" : "💎 EPIC"}</div>`;
+    <div class="glabel">${rar === "legend" ? "👑 LEGENDARY" : rar === "myth" ? "🌈 MYTHIC" : "💎 EPIC"}</div>`;
   document.body.appendChild(d); [0, 450, 900].forEach(t => setTimeout(() => SFX.tap(), t));
   setTimeout(() => { d.classList.add("open"); SFX.fanfare(); confetti(rar === "legend" ? 220 : 120); }, 1400);
   setTimeout(() => { d.remove(); done(); }, 2500);
@@ -4607,7 +5011,7 @@ const ILLS = [
   { id: "flu", name: "Influenza (flu)", type: "virus", agent: "the influenza virus", icon: "🤒", sym: "sudden high fever, aching muscles, very tired", test: "Rapid flu test: positive for influenza A.", cure: ["antiviral", "rest"],
     why: "Flu is a virus. Antiviral medicine (given early) stops the virus copying itself inside cells, and rest helps the immune system win.", tip: "A flu vaccine every year trains your immune system to make memory cells before flu season." },
   { id: "strep", name: "Strep throat", type: "bacterium", agent: "Streptococcus bacteria", icon: "😣", sym: "very sore throat, fever, white spots on the tonsils", test: "Throat swab: Streptococcus bacteria grew on the agar plate.", cure: ["antibiotic"],
-    why: "This infection is caused by bacteria, so antibiotics work. Mochi must finish the whole course, even after feeling better, so no bacteria survive.", tip: "Stopping antibiotics early lets the toughest bacteria survive, which helps antibiotic resistance spread." },
+    why: "This infection is caused by bacteria, so antibiotics work. {P} must finish the whole course, even after feeling better, so no bacteria survive.", tip: "Stopping antibiotics early lets the toughest bacteria survive, which helps antibiotic resistance spread." },
   { id: "food", name: "Food poisoning", type: "bacterium", agent: "Salmonella bacteria from an undercooked egg", icon: "🤢", sym: "diarrhoea, vomiting, stomach cramps", test: "Stool sample: Salmonella found. Mochi is losing lots of water.", cure: ["ors"],
     why: "The main danger is dehydration. Oral rehydration salts replace water and ions, and most cases clear up by themselves. Antibiotics are only for severe cases.", tip: "Cook eggs and meat thoroughly, and keep raw and cooked food apart." },
   { id: "athlete", name: "Athlete's foot", type: "fungus", agent: "a fungus", icon: "🦶", sym: "itchy, cracked, peeling skin between the toes after days in sweaty sports shoes", test: "Skin scraping: fungal threads (hyphae) seen under the microscope.", cure: ["antifungal"],
@@ -4621,7 +5025,7 @@ const ILLS = [
   { id: "scurvy", name: "Scurvy", type: "deficiency", agent: "a lack of vitamin C", icon: "🍜", sym: "bleeding gums, bruises and slow-healing cuts, after weeks of eating only instant noodles", test: "Diet diary: no fruit or vegetables for 6 weeks. Not an infection.", cure: ["vitc"],
     why: "Scurvy is a deficiency disease: no pathogen is involved. Vitamin C is needed to make collagen, so eating citrus fruit and vegetables fixes it.", tip: "A balanced diet with fruit and vegetables every day prevents scurvy." },
   { id: "anaemia", name: "Iron-deficiency anaemia", type: "deficiency", agent: "not enough iron in the diet", icon: "😮‍💨", sym: "pale skin, very tired, out of breath after climbing stairs", test: "Blood test: low haemoglobin. Not an infection.", cure: ["iron"],
-    why: "Iron is part of haemoglobin. With too little, blood carries less oxygen, so Mochi feels tired. Red meat, beans and dark green leafy vegetables help.", tip: "Vitamin C helps your body absorb iron from plant foods." },
+    why: "Iron is part of haemoglobin. With too little, blood carries less oxygen, so {P} feels tired. Red meat, beans and dark green leafy vegetables help.", tip: "Vitamin C helps your body absorb iron from plant foods." },
   { id: "hayfever", name: "Hay fever (allergy)", type: "allergy", agent: "an allergic reaction to pollen", icon: "🌼", sym: "sneezing and itchy, watery eyes every spring, but no fever", test: "Skin-prick test: strong reaction to grass pollen. Not infectious.", cure: ["antihist"],
     why: "In an allergy, the immune system overreacts to something harmless and releases histamine. Antihistamines block its effects.", tip: "Allergies are not caught from other people: they aren't caused by pathogens." },
   { id: "heat", name: "Heat exhaustion", type: "homeostasis", agent: "overheating while playing basketball on a hot, humid Hong Kong afternoon", icon: "☀️", sym: "hot, dizzy, heavy sweating, very thirsty", test: "Body temperature 39 °C, no infection. In humid air, sweat evaporates slowly.", cure: ["cool"],
@@ -4636,10 +5040,10 @@ function wrongWhy(m, ill) {
   if (m.id === "antibiotic" && ill.type === "virus") return "❌ Antibiotics don't work on viruses! They target bacterial structures like cell walls and bacterial ribosomes, and viruses have neither. Using antibiotics when they aren't needed also helps antibiotic-resistant bacteria spread.";
   if (m.id === "antibiotic" && ill.id === "food") return "❌ Not the best choice. Most Salmonella food poisoning clears up by itself, and antibiotics are only for severe cases. The real danger right now is losing too much water.";
   if (m.id === "antibiotic") return `❌ Antibiotics only work against bacteria. This is caused by ${cause}.`;
-  if (m.id === "vaccine") return "❌ Vaccines prevent diseases by training the immune system before an infection. They can't cure an illness Mochi already has.";
+  if (m.id === "vaccine") return "❌ Vaccines prevent diseases by training the immune system before an infection. They can't cure an illness {P} already has.";
   if (m.id === "antiviral") return `❌ Antiviral medicine only stops viruses from copying themselves. This is caused by ${cause}.`;
   if (m.id === "rest" && ill.cure.indexOf("rest") < 0) return `❌ Rest always helps a little, but this is caused by ${cause} and needs the right treatment to get better.`;
-  return `❌ ${m.does} But Mochi's problem is caused by ${cause}.`;
+  return `❌ ${m.does} But {P}'s problem is caused by ${cause}.`;
 }
 function maybeGetSick(chance) {
   if (!S || S.ill || S.lastIllDay === today() || Math.random() >= chance) return false;
@@ -4650,7 +5054,7 @@ function maybeGetSick(chance) {
 function openClinic() {
   const ill = S.ill && illById(S.ill.id); if (!ill) return;
   const tried = S.ill.tried || [];
-  const box = openModal(`<span class="kicker">🩺 Dr Koma's clinic</span><h2>${ill.icon} Mochi isn't feeling well</h2>
+  const box = openModal(`<span class="kicker">🩺 Dr Koma's clinic</span><h2>${ill.icon} ${esc(palName())} isn't feeling well</h2>
     <div class="petstory"><div class="petpic sick">${figure("chiikawa", "sick")}</div>
       <div class="chart"><b>Symptoms:</b> ${esc(ill.sym)}<br><b>🔬 Test result:</b> ${esc(ill.test)}</div></div>
     ${say("shisa", "What is causing it: a virus, bacteria, a fungus, a parasite... or no pathogen at all? Pick the right treatment from the cabinet! 🦁🩺", "normal", "hint")}
@@ -4660,7 +5064,7 @@ function openClinic() {
     const m = medById(b.dataset.med), fb = box.querySelector("#clinicFb");
     if (ill.cure.includes(m.id)) {
       S.ill = null; S.stats.cured += 1; const bonus = 20; S.coins += bonus; save(true); SFX.fanfare(); confetti(120); checkTrophies();
-      box.innerHTML = `<span class="kicker">🩺 Dr Koma's clinic</span><h2>🎉 Mochi feels better!</h2>
+      box.innerHTML = `<span class="kicker">🩺 Dr Koma's clinic</span><h2>🎉 ${esc(palName())} feels better!</h2>
         <div class="petstory"><div class="petpic">${figure("chiikawa", "sparkle")}</div>
           <div><p><b>${esc(ill.name)}</b> is caused by ${esc(ill.agent)} (${TYPE_LABEL[ill.type]}).</p><p>✅ ${esc(ill.why)}</p></div></div>
         <div class="formula">🛡️ Prevention: ${esc(ill.tip)}</div>
@@ -4677,21 +5081,382 @@ function openClinic() {
 }
 /* Small moments of biology in Mochi's daily life (shown in the chat card) */
 const DAILY_LIFE = [
-  "🪥 Mochi brushed their teeth. Plaque bacteria turn sugar into acid, which dissolves tooth enamel, so brushing matters!",
-  "🧼 Mochi washed their hands for 20 seconds with soap. Soap breaks up the fatty outer layer of many germs.",
-  "😴 Mochi slept 9 hours. During deep sleep, the body releases growth hormone for growing and repair.",
-  "🍳 Mochi ate eggs for breakfast. Proteases break the protein into amino acids to build new cells.",
-  "🍚 Mochi chewed rice slowly. Salivary amylase in the mouth starts breaking starch into maltose.",
-  "🚶 Mochi climbed the stairs. Breathing got faster to bring in more oxygen and remove carbon dioxide.",
-  "🌞 Mochi played in the sun for a while. Skin uses sunlight to make vitamin D for strong bones.",
-  "💧 Mochi forgot to drink water. The brain released more ADH, so the kidneys saved water and made darker urine.",
-  "🥶 Mochi shivered in the cold air-con. Shivering is muscles contracting to release heat from respiration.",
-  "😳 Mochi blushed when the teacher said 'well done'. Blood vessels in the skin widened (vasodilation).",
-  "🥦 Mochi ate broccoli. The fibre (cellulose) isn't digested, but helps food move through the gut.",
-  "🏃 Mochi sprinted for the bus. Muscles used anaerobic respiration and made lactic acid. Deep breaths repay the oxygen debt.",
-  "🤧 Mochi covered a sneeze with a tissue. Droplets can carry viruses to other people.",
-  "💉 Mochi got a vaccine. The immune system made memory cells, ready for a faster response next time."
+  "🪥 {P} brushed their teeth. Plaque bacteria turn sugar into acid, which dissolves tooth enamel, so brushing matters!",
+  "🧼 {P} washed their hands for 20 seconds with soap. Soap breaks up the fatty outer layer of many germs.",
+  "😴 {P} slept 9 hours. During deep sleep, the body releases growth hormone for growing and repair.",
+  "🍳 {P} ate eggs for breakfast. Proteases break the protein into amino acids to build new cells.",
+  "🍚 {P} chewed rice slowly. Salivary amylase in the mouth starts breaking starch into maltose.",
+  "🚶 {P} climbed the stairs. Breathing got faster to bring in more oxygen and remove carbon dioxide.",
+  "🌞 {P} played in the sun for a while. Skin uses sunlight to make vitamin D for strong bones.",
+  "💧 {P} forgot to drink water. The brain released more ADH, so the kidneys saved water and made darker urine.",
+  "🥶 {P} shivered in the cold air-con. Shivering is muscles contracting to release heat from respiration.",
+  "😳 {P} blushed when the teacher said 'well done'. Blood vessels in the skin widened (vasodilation).",
+  "🥦 {P} ate broccoli. The fibre (cellulose) isn't digested, but helps food move through the gut.",
+  "🏃 {P} sprinted for the bus. Muscles used anaerobic respiration and made lactic acid. Deep breaths repay the oxygen debt.",
+  "🤧 {P} covered a sneeze with a tissue. Droplets can carry viruses to other people.",
+  "💉 {P} got a vaccine. The immune system made memory cells, ready for a faster response next time."
 ];
+
+/* ============================================================
+   4c. 🐾 Study Pals: the character you raise. The active pal IS the main character
+   (room, dialogue, dress-up, avatar). Each pal has Energy, Happiness, XP / level,
+   3 evolution stages (Baby → Junior → Master), moods, a small perk, a favourite food and a real biology fact.
+   19 animal pals come from the S1 Science game; 8 are new biology pals.
+   Rarity: common · rare · epic (adopt with 🌰 once the goal is met) · legendary (free, very hard goals) · mythic (🌰 only).
+   ============================================================ */
+const PAL_RAR = { common: ["Common", "#E5E5E5", "#AFAFAF"], rare: ["Rare", "#BDE7FF", "#1CB0F6"], epic: ["Epic", "#EBD4FF", "#CE82FF"], legend: ["Legendary", "#FFE9A6", "#FFC800"], myth: ["Mythic", "#FFD6F0", "#FF86D0"] };
+const PAL_ORDER = { myth: 0, legend: 1, epic: 2, rare: 3, common: 4 };
+const PERK_TXT = { xp: v => `+${Math.round(v * 100)}% pal XP`, coins: v => `+${Math.round(v * 100)}% chestnuts`, food: v => `Food ${Math.round(v * 100)}% cheaper`,
+  calm: v => `Happiness drops ${v >= 1 ? "never" : "half as fast"}`, energy: v => `Energy drops ${v >= 1 ? "never" : "half as fast"}`, notebook: v => `+${Math.round(v * 100)}% Mistake Notebook chestnuts`,
+  dict: v => `+${Math.round(v * 100)}% dictation chestnuts`, rush: v => `+${Math.round(v * 100)}% Cell Rush chestnuts` };
+const P_ = (id, name, sp, body, belly, rar, price, cond, perk, fav, desc, fact, extra) => Object.assign({ id, name, sp, body, belly, rar, price, cond, perk, fav, desc, fact }, extra || {});
+const PALS = [
+  P_("mochi", "Mochi", "bear", "#FFFFFF", "#FFF6EE", "common", 0, null, ["calm", .5], "rice", "A squishy rice-cake bear who loves taking notes.", "Bears fatten up before winter: stored fat is respired slowly during hibernation."),
+  P_("matcha", "Matcha", "frog", "#C9E7B4", "#EAF4E2", "rare", 150, ["streak", 3, "Reach a 3-day streak"], ["xp", .08], "salad", "A calm little frog who hums in the rain.", "Frogs can take in oxygen through their thin, moist skin as well as their lungs."),
+  P_("sakura", "Sakura", "bunny", "#FFD9E2", "#FFEDF1", "rare", 200, ["studies", 5, "Finish 5 stages or study series"], ["coins", .05], "apple", "A shy bunny who blushes at every right answer.", "Rabbits eat some of their own soft droppings, so plant food passes through the gut twice and more cellulose is digested."),
+  P_("pudding", "Pudding", "chick", "#FFE58F", "#FFF5D6", "rare", 250, ["correct", 150, "Answer 150 questions right"], ["food", .2], "rice", "A wobbly chick who is scared of Bunsen flames.", "A chick inside an egg breathes through thousands of tiny pores in the shell."),
+  P_("soda", "Soda", "seal", "#CFE7F6", "#E9F5FC", "rare", 300, ["cleared", 10, "Clear 10 Mistake Notebook questions"], ["notebook", .25], "fish", "A bubbly seal who loves deep dives.", "When a seal dives, its heart rate slows right down to save oxygen for the brain and heart."),
+  P_("kinako", "Kinako", "hamster", "#F6D6A4", "#FFF6E8", "rare", 300, ["days", 7, "Play on 7 different days"], ["energy", .5], "banana", "A round hamster who stores facts in her cheeks.", "A hamster's front teeth never stop growing, so it gnaws to wear them down."),
+  P_("hachi", "Hachi", "bee", "#FFD24D", "#FFEFB0", "rare", 350, ["sims", 3, "Try 3 Lab simulations"], ["xp", .08], "banana", "A busy bee who pollinates every flower on the way to class.", "Honeybees do a 'waggle dance' to tell other bees the direction and distance of food."),
+  P_("kame", "Kame", "turtle", "#A9D98B", "#F2F7D9", "rare", 350, ["streak", 5, "Reach a 5-day streak"], ["energy", .5], "salad", "A slow-and-steady turtle who never skips a day.", "Turtles are ectotherms: they warm up by basking, because they can't make enough body heat themselves."),
+  P_("noro", "Noro", "sloth", "#C9A88A", "#F3E6D6", "rare", 400, ["three", 3, "Get 3★ in 3 stages"], ["calm", .5], "salad", "A sleepy sloth who reads one page very, very carefully.", "Sloths have such a slow metabolism that green algae grow in their fur, giving them camouflage."),
+  P_("taro", "Taro", "cat", "#E4D6F3", "#F2EAFA", "epic", 500, ["three", 8, "Get 3★ in 8 stages"], ["coins", .06], "fish", "A sleepy cat who dreams in DNA spirals.", "Cats can't taste sweetness: the gene for their sweet-taste receptor doesn't work."),
+  P_("goma", "Goma", "panda", "#FFFFFF", "#F6F2EF", "epic", 500, ["days", 14, "Play on 14 different days"], ["energy", .5], "salad", "A panda who naps on textbooks.", "Pandas eat bamboo but have a meat-eater's short gut, so they digest little of it and eat for 12+ hours a day."),
+  P_("mikan", "Mikan", "fox", "#FFC894", "#FFF4E8", "epic", 550, ["dict", 3, "Get 3 perfect dictation rounds"], ["dict", .2], "egg", "A tangerine fox who listens for every syllable.", "A fox's large ears have many blood vessels close to the surface, which helps it lose heat."),
+  P_("nori", "Nori", "penguin", "#8494B5", "#FFFFFF", "epic", 600, ["streak", 7, "Reach a 7-day streak"], ["rush", .15], "fish", "A tiny penguin who slides into every Cell Rush.", "In a penguin's legs, warm blood flowing down heats the cold blood flowing back (countercurrent exchange)."),
+  P_("ume", "Ume", "axolotl", "#FFC9DA", "#FFE8F0", "epic", 650, ["cleared", 30, "Clear 30 Mistake Notebook questions"], ["notebook", .25], "fish", "A smiley axolotl who waves her frilly gills.", "Axolotls can regrow lost legs, and even parts of the heart and brain."),
+  P_("wata", "Wata", "sheep", "#FFF7EA", "#FFFDF8", "epic", 650, ["rush", 150, "Score 150 in Cell Rush"], ["food", .2], "salad", "A fluffy lamb made of marshmallow clouds.", "Sheep are ruminants: microbes in their four-part stomach digest the cellulose in grass."),
+  P_("chiku", "Chiku", "hedgehog", "#F3E1C8", "#FFF8EE", "epic", 700, ["spell", 80, "Spell 80 key terms right"], ["dict", .2], "egg", "A shy hedgehog who spells every word twice.", "Hedgehog spines are hairs made of keratin, the same protein as your nails."),
+  P_("kuma", "Kuma", "koala", "#D6D9DE", "#F2F3F5", "epic", 750, ["three", 18, "Get 3★ in 18 stages"], ["energy", .5], "salad", "A dozy koala who naps between quizzes.", "Koalas sleep up to 20 hours a day: eucalyptus leaves give very little energy and gut bacteria must break down their toxins."),
+  P_("chiro", "Chiro", "bat", "#A79BC9", "#EDE8FA", "epic", 800, ["sims", 5, "Try all 5 Lab simulations"], ["xp", .1], "banana", "A night-time bat who 'sees' with sound.", "Bats use echolocation: they make high-pitched calls and listen for the echoes. Hong Kong has over 20 bat species."),
+  P_("tako", "Tako", "octopus", "#FF9AA2", "#FFE1E4", "epic", 850, ["correct", 600, "Answer 600 questions right"], ["coins", .08], "fish", "A clever octopus who solves puzzles with all eight arms.", "An octopus has three hearts and blue blood: it carries oxygen with haemocyanin, which contains copper."),
+  P_("kurage", "Kurage", "jelly", "#D9CCFF", "#F2EDFF", "epic", 900, ["missions", 10, "Complete 10 daily missions"], ["notebook", .3], "fish", "A dreamy jellyfish who drifts through revision.", "Jellyfish have no brain, heart or blood: their body is so thin that oxygen simply diffuses in."),
+  P_("nova", "Nova", "unicorn", "#F4EEFF", "#FFFFFF", "legend", 0, ["days", 60, "Play on 60 different days"], ["xp", .12], "apple", "A legendary star-unicorn that only visits the most devoted scientists.", "Unicorns aren't real, but the narwhal's 'horn' is: it's a long tooth with millions of nerve endings."),
+  P_("petal", "Petal", "fawn", "#E9B98E", "#FFF3E6", "legend", 0, ["topics", 10, "Clear 10 whole topics"], ["coins", .1], "salad", "A legendary blossom fawn who grows a little every day.", "Deer antlers are bone that falls off and regrows every year, one of the fastest-growing tissues in any animal."),
+  P_("riccio", "Riccio", "pangolin", "#C98B6B", "#FBEFE6", "legend", 0, ["streak", 30, "Reach a 30-day streak"], ["xp", .1], "egg", "A legendary Hong Kong pangolin who rolls into a ball when exams get scary.", "The Chinese pangolin lives wild in Hong Kong and is critically endangered. Its scales are made of keratin."),
+  P_("hikari", "Hikari", "firefly", "#FFF3B0", "#FFFBE0", "legend", 0, ["correct", 1500, "Answer 1,500 questions right"], ["xp", .1], "banana", "A legendary firefly whose tail glows brighter with every right answer.", "Fireflies glow by bioluminescence: an enzyme (luciferase) uses ATP to make light with almost no heat."),
+  P_("finn", "Finn", "shark", "#8FBCE6", "#FFFFFF", "myth", 1500, null, ["coins", .08], "fish", "A mythic baby shark who never stops swimming, just like a streak.", "A shark's skeleton is cartilage, not bone, and many sharks must keep swimming to push water over their gills."),
+  P_("tardi", "Tardi", "tardigrade", "#D8CBB5", "#F5EEDF", "myth", 2500, null, ["energy", 1], "rice", "A mythic water bear who survives absolutely anything.", "Tardigrades can dry out almost completely and survive boiling, freezing, radiation and even outer space."),
+  P_("luna", "Luna", "owl", "#8A86C9", "#F3EEFF", "myth", 3500, null, ["notebook", .3], "fish", "A mythic moon owl who reads every textbook at night.", "Owls can turn their heads about 270°, and their ears sit at different heights to pinpoint sounds.")
+];
+const palById = id => PALS.find(p => p.id === id) || PALS[0];
+const activePalId = () => (S && S.activePal && S.pals && S.pals[S.activePal] ? S.activePal : "mochi");
+const activePal = () => palById(activePalId());
+const palName = () => activePal().name;
+const palState = id => { S.pals = S.pals || {}; if (!S.pals[id]) S.pals[id] = newPal(); return S.pals[id]; };
+function newPal() { return { xp: 0, stage: 1, energy: 80, happy: 80, t: Date.now(), meals: 0 }; }
+const palLevel = xp => Math.floor(Math.sqrt((xp || 0) / 25)) + 1;
+const lvXP = l => 25 * (l - 1) * (l - 1);
+const STAGES = [null, "Baby", "Junior", "Master"];
+const EVO = { common: [[5, 120], [10, 300]], rare: [[5, 120], [10, 300]], epic: [[5, 150], [10, 350]], legend: [[7, 250], [13, 600]], myth: [[8, 400], [15, 900]] };
+function perk(kind) { if (!S) return 1; const [t, v] = activePal().perk; return t === kind ? 1 + v : 1; }
+const perkLabel = P => PERK_TXT[P.perk[0]](P.perk[1]);
+const palVal = k => !S ? 0 : ({ streak: S.longest_streak, days: S.stats.days, studies: (S.stats.studyClears || 0) + (S.stats.escClears || 0), correct: S.stats.correct, cleared: S.mistakes_cleared || 0,
+  sims: Object.keys(S.sims || {}).length, three: Object.values(S.room_stars || {}).filter(v => v >= 3).length, dict: S.stats.dictPerfect, rush: S.rush.best, spell: S.stats.spellRight,
+  missions: S.stats.missions || 0, topics: typeof topicsCleared === "function" ? topicsCleared() : 0 })[k] || 0;
+const condMet = P => !P.cond || palVal(P.cond[0]) >= P.cond[1];
+const condPct = P => !P.cond ? (P.price ? Math.min(1, S.coins / P.price) : 1) : Math.min(1, palVal(P.cond[0]) / P.cond[1]);
+
+/* ----- Art: every pal shares Mochi's squishy body; species features are layered on (ported from the S1 Science pals) ----- */
+const PST = `stroke="${CO}" stroke-width="3.5" stroke-linejoin="round"`;
+const bellyEl = (c, ry = 20) => `<ellipse cx="100" cy="152" rx="36" ry="${ry}" fill="${c}"/>`;
+const clipBody = inner => { const id = "pb" + (++clipN); return `<clipPath id="${id}"><path d="${BODY}"/></clipPath><g clip-path="url(#${id})">${inner}</g>`; };
+const PAL_ART = {
+  frog: { back: b => `<circle cx="70" cy="72" r="17" fill="${b}" ${PST}/><circle cx="130" cy="72" r="17" fill="${b}" ${PST}/>`, front: (b, be) => bellyEl(be) + `<circle cx="70" cy="72" r="7" fill="#fff"/><circle cx="130" cy="72" r="7" fill="#fff"/>` },
+  bunny: { back: b => `<ellipse cx="76" cy="44" rx="13" ry="32" fill="${b}" ${PST} transform="rotate(-12 76 44)"/><ellipse cx="124" cy="44" rx="13" ry="32" fill="${b}" ${PST} transform="rotate(12 124 44)"/><ellipse cx="76" cy="46" rx="6" ry="22" fill="#FFB9C8" transform="rotate(-12 76 46)"/><ellipse cx="124" cy="46" rx="6" ry="22" fill="#FFB9C8" transform="rotate(12 124 46)"/>`, front: (b, be) => bellyEl(be) },
+  chick: { back: () => `<path d="M100 64 C94 48 98 40 104 38 C102 46 104 54 100 64Z M100 64 C108 50 116 48 120 50 C112 54 106 60 100 64Z" fill="#F7D476" ${PST}/>`, front: (b, be) => bellyEl(be), after: () => `<path d="M94 124 L106 124 L100 132Z" fill="#FF9600" stroke="${CO}" stroke-width="2" stroke-linejoin="round"/>` },
+  seal: { front: (b, be) => bellyEl(be), after: () => `<path d="M52 124 L36 120 M52 130 L36 132 M148 124 L164 120 M148 130 L164 132" stroke="${CO}" stroke-width="2" stroke-linecap="round"/><ellipse cx="100" cy="125" rx="5" ry="3.5" fill="${CO}"/>` },
+  hamster: { back: b => `<circle cx="64" cy="74" r="11" fill="${b}" ${PST}/><circle cx="136" cy="74" r="11" fill="${b}" ${PST}/><circle cx="64" cy="74" r="5" fill="#FFC6D2"/><circle cx="136" cy="74" r="5" fill="#FFC6D2"/>`, front: (b, be) => bellyEl(be) + `<ellipse cx="100" cy="78" rx="9" ry="10" fill="#E3AE6C" opacity=".8"/>` },
+  bee: { back: () => `<ellipse cx="44" cy="92" rx="22" ry="14" fill="rgba(220,240,255,.85)" ${PST} transform="rotate(-30 44 92)"/><ellipse cx="156" cy="92" rx="22" ry="14" fill="rgba(220,240,255,.85)" ${PST} transform="rotate(30 156 92)"/><path d="M86 66 Q78 40 68 34 M114 66 Q122 40 132 34" stroke="${CO}" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="68" cy="34" r="6" fill="${CO}"/><circle cx="132" cy="34" r="6" fill="${CO}"/>`,
+    front: () => clipBody(`<path d="M0 142 Q100 128 200 142 V156 Q100 142 0 156Z M0 166 Q100 152 200 166 V182 Q100 168 0 182Z" fill="#4B3B2F"/>`) },
+  turtle: { back: () => `<path d="M100 186 l-6 8 l12 -2Z" fill="#7CBF5E" ${PST}/>`,
+    front: () => clipBody(`<path d="M0 0 H200 V96 Q100 74 0 96Z" fill="#8A6A3F"/><path d="M70 72 l14 -10 h32 l14 10 M84 62 v-14 M116 62 v-14 M58 90 l12 -18 M142 90 l-12 -18" stroke="#5E4526" stroke-width="3" fill="none"/>`) + bellyEl("#F2F7D9") },
+  sloth: { front: (b, be) => bellyEl(be) + `<ellipse cx="100" cy="118" rx="46" ry="26" fill="#F3E6D6"/><path d="M68 108 Q78 104 88 116 Q80 128 68 120Z M132 108 Q122 104 112 116 Q120 128 132 120Z" fill="#6B4E3A"/>`, after: () => `<ellipse cx="100" cy="124" rx="5" ry="3.5" fill="${CO}"/>` },
+  cat: { back: b => `<path d="M50 96 L56 50 L90 70Z" fill="${b}" ${PST}/><path d="M150 96 L144 50 L110 70Z" fill="${b}" ${PST}/><path d="M58 84 L61 60 L80 72Z M142 84 L139 60 L120 72Z" fill="#F7C6D4"/>`, front: (b, be) => bellyEl(be), after: () => `<path d="M52 124 L36 120 M52 130 L36 132 M148 124 L164 120 M148 130 L164 132" stroke="${CO}" stroke-width="2" stroke-linecap="round"/>` },
+  panda: { back: () => `<circle cx="60" cy="76" r="15" fill="#4B4B4B" ${PST}/><circle cx="140" cy="76" r="15" fill="#4B4B4B" ${PST}/>`, front: (b, be) => bellyEl(be) + `<ellipse cx="80" cy="117" rx="13" ry="14" fill="#5E5555" transform="rotate(-20 80 117)"/><ellipse cx="120" cy="117" rx="13" ry="14" fill="#5E5555" transform="rotate(20 120 117)"/>` },
+  fox: { back: b => `<path d="M150 162 C196 164 204 118 182 96 C176 118 164 136 144 146Z" fill="${b}" ${PST}/><path d="M182 96 C196 110 198 128 192 140 C186 126 184 112 182 96Z" fill="#FFF4E8"/><path d="M52 98 L50 44 L92 68Z" fill="${b}" ${PST}/><path d="M148 98 L150 44 L108 68Z" fill="${b}" ${PST}/><path d="M60 86 L58 58 L80 72Z M140 86 L142 58 L120 72Z" fill="#FFF4E8"/>`, front: (b, be) => bellyEl(be) },
+  penguin: { front: () => `<ellipse cx="100" cy="128" rx="54" ry="46" fill="#fff"/>`, after: () => `<path d="M93 124 L107 124 L100 132Z" fill="#FF9600" stroke="${CO}" stroke-width="2" stroke-linejoin="round"/>` },
+  axolotl: { back: () => [[-30, 34, 90], [0, 26, 108], [30, 34, 126]].map(([r, x, y]) => `<ellipse cx="${x}" cy="${y}" rx="15" ry="6" fill="#F58FB1" ${PST} transform="rotate(${r} ${x} ${y})"/><ellipse cx="${200 - x}" cy="${y}" rx="15" ry="6" fill="#F58FB1" ${PST} transform="rotate(${-r} ${200 - x} ${y})"/>`).join(""), front: (b, be) => bellyEl(be) },
+  sheep: { back: () => `<ellipse cx="36" cy="104" rx="17" ry="8" fill="#F1DCC0" ${PST} transform="rotate(20 36 104)"/><ellipse cx="164" cy="104" rx="17" ry="8" fill="#F1DCC0" ${PST} transform="rotate(-20 164 104)"/>`, front: (b, be) => bellyEl(be) + [60, 74, 88, 100, 112, 126, 140].map((x, i) => `<circle cx="${x}" cy="${i % 2 ? 70 : 76}" r="14" fill="#fff" stroke="${CO}" stroke-width="3"/>`).join("") },
+  hedgehog: { back: () => { let d = ""; for (let i = 0; i < 11; i++) { const a = Math.PI * (.95 + i * .11), p = (r1, r2, aa) => `${(100 + r1 * Math.cos(aa)).toFixed(1)} ${(128 + r2 * Math.sin(aa)).toFixed(1)}`; d += `${i ? "L" : "M"}${p(76, 70, a)} L${p(96, 90, a + .05)} L${p(76, 70, a + .1)} `; } return `<path d="${d}Z" fill="#A9825E" ${PST}/>`; }, front: (b, be) => bellyEl(be), after: () => `<ellipse cx="100" cy="124" rx="4.5" ry="3.5" fill="${CO}"/>` },
+  koala: { back: b => `<circle cx="48" cy="84" r="26" fill="${b}" ${PST}/><circle cx="152" cy="84" r="26" fill="${b}" ${PST}/><circle cx="50" cy="86" r="14" fill="#fff"/><circle cx="150" cy="86" r="14" fill="#fff"/>`, front: (b, be) => bellyEl(be), after: () => `<ellipse cx="100" cy="124" rx="8" ry="6" fill="#5E5555"/>` },
+  bat: { back: b => `<path d="M40 120 Q6 96 0 132 Q14 128 18 142 Q26 132 36 146Z M160 120 Q194 96 200 132 Q186 128 182 142 Q174 132 164 146Z" fill="#7E70A8" ${PST}/><path d="M56 94 L46 40 L92 70Z" fill="${b}" ${PST}/><path d="M144 94 L154 40 L108 70Z" fill="${b}" ${PST}/><path d="M60 82 L55 54 L80 70Z M140 82 L145 54 L120 70Z" fill="#F7C6D4"/>`, front: (b, be) => bellyEl(be), after: () => `<path d="M94 133 l2 5 l2 -5 M102 133 l2 5 l2 -5" fill="#fff" stroke="${CO}" stroke-width="1.5" stroke-linejoin="round"/>` },
+  octopus: { back: b => [34, 58, 82, 118, 142, 166].map((x, i) => `<path d="M${x} 158 q${i < 3 ? -14 : 14} 16 ${i < 3 ? -4 : 4} 30 q${i < 3 ? 10 : -10} 2 ${i < 3 ? 8 : -8} -10" fill="none" stroke="${CO}" stroke-width="15" stroke-linecap="round"/><path d="M${x} 158 q${i < 3 ? -14 : 14} 16 ${i < 3 ? -4 : 4} 30 q${i < 3 ? 10 : -10} 2 ${i < 3 ? 8 : -8} -10" fill="none" stroke="${b}" stroke-width="9" stroke-linecap="round"/>`).join(""), front: (b, be) => `<circle cx="70" cy="86" r="5" fill="#fff" opacity=".6"/><circle cx="82" cy="76" r="3" fill="#fff" opacity=".6"/>` + bellyEl(be, 16) },
+  jelly: { back: () => [52, 74, 100, 126, 148].map((x, i) => `<path d="M${x} 168 q${i % 2 ? 8 : -8} 12 0 22 q${i % 2 ? -8 : 8} 8 0 18" fill="none" stroke="#B9A6F2" stroke-width="5" stroke-linecap="round"/>`).join(""), front: () => `<path d="M48 100 Q100 70 152 100" stroke="#fff" stroke-width="6" fill="none" opacity=".6" stroke-linecap="round"/>${[[64, 150], [100, 160], [136, 150]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#fff" opacity=".7"/>`).join("")}` },
+  unicorn: { back: b => `<path d="M92 66 L100 20 L108 66Z" fill="#FFC800" ${PST}/><path d="M95 52 L105 48 M96 40 L104 36" stroke="#E5A000" stroke-width="2"/><path d="M60 80 Q52 58 68 64Z M140 80 Q148 58 132 64Z" fill="${b}" ${PST}/>`, front: (b, be) => bellyEl(be) + `<path d="M56 108 l2 4 l4 .5 l-3 3 l1 4 l-4 -2 l-4 2 l1 -4 l-3 -3 l4 -.5Z M144 108 l2 4 l4 .5 l-3 3 l1 4 l-4 -2 l-4 2 l1 -4 l-3 -3 l4 -.5Z" fill="#CE82FF"/><path d="M70 70 Q100 56 130 70" stroke="#FF86D0" stroke-width="4" fill="none" opacity=".7"/>` },
+  fawn: { back: b => `<ellipse cx="50" cy="86" rx="20" ry="9" fill="${b}" ${PST} transform="rotate(-28 50 86)"/><ellipse cx="150" cy="86" rx="20" ry="9" fill="${b}" ${PST} transform="rotate(28 150 86)"/><ellipse cx="50" cy="86" rx="11" ry="4" fill="#FFD1DA" transform="rotate(-28 50 86)"/><ellipse cx="150" cy="86" rx="11" ry="4" fill="#FFD1DA" transform="rotate(28 150 86)"/><path d="M84 68 Q78 46 70 30 M77 50 Q66 46 58 38 M116 68 Q122 46 130 30 M123 50 Q134 46 142 38" stroke="${CO}" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M84 68 Q78 46 70 30 M77 50 Q66 46 58 38 M116 68 Q122 46 130 30 M123 50 Q134 46 142 38" stroke="#F3E1C8" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="70" cy="30" r="5" fill="#FF86D0"/><circle cx="130" cy="30" r="5" fill="#FF86D0"/>`,
+    front: (b, be) => bellyEl(be) + [[60, 100, 4.5], [71, 89, 3.2], [140, 100, 4.5], [129, 89, 3.2], [52, 114, 3], [148, 114, 3]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity=".85"/>`).join("") },
+  pangolin: { back: b => `<circle cx="62" cy="80" r="9" fill="${b}" ${PST}/><circle cx="138" cy="80" r="9" fill="${b}" ${PST}/><path d="M156 162 Q198 164 198 128 Q196 102 172 108 Q186 118 184 134 Q180 150 154 146Z" fill="${b}" ${PST}/><path d="M166 158 q6 -6 0 -12 M178 154 q6 -6 2 -14 M188 142 q4 -8 -2 -14" stroke="#8A5A3C" stroke-width="2.5" fill="none"/>`,
+    front: (b, be) => bellyEl(be, 22) + [[72, 84, 100, 116, 128], [62, 76, 90, 110, 124, 138]].map((row, j) => row.map((x, i) => { const y = j ? 88 : (i === 0 || i === 4 ? 78 : 74); return `<path d="M${x - 9} ${y} Q${x} ${y + 15} ${x + 9} ${y}Z" fill="#8A5A3C" stroke="${CO}" stroke-width="2"/>`; }).join("")).join("") },
+  firefly: { back: () => `<circle cx="150" cy="166" r="34" fill="rgba(255,240,120,.45)"/><circle cx="150" cy="166" r="20" fill="#FFF07A" ${PST}/><ellipse cx="46" cy="100" rx="22" ry="12" fill="rgba(230,245,255,.85)" ${PST} transform="rotate(-24 46 100)"/><ellipse cx="154" cy="100" rx="22" ry="12" fill="rgba(230,245,255,.85)" ${PST} transform="rotate(24 154 100)"/><path d="M88 66 Q82 42 72 38 M112 66 Q118 42 128 38" stroke="${CO}" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="72" cy="38" r="5" fill="#FFC800" ${PST}/><circle cx="128" cy="38" r="5" fill="#FFC800" ${PST}/>`,
+    front: () => clipBody(`<path d="M0 0 H200 V92 Q100 72 0 92Z" fill="#4B4B4B"/>`) + bellyEl("#FFFBE0") },
+  shark: { back: b => `<path d="M166 150 Q196 128 198 104 Q186 128 170 132Z" fill="${b}" ${PST}/><path d="M166 150 Q194 160 204 178 Q184 170 164 164Z" fill="${b}" ${PST}/><path d="M82 70 Q96 14 128 30 Q112 44 118 66Z" fill="${b}" ${PST}/>`,
+    front: () => `<path d="M40 148 Q100 196 160 148 Q150 176 100 178 Q50 176 40 148Z" fill="#fff" opacity=".95"/><path d="M44 112 q-5 6 0 12 M52 108 q-5 7 0 14 M156 112 q5 6 0 12 M148 108 q5 7 0 14" stroke="#5C8DC2" stroke-width="2.5" fill="none" stroke-linecap="round"/>` },
+  tardigrade: { back: b => [[34, 132], [166, 132], [44, 160], [156, 160]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="12" ry="9" fill="${b}" ${PST}/><path d="M${x + (x < 100 ? -12 : 8)} ${y + 2} l4 4 M${x + (x < 100 ? -9 : 5)} ${y + 6} l3 4" stroke="${CO}" stroke-width="2" stroke-linecap="round"/>`).join(""),
+    front: () => `<path d="M38 102 Q100 86 162 102 M32 138 Q100 124 168 138 M40 164 Q100 152 160 164" stroke="#B8A88E" stroke-width="3" fill="none"/>`, after: () => `<ellipse cx="100" cy="134" rx="6" ry="4" fill="#E88A9A" stroke="${CO}" stroke-width="2"/>` },
+  owl: { back: b => `<path d="M52 92 L46 46 L84 70Z" fill="${b}" ${PST}/><path d="M148 92 L154 46 L116 70Z" fill="${b}" ${PST}/><path d="M56 80 L52 56 L72 70Z M144 80 L148 56 L128 70Z" fill="#C9C2EE"/>`,
+    front: (b, be) => `<circle cx="80" cy="116" r="18" fill="#FFF6D6" stroke="#C9C2EE" stroke-width="3"/><circle cx="120" cy="116" r="18" fill="#FFF6D6" stroke="#C9C2EE" stroke-width="3"/>` + [[82, 150], [100, 158], [118, 150], [91, 166], [109, 166]].map(([x, y]) => `<path d="M${x - 5} ${y} l5 5 l5 -5" stroke="#B9AEE6" stroke-width="2.5" fill="none" stroke-linecap="round"/>`).join(""),
+    after: () => `<path d="M94 124 L106 124 L100 134Z" fill="#FF9600" stroke="${CO}" stroke-width="2" stroke-linejoin="round"/>` }
+};
+const MOCHI_CHAR = CHAR.chiikawa;
+// Halo, sparkles and rarity aura for the active pal (evolution stage 3 = golden halo; legendary = gold glow; mythic = rainbow ring)
+function palAura(P, st) {
+  let s = "";
+  if (P.rar === "myth") s += `<g class="pring">${["#FF4B4B", "#FF9600", "#FFC800", "#58CC02", "#1CB0F6", "#CE82FF"].map((c, i) => `<circle cx="100" cy="118" r="88" fill="none" stroke="${c}" stroke-width="5" stroke-dasharray="46 507" stroke-dashoffset="${-i * 92}" opacity=".75"/>`).join("")}</g>`;
+  else if (P.rar === "legend") s += `<circle cx="100" cy="118" r="86" fill="#FFE27A" opacity=".35"/><g class="pring"><circle cx="100" cy="118" r="88" fill="none" stroke="#FFC800" stroke-width="3" stroke-dasharray="6 14"/></g>`;
+  if (st >= 3) s += `<circle cx="100" cy="118" r="80" fill="#FFF1C5" opacity=".7"/><circle cx="100" cy="118" r="80" fill="none" stroke="#FFC800" stroke-width="3" stroke-dasharray="4 10"/>`;
+  return s;
+}
+function palMarks(st) {
+  let s = "";
+  if (st >= 2) s += `<path d="M146 112 l2 4 l4 .5 l-3 3 l1 4 l-4 -2 l-4 2 l1 -4 l-3 -3 l4 -.5Z" fill="#FFC800" stroke="${CO}" stroke-width="1"/>`;
+  if (st >= 3) s += `<g class="twinkle">${spark4(28, 72, 8, "#FFC800")}${spark4(174, 56, 7, "#FFC800")}</g>`;
+  return s;
+}
+// The player's character ("chiikawa" key) now draws whichever Study Pal is active
+CHAR.chiikawa = {
+  get name() { return palName(); },
+  get color() { return activePal().id === "mochi" ? MOCHI_CHAR.color : activePal().body; },
+  back() { const P = activePal(), st = S && S.pals && S.pals[P.id] ? S.pals[P.id].stage : 1, A = PAL_ART[P.sp];
+    return palAura(P, st) + (P.id === "mochi" ? MOCHI_CHAR.back() : A && A.back ? A.back(P.body) : ""); },
+  front() { const P = activePal(), A = PAL_ART[P.sp]; return P.id === "mochi" ? "" : A && A.front ? A.front(P.body, P.belly) : ""; },
+  face(m) { return MOCHI_CHAR.face(m); },
+  after(m) { const P = activePal(), A = PAL_ART[P.sp], st = S && S.pals && S.pals[P.id] ? S.pals[P.id].stage : 1; return (A && A.after && m !== "sick" ? A.after(m) : "") + palMarks(st); }
+};
+// Draw any pal (collection cards, adverts), independent of which one is active
+function palFig(id, mood = "happy", opts = {}) {
+  const keep = S && S.activePal, had = S && S.pals && S.pals[id];
+  if (!S) return figure("chiikawa", mood, {});
+  S.pals = S.pals || {}; if (!had) S.pals[id] = Object.assign(newPal(), { stage: opts.stage || 1 });
+  S.activePal = id;
+  const svg = figure("chiikawa", mood, opts.eq || {});
+  S.activePal = keep; if (!had) delete S.pals[id];
+  return svg;
+}
+
+/* ----- Care: energy and happiness drift down over time; studying earns XP ----- */
+function palTick() {
+  if (!S) return;
+  S.pals = S.pals || {}; if (!S.pals.mochi) S.pals.mochi = newPal(); if (!S.activePal || !S.pals[S.activePal]) S.activePal = "mochi";
+  const p = palState(S.activePal), now = Date.now(), h = Math.min(72, (now - (p.t || now)) / 3600e3);
+  if (h > .05) {
+    p.energy = Math.max(5, p.energy - h * 1.2 * (2 - perk("energy")));
+    p.happy = Math.max(5, p.happy - h * .3 * (2 - perk("calm")));
+    p.t = now;
+  }
+}
+function palMood() {
+  if (!S) return "happy";
+  const p = palState(activePalId()), h = new Date().getHours();
+  if (S.ill) return "sick";
+  if (p.energy < 25) return "hungry";
+  if (p.happy < 25) return "lonely";
+  if (h >= 22 || h < 6 || p.energy < 42) return "sleepy";
+  if (p.happy >= 75 && p.energy >= 60) return "overjoyed";
+  return "happy";
+}
+const MOOD_FACE = { sick: "sick", hungry: "cry", lonely: "cry", sleepy: "sleepy", overjoyed: "sparkle", happy: "happy" };
+const MOOD_INFO = { sick: ["🤒", "Sick"], hungry: ["🍙", "Hungry"], lonely: ["🥺", "Lonely"], sleepy: ["😴", "Sleepy"], overjoyed: ["🤩", "Overjoyed"], happy: ["😊", "Happy"] };
+const MOOD_LINE = { hungry: "My tummy is rumbling... 🍙 Hungry pals learn slower (my brain needs glucose!). Can we eat?", lonely: "Uu... play with me? 🥺 A quick Term Match would cheer me up!", sleepy: "Yawn... I'm a bit sleepy. 😴" };
+function palGain(ev) {
+  if (!S || !(ev.ans > 0)) return;
+  const p = palState(activePalId()), before = palLevel(p.xp);
+  const xp = Math.round((5 + 2 * Math.min(25, ev.cor || 0)) * perk("xp") * (p.energy < 25 ? .5 : 1));
+  p.xp += xp; p.energy = Math.max(5, p.energy - 6); p.happy = Math.min(100, p.happy + 3);
+  const after = palLevel(p.xp);
+  setTimeout(() => toast(after > before ? `⭐ ${palName()} reached level ${after}!${evoReady(activePalId()) ? " Evolution is ready! ✨" : ""}` : `+${xp} XP for ${palName()}${p.energy < 25 ? " (hungry: half XP)" : ""}`), 2600);
+}
+function evoNeed(id) { const p = palState(id), P = palById(id); return p.stage >= 3 ? null : EVO[P.rar][p.stage - 1]; }
+const evoReady = id => { const n = evoNeed(id); return !!n && palLevel(palState(id).xp) >= n[0]; };
+function evolve(id) {
+  const n = evoNeed(id), p = palState(id); if (!n || palLevel(p.xp) < n[0] || S.coins < n[1]) return;
+  S.coins -= n[1]; p.stage += 1; save(true);
+  giftCeremony(palById(id).rar === "myth" ? "myth" : "legend", () => { SFX.fanfare(); confetti(200); yaha(`${STAGES[p.stage]}!`); toast(`✨ ${palById(id).name} evolved into a ${STAGES[p.stage]}!`); renderMap(); });
+}
+
+/* ----- 🍱 Food with nutrition cards (approximate values per typical serving) ----- */
+const FOODS = [
+  { id: "apple", e: "🍎", name: "Apple", price: 4, en: 14, hp: 4, xp: 2, r: "g", n: [95, 25, .5, .3, 19, 4.4], note: "Fibre adds bulk, so food moves easily along the gut by peristalsis." },
+  { id: "banana", e: "🍌", name: "Banana", price: 4, en: 18, hp: 4, xp: 2, r: "g", n: [105, 27, 1.3, .4, 14, 3.1], note: "Rich in carbohydrate and potassium: quick energy for respiration." },
+  { id: "milk", e: "🥛", name: "Low-fat milk", price: 5, en: 14, hp: 5, xp: 3, r: "g", n: [110, 12, 8, 2.5, 12, 0], note: "Calcium and protein for strong bones and teeth. The sugar here is lactose." },
+  { id: "salad", e: "🥗", name: "Egg salad", price: 8, en: 16, hp: 6, xp: 4, r: "g", n: [180, 10, 10, 11, 4, 4], note: "Vitamins, minerals and fibre from vegetables, plus protein from the egg." },
+  { id: "rice", e: "🍚", name: "Rice with vegetables", price: 10, en: 34, hp: 6, xp: 4, r: "g", n: [300, 60, 7, 3, 2, 3], note: "Starch is digested to glucose: slow, steady energy for the brain." },
+  { id: "fish", e: "🐟", name: "Steamed fish with rice", price: 14, en: 40, hp: 8, xp: 6, r: "g", n: [420, 55, 30, 8, 2, 2], note: "Lean protein for growth and repair; fish oils are good unsaturated fats." },
+  { id: "congee", e: "🥣", name: "Fish congee", price: 9, en: 26, hp: 6, xp: 4, r: "g", n: [250, 40, 14, 4, 1, 1], note: "Easy to digest and full of water: great when you're unwell." },
+  { id: "egg", e: "🍳", name: "Fried egg on toast", price: 8, en: 24, hp: 7, xp: 4, r: "y", n: [260, 26, 11, 13, 3, 2], note: "Good protein, but frying adds fat. Boiling an egg is lighter." },
+  { id: "siumai", e: "🥟", name: "Siu mai (4 pieces)", price: 10, en: 22, hp: 10, xp: 3, r: "y", n: [200, 12, 10, 12, 1, .5], note: "Tasty protein, but quite fatty and salty. Too much salt can raise blood pressure." },
+  { id: "fishball", e: "🍢", name: "Curry fish balls", price: 9, en: 18, hp: 12, xp: 2, r: "y", n: [200, 18, 10, 10, 3, .5], note: "A Hong Kong favourite! Lots of salt and some fat, so not every day." },
+  { id: "noodles", e: "🍜", name: "Wonton noodles", price: 15, en: 36, hp: 12, xp: 4, r: "y", n: [400, 55, 20, 10, 2, 2], note: "Balanced carbohydrate and protein, but the soup is very salty." },
+  { id: "bun", e: "🍞", name: "Pineapple bun", price: 8, en: 20, hp: 14, xp: 2, r: "r", n: [300, 45, 6, 11, 15, 1], note: "Sugar and fat in the crunchy top. Yummy, but a treat." },
+  { id: "tart", e: "🥧", name: "Egg tart", price: 8, en: 14, hp: 16, xp: 2, r: "r", n: [200, 20, 4, 12, 10, .3], note: "Buttery pastry is high in saturated fat. A sometimes-snack!" },
+  { id: "milktea", e: "☕", name: "HK milk tea", price: 7, en: 10, hp: 14, xp: 1, r: "r", n: [150, 22, 3, 5, 20, 0], note: "Caffeine keeps you awake; added sugar gives a quick spike, then a dip." },
+  { id: "boba", e: "🧋", name: "Bubble tea", price: 12, en: 14, hp: 22, xp: 1, r: "r", n: [350, 70, 2, 7, 40, 0], note: "About 10 teaspoons of sugar in one cup! Fun, but a big treat." }
+];
+const FOOD_R = { g: ["Everyday", "#58CC02"], y: ["Sometimes", "#FFC800"], r: ["Treat", "#FF4B4B"] };
+const foodPrice = f => Math.max(1, Math.round(f.price / perk("food")));
+function openFeed() {
+  const P = activePal();
+  openModal(`<span class="kicker">🍱 Feed ${esc(P.name)}</span><h2>What's for ${new Date().getHours() < 11 ? "breakfast" : new Date().getHours() < 16 ? "lunch" : "dinner"}?</h2>
+    <p class="small muted" style="margin:0">❤️ ${esc(P.name)}'s favourite: <b>${esc(FOODS.find(f => f.id === P.fav).name)}</b> (double happiness). Tap 🔍 for the nutrition card. 3 treats in one day = sugar crash!</p>
+    <div class="foodgrid">${FOODS.map(f => `<div class="food"><button class="fpic" data-feed="${f.id}" aria-label="Feed ${esc(f.name)} for ${foodPrice(f)} chestnuts" ${S.coins < foodPrice(f) ? "disabled" : ""}><span class="fe">${f.e}</span><b class="small">${esc(f.name)}</b><span class="small"><i class="rdot" style="background:${FOOD_R[f.r][1]}"></i>${FOOD_R[f.r][0]}</span><span class="pill coinpill">🌰 ${foodPrice(f)}</span></button><button class="fnut" data-nut="${f.id}" aria-label="Nutrition card for ${esc(f.name)}">🔍</button></div>`).join("")}</div>`, { wide: true });
+  $modal.querySelectorAll("[data-feed]").forEach(b => b.onclick = () => feed(b.dataset.feed));
+  $modal.querySelectorAll("[data-nut]").forEach(b => b.onclick = () => { SFX.tap(); nutritionCard(b.dataset.nut); });
+}
+function nutritionCard(id) {
+  const f = FOODS.find(x => x.id === id), [kc, c, pr, fa, su, fi] = f.n, bar = (v, max, col) => `<div class="nbar"><i style="width:${Math.min(100, Math.round(100 * v / max))}%;background:${col}"></i></div>`;
+  openModal(`<span class="kicker">🔍 Nutrition card</span><h2>${f.e} ${esc(f.name)}</h2>
+    <span class="pill" style="background:${FOOD_R[f.r][1]};color:#fff">${FOOD_R[f.r][0]}</span>
+    <table class="ntab"><tbody>
+      <tr><td>Energy</td><td><b>${kc} kcal</b></td><td>${bar(kc, 600, "#FF9600")}</td></tr>
+      <tr><td>Carbohydrate</td><td><b>${c} g</b></td><td>${bar(c, 80, "#FFC800")}</td></tr>
+      <tr><td>&nbsp;· of which sugar</td><td><b>${su} g</b></td><td>${bar(su, 40, "#FF4B4B")}</td></tr>
+      <tr><td>Protein</td><td><b>${pr} g</b></td><td>${bar(pr, 35, "#1CB0F6")}</td></tr>
+      <tr><td>Fat</td><td><b>${fa} g</b></td><td>${bar(fa, 25, "#CE82FF")}</td></tr>
+      <tr><td>Dietary fibre</td><td><b>${fi} g</b></td><td>${bar(fi, 8, "#58CC02")}</td></tr></tbody></table>
+    <p class="small muted" style="margin:0">Approximate values for one typical serving.</p>
+    ${say("hachiware", esc(f.note), "normal", "hint")}
+    <div class="row"><button class="btn big" id="nFeed" ${S.coins < foodPrice(f) ? "disabled" : ""}>Feed for 🌰 ${foodPrice(f)}</button><button class="btn plain" id="nBack">← All food</button></div>`);
+  document.getElementById("nFeed").onclick = () => feed(id);
+  document.getElementById("nBack").onclick = () => { SFX.tap(); openFeed(); };
+}
+function feed(id) {
+  const f = FOODS.find(x => x.id === id), P = activePal(), p = palState(P.id), cost = foodPrice(f); if (S.coins < cost) return;
+  S.coins -= cost; const fav = P.fav === id;
+  p.energy = Math.min(100, p.energy + f.en); p.happy = Math.min(100, p.happy + f.hp * (fav ? 2 : 1)); p.xp += Math.round(f.xp * perk("xp")); p.meals = (p.meals || 0) + 1;
+  S.treats = S.treats && S.treats.day === today() ? S.treats : { day: today(), n: 0 };
+  let crash = false; if (f.r === "r") { S.treats.n += 1; if (S.treats.n === 3) { crash = true; p.energy = Math.max(5, p.energy - 15); } }
+  S.stats.meals = (S.stats.meals || 0) + 1; save(true); SFX.item(); closeModal(); renderMap();
+  if (crash) openModal(`<span class="kicker">🍬 Sugar crash!</span><h2>${esc(P.name)} feels wobbly...</h2>${say("chiikawa", "Too many sweet treats today... 😵 First my blood glucose shot up, then insulin brought it down fast, and now I feel tired!", "cry")}
+      ${say("hachiware", "Tip: choose 🟢 everyday foods. Starchy foods release glucose slowly, so energy stays steady.", "normal", "hint")}<div class="row"><button class="btn" id="crOk">OK</button></div>`), document.getElementById("crOk").onclick = () => { SFX.tap(); closeModal(); };
+  else toast(`${f.e} ${P.name} ate the ${f.name.toLowerCase()}!${fav ? " ❤️ Favourite!" : ""} Energy ${Math.round(p.energy)}`);
+}
+
+/* ----- 🃏 Play: Term Match (tap a term, then its meaning) ----- */
+function playMatch() {
+  const rooms = ROOMS.filter(r => S.completed_rooms.includes(r.id) || r.id === S.current_room);
+  const pairs = shuffle(rooms.flatMap(r => r.terms.filter(([t, m]) => m.length < 70))).slice(0, 4);
+  const right = shuffle(pairs.map((_, i) => i));
+  let sel = null, done = 0, miss = 0;
+  const box = openModal(`<span class="kicker">🃏 Term Match with ${esc(palName())}</span><h2>Match each term to its meaning</h2>
+    <div class="tmatch"><div class="tcol">${pairs.map(([t], i) => `<button class="tm" data-t="${i}">${esc(t)}</button>`).join("")}</div><div class="tcol">${right.map(i => `<button class="tm m" data-m="${i}">${esc(pairs[i][1])}</button>`).join("")}</div></div><div id="tmFb"></div>`, { wide: true });
+  box.querySelectorAll("[data-t]").forEach(b => b.onclick = () => { SFX.tap(); box.querySelectorAll("[data-t]").forEach(x => x.classList.remove("sel")); b.classList.add("sel"); sel = b.dataset.t; });
+  box.querySelectorAll("[data-m]").forEach(b => b.onclick = () => {
+    if (sel == null) { toast("Tap a term first 👈"); return; }
+    if (b.dataset.m === sel) {
+      SFX.right(); b.disabled = true; b.classList.add("ok"); const t = box.querySelector(`[data-t="${sel}"]`); t.disabled = true; t.classList.add("ok"); t.classList.remove("sel"); sel = null; done++;
+      if (done === pairs.length) {
+        const p = palState(activePalId()), first = S.lastPlay !== today(); S.lastPlay = today();
+        p.happy = Math.min(100, p.happy + (miss ? 10 : 18)); p.xp += Math.round(8 * perk("xp")); const coins = first ? 5 : 0; S.coins += coins; S.stats.matches = (S.stats.matches || 0) + 1; save(true);
+        confetti(80); document.getElementById("tmFb").innerHTML = `${say("chiikawa", `Yay! That was fun! 🥹 Happiness +${miss ? 10 : 18}${coins ? ", +5 🌰 (first game today)" : ""}`, "sparkle")}<div class="row"><button class="btn" id="tmAgain">🔁 Again</button><button class="btn plain" id="tmOk">Done</button></div>`;
+        document.getElementById("tmAgain").onclick = () => { SFX.tap(); playMatch(); }; document.getElementById("tmOk").onclick = () => { SFX.tap(); closeModal(); renderMap(); };
+      }
+    } else { SFX.wrong(); miss++; b.classList.add("shake"); setTimeout(() => b.classList.remove("shake"), 400); }
+  });
+}
+
+/* ----- Unlocks: legendary pals arrive by themselves; others are adopted on the Pals page ----- */
+let palQueue = [];
+function checkPals() {
+  if (!S) return;
+  PALS.forEach(P => { if (P.rar === "legend" && !S.pals[P.id] && condMet(P)) { S.pals[P.id] = newPal(); palQueue.push(P); } });
+  if (palQueue.length) { save(); setTimeout(showPalUnlock, 2600); }
+}
+function adoptPal(id) {
+  const P = palById(id); if (S.pals[id] || !condMet(P) || S.coins < P.price) return;
+  S.coins -= P.price; S.pals[id] = newPal(); save(true); palQueue.push(P); showPalUnlock();
+}
+function showPalUnlock() {
+  if (!palQueue.length) return;
+  if ($modal.innerHTML && !$modal.querySelector(".foodgrid") || R || RU) { setTimeout(showPalUnlock, 3000); return; }
+  const P = palQueue[0];
+  if ((P.rar === "epic" || P.rar === "legend" || P.rar === "myth") && !P._cer && !reduced()) { P._cer = true; closeModal(); return giftCeremony(P.rar, showPalUnlock); }
+  palQueue.shift(); delete P._cer; SFX.fanfare(); confetti(P.rar === "myth" || P.rar === "legend" ? 240 : 120);
+  openModal(`<span class="kicker">🐾 New Study Pal!</span><h2>${esc(P.name)} joined your team!</h2>
+    <div class="petreveal flipin ${P.rar === "myth" ? "epic" : P.rar}"><i class="aura" aria-hidden="true"></i>${palFig(P.id, "sparkle")}</div>
+    <div class="row" style="justify-content:center">${palChips(P)}</div>
+    <p style="text-align:center;margin:0">${esc(P.desc)}</p>
+    <div class="row" style="justify-content:center"><button class="btn big" id="paSet">⭐ Set as my active pal</button><button class="btn plain" id="paLater">Later</button></div>`, { onClose: () => setTimeout(showPalUnlock, 400) });
+  document.getElementById("paSet").onclick = () => { SFX.item(); setActivePal(P.id); closeModal(); setTimeout(showPalUnlock, 400); };
+  document.getElementById("paLater").onclick = () => { SFX.tap(); closeModal(); renderMap(); setTimeout(showPalUnlock, 400); };
+}
+function setActivePal(id) { if (!S.pals[id]) return; palTick(); S.activePal = id; palState(id).t = Date.now(); save(true); refreshPlayer(); if (!R && !RU) renderMap(); toast(`⭐ ${palById(id).name} is your active Study Pal!`); }
+const palChips = P => `<span class="pill rchip2" style="background:${PAL_RAR[P.rar][1]};border-color:${PAL_RAR[P.rar][2]}">${PAL_RAR[P.rar][0]}</span><span class="pill perk" style="background:#fff">✨ ${esc(perkLabel(P))}</span>`;
+
+/* ----- 🐾 Pals page: active pal care panel + collection ----- */
+const palsSubnav = on => `<div class="subnav" role="tablist">${[["pals", "🐾", "Study Pals"], ["dress", "👗", "Dress up"], ["pets", "🦜", "Pets"]].map(([id, ic, nm]) => `<button role="tab" data-go="${id}" aria-selected="${on === id}"><span aria-hidden="true">${ic}</span>${nm}</button>`).join("")}</div>`;
+const meter = (v, cls, label) => `<div class="meter ${cls}" aria-label="${label} ${Math.round(v)} of 100"><span>${label}</span><div class="tprog"><i style="width:${Math.round(v)}%"></i></div><b>${Math.round(v)}</b></div>`;
+function palPanelHtml() {
+  const P = activePal(), p = palState(P.id), lv = palLevel(p.xp), mood = palMood(), [mi, ml] = MOOD_INFO[mood], n = evoNeed(P.id);
+  const xpPc = Math.round(100 * (p.xp - lvXP(lv)) / (lvXP(lv + 1) - lvXP(lv)));
+  return `<section class="card palpanel ${P.rar}"><div class="palhero"><div class="palbig ${frameCls()}">${figure("chiikawa", MOOD_FACE[mood], S.equip)}</div>
+      <div class="palinfo"><div class="row" style="gap:6px"><h2 style="margin:0">${esc(P.name)}</h2>${palChips(P)}</div>
+        <div class="small"><b>Lv ${lv}</b> · ${STAGES[p.stage]} · <span class="moodchip">${mi} ${ml}</span></div>
+        <div class="meter xp"><span>XP</span><div class="tprog"><i style="width:${xpPc}%"></i></div><b>${p.xp}</b></div>
+        ${meter(p.energy, "en", "⚡ Energy")}${meter(p.happy, "hp", "❤️ Happy")}
+        <p class="small muted" style="margin:0">🔬 ${esc(P.fact)}</p></div></div>
+    ${MOOD_LINE[mood] ? say("chiikawa", MOOD_LINE[mood], MOOD_FACE[mood]) : ""}
+    <div class="row"><button class="btn yellow" id="pFeed">🍱 Feed</button><button class="btn blue" id="pPlay">🃏 Play Term Match</button>
+      ${n ? `<button class="btn ${lv >= n[0] ? "pink" : "plain"}" id="pEvo" ${lv >= n[0] && S.coins >= n[1] ? "" : "disabled"}>✨ Evolve to ${STAGES[p.stage + 1]} · Lv ${n[0]} + 🌰 ${n[1]}</button>` : `<span class="pill saved">👑 Fully evolved</span>`}
+      <button class="btn plain" data-go="dress">👗 Dress up</button></div></section>`;
+}
+function palsHtml() {
+  const own = PALS.filter(P => S.pals[P.id]).length, list = PALS.slice().sort((a, b) => PAL_ORDER[a.rar] - PAL_ORDER[b.rar]);
+  return `${palsSubnav("pals")}<div class="homegrid">${palPanelHtml()}
+    <section class="card palcoll"><div class="collhead"><h2 style="margin:0">Collect every Study Pal!</h2><span class="pill">${own} / ${PALS.length}</span></div>
+      <div class="tprog rainbow"><i style="width:${Math.round(100 * own / PALS.length)}%"></i></div>
+      <div class="palstrip" aria-hidden="true">${list.map(P => `<span class="${S.pals[P.id] ? "" : "sil"}">${palFig(P.id, "happy")}</span>`).join("")}</div>
+      <div class="palgrid">${list.map(P => palCard(P)).join("")}</div>
+      <p class="small muted" style="margin:0">Only your <b>active</b> pal's perk works. Common, rare and epic pals: reach the goal, then adopt with 🌰. Legendary pals come by themselves after a very hard goal. Mythic pals can only be adopted with 🌰.</p></section></div>`;
+}
+function palCard(P) {
+  const got = !!S.pals[P.id], act = activePalId() === P.id, met = condMet(P), pc = Math.round(100 * condPct(P));
+  const st = got ? S.pals[P.id] : null;
+  return `<div class="palcard ${P.rar} ${got ? "own" : "locked"} ${act ? "active" : ""}">
+    <div class="ppic">${got ? palFig(P.id, act ? "sparkle" : "happy", { stage: st.stage }) : `<span class="sil">${palFig(P.id, "normal")}</span><span class="plock" aria-hidden="true">🔒</span>`}</div>
+    <b>${esc(P.name)}</b><span class="rchip2 small" style="background:${PAL_RAR[P.rar][1]};border-color:${PAL_RAR[P.rar][2]}">${PAL_RAR[P.rar][0]}</span>
+    <span class="small muted">${got ? `Lv ${palLevel(st.xp)} · ${STAGES[st.stage]}` : P.cond ? esc(P.cond[2]) : "Adopt with chestnuts"}</span>
+    ${got ? (act ? `<span class="pill saved">⭐ Active</span>` : `<button class="btn plain sm" data-usepal="${P.id}">Make active</button>`)
+      : P.rar === "legend" ? `<div class="tprog"><i style="width:${pc}%"></i></div><span class="small">${Math.min(palVal(P.cond[0]), P.cond[1])} / ${P.cond[1]}</span>`
+      : met ? `<button class="btn yellow sm" data-adopt="${P.id}" ${S.coins < P.price ? "disabled" : ""}>Adopt 🌰 ${P.price}</button>`
+      : `<div class="tprog"><i style="width:${pc}%"></i></div><span class="small">${Math.min(palVal(P.cond[0]), P.cond[1])} / ${P.cond[1]}</span>`}
+    <button class="pinfo" data-palinfo="${P.id}" aria-label="About ${esc(P.name)}">i</button></div>`;
+}
+function openPalInfo(id) {
+  const P = palById(id), got = !!S.pals[id];
+  openModal(`<span class="kicker">🐾 Study Pal</span><h2>${esc(P.name)}</h2><div class="petreveal ${P.rar === "myth" ? "epic" : P.rar}" style="width:150px;height:150px">${got ? palFig(id, "happy") : `<span class="sil">${palFig(id, "normal")}</span>`}</div>
+    <div class="row" style="justify-content:center">${palChips(P)}</div><p style="margin:0">${esc(P.desc)}</p>
+    <section class="jsec"><h3>🔬 Real biology</h3><p style="margin:0">${esc(P.fact)}</p></section>
+    <p class="small"><b>How to get:</b> ${P.cond ? esc(P.cond[2]) + (P.price ? `, then adopt for 🌰 ${P.price}` : " (arrives by itself)") : `Adopt for 🌰 ${P.price}`} · <b>Favourite food:</b> ${esc(FOODS.find(f => f.id === P.fav).name)} · <b>Evolves at</b> Lv ${EVO[P.rar][0][0]} and Lv ${EVO[P.rar][1][0]}</p>`);
+}
+function wirePals() {
+  wireCommon();
+  const g = id => document.getElementById(id);
+  if (g("pFeed")) g("pFeed").onclick = () => { SFX.tap(); openFeed(); };
+  if (g("pPlay")) g("pPlay").onclick = () => { SFX.tap(); playMatch(); };
+  if (g("pEvo")) g("pEvo").onclick = () => { SFX.tap(); evolve(activePalId()); };
+  $app.querySelectorAll("[data-usepal]").forEach(b => b.onclick = () => setActivePal(b.dataset.usepal));
+  $app.querySelectorAll("[data-adopt]").forEach(b => b.onclick = () => { SFX.tap(); adoptPal(b.dataset.adopt); });
+  $app.querySelectorAll("[data-palinfo]").forEach(b => b.onclick = () => { SFX.tap(); openPalInfo(b.dataset.palinfo); });
+}
+
+/* ----- 🌟 Featured Pal advert on Home: a legendary or mythic pal you don't own yet ----- */
+let featIdx = null;
+function featuredHtml() {
+  const list = PALS.filter(P => (P.rar === "legend" || P.rar === "myth") && !S.pals[P.id]); if (!list.length) return "";
+  if (featIdx == null) featIdx = dayNum(today()) % list.length; featIdx = (featIdx + list.length) % list.length;
+  const P = list[featIdx], pc = Math.round(100 * condPct(P));
+  return `<section class="card featpal ${P.rar}"><div class="fpfig">${palFig(P.id, "sparkle", { stage: 3 })}</div>
+    <div class="fptext"><span class="kicker" style="padding:0">🌟 Featured ${P.rar === "myth" ? "Mythic" : "Legendary"} Pal</span><h3 style="margin:0">${esc(P.name)}</h3>
+      <p class="small" style="margin:0">${esc(P.desc)}</p><span class="pill perk" style="background:#fff">✨ ${esc(perkLabel(P))}</span>
+      <div class="tprog"><i style="width:${pc}%"></i></div>
+      <div class="row" style="gap:6px"><button class="btn sm fparr" id="fpPrev" aria-label="Previous pal">◀</button><button class="btn ${P.rar === "myth" ? "pink" : "yellow"} sm" id="fpGo">${P.rar === "myth" ? `🌰 ${P.price} ADOPT` : esc(P.cond[2]).toUpperCase()}</button><button class="btn sm fparr" id="fpNext" aria-label="Next pal">▶</button></div></div></section>`;
+}
+function wireFeatured() {
+  const g = id => document.getElementById(id);
+  if (g("fpPrev")) g("fpPrev").onclick = () => { SFX.tap(); featIdx--; renderMap(); };
+  if (g("fpNext")) g("fpNext").onclick = () => { SFX.tap(); featIdx++; renderMap(); };
+  if (g("fpGo")) g("fpGo").onclick = () => { SFX.tap(); goTab("pals"); };
+}
 
 /* ============================================================
    5f. 🔬 Simulation Lab: interactive biology models
@@ -4942,7 +5707,7 @@ function lensSim(root) {
       <div class="simctl"><div><b class="small">Look at</b>${segBtns("lo", [["far", "🌳 Distant tree"], ["near", "📖 Book (25 cm)"]], st.obj)}</div>
         <div><b class="small">Eye</b>${segBtns("le", [["normal", "🙂 Normal"], ["short", "👓 Short sight"], ["long", "🔭 Long sight"]], st.eye)}</div>
         <div><b class="small">Glasses</b>${segBtns("lg", [["none", "None"], ["concave", "Concave )("], ["convex", "Convex ()"]], st.gl)}</div></div></section>
-    <section class="card"><h3 style="margin:0">👀 What Mochi sees</h3><div id="lensView" class="lensview"></div><div id="lensInfo"></div></section></div>
+    <section class="card"><h3 style="margin:0">👀 What ${esc(palName())} sees</h3><div id="lensView" class="lensview"></div><div id="lensInfo"></div></section></div>
     ${simQuiz("lens")}`;
   const seg = (name, key) => root.querySelectorAll(`[data-${name}]`).forEach(b => b.onclick = () => { SFX.tap(); st[key] = b.dataset[name]; root.querySelectorAll(`[data-${name}]`).forEach(x => x.setAttribute("aria-checked", x === b)); });
   seg("lo", "obj"); seg("le", "eye"); seg("lg", "gl");
@@ -5138,7 +5903,7 @@ function cochleaSvg(st, A, pos, heard) {
     <path d="${mem}" fill="none" stroke="${CO}" stroke-width="3"/>${hairs}
     ${st.dmg ? `<rect x="${x0}" y="96" width="${.32 * (x1 - x0)}" height="8" rx="4" fill="#A89F9A" opacity=".6"/>` : ""}
     <g font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif"><text x="${x0}" y="118">Base · HIGH pitch</text><text x="${x1}" y="118" text-anchor="end">Apex (tip) · LOW pitch</text>
-      <text x="320" y="118" text-anchor="middle" fill="${heard ? "#C0392B" : "#7A6A66"}">${heard ? "⚡ impulses to the brain" : A > .02 ? "no impulses" : ""}</text></g>
+      <text x="320" y="118" text-anchor="middle" fill="${heard ? "#C0392B" : "#7A6A66"}">${heard ? "→ impulses to the brain" : A > .02 ? "no impulses" : ""}</text></g>
   </svg>`;
 }
 
@@ -5386,10 +6151,12 @@ function finishStudy(ST) {
    Tabs: 🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🏆 Rewards
    ============================================================ */
 let homeTab = "home", dressSlot = "hat", dressTry = null;
-const NAV_TABS = [["home", "🏠", "Home"], ["stages", "🗺️", "Stages"], ["play", "🎮", "Practice"], ["dress", "👗", "Dress up"], ["pets", "🐾", "Pets"], ["rewards", "🏆", "Rewards"], ["lab", "🔬", "Lab"]];
+const NAV_TABS = [["home", "🏠", "Home"], ["stages", "🗺️", "Stages"], ["play", "🎮", "Practice"], ["pals", "🐾", "Pals"], ["rewards", "🏆", "Rewards"], ["lab", "🔬", "Lab"]];
+const PAL_TABS = ["pals", "dress", "pets"];
 function renderNav(active) {
   const nav = document.getElementById("bnav"); if (!nav) return;
   $app.className = active ? "tab-" + active : "";
+  if (PAL_TABS.includes(active)) active = "pals";
   if (active === false || !S) { nav.hidden = true; document.body.classList.remove("has-nav"); return; }
   nav.hidden = false; document.body.classList.add("has-nav");
   const badge = { play: mistakeKeys().length, rewards: S.coll.pending, home: S.ill ? "🤒" : 0 };
@@ -5418,13 +6185,14 @@ function roomWindow() {
 }
 function roomCard(line, mood = "happy", eq, withPet = true) {
   const pet = withPet && S.activePet && S.pets[S.activePet] ? petById(S.activePet) : null;
-  if (S.ill) mood = "sick";
+  if (S.ill) mood = "sick"; else if (mood === "happy" || mood === "normal") mood = MOOD_FACE[palMood()];
   return `<div class="petroom">${roomWindow()}<div class="pbubble">${line}</div>
     <div class="rug"></div><div class="pet ${frameCls(eq)}">${figure("chiikawa", mood, eq)}</div>
     ${pet ? `<button class="rpet" data-pet="${pet.id}" aria-label="${esc(pet.nick)} the ${esc(pet.name)}">${petSvg(pet.id)}</button>` : ""}</div>`;
 }
 function greeting() {
   if (streakNote) return esc(streakNote);
+  if (!S.ill && MOOD_LINE[palMood()] && palMood() !== "sleepy") return MOOD_LINE[palMood()];
   if (S.ill) return `Achoo... I feel sick... 🤒 (${esc(illById(S.ill.id).sym.split(",")[0])})`;
   const h = new Date().getHours(), ni = nextRoomIndex();
   return pick([h < 12 ? `Good morning, ${esc(S.player_name)}! ☀️` : h < 18 ? `Hi ${esc(S.player_name)}! Ready for one small stage? 🌱` : `Evening study buddy~ 🌙`,
@@ -5433,13 +6201,15 @@ function greeting() {
 
 function renderMap() {
   stopRush(); MUSIC.setMode("map"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; recomputeMastery(); save(); renderTools();
-  if (!NAV_TABS.some(t => t[0] === homeTab)) homeTab = "home";
+  palTick();
+  if (!NAV_TABS.some(t => t[0] === homeTab) && !PAL_TABS.includes(homeTab)) homeTab = "home";
   if (homeTab === "lab") return renderSims();
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni];
   if (mapPart === null) mapPart = nr ? TOPICS[nr.t].p : 0;
-  $app.innerHTML = { home: homeHtml, stages: stagesHtml, play: playHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml }[homeTab]();
+  $app.innerHTML = { home: homeHtml, stages: stagesHtml, play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml }[homeTab]();
   renderNav(homeTab);
-  ({ home: wireHome, stages: wireStages, play: wirePlay, dress: wireDress, pets: wirePets, rewards: wireRewards })[homeTab]();
+  ({ home: wireHome, stages: wireStages, play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards })[homeTab]();
+  $app.querySelectorAll(".subnav [data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });
 }
 
 /* ----- 🏠 Home ----- */
@@ -5452,7 +6222,7 @@ function homeHtml() {
       ${healthTipHtml()}</section>
     <div class="homeside">
       ${riskCardHtml()}
-      ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>Mochi is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Mochi gets better.</div></div></div>
+      ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>${esc(palName())} is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Mochi gets better.</div></div></div>
         <button class="btn big" id="goClinic">🩺 Open the medicine cabinet</button></section>` : ""}
       <section class="card nextcard">
         <span class="kicker">✨ One small thing today</span>
@@ -5462,12 +6232,13 @@ function homeHtml() {
         <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study it" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">🗺️ All stages</button></div>
       </section>
       ${missionCardHtml()}
+      ${featuredHtml()}
       ${streakCardHtml()}
       ${chatCardHtml()}
     </div></div>`;
 }
 function wireHome() {
-  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards();
+  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured();
   const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
   const c = document.getElementById("chest");
   if (S.last_chest_date !== today()) c.onclick = () => {
@@ -5477,7 +6248,9 @@ function wireHome() {
     S.last_chest_date = today(); S.stats.chests += 1; S.coll.pending += 1; streakNote = `🎁 Kurumi opened the chest: ${snack}${extra} …plus a mystery capsule!`; save(true); renderMap(); checkTrophies(); openCapsule();
   };
 }
+let lastPat = 0;
 function wireCommon() {
+  $app.querySelectorAll(".petroom .pet").forEach(b => b.onclick = () => { if (Date.now() - lastPat < 20000) return; lastPat = Date.now(); const p = palState(activePalId()); p.happy = Math.min(100, p.happy + 2); save(); SFX.item(); b.classList.remove("hop"); void b.offsetWidth; b.classList.add("hop"); toast(`❤️ ${palName()} loves pats! Happy +2`); });
   $app.querySelectorAll(".rpet[data-pet]").forEach(b => b.onclick = () => { SFX.item(); const p = petById(b.dataset.pet); const bub = $app.querySelector(".pbubble"); if (bub) { bub.innerHTML = `<b>${esc(p.nick)}:</b> ${esc(pick(p.story.split(". ")))}${/[.!?]$/.test(p.story) ? "" : "."}`; bub.style.animation = "none"; void bub.offsetWidth; bub.style.animation = ""; } b.classList.remove("hop"); void b.offsetWidth; b.classList.add("hop"); });
   $app.querySelectorAll("[data-room]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); streakNote = ""; enterRoom(b.dataset.room); });
   $app.querySelectorAll("[data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });
@@ -5556,7 +6329,7 @@ function dressHtml() {
   const ti = dressTry && itemById(dressTry.id);
   const items = slot === "power" ? [] : WARDROBE.filter(w => w.slot === slot);
   const line = ti ? `<b>${esc(ti.name)}</b>${ti.desc ? `<br><span class="small">${esc(ti.desc)}</span>` : ""}` : pick(["Do I look cute? 🥹", "Try things on! It's free to try~ ✨", "Ooh, what should I wear today? 🎀"]);
-  return `<div class="dressgrid">
+  return `${palsSubnav("dress")}<div class="dressgrid">
     <section class="card roomwrap dresspv">${roomCard(line, "happy", tryEq)}
       <div class="row" style="justify-content:center"><span class="pill coinpill">🌰 ${S.coins}</span>
         ${ti && !S.owned.includes(ti.id) ? `<button class="btn yellow" data-buy="${ti.id}" ${S.coins < ti.price ? "disabled" : ""}>Buy for 🌰 ${ti.price}</button><button class="btn plain" id="dsBack">Stop trying</button>` : ""}
@@ -5616,8 +6389,8 @@ function petsHtml() {
   const F = { all: ["All", () => true], hk: ["🇭🇰 Hong Kong", p => p.hk], esc: ["⏱️ Escape only", p => p.esc], mine: ["⭐ Mine", p => S.pets[p.id]] };
   const order = { common: 0, rare: 1, epic: 2, legend: 3 };
   const list = PETS.filter(F[petFilter][1]).slice().sort((a, b) => order[a.rar] - order[b.rar]);
-  return `<section class="card">
-      <div class="row" style="justify-content:space-between"><h2>🐾 Mochi's pets</h2><span class="pill">${own} / ${PETS.length} adopted · 🇭🇰 ${PETS.filter(p => p.hk && S.pets[p.id]).length} / 5</span></div>
+  return `${palsSubnav("pets")}<section class="card">
+      <div class="row" style="justify-content:space-between"><h2>🦜 ${esc(palName())}'s pets</h2><span class="pill">${own} / ${PETS.length} adopted · 🇭🇰 ${PETS.filter(p => p.hk && S.pets[p.id]).length} / 5</span></div>
       ${say("chiikawa", act ? `${esc(act.nick)} the ${esc(act.name)} is my companion! Tap a pet to read its real biology story. 🥹` : "Rare animals from all over the world want to live with me! Clear stages to adopt them. Half of them only come in ⏱️ Escape mode! 🐾", "happy")}
       <div class="slottabs" role="tablist">${Object.entries(F).map(([k, [l]]) => `<button role="tab" aria-selected="${k === petFilter}" data-pf="${k}">${l}</button>`).join("")}</div>
       <div class="petgrid">${list.map(p => { const got = !!S.pets[p.id];
@@ -5739,9 +6512,9 @@ function openFreezeInfo() {
 
 /* ----- 📅 Daily mission: one a day, aimed at what each student avoids or finds hardest ----- */
 const MISSION_STORY = {
-  weak: [["🕵️ Detective Mochi", "A mystery in Topic {T}! Clear one stage there to crack the case."], ["🏥 Ward round", "Dr Koma needs help with Topic {T}. Clear one stage there."], ["🔦 Power cut!", "The lab lights went out over Topic {T}. Clear one stage to switch them back on."]],
+  weak: [["🕵️ Detective {P}", "A mystery in Topic {T}! Clear one stage there to crack the case."], ["🏥 Ward round", "Dr Koma needs help with Topic {T}. Clear one stage there."], ["🔦 Power cut!", "The lab lights went out over Topic {T}. Clear one stage to switch them back on."]],
   fix: [["📕 Mistake hunt", "Three old mistakes are hiding in the Notebook. Answer 3 notebook questions right."], ["🧹 Lab clean-up", "Tidy the Mistake Notebook: answer 3 of its questions right."]],
-  dict: [["📻 Radio host Mochi", "Mochi is reading the biology news on air. Spell 5 dictation words right."], ["✉️ Letter to a scientist", "Write a neat letter: spell 5 dictation words right."]],
+  dict: [["📻 Radio host {P}", "{P} is reading the biology news on air. Spell 5 dictation words right."], ["✉️ Letter to a scientist", "Write a neat letter: spell 5 dictation words right."]],
   rush: [["⚡ Speed lab", "The centrifuge is spinning! Score 80+ points in one Cell Rush."], ["🏃 Relay race", "Hand on the baton: score 80+ points in one Cell Rush."]],
   sim: [["🔬 Lab day", "Run 2 different simulations in the 🔬 Lab tab and read what changes."], ["🧪 Experiment fair", "Show the class 2 different simulations from the 🔬 Lab tab."]],
   fresh: [["🗺️ Field trip", "Explore somewhere new: clear a stage you have never cleared."], ["🦆 Mai Po expedition", "Pack your binoculars: clear a brand-new stage."]]
@@ -5768,7 +6541,7 @@ function dailyMission() {
 }
 function missionText(m) {
   const [title, text] = MISSION_STORY[m.kind][m.s] || MISSION_STORY[m.kind][0];
-  return { title, text: text.replace("{T}", m.ti == null ? "" : `${TOPICS[m.ti].no} (${TOPICS[m.ti].name})`) };
+  return { title: title.replace("{P}", palName()), text: text.replace("{P}", palName()).replace("{T}", m.ti == null ? "" : `${TOPICS[m.ti].no} (${TOPICS[m.ti].name})`) };
 }
 function missionCardHtml() {
   const m = dailyMission(), { title, text } = missionText(m), pc = Math.min(100, Math.round(100 * m.prog / m.n));
@@ -5809,6 +6582,7 @@ function missionProgress(ev) {
 function activityDone(ev) {
   if (!S) return;
   if (ev.done !== false && (ev.ans || 0) > 0) markStudied();
+  palGain(ev);
   missionProgress(ev);
   if (ev.mode !== "sim") logRec({ mode: ev.mode, topic: ev.room ? String(TOPICS[ev.room.t].no) : ev.topic || "", stage: ev.room ? `${ev.room.id} ${ev.room.name}` : ev.stage || "",
     ans: ev.ans || 0, cor: ev.cor || 0, stars: ev.stars || 0, secs: ev.secs || 0, status: ev.done === false ? "quit" : "done", start: ev.start || "", ids: ev.ids || "", wrong: ev.wrong || "" });
@@ -5993,7 +6767,7 @@ function renderLogin() {
   const on = cloudOn(), back = authPref() === "google";
   $app.innerHTML = `<section class="login">
     <div class="lgsky" aria-hidden="true">${LG_FLOAT.map((e, i) => `<span style="left:${(i * 37 + 7) % 92}%;top:${(i * 53 + 11) % 80}%;animation-delay:${-i * 1.7}s;font-size:${1.1 + (i % 3) * .45}rem">${e}</span>`).join("")}<i class="orb o1"></i><i class="orb o2"></i></div>
-    <div class="lgtitle"><span class="kicker">${HERO_KICKER}</span><h1>Mochi Bio Escape</h1><p class="sub">From tiny cells to whole ecosystems, one small stage a day.</p></div>
+    <div class="lgtitle"><span class="kicker">${HERO_KICKER}</span><h1>Biology Study Pals</h1><p class="sub">From tiny cells to whole ecosystems, one small stage a day.</p></div>
     <div class="island" aria-hidden="true"><svg class="isl" viewBox="0 0 300 70"><ellipse cx="150" cy="22" rx="146" ry="20" fill="#9ED89A" stroke="${CO}" stroke-width="3"/><path d="M8 24 Q150 120 292 24" fill="#C79A72" stroke="${CO}" stroke-width="3"/><path d="M60 40 q10 8 20 0 M130 52 q10 8 20 0 M200 42 q10 8 20 0" stroke="#A97C57" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="150" cy="18" rx="120" ry="10" fill="#B6E6AE"/></svg>
       <div class="ifig f1">${figure("hachiware", "happy")}</div><div class="ifig f2">${figure("chiikawa", "sparkle")}</div><div class="ifig f3">${figure("usagi", "happy")}</div></div>
     <section class="card lgcard">
@@ -6149,7 +6923,8 @@ function freshState() {
     room_run: {}, trophies: {}, stats: freshStats(),
     coins: 0, owned: [], equip: { hat: null, hair: null, face: null, outfit: null, ribbon: null, hand: null, frame: null }, power: { torch: 1, crystal: 1, guard: 1 },
     rush: { best: 0, lastDay: null }, player_id: newId(), lb_last: 0, mistakes: {}, mistakes_cleared: 0, playMode: "escape", pets: {}, activePet: null, ill: null, lastIllDay: null, lastIll: null, coll: { owned: {}, pending: 0, pity: 0 }, dict: { missed: {}, best: 0 },
-    last_study_day: null, study_days: [], frozen_days: [], freeze_month: null, freeze_used: null, mission: null, upd: 0
+    last_study_day: null, study_days: [], frozen_days: [], freeze_month: null, freeze_used: null, mission: null, upd: 0,
+    pals: { mochi: newPal() }, activePal: "mochi"
   };
 }
 function normalise(obj) {
@@ -6169,6 +6944,7 @@ function normalise(obj) {
   if (!ROOMS.some(r => r.id === s.current_room)) s.current_room = ROOMS[0].id;
   // Saves from before the study streak: count the last visit as a study day and hand out the 3 starting Streak Freezes
   if (obj && !("last_study_day" in obj)) { s.last_study_day = s.last_login_date; s.study_days = s.last_login_date ? [s.last_login_date] : []; s.streak_shields = Math.max(s.streak_shields || 0, 3); }
+  s.pals = Object.assign({ mochi: newPal() }, s.pals); if (!s.pals[s.activePal]) s.activePal = "mochi";
   s.study_days = [...(s.study_days || [])]; s.frozen_days = [...(s.frozen_days || [])];
   return s;
 }
@@ -6286,10 +7062,11 @@ try { SFX.on = localStorage.getItem(SOUND_KEY) !== "off"; } catch (e) {}
 function checkIn() {
   const t = today();
   if (S.last_login_date !== t) S.stats.days += 1;
+  palTick();
   streakNote = streakCheck() || (!S.last_login_date ? "🌱 Finish one activity today to start your study streak!" : "");
   S.longest_streak = Math.max(S.longest_streak || 0, S.current_streak);
   S.last_login_date = t;
-  if (S.stats.days > 1 && maybeGetSick(.3)) streakNote = (streakNote ? streakNote + " " : "") + "🤒 Uh-oh... Mochi woke up feeling sick. Visit Dr Koma!";
+  if (S.stats.days > 1 && maybeGetSick(.3)) streakNote = (streakNote ? streakNote + " " : "") + `🤒 Uh-oh... ${palName()} woke up feeling sick. Visit Dr Koma!`;
   save();
   checkTrophies();
 }
@@ -6308,7 +7085,7 @@ const $app = document.getElementById("app"), $modal = document.getElementById("m
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const reduced = () => window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-const say = (who, text, mood = "normal", cls = "") => `<div class="say"><div class="av">${avatar(who, mood)}</div><div class="bubble ${cls}"><span class="name">${CHAR[who].name}</span>${text}</div></div>`;
+const say = (who, text, mood = "normal", cls = "") => (text = String(text).replace(/\{P\}/g, esc(palName())), `<div class="say"><div class="av">${avatar(who, mood)}</div><div class="bubble ${cls}"><span class="name">${CHAR[who].name}</span>${text}</div></div>`);
 const roomIndex = id => ROOMS.findIndex(r => r.id === id);
 // Every topic is open; inside a topic, stages unlock one after another
 const isUnlocked = i => ROOMS[i].s === 1 || S.completed_rooms.includes(ROOMS[i - 1].id);
@@ -6321,7 +7098,7 @@ function nextRoomIndex() {
 const stageLabel = r => `Topic ${r.topicNo} · ${r.boss ? "Boss stage" : `Stage ${r.s}`}`;
 const starStr = n => "★".repeat(n) + "☆".repeat(3 - n);
 const fmt = sec => { const a = Math.abs(sec); return `${sec < 0 ? "+" : ""}${String(Math.floor(a / 60)).padStart(2, "0")}:${String(a % 60).padStart(2, "0")}`; };
-function toast(msg) { const t = document.getElementById("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => (t.hidden = true), 2600); }
+function toast(msg) { msg = String(msg).replace(/\{P\}/g, palName()); const t = document.getElementById("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => (t.hidden = true), 2600); }
 
 function confetti(amount = 140) {
   if (reduced()) return;
@@ -6389,7 +7166,7 @@ const TROPHIES = [
   { id: "coll", cat: "fun", name: "Collector", rar: "gold", who: "shisa", desc: "Collect 15 different collectibles", prog: () => [collOwned(), 15] },
   { id: "rare", cat: "fun", name: "Rare Hunter", rar: "legend", who: "chiikawa", desc: "Collect all 5 rare collectibles", prog: () => [collOwned(true), 5] },
   { id: "dict", cat: "brain", name: "Dictation Star", rar: "gold", who: "hachiware", desc: "Get 10 perfect Word Dictation rounds", prog: () => [S.stats.dictPerfect, 10] },
-  { id: "doctor", cat: "fun", name: "Little Doctor", rar: "silver", who: "shisa", desc: "Cure Mochi 5 times with the right treatment", prog: () => [S.stats.cured, 5] },
+  { id: "doctor", cat: "fun", name: "Little Doctor", rar: "silver", who: "shisa", desc: "Cure your Study Pal 5 times with the right treatment", prog: () => [S.stats.cured, 5] },
   { id: "petpal", cat: "adventure", name: "Pet Pal", rar: "gold", who: "momonga", desc: "Adopt 10 pets", prog: () => [Object.keys(S.pets).length, 10] },
   { id: "hkguard", cat: "adventure", name: "HK Wildlife Guardian", rar: "legend", who: "chiikawa", desc: "Adopt all 5 Hong Kong species", prog: () => [PETS.filter(p => p.hk && S.pets[p.id]).length, 5] },
   { id: "labsci", cat: "brain", name: "Virtual Scientist", rar: "bronze", who: "hachiware", desc: "Try all 5 biology simulations", prog: () => [Object.keys(S.sims || {}).length, 5] }
@@ -6476,7 +7253,7 @@ const COLL_ART = {
   matcha: `<svg viewBox="0 0 80 100" aria-hidden="true"><path d="M18 30 H62 L56 92 H24 Z" fill="rgba(255,255,255,.7)" stroke="${INK}" stroke-width="3"/><path d="M20 52 H60 L56 90 H24Z" fill="#9CCB6B"/><path d="M19 42 H61 L60 52 H20Z" fill="#F4F0E8"/>
     ${[[32, 70], [46, 76], [38, 84]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="6" ry="3.5" fill="#6BBF5F" stroke="${INK}" stroke-width="1.4"/>`).join("")}<rect x="14" y="24" width="52" height="8" rx="3" fill="#FFFDF0" stroke="${INK}" stroke-width="2.4"/><path d="M48 24 L56 4" stroke="#FFB7C5" stroke-width="5" stroke-linecap="round"/>
     <path d="M40 60 q-8 -6 -4 -12 q6 -2 4 12 q-2 -14 4 -12 q4 6 -4 12" fill="#FFFDF0" opacity=".8"/></svg>`,
-  flip: `<svg viewBox="0 0 80 100" aria-hidden="true"><rect x="22" y="6" width="36" height="42" rx="8" fill="#FFB7C5" stroke="${INK}" stroke-width="3"/><rect x="27" y="11" width="26" height="26" rx="4" fill="#D3E4FF" stroke="${INK}" stroke-width="2"/><text x="40" y="28" text-anchor="middle" font-size="10">💖</text>
+  flip: `<svg viewBox="0 0 80 100" aria-hidden="true"><rect x="22" y="6" width="36" height="42" rx="8" fill="#FFB7C5" stroke="${INK}" stroke-width="3"/><rect x="27" y="11" width="26" height="26" rx="4" fill="#D3E4FF" stroke="${INK}" stroke-width="2"/><path d="M40 31 C34 27 32 24 32 21.5 C32 19 34 18 36 18 C38 18 39.5 19.5 40 21 C40.5 19.5 42 18 44 18 C46 18 48 19 48 21.5 C48 24 46 27 40 31Z" fill="#FF86D0"/>
     <rect x="22" y="50" width="36" height="42" rx="8" fill="#FFB7C5" stroke="${INK}" stroke-width="3"/>${[0, 1, 2].map(r => [0, 1, 2].map(c => `<rect x="${28 + c * 9}" y="${58 + r * 9}" width="6" height="5" rx="2" fill="#FFFDF0" stroke="${INK}" stroke-width="1"/>`).join("")).join("")}
     <path d="M58 70 q14 4 12 16" fill="none" stroke="${INK}" stroke-width="1.6"/><path d="M66 84 q4 4 0 8 q-4 4 0 8 M72 84 q-4 4 0 8 q4 4 0 8" fill="none" stroke="#5B8FE0" stroke-width="2"/>${[[16, 10], [64, 44], [12, 60]].map(([x, y]) => `<path d="M${x} ${y - 5} l1.5 3.5 3.5 1.5 -3.5 1.5 -1.5 3.5 -1.5 -3.5 -3.5 -1.5 3.5 -1.5z" fill="#FDD66B"/>`).join("")}</svg>`
 };
@@ -6567,7 +7344,7 @@ function checkTrophies() {
     if (cur >= goal) { S.trophies[t.id] = today(); S.coins = (S.coins || 0) + 30; S.coll.pending += 1; trophyQueue.push(t); }
   });
   if (trophyQueue.length) { save(); renderTools(); showTrophyBanner(); }
-  checkPets();
+  checkPets(); checkPals();
 }
 function showTrophyBanner() {
   if (document.querySelector(".tbanner") || !trophyQueue.length) return;
@@ -6801,7 +7578,7 @@ function rushEnd() {
   if (!RU) return;
   const r = RU; stopRush();
   const bonus = S.rush.lastDay !== today();
-  let coins = withStreak(Math.ceil(r.score / 10)); if (bonus && r.total > 0) coins *= 2;
+  let coins = Math.round(withStreak(Math.ceil(r.score / 10)) * perk("rush")); if (bonus && r.total > 0) coins *= 2;
   if (r.total > 0) { S.rush.lastDay = today(); S.stats.rushRounds += 1; }
   const best = r.score > S.rush.best; S.rush.best = Math.max(S.rush.best, r.score);
   const rcap = r.score >= 120 ? 1 : 0; S.coll.pending += rcap;
@@ -7011,7 +7788,7 @@ function renderWelcome() {
   $app.innerHTML = `
     <section class="hero">${starsBg()}
       <span class="kicker" style="color:#fff">${HERO_KICKER}</span>
-      <h1>Mochi Bio Escape</h1>
+      <h1>Biology Study Pals</h1>
       <p class="sub">${TOPICS.length} topics · ${ROOMS.length} stages · 1 stage a day · about 15–20 minutes</p>
       ${castHtml({ chiikawa: "cry", usagi: "happy", momonga: "shock" })}
     </section>
@@ -7103,7 +7880,7 @@ function startRevision(ti) {
   const RV = { keys, at: 0, right: 0, cleared: 0, done: 0, start: new Date().toISOString() };
   const next = () => {
     if (RV.at >= RV.keys.length) {
-      const coins = RV.cleared * 2 + RV.right; S.coins += coins; save(true); SFX.fanfare(); if (RV.right) confetti(100);
+      const coins = Math.round((RV.cleared * 2 + RV.right) * perk("notebook")); S.coins += coins; save(true); SFX.fanfare(); if (RV.right) confetti(100);
       activityDone({ mode: "notebook", topic: ti == null ? "all" : String(TOPICS[ti].no), stage: "Mistake Notebook", ans: RV.done || 0, cor: RV.right, done: (RV.done || 0) > 0, start: RV.start });
       $app.innerHTML = `<section class="card"><span class="kicker">📕 Revision done</span><h2>${RV.right === RV.keys.length ? "Perfect revision! 🎉" : "Revision complete! 🌱"}</h2>
         <div class="cast" style="margin:0">${["chiikawa", "hachiware", "usagi"].map(w => `<div class="fig" style="width:84px">${figure(w, RV.right ? (w === "chiikawa" ? "sparkle" : "happy") : "normal")}</div>`).join("")}</div>
@@ -7296,7 +8073,7 @@ function setLine(who, html, mood = "normal") {
 function setMood(m, ms) {
   if (!R) return; R.mood = m;
   const el = document.getElementById("chiiAv"); if (el) el.innerHTML = avatar("chiikawa", m);
-  const st = document.getElementById("chiiSt"); if (st) st.textContent = { normal: "Mochi is ready", happy: "Mochi is happy!", cry: "Mochi is nervous... 🥺", shock: "Mochi is shocked! 😱", sparkle: "Mochi is sparkling! ✨", brave: "Mochi is being brave! 💪" }[m];
+  const st = document.getElementById("chiiSt"); if (st) st.textContent = { normal: `${palName()} is ready`, happy: `${palName()} is happy!`, cry: `${palName()} is nervous... 🥺`, shock: `${palName()} is shocked! 😱`, sparkle: `${palName()} is sparkling! ✨`, brave: `${palName()} is being brave! 💪` }[m];
   clearTimeout(moodTimer);
   if (ms) moodTimer = setTimeout(() => R && setMood(S.room_timer[R.room.id] < 120 ? "cry" : "normal"), ms);
 }
@@ -7326,7 +8103,7 @@ function renderRoom() {
         <div style="min-width:0"><div class="rtopic">${TOPICS[room.t].icon} ${topicNo(room.topicNo)}: ${esc(room.topic)}</div>
           <div class="rt">${esc(room.name)} ${room.boss ? `<span class="boss-tag">⚔️ BOSS</span>` : ""}</div>
           <div class="stepper" aria-label="${esc(stageLabel(room))}">${topicRooms(room.t).map(x => `<i class="${x.id === room.id ? "cur" : S.completed_rooms.includes(x.id) ? "on" : ""}"></i>`).join("")}<span class="small">${room.boss ? "Boss stage" : `Stage ${room.s}`} of ${topicRooms(room.t).length} · ${esc(room.focus)}</span></div>
-          <div class="small" id="chiiSt">${"Mochi is ready"}</div></div>
+          <div class="small" id="chiiSt">${`${palName()} is ready`}</div></div>
       </div>
       <div style="display:grid;justify-items:end;gap:4px">
         ${R.study ? `<div class="timer study" id="timer" title="Study mode: no timer">📖 Study</div>` : `<div class="timer ${t < 0 ? "over" : t < 120 ? "low" : ""}" id="timer" role="timer" aria-label="${"Time left"}">${t >= 0 ? fmt(t) : `${"OVERTIME"} ${fmt(t)}`}</div>`}
@@ -7849,6 +8626,7 @@ document.addEventListener("keydown", () => { SFX.init(); MUSIC.start(); }, { onc
 document.addEventListener("visibilitychange", () => { if (document.hidden && S) save(); });
 window.addEventListener("pagehide", () => { if (S) save(); });
 (function boot() {
+  startIcons();
   const linked = decodeCode(location.hash.slice(1));
   if (linked) { S ? renderMap() : renderWelcome(); showCodeFromLink(linked); return; }
   // Class sign-in screen first, unless this device chose guest mode (or sign-in is off and there is saved progress)
