@@ -4,7 +4,7 @@ Three sibling repos, one teacher, one pattern. **This file lives in `biology` (t
 
 | Repo | Game | Audience | Language | Shape |
 |------|------|----------|----------|-------|
-| [`biology`](https://github.com/kcchamaa-sys/biology) | Mochi Bio Escape | Sec 4–6 Biology | English | Escape rooms + pet/dress-up; **built** from `src/` by `tools/build.py` |
+| [`biology`](https://github.com/kcchamaa-sys/biology) | Biology Study Pals | Sec 4–6 Biology | English | Escape rooms + pet/dress-up; **built** from `src/` by `tools/build.py` |
 | [`s1science`](https://github.com/kcchamaa-sys/s1science) | Mochi Science Pals 麻糬科學小夥伴 | S1 Science | EN / 繁中 | Pet-raising revision; single hand-edited `index.html`; `server/Code.gs` |
 | [`s3science`](https://github.com/kcchamaa-sys/s3science) | Puff's Physics Escape | S3 Physics (Ch 14 Light) | EN / 繁中 | Chiikawa-themed escape rooms; single `index.html`; `leaderboard/` |
 
@@ -42,6 +42,8 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 4. Edit biology via `src/` then run `python3 tools/build.py`; never hand-edit its `index.html`.
 
 ## Cross-project log (newest first)
+
+- 2026-10-02 (biology): Renamed to **Biology Study Pals**. Ported the s1science **Science Pals** system as Study Pals (`src/pals.js`): 19 animal pals reused + 8 new biology pals, energy/happiness/XP, moods, 3 evolution stages, perks, rarity auras, food with nutrition cards and sugar crash, Term Match play, featured-pal advert. The active pal *is* the main character (it replaces the `chiikawa` char via getters, so dialogue and outfits follow it). New reusable **emoji → icon swapper** (`src/icons.js`): ~250 original 2-tone icons plus a MutationObserver that converts emoji in any rendered text (skips SVG/option text; only rewrites text that contains a mapped emoji, to avoid observer loops).
 
 - 2026-10-02 (biology): Ported from s1science: Google class sign-in with **guest mode** (`src/auth.js`, `server/Code.gs`, tabs `Biology Records` / `Biology Progress`, reuses the s1 Users tab and Client ID); study-day streak with Streak Freezes (3, +1/month, 150 to buy) and a streak-risk card; daily mission aimed at the weakest topic; health tips by time of day + late-night rest pop-up; guess alert + "Why?" check after study series; clay buttons, trading-card trophies with progressive reveal, gift-box ceremony for epic/legendary pets (`src/daily.js`, `src/head.html`). The old anonymous `leaderboard/` was removed.
 

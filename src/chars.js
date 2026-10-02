@@ -93,6 +93,7 @@ function charSvg(who, m = "normal", eq, full = true) {
   s += arms(m, armC);
   if (who === "chiikawa" && d.acc && d.acc.low) s += d.acc.svg;
   s += C.face(m);
+  if (C.after) s += C.after(m);
   if (d.hair) s += d.hair.svg;
   if (d.face) s += d.face.svg;
   if (d.hat) s += d.hat.svg;

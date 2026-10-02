@@ -248,7 +248,7 @@ function lensSim(root) {
       <div class="simctl"><div><b class="small">Look at</b>${segBtns("lo", [["far", "🌳 Distant tree"], ["near", "📖 Book (25 cm)"]], st.obj)}</div>
         <div><b class="small">Eye</b>${segBtns("le", [["normal", "🙂 Normal"], ["short", "👓 Short sight"], ["long", "🔭 Long sight"]], st.eye)}</div>
         <div><b class="small">Glasses</b>${segBtns("lg", [["none", "None"], ["concave", "Concave )("], ["convex", "Convex ()"]], st.gl)}</div></div></section>
-    <section class="card"><h3 style="margin:0">👀 What Mochi sees</h3><div id="lensView" class="lensview"></div><div id="lensInfo"></div></section></div>
+    <section class="card"><h3 style="margin:0">👀 What ${esc(palName())} sees</h3><div id="lensView" class="lensview"></div><div id="lensInfo"></div></section></div>
     ${simQuiz("lens")}`;
   const seg = (name, key) => root.querySelectorAll(`[data-${name}]`).forEach(b => b.onclick = () => { SFX.tap(); st[key] = b.dataset[name]; root.querySelectorAll(`[data-${name}]`).forEach(x => x.setAttribute("aria-checked", x === b)); });
   seg("lo", "obj"); seg("le", "eye"); seg("lg", "gl");
@@ -444,7 +444,7 @@ function cochleaSvg(st, A, pos, heard) {
     <path d="${mem}" fill="none" stroke="${CO}" stroke-width="3"/>${hairs}
     ${st.dmg ? `<rect x="${x0}" y="96" width="${.32 * (x1 - x0)}" height="8" rx="4" fill="#A89F9A" opacity=".6"/>` : ""}
     <g font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif"><text x="${x0}" y="118">Base · HIGH pitch</text><text x="${x1}" y="118" text-anchor="end">Apex (tip) · LOW pitch</text>
-      <text x="320" y="118" text-anchor="middle" fill="${heard ? "#C0392B" : "#7A6A66"}">${heard ? "⚡ impulses to the brain" : A > .02 ? "no impulses" : ""}</text></g>
+      <text x="320" y="118" text-anchor="middle" fill="${heard ? "#C0392B" : "#7A6A66"}">${heard ? "→ impulses to the brain" : A > .02 ? "no impulses" : ""}</text></g>
   </svg>`;
 }
 

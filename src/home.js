@@ -4,10 +4,12 @@
    Tabs: 🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🏆 Rewards
    ============================================================ */
 let homeTab = "home", dressSlot = "hat", dressTry = null;
-const NAV_TABS = [["home", "🏠", "Home"], ["stages", "🗺️", "Stages"], ["play", "🎮", "Practice"], ["dress", "👗", "Dress up"], ["pets", "🐾", "Pets"], ["rewards", "🏆", "Rewards"], ["lab", "🔬", "Lab"]];
+const NAV_TABS = [["home", "🏠", "Home"], ["stages", "🗺️", "Stages"], ["play", "🎮", "Practice"], ["pals", "🐾", "Pals"], ["rewards", "🏆", "Rewards"], ["lab", "🔬", "Lab"]];
+const PAL_TABS = ["pals", "dress", "pets"];
 function renderNav(active) {
   const nav = document.getElementById("bnav"); if (!nav) return;
   $app.className = active ? "tab-" + active : "";
+  if (PAL_TABS.includes(active)) active = "pals";
   if (active === false || !S) { nav.hidden = true; document.body.classList.remove("has-nav"); return; }
   nav.hidden = false; document.body.classList.add("has-nav");
   const badge = { play: mistakeKeys().length, rewards: S.coll.pending, home: S.ill ? "🤒" : 0 };
@@ -36,13 +38,14 @@ function roomWindow() {
 }
 function roomCard(line, mood = "happy", eq, withPet = true) {
   const pet = withPet && S.activePet && S.pets[S.activePet] ? petById(S.activePet) : null;
-  if (S.ill) mood = "sick";
+  if (S.ill) mood = "sick"; else if (mood === "happy" || mood === "normal") mood = MOOD_FACE[palMood()];
   return `<div class="petroom">${roomWindow()}<div class="pbubble">${line}</div>
     <div class="rug"></div><div class="pet ${frameCls(eq)}">${figure("chiikawa", mood, eq)}</div>
     ${pet ? `<button class="rpet" data-pet="${pet.id}" aria-label="${esc(pet.nick)} the ${esc(pet.name)}">${petSvg(pet.id)}</button>` : ""}</div>`;
 }
 function greeting() {
   if (streakNote) return esc(streakNote);
+  if (!S.ill && MOOD_LINE[palMood()] && palMood() !== "sleepy") return MOOD_LINE[palMood()];
   if (S.ill) return `Achoo... I feel sick... 🤒 (${esc(illById(S.ill.id).sym.split(",")[0])})`;
   const h = new Date().getHours(), ni = nextRoomIndex();
   return pick([h < 12 ? `Good morning, ${esc(S.player_name)}! ☀️` : h < 18 ? `Hi ${esc(S.player_name)}! Ready for one small stage? 🌱` : `Evening study buddy~ 🌙`,
@@ -51,13 +54,15 @@ function greeting() {
 
 function renderMap() {
   stopRush(); MUSIC.setMode("map"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; recomputeMastery(); save(); renderTools();
-  if (!NAV_TABS.some(t => t[0] === homeTab)) homeTab = "home";
+  palTick();
+  if (!NAV_TABS.some(t => t[0] === homeTab) && !PAL_TABS.includes(homeTab)) homeTab = "home";
   if (homeTab === "lab") return renderSims();
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni];
   if (mapPart === null) mapPart = nr ? TOPICS[nr.t].p : 0;
-  $app.innerHTML = { home: homeHtml, stages: stagesHtml, play: playHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml }[homeTab]();
+  $app.innerHTML = { home: homeHtml, stages: stagesHtml, play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml }[homeTab]();
   renderNav(homeTab);
-  ({ home: wireHome, stages: wireStages, play: wirePlay, dress: wireDress, pets: wirePets, rewards: wireRewards })[homeTab]();
+  ({ home: wireHome, stages: wireStages, play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards })[homeTab]();
+  $app.querySelectorAll(".subnav [data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });
 }
 
 /* ----- 🏠 Home ----- */
@@ -70,7 +75,7 @@ function homeHtml() {
       ${healthTipHtml()}</section>
     <div class="homeside">
       ${riskCardHtml()}
-      ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>Mochi is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Mochi gets better.</div></div></div>
+      ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>${esc(palName())} is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Mochi gets better.</div></div></div>
         <button class="btn big" id="goClinic">🩺 Open the medicine cabinet</button></section>` : ""}
       <section class="card nextcard">
         <span class="kicker">✨ One small thing today</span>
@@ -80,12 +85,13 @@ function homeHtml() {
         <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study it" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">🗺️ All stages</button></div>
       </section>
       ${missionCardHtml()}
+      ${featuredHtml()}
       ${streakCardHtml()}
       ${chatCardHtml()}
     </div></div>`;
 }
 function wireHome() {
-  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards();
+  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured();
   const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
   const c = document.getElementById("chest");
   if (S.last_chest_date !== today()) c.onclick = () => {
@@ -95,7 +101,9 @@ function wireHome() {
     S.last_chest_date = today(); S.stats.chests += 1; S.coll.pending += 1; streakNote = `🎁 Kurumi opened the chest: ${snack}${extra} …plus a mystery capsule!`; save(true); renderMap(); checkTrophies(); openCapsule();
   };
 }
+let lastPat = 0;
 function wireCommon() {
+  $app.querySelectorAll(".petroom .pet").forEach(b => b.onclick = () => { if (Date.now() - lastPat < 20000) return; lastPat = Date.now(); const p = palState(activePalId()); p.happy = Math.min(100, p.happy + 2); save(); SFX.item(); b.classList.remove("hop"); void b.offsetWidth; b.classList.add("hop"); toast(`❤️ ${palName()} loves pats! Happy +2`); });
   $app.querySelectorAll(".rpet[data-pet]").forEach(b => b.onclick = () => { SFX.item(); const p = petById(b.dataset.pet); const bub = $app.querySelector(".pbubble"); if (bub) { bub.innerHTML = `<b>${esc(p.nick)}:</b> ${esc(pick(p.story.split(". ")))}${/[.!?]$/.test(p.story) ? "" : "."}`; bub.style.animation = "none"; void bub.offsetWidth; bub.style.animation = ""; } b.classList.remove("hop"); void b.offsetWidth; b.classList.add("hop"); });
   $app.querySelectorAll("[data-room]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); streakNote = ""; enterRoom(b.dataset.room); });
   $app.querySelectorAll("[data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });
@@ -174,7 +182,7 @@ function dressHtml() {
   const ti = dressTry && itemById(dressTry.id);
   const items = slot === "power" ? [] : WARDROBE.filter(w => w.slot === slot);
   const line = ti ? `<b>${esc(ti.name)}</b>${ti.desc ? `<br><span class="small">${esc(ti.desc)}</span>` : ""}` : pick(["Do I look cute? 🥹", "Try things on! It's free to try~ ✨", "Ooh, what should I wear today? 🎀"]);
-  return `<div class="dressgrid">
+  return `${palsSubnav("dress")}<div class="dressgrid">
     <section class="card roomwrap dresspv">${roomCard(line, "happy", tryEq)}
       <div class="row" style="justify-content:center"><span class="pill coinpill">🌰 ${S.coins}</span>
         ${ti && !S.owned.includes(ti.id) ? `<button class="btn yellow" data-buy="${ti.id}" ${S.coins < ti.price ? "disabled" : ""}>Buy for 🌰 ${ti.price}</button><button class="btn plain" id="dsBack">Stop trying</button>` : ""}
@@ -234,8 +242,8 @@ function petsHtml() {
   const F = { all: ["All", () => true], hk: ["🇭🇰 Hong Kong", p => p.hk], esc: ["⏱️ Escape only", p => p.esc], mine: ["⭐ Mine", p => S.pets[p.id]] };
   const order = { common: 0, rare: 1, epic: 2, legend: 3 };
   const list = PETS.filter(F[petFilter][1]).slice().sort((a, b) => order[a.rar] - order[b.rar]);
-  return `<section class="card">
-      <div class="row" style="justify-content:space-between"><h2>🐾 Mochi's pets</h2><span class="pill">${own} / ${PETS.length} adopted · 🇭🇰 ${PETS.filter(p => p.hk && S.pets[p.id]).length} / 5</span></div>
+  return `${palsSubnav("pets")}<section class="card">
+      <div class="row" style="justify-content:space-between"><h2>🦜 ${esc(palName())}'s pets</h2><span class="pill">${own} / ${PETS.length} adopted · 🇭🇰 ${PETS.filter(p => p.hk && S.pets[p.id]).length} / 5</span></div>
       ${say("chiikawa", act ? `${esc(act.nick)} the ${esc(act.name)} is my companion! Tap a pet to read its real biology story. 🥹` : "Rare animals from all over the world want to live with me! Clear stages to adopt them. Half of them only come in ⏱️ Escape mode! 🐾", "happy")}
       <div class="slottabs" role="tablist">${Object.entries(F).map(([k, [l]]) => `<button role="tab" aria-selected="${k === petFilter}" data-pf="${k}">${l}</button>`).join("")}</div>
       <div class="petgrid">${list.map(p => { const got = !!S.pets[p.id];

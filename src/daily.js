@@ -104,9 +104,9 @@ function openFreezeInfo() {
 
 /* ----- 📅 Daily mission: one a day, aimed at what each student avoids or finds hardest ----- */
 const MISSION_STORY = {
-  weak: [["🕵️ Detective Mochi", "A mystery in Topic {T}! Clear one stage there to crack the case."], ["🏥 Ward round", "Dr Koma needs help with Topic {T}. Clear one stage there."], ["🔦 Power cut!", "The lab lights went out over Topic {T}. Clear one stage to switch them back on."]],
+  weak: [["🕵️ Detective {P}", "A mystery in Topic {T}! Clear one stage there to crack the case."], ["🏥 Ward round", "Dr Koma needs help with Topic {T}. Clear one stage there."], ["🔦 Power cut!", "The lab lights went out over Topic {T}. Clear one stage to switch them back on."]],
   fix: [["📕 Mistake hunt", "Three old mistakes are hiding in the Notebook. Answer 3 notebook questions right."], ["🧹 Lab clean-up", "Tidy the Mistake Notebook: answer 3 of its questions right."]],
-  dict: [["📻 Radio host Mochi", "Mochi is reading the biology news on air. Spell 5 dictation words right."], ["✉️ Letter to a scientist", "Write a neat letter: spell 5 dictation words right."]],
+  dict: [["📻 Radio host {P}", "{P} is reading the biology news on air. Spell 5 dictation words right."], ["✉️ Letter to a scientist", "Write a neat letter: spell 5 dictation words right."]],
   rush: [["⚡ Speed lab", "The centrifuge is spinning! Score 80+ points in one Cell Rush."], ["🏃 Relay race", "Hand on the baton: score 80+ points in one Cell Rush."]],
   sim: [["🔬 Lab day", "Run 2 different simulations in the 🔬 Lab tab and read what changes."], ["🧪 Experiment fair", "Show the class 2 different simulations from the 🔬 Lab tab."]],
   fresh: [["🗺️ Field trip", "Explore somewhere new: clear a stage you have never cleared."], ["🦆 Mai Po expedition", "Pack your binoculars: clear a brand-new stage."]]
@@ -133,7 +133,7 @@ function dailyMission() {
 }
 function missionText(m) {
   const [title, text] = MISSION_STORY[m.kind][m.s] || MISSION_STORY[m.kind][0];
-  return { title, text: text.replace("{T}", m.ti == null ? "" : `${TOPICS[m.ti].no} (${TOPICS[m.ti].name})`) };
+  return { title: title.replace("{P}", palName()), text: text.replace("{P}", palName()).replace("{T}", m.ti == null ? "" : `${TOPICS[m.ti].no} (${TOPICS[m.ti].name})`) };
 }
 function missionCardHtml() {
   const m = dailyMission(), { title, text } = missionText(m), pc = Math.min(100, Math.round(100 * m.prog / m.n));
@@ -174,6 +174,7 @@ function missionProgress(ev) {
 function activityDone(ev) {
   if (!S) return;
   if (ev.done !== false && (ev.ans || 0) > 0) markStudied();
+  palGain(ev);
   missionProgress(ev);
   if (ev.mode !== "sim") logRec({ mode: ev.mode, topic: ev.room ? String(TOPICS[ev.room.t].no) : ev.topic || "", stage: ev.room ? `${ev.room.id} ${ev.room.name}` : ev.stage || "",
     ans: ev.ans || 0, cor: ev.cor || 0, stars: ev.stars || 0, secs: ev.secs || 0, status: ev.done === false ? "quit" : "done", start: ev.start || "", ids: ev.ids || "", wrong: ev.wrong || "" });

@@ -1,4 +1,4 @@
-# 🧬 Mochi Bio Escape
+# 🧬 Biology Study Pals
 
 A cosy kawaii-style biology escape-room adventure for **Secondary 4–6**. It is framed as exploring, not exam drilling, but the content follows the local senior secondary Biology curriculum (compulsory part) closely, so teachers can map it to lessons. English only. One file (`index.html`), no install, no build step for players.
 
@@ -70,7 +70,25 @@ All characters are original: **Mochi** (the player, a little white mochi bun-bea
 
 Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, gentle anti-guessing penalties (no wait or time loss over 15 s: −10 s, reshuffle, short jams, strikes, chestnut fine, and guessing makes the lock **slip back a notch** so students answer one bonus question), random spooky-but-friendly incidents, ⚡ **Cell Rush** (60-second mixed rush with test-tube colours and organelle spotting), Koma's shop (outfits and power-ups), a study streak with ❄️ Streak Freezes, a daily mission, daily snack chest and a class leaderboard.
 
-## 🐾 Pets (25)
+## 🐾 Study Pals (27)
+
+Your **Study Pal** is the character you raise: it lives in the room, talks in the dialogue, wears your outfits and appears in your avatar. Mochi is the starter pal.
+
+- **19 animal pals from the S1 Science game** (Mochi, Matcha, Sakura, Pudding, Soda, Taro, Kinako, Goma, Mikan, Nori, Ume, Wata, Chiku, Kuma, Nova, Petal, Riccio, Finn, Luna) and **8 new biology pals**: Hachi the honeybee, Kame the turtle, Noro the sloth, Chiro the bat, Tako the octopus, Kurage the jellyfish, Hikari the firefly (legendary) and Tardi the tardigrade (mythic).
+- Every pal shares the same squishy body, so every outfit fits. Each has a short story, a **real biology fact** (e.g. octopus blood uses copper-based haemocyanin; fireflies make light with luciferase and ATP), a favourite food and a small **perk** (more XP, more chestnuts, cheaper food, slower energy or happiness drop, or bonuses in the Mistake Notebook, dictation or Cell Rush). Only the active pal's perk works.
+- **Rarity:** common · rare · epic (reach the goal, then adopt with 🌰) · legendary (arrives by itself after a very hard goal) · mythic (🌰 only). Legendary pals glow gold and mythic pals have a turning rainbow ring.
+- **Care:** ⚡ energy and ❤️ happiness drift down over time. Every finished activity gives the pal **XP** (5 + 2 per first-try answer), but a hungry pal earns half (its brain needs glucose!). Moods: overjoyed, happy, sleepy, hungry, lonely, sick.
+- **🍱 Food with nutrition cards:** 15 foods (apple, steamed fish with rice, congee, siu mai, curry fish balls, wonton noodles, pineapple bun, egg tart, HK milk tea, bubble tea…). Each has approximate energy, carbohydrate, sugar, protein, fat and fibre per serving, an everyday / sometimes / treat rating and a one-line biology note. Favourite food = double happiness. 3 treats in a day = **sugar crash** (with a blood glucose and insulin explanation).
+- **🃏 Play:** Term Match (match 4 key terms from your stages to their meanings) raises happiness and XP. Tapping the pal in the room gives a little happiness too.
+- **Evolution:** Baby → Junior → Master at Lv 5 / 10 (legendary Lv 7 / 13, mythic Lv 8 / 15) plus chestnuts. Juniors get a gold star mark; Masters get a golden halo and sparkles. Epic, legendary and mythic unlocks use the gift-box ceremony.
+- **🌟 Featured Pal advert** on Home shows a legendary or mythic pal you don't own yet, with its perk, progress and ◀ ▶ to browse.
+- The bottom bar now has one **🐾 Pals** tab with three parts: Study Pals · Dress up · Pets.
+
+## 🎨 Icons
+
+Every emoji is replaced by an original chunky 2-tone icon set (about 250 icons, flat colours with a darker "depth" layer and a white shine, in a Duolingo-like style), so the game looks the same on every phone and computer. The icons live in `src/icons.js`; a small observer swaps emoji in any text the game shows, so new text with emoji is converted automatically.
+
+## 🦜 Pets (25)
 
 Mochi can adopt 25 rare animals from across the animal kingdom (mammals, birds, reptiles, amphibians, fish, insects, an arachnid, a crustacean, a mollusc, a cnidarian, an echinoderm, a tardigrade and a horseshoe crab). Each has a Mochi-style drawing, its scientific name, home, conservation status and a **real biology story** linked to a syllabus topic (for example the fennec fox's ears and vasodilation, the octopus's blue haemocyanin, the firefly's luciferase).
 
@@ -130,6 +148,6 @@ Students earn 🎁 capsules (first escape = 1, boss = 2, sometimes on replays, d
 
 ## Editing
 
-The page is assembled from `src/` by `python3 tools/build.py`. Content lives in `src/stages.js` and `src/stages2.js` (notes, rules, terms), `src/scenes.js` (rooms), `src/q_t*.js`, `src/q_graphs.js` and `src/q_graphs2.js` (questions), `src/graphs.js` (graph data) and `src/rush.js`. Daily systems (streak, freezes, mission, health tips) are in `src/daily.js`; sign-in, cloud save and the class leaderboard in `src/auth.js`. Check content with `node tools/check_content.js`.
+The page is assembled from `src/` by `python3 tools/build.py`. Content lives in `src/stages.js` and `src/stages2.js` (notes, rules, terms), `src/scenes.js` (rooms), `src/q_t*.js`, `src/q_graphs.js` and `src/q_graphs2.js` (questions), `src/graphs.js` (graph data) and `src/rush.js`. Daily systems (streak, freezes, mission, health tips) are in `src/daily.js`; sign-in, cloud save and the class leaderboard in `src/auth.js`; Study Pals in `src/pals.js`; icons in `src/icons.js`. Check content with `node tools/check_content.js`.
 
 *Educational project with original kawaii-style characters (Mochi, Ramune, Pyon, Budo, Kurumi, Koma and Ryo).*

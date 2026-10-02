@@ -79,7 +79,7 @@ const PETS = [
     link: "🦋 Classification: mammals have hair and feed their young on milk, even egg-layers.", k: "dict", n: 1, how: "Get a perfect 🎧 Word Dictation round" },
   { id: "tardigrade", name: "Tardigrade (water bear)", nick: "Chonk", sci: "Tardigrada", group: "Tardigrade", rar: "rare", status: "Everywhere!", home: "Moss, lichen and ponds all over the world, maybe even in Hong Kong parks",
     story: "Less than 1 mm long. When it dries out, it curls into a 'tun' and slows its metabolism to less than 0.01% of normal. In this state it survives boiling, freezing, strong radiation and even outer space. A special protein helps protect its DNA from damage.",
-    link: "🔑 Metabolism and 🧫 DNA: protecting enzymes and genes from damage.", k: "cured", n: 3, how: "Cure Mochi 3 times in the 🩺 medicine cabinet" },
+    link: "🔑 Metabolism and 🧫 DNA: protecting enzymes and genes from damage.", k: "cured", n: 3, how: "Cure your Study Pal 3 times in the 🩺 medicine cabinet" },
   { id: "seahorse", name: "Seahorse", nick: "Coral", sci: "Hippocampus kuda", group: "Fish", rar: "rare", status: "Vulnerable", home: "Shallow seagrass and coral reefs, including around Hong Kong",
     story: "The dad gets pregnant! The female puts her eggs into the male's brood pouch, he fertilises them, and weeks later he gives birth to hundreds of tiny babies. It is a fish that swims upright, beating its small back fin very fast.",
     link: "🌸 Reproduction: fertilisation and care of young can be done by either parent.", k: "spell", n: 40, how: "Spell 40 biology words correctly" },
@@ -133,7 +133,7 @@ function showPetUnlock() {
   const p = petQueue.shift();
   if ((p.rar === "epic" || p.rar === "legend") && !p.cer && !reduced()) { p.cer = true; petQueue.unshift(p); return giftCeremony(p.rar, showPetUnlock); }
   SFX.fanfare(); confetti(p.rar === "legend" ? 260 : 140);
-  const box = openModal(`<span class="kicker">🐾 New pet!</span><h2>${esc(p.nick)} the ${esc(p.name)} joined Mochi!</h2>
+  const box = openModal(`<span class="kicker">🐾 New pet!</span><h2>${esc(p.nick)} the ${esc(p.name)} joined ${esc(palName())}!</h2>
     <div class="petreveal flipin ${p.rar}">${p.rar === "legend" || p.rar === "epic" ? `<i class="aura" aria-hidden="true"></i>` : ""}${petSvg(p.id)}</div>
     <div class="row" style="justify-content:center">${petChips(p)}</div>
     <p style="text-align:center">${esc(p.story.split(". ")[0])}.</p>
@@ -146,12 +146,12 @@ function showPetUnlock() {
 function giftCeremony(rar, done) {
   const d = document.createElement("div"); d.className = `gift ${rar}`; d.setAttribute("aria-hidden", "true");
   d.innerHTML = `<div class="rays"></div>${rar === "legend" ? Array.from({ length: 18 }, (_, i) => `<i class="gold" style="left:${(i * 53) % 100}%;animation-delay:${(i % 6) * .18}s"></i>`).join("") : ""}
-    <svg class="gbox" viewBox="0 0 120 120"><rect x="16" y="50" width="88" height="62" rx="8" fill="${rar === "legend" ? "#FFD25E" : "#C9A0FF"}" stroke="${CO}" stroke-width="4"/>
-      <rect x="10" y="34" width="100" height="22" rx="6" fill="${rar === "legend" ? "#FFE58F" : "#DCC4FF"}" stroke="${CO}" stroke-width="4"/>
+    <svg class="gbox" viewBox="0 0 120 120"><rect x="16" y="50" width="88" height="62" rx="8" fill="${rar === "legend" ? "#FFD25E" : rar === "myth" ? "#FF86D0" : "#C9A0FF"}" stroke="${CO}" stroke-width="4"/>
+      <rect x="10" y="34" width="100" height="22" rx="6" fill="${rar === "legend" ? "#FFE58F" : rar === "myth" ? "#FFC2E8" : "#DCC4FF"}" stroke="${CO}" stroke-width="4"/>
       <rect x="52" y="34" width="16" height="78" fill="#FF8FA3" stroke="${CO}" stroke-width="3.5"/>
       <path d="M60 34 C40 8 22 18 34 32 Z M60 34 C80 8 98 18 86 32 Z" fill="#FF8FA3" stroke="${CO}" stroke-width="3.5" stroke-linejoin="round"/>
       <path d="M24 64 v36" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".6"/></svg>
-    <div class="glabel">${rar === "legend" ? "👑 LEGENDARY" : "💎 EPIC"}</div>`;
+    <div class="glabel">${rar === "legend" ? "👑 LEGENDARY" : rar === "myth" ? "🌈 MYTHIC" : "💎 EPIC"}</div>`;
   document.body.appendChild(d); [0, 450, 900].forEach(t => setTimeout(() => SFX.tap(), t));
   setTimeout(() => { d.classList.add("open"); SFX.fanfare(); confetti(rar === "legend" ? 220 : 120); }, 1400);
   setTimeout(() => { d.remove(); done(); }, 2500);
@@ -195,7 +195,7 @@ const ILLS = [
   { id: "flu", name: "Influenza (flu)", type: "virus", agent: "the influenza virus", icon: "🤒", sym: "sudden high fever, aching muscles, very tired", test: "Rapid flu test: positive for influenza A.", cure: ["antiviral", "rest"],
     why: "Flu is a virus. Antiviral medicine (given early) stops the virus copying itself inside cells, and rest helps the immune system win.", tip: "A flu vaccine every year trains your immune system to make memory cells before flu season." },
   { id: "strep", name: "Strep throat", type: "bacterium", agent: "Streptococcus bacteria", icon: "😣", sym: "very sore throat, fever, white spots on the tonsils", test: "Throat swab: Streptococcus bacteria grew on the agar plate.", cure: ["antibiotic"],
-    why: "This infection is caused by bacteria, so antibiotics work. Mochi must finish the whole course, even after feeling better, so no bacteria survive.", tip: "Stopping antibiotics early lets the toughest bacteria survive, which helps antibiotic resistance spread." },
+    why: "This infection is caused by bacteria, so antibiotics work. {P} must finish the whole course, even after feeling better, so no bacteria survive.", tip: "Stopping antibiotics early lets the toughest bacteria survive, which helps antibiotic resistance spread." },
   { id: "food", name: "Food poisoning", type: "bacterium", agent: "Salmonella bacteria from an undercooked egg", icon: "🤢", sym: "diarrhoea, vomiting, stomach cramps", test: "Stool sample: Salmonella found. Mochi is losing lots of water.", cure: ["ors"],
     why: "The main danger is dehydration. Oral rehydration salts replace water and ions, and most cases clear up by themselves. Antibiotics are only for severe cases.", tip: "Cook eggs and meat thoroughly, and keep raw and cooked food apart." },
   { id: "athlete", name: "Athlete's foot", type: "fungus", agent: "a fungus", icon: "🦶", sym: "itchy, cracked, peeling skin between the toes after days in sweaty sports shoes", test: "Skin scraping: fungal threads (hyphae) seen under the microscope.", cure: ["antifungal"],
@@ -209,7 +209,7 @@ const ILLS = [
   { id: "scurvy", name: "Scurvy", type: "deficiency", agent: "a lack of vitamin C", icon: "🍜", sym: "bleeding gums, bruises and slow-healing cuts, after weeks of eating only instant noodles", test: "Diet diary: no fruit or vegetables for 6 weeks. Not an infection.", cure: ["vitc"],
     why: "Scurvy is a deficiency disease: no pathogen is involved. Vitamin C is needed to make collagen, so eating citrus fruit and vegetables fixes it.", tip: "A balanced diet with fruit and vegetables every day prevents scurvy." },
   { id: "anaemia", name: "Iron-deficiency anaemia", type: "deficiency", agent: "not enough iron in the diet", icon: "😮‍💨", sym: "pale skin, very tired, out of breath after climbing stairs", test: "Blood test: low haemoglobin. Not an infection.", cure: ["iron"],
-    why: "Iron is part of haemoglobin. With too little, blood carries less oxygen, so Mochi feels tired. Red meat, beans and dark green leafy vegetables help.", tip: "Vitamin C helps your body absorb iron from plant foods." },
+    why: "Iron is part of haemoglobin. With too little, blood carries less oxygen, so {P} feels tired. Red meat, beans and dark green leafy vegetables help.", tip: "Vitamin C helps your body absorb iron from plant foods." },
   { id: "hayfever", name: "Hay fever (allergy)", type: "allergy", agent: "an allergic reaction to pollen", icon: "🌼", sym: "sneezing and itchy, watery eyes every spring, but no fever", test: "Skin-prick test: strong reaction to grass pollen. Not infectious.", cure: ["antihist"],
     why: "In an allergy, the immune system overreacts to something harmless and releases histamine. Antihistamines block its effects.", tip: "Allergies are not caught from other people: they aren't caused by pathogens." },
   { id: "heat", name: "Heat exhaustion", type: "homeostasis", agent: "overheating while playing basketball on a hot, humid Hong Kong afternoon", icon: "☀️", sym: "hot, dizzy, heavy sweating, very thirsty", test: "Body temperature 39 °C, no infection. In humid air, sweat evaporates slowly.", cure: ["cool"],
@@ -224,10 +224,10 @@ function wrongWhy(m, ill) {
   if (m.id === "antibiotic" && ill.type === "virus") return "❌ Antibiotics don't work on viruses! They target bacterial structures like cell walls and bacterial ribosomes, and viruses have neither. Using antibiotics when they aren't needed also helps antibiotic-resistant bacteria spread.";
   if (m.id === "antibiotic" && ill.id === "food") return "❌ Not the best choice. Most Salmonella food poisoning clears up by itself, and antibiotics are only for severe cases. The real danger right now is losing too much water.";
   if (m.id === "antibiotic") return `❌ Antibiotics only work against bacteria. This is caused by ${cause}.`;
-  if (m.id === "vaccine") return "❌ Vaccines prevent diseases by training the immune system before an infection. They can't cure an illness Mochi already has.";
+  if (m.id === "vaccine") return "❌ Vaccines prevent diseases by training the immune system before an infection. They can't cure an illness {P} already has.";
   if (m.id === "antiviral") return `❌ Antiviral medicine only stops viruses from copying themselves. This is caused by ${cause}.`;
   if (m.id === "rest" && ill.cure.indexOf("rest") < 0) return `❌ Rest always helps a little, but this is caused by ${cause} and needs the right treatment to get better.`;
-  return `❌ ${m.does} But Mochi's problem is caused by ${cause}.`;
+  return `❌ ${m.does} But {P}'s problem is caused by ${cause}.`;
 }
 function maybeGetSick(chance) {
   if (!S || S.ill || S.lastIllDay === today() || Math.random() >= chance) return false;
@@ -238,7 +238,7 @@ function maybeGetSick(chance) {
 function openClinic() {
   const ill = S.ill && illById(S.ill.id); if (!ill) return;
   const tried = S.ill.tried || [];
-  const box = openModal(`<span class="kicker">🩺 Dr Koma's clinic</span><h2>${ill.icon} Mochi isn't feeling well</h2>
+  const box = openModal(`<span class="kicker">🩺 Dr Koma's clinic</span><h2>${ill.icon} ${esc(palName())} isn't feeling well</h2>
     <div class="petstory"><div class="petpic sick">${figure("chiikawa", "sick")}</div>
       <div class="chart"><b>Symptoms:</b> ${esc(ill.sym)}<br><b>🔬 Test result:</b> ${esc(ill.test)}</div></div>
     ${say("shisa", "What is causing it: a virus, bacteria, a fungus, a parasite... or no pathogen at all? Pick the right treatment from the cabinet! 🦁🩺", "normal", "hint")}
@@ -248,7 +248,7 @@ function openClinic() {
     const m = medById(b.dataset.med), fb = box.querySelector("#clinicFb");
     if (ill.cure.includes(m.id)) {
       S.ill = null; S.stats.cured += 1; const bonus = 20; S.coins += bonus; save(true); SFX.fanfare(); confetti(120); checkTrophies();
-      box.innerHTML = `<span class="kicker">🩺 Dr Koma's clinic</span><h2>🎉 Mochi feels better!</h2>
+      box.innerHTML = `<span class="kicker">🩺 Dr Koma's clinic</span><h2>🎉 ${esc(palName())} feels better!</h2>
         <div class="petstory"><div class="petpic">${figure("chiikawa", "sparkle")}</div>
           <div><p><b>${esc(ill.name)}</b> is caused by ${esc(ill.agent)} (${TYPE_LABEL[ill.type]}).</p><p>✅ ${esc(ill.why)}</p></div></div>
         <div class="formula">🛡️ Prevention: ${esc(ill.tip)}</div>
@@ -265,18 +265,18 @@ function openClinic() {
 }
 /* Small moments of biology in Mochi's daily life (shown in the chat card) */
 const DAILY_LIFE = [
-  "🪥 Mochi brushed their teeth. Plaque bacteria turn sugar into acid, which dissolves tooth enamel, so brushing matters!",
-  "🧼 Mochi washed their hands for 20 seconds with soap. Soap breaks up the fatty outer layer of many germs.",
-  "😴 Mochi slept 9 hours. During deep sleep, the body releases growth hormone for growing and repair.",
-  "🍳 Mochi ate eggs for breakfast. Proteases break the protein into amino acids to build new cells.",
-  "🍚 Mochi chewed rice slowly. Salivary amylase in the mouth starts breaking starch into maltose.",
-  "🚶 Mochi climbed the stairs. Breathing got faster to bring in more oxygen and remove carbon dioxide.",
-  "🌞 Mochi played in the sun for a while. Skin uses sunlight to make vitamin D for strong bones.",
-  "💧 Mochi forgot to drink water. The brain released more ADH, so the kidneys saved water and made darker urine.",
-  "🥶 Mochi shivered in the cold air-con. Shivering is muscles contracting to release heat from respiration.",
-  "😳 Mochi blushed when the teacher said 'well done'. Blood vessels in the skin widened (vasodilation).",
-  "🥦 Mochi ate broccoli. The fibre (cellulose) isn't digested, but helps food move through the gut.",
-  "🏃 Mochi sprinted for the bus. Muscles used anaerobic respiration and made lactic acid. Deep breaths repay the oxygen debt.",
-  "🤧 Mochi covered a sneeze with a tissue. Droplets can carry viruses to other people.",
-  "💉 Mochi got a vaccine. The immune system made memory cells, ready for a faster response next time."
+  "🪥 {P} brushed their teeth. Plaque bacteria turn sugar into acid, which dissolves tooth enamel, so brushing matters!",
+  "🧼 {P} washed their hands for 20 seconds with soap. Soap breaks up the fatty outer layer of many germs.",
+  "😴 {P} slept 9 hours. During deep sleep, the body releases growth hormone for growing and repair.",
+  "🍳 {P} ate eggs for breakfast. Proteases break the protein into amino acids to build new cells.",
+  "🍚 {P} chewed rice slowly. Salivary amylase in the mouth starts breaking starch into maltose.",
+  "🚶 {P} climbed the stairs. Breathing got faster to bring in more oxygen and remove carbon dioxide.",
+  "🌞 {P} played in the sun for a while. Skin uses sunlight to make vitamin D for strong bones.",
+  "💧 {P} forgot to drink water. The brain released more ADH, so the kidneys saved water and made darker urine.",
+  "🥶 {P} shivered in the cold air-con. Shivering is muscles contracting to release heat from respiration.",
+  "😳 {P} blushed when the teacher said 'well done'. Blood vessels in the skin widened (vasodilation).",
+  "🥦 {P} ate broccoli. The fibre (cellulose) isn't digested, but helps food move through the gut.",
+  "🏃 {P} sprinted for the bus. Muscles used anaerobic respiration and made lactic acid. Deep breaths repay the oxygen debt.",
+  "🤧 {P} covered a sneeze with a tissue. Droplets can carry viruses to other people.",
+  "💉 {P} got a vaccine. The immune system made memory cells, ready for a faster response next time."
 ];

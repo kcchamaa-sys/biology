@@ -76,7 +76,8 @@ function freshState() {
     room_run: {}, trophies: {}, stats: freshStats(),
     coins: 0, owned: [], equip: { hat: null, hair: null, face: null, outfit: null, ribbon: null, hand: null, frame: null }, power: { torch: 1, crystal: 1, guard: 1 },
     rush: { best: 0, lastDay: null }, player_id: newId(), lb_last: 0, mistakes: {}, mistakes_cleared: 0, playMode: "escape", pets: {}, activePet: null, ill: null, lastIllDay: null, lastIll: null, coll: { owned: {}, pending: 0, pity: 0 }, dict: { missed: {}, best: 0 },
-    last_study_day: null, study_days: [], frozen_days: [], freeze_month: null, freeze_used: null, mission: null, upd: 0
+    last_study_day: null, study_days: [], frozen_days: [], freeze_month: null, freeze_used: null, mission: null, upd: 0,
+    pals: { mochi: newPal() }, activePal: "mochi"
   };
 }
 function normalise(obj) {
@@ -96,6 +97,7 @@ function normalise(obj) {
   if (!ROOMS.some(r => r.id === s.current_room)) s.current_room = ROOMS[0].id;
   // Saves from before the study streak: count the last visit as a study day and hand out the 3 starting Streak Freezes
   if (obj && !("last_study_day" in obj)) { s.last_study_day = s.last_login_date; s.study_days = s.last_login_date ? [s.last_login_date] : []; s.streak_shields = Math.max(s.streak_shields || 0, 3); }
+  s.pals = Object.assign({ mochi: newPal() }, s.pals); if (!s.pals[s.activePal]) s.activePal = "mochi";
   s.study_days = [...(s.study_days || [])]; s.frozen_days = [...(s.frozen_days || [])];
   return s;
 }
@@ -213,10 +215,11 @@ try { SFX.on = localStorage.getItem(SOUND_KEY) !== "off"; } catch (e) {}
 function checkIn() {
   const t = today();
   if (S.last_login_date !== t) S.stats.days += 1;
+  palTick();
   streakNote = streakCheck() || (!S.last_login_date ? "🌱 Finish one activity today to start your study streak!" : "");
   S.longest_streak = Math.max(S.longest_streak || 0, S.current_streak);
   S.last_login_date = t;
-  if (S.stats.days > 1 && maybeGetSick(.3)) streakNote = (streakNote ? streakNote + " " : "") + "🤒 Uh-oh... Mochi woke up feeling sick. Visit Dr Koma!";
+  if (S.stats.days > 1 && maybeGetSick(.3)) streakNote = (streakNote ? streakNote + " " : "") + `🤒 Uh-oh... ${palName()} woke up feeling sick. Visit Dr Koma!`;
   save();
   checkTrophies();
 }
@@ -235,7 +238,7 @@ const $app = document.getElementById("app"), $modal = document.getElementById("m
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const reduced = () => window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-const say = (who, text, mood = "normal", cls = "") => `<div class="say"><div class="av">${avatar(who, mood)}</div><div class="bubble ${cls}"><span class="name">${CHAR[who].name}</span>${text}</div></div>`;
+const say = (who, text, mood = "normal", cls = "") => (text = String(text).replace(/\{P\}/g, esc(palName())), `<div class="say"><div class="av">${avatar(who, mood)}</div><div class="bubble ${cls}"><span class="name">${CHAR[who].name}</span>${text}</div></div>`);
 const roomIndex = id => ROOMS.findIndex(r => r.id === id);
 // Every topic is open; inside a topic, stages unlock one after another
 const isUnlocked = i => ROOMS[i].s === 1 || S.completed_rooms.includes(ROOMS[i - 1].id);
@@ -248,7 +251,7 @@ function nextRoomIndex() {
 const stageLabel = r => `Topic ${r.topicNo} · ${r.boss ? "Boss stage" : `Stage ${r.s}`}`;
 const starStr = n => "★".repeat(n) + "☆".repeat(3 - n);
 const fmt = sec => { const a = Math.abs(sec); return `${sec < 0 ? "+" : ""}${String(Math.floor(a / 60)).padStart(2, "0")}:${String(a % 60).padStart(2, "0")}`; };
-function toast(msg) { const t = document.getElementById("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => (t.hidden = true), 2600); }
+function toast(msg) { msg = String(msg).replace(/\{P\}/g, palName()); const t = document.getElementById("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => (t.hidden = true), 2600); }
 
 function confetti(amount = 140) {
   if (reduced()) return;
@@ -316,7 +319,7 @@ const TROPHIES = [
   { id: "coll", cat: "fun", name: "Collector", rar: "gold", who: "shisa", desc: "Collect 15 different collectibles", prog: () => [collOwned(), 15] },
   { id: "rare", cat: "fun", name: "Rare Hunter", rar: "legend", who: "chiikawa", desc: "Collect all 5 rare collectibles", prog: () => [collOwned(true), 5] },
   { id: "dict", cat: "brain", name: "Dictation Star", rar: "gold", who: "hachiware", desc: "Get 10 perfect Word Dictation rounds", prog: () => [S.stats.dictPerfect, 10] },
-  { id: "doctor", cat: "fun", name: "Little Doctor", rar: "silver", who: "shisa", desc: "Cure Mochi 5 times with the right treatment", prog: () => [S.stats.cured, 5] },
+  { id: "doctor", cat: "fun", name: "Little Doctor", rar: "silver", who: "shisa", desc: "Cure your Study Pal 5 times with the right treatment", prog: () => [S.stats.cured, 5] },
   { id: "petpal", cat: "adventure", name: "Pet Pal", rar: "gold", who: "momonga", desc: "Adopt 10 pets", prog: () => [Object.keys(S.pets).length, 10] },
   { id: "hkguard", cat: "adventure", name: "HK Wildlife Guardian", rar: "legend", who: "chiikawa", desc: "Adopt all 5 Hong Kong species", prog: () => [PETS.filter(p => p.hk && S.pets[p.id]).length, 5] },
   { id: "labsci", cat: "brain", name: "Virtual Scientist", rar: "bronze", who: "hachiware", desc: "Try all 5 biology simulations", prog: () => [Object.keys(S.sims || {}).length, 5] }
@@ -403,7 +406,7 @@ const COLL_ART = {
   matcha: `<svg viewBox="0 0 80 100" aria-hidden="true"><path d="M18 30 H62 L56 92 H24 Z" fill="rgba(255,255,255,.7)" stroke="${INK}" stroke-width="3"/><path d="M20 52 H60 L56 90 H24Z" fill="#9CCB6B"/><path d="M19 42 H61 L60 52 H20Z" fill="#F4F0E8"/>
     ${[[32, 70], [46, 76], [38, 84]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="6" ry="3.5" fill="#6BBF5F" stroke="${INK}" stroke-width="1.4"/>`).join("")}<rect x="14" y="24" width="52" height="8" rx="3" fill="#FFFDF0" stroke="${INK}" stroke-width="2.4"/><path d="M48 24 L56 4" stroke="#FFB7C5" stroke-width="5" stroke-linecap="round"/>
     <path d="M40 60 q-8 -6 -4 -12 q6 -2 4 12 q-2 -14 4 -12 q4 6 -4 12" fill="#FFFDF0" opacity=".8"/></svg>`,
-  flip: `<svg viewBox="0 0 80 100" aria-hidden="true"><rect x="22" y="6" width="36" height="42" rx="8" fill="#FFB7C5" stroke="${INK}" stroke-width="3"/><rect x="27" y="11" width="26" height="26" rx="4" fill="#D3E4FF" stroke="${INK}" stroke-width="2"/><text x="40" y="28" text-anchor="middle" font-size="10">💖</text>
+  flip: `<svg viewBox="0 0 80 100" aria-hidden="true"><rect x="22" y="6" width="36" height="42" rx="8" fill="#FFB7C5" stroke="${INK}" stroke-width="3"/><rect x="27" y="11" width="26" height="26" rx="4" fill="#D3E4FF" stroke="${INK}" stroke-width="2"/><path d="M40 31 C34 27 32 24 32 21.5 C32 19 34 18 36 18 C38 18 39.5 19.5 40 21 C40.5 19.5 42 18 44 18 C46 18 48 19 48 21.5 C48 24 46 27 40 31Z" fill="#FF86D0"/>
     <rect x="22" y="50" width="36" height="42" rx="8" fill="#FFB7C5" stroke="${INK}" stroke-width="3"/>${[0, 1, 2].map(r => [0, 1, 2].map(c => `<rect x="${28 + c * 9}" y="${58 + r * 9}" width="6" height="5" rx="2" fill="#FFFDF0" stroke="${INK}" stroke-width="1"/>`).join("")).join("")}
     <path d="M58 70 q14 4 12 16" fill="none" stroke="${INK}" stroke-width="1.6"/><path d="M66 84 q4 4 0 8 q-4 4 0 8 M72 84 q-4 4 0 8 q4 4 0 8" fill="none" stroke="#5B8FE0" stroke-width="2"/>${[[16, 10], [64, 44], [12, 60]].map(([x, y]) => `<path d="M${x} ${y - 5} l1.5 3.5 3.5 1.5 -3.5 1.5 -1.5 3.5 -1.5 -3.5 -3.5 -1.5 3.5 -1.5z" fill="#FDD66B"/>`).join("")}</svg>`
 };
@@ -494,7 +497,7 @@ function checkTrophies() {
     if (cur >= goal) { S.trophies[t.id] = today(); S.coins = (S.coins || 0) + 30; S.coll.pending += 1; trophyQueue.push(t); }
   });
   if (trophyQueue.length) { save(); renderTools(); showTrophyBanner(); }
-  checkPets();
+  checkPets(); checkPals();
 }
 function showTrophyBanner() {
   if (document.querySelector(".tbanner") || !trophyQueue.length) return;
@@ -728,7 +731,7 @@ function rushEnd() {
   if (!RU) return;
   const r = RU; stopRush();
   const bonus = S.rush.lastDay !== today();
-  let coins = withStreak(Math.ceil(r.score / 10)); if (bonus && r.total > 0) coins *= 2;
+  let coins = Math.round(withStreak(Math.ceil(r.score / 10)) * perk("rush")); if (bonus && r.total > 0) coins *= 2;
   if (r.total > 0) { S.rush.lastDay = today(); S.stats.rushRounds += 1; }
   const best = r.score > S.rush.best; S.rush.best = Math.max(S.rush.best, r.score);
   const rcap = r.score >= 120 ? 1 : 0; S.coll.pending += rcap;
@@ -938,7 +941,7 @@ function renderWelcome() {
   $app.innerHTML = `
     <section class="hero">${starsBg()}
       <span class="kicker" style="color:#fff">${HERO_KICKER}</span>
-      <h1>Mochi Bio Escape</h1>
+      <h1>Biology Study Pals</h1>
       <p class="sub">${TOPICS.length} topics · ${ROOMS.length} stages · 1 stage a day · about 15–20 minutes</p>
       ${castHtml({ chiikawa: "cry", usagi: "happy", momonga: "shock" })}
     </section>
@@ -1030,7 +1033,7 @@ function startRevision(ti) {
   const RV = { keys, at: 0, right: 0, cleared: 0, done: 0, start: new Date().toISOString() };
   const next = () => {
     if (RV.at >= RV.keys.length) {
-      const coins = RV.cleared * 2 + RV.right; S.coins += coins; save(true); SFX.fanfare(); if (RV.right) confetti(100);
+      const coins = Math.round((RV.cleared * 2 + RV.right) * perk("notebook")); S.coins += coins; save(true); SFX.fanfare(); if (RV.right) confetti(100);
       activityDone({ mode: "notebook", topic: ti == null ? "all" : String(TOPICS[ti].no), stage: "Mistake Notebook", ans: RV.done || 0, cor: RV.right, done: (RV.done || 0) > 0, start: RV.start });
       $app.innerHTML = `<section class="card"><span class="kicker">📕 Revision done</span><h2>${RV.right === RV.keys.length ? "Perfect revision! 🎉" : "Revision complete! 🌱"}</h2>
         <div class="cast" style="margin:0">${["chiikawa", "hachiware", "usagi"].map(w => `<div class="fig" style="width:84px">${figure(w, RV.right ? (w === "chiikawa" ? "sparkle" : "happy") : "normal")}</div>`).join("")}</div>
@@ -1223,7 +1226,7 @@ function setLine(who, html, mood = "normal") {
 function setMood(m, ms) {
   if (!R) return; R.mood = m;
   const el = document.getElementById("chiiAv"); if (el) el.innerHTML = avatar("chiikawa", m);
-  const st = document.getElementById("chiiSt"); if (st) st.textContent = { normal: "Mochi is ready", happy: "Mochi is happy!", cry: "Mochi is nervous... 🥺", shock: "Mochi is shocked! 😱", sparkle: "Mochi is sparkling! ✨", brave: "Mochi is being brave! 💪" }[m];
+  const st = document.getElementById("chiiSt"); if (st) st.textContent = { normal: `${palName()} is ready`, happy: `${palName()} is happy!`, cry: `${palName()} is nervous... 🥺`, shock: `${palName()} is shocked! 😱`, sparkle: `${palName()} is sparkling! ✨`, brave: `${palName()} is being brave! 💪` }[m];
   clearTimeout(moodTimer);
   if (ms) moodTimer = setTimeout(() => R && setMood(S.room_timer[R.room.id] < 120 ? "cry" : "normal"), ms);
 }
@@ -1253,7 +1256,7 @@ function renderRoom() {
         <div style="min-width:0"><div class="rtopic">${TOPICS[room.t].icon} ${topicNo(room.topicNo)}: ${esc(room.topic)}</div>
           <div class="rt">${esc(room.name)} ${room.boss ? `<span class="boss-tag">⚔️ BOSS</span>` : ""}</div>
           <div class="stepper" aria-label="${esc(stageLabel(room))}">${topicRooms(room.t).map(x => `<i class="${x.id === room.id ? "cur" : S.completed_rooms.includes(x.id) ? "on" : ""}"></i>`).join("")}<span class="small">${room.boss ? "Boss stage" : `Stage ${room.s}`} of ${topicRooms(room.t).length} · ${esc(room.focus)}</span></div>
-          <div class="small" id="chiiSt">${"Mochi is ready"}</div></div>
+          <div class="small" id="chiiSt">${`${palName()} is ready`}</div></div>
       </div>
       <div style="display:grid;justify-items:end;gap:4px">
         ${R.study ? `<div class="timer study" id="timer" title="Study mode: no timer">📖 Study</div>` : `<div class="timer ${t < 0 ? "over" : t < 120 ? "low" : ""}" id="timer" role="timer" aria-label="${"Time left"}">${t >= 0 ? fmt(t) : `${"OVERTIME"} ${fmt(t)}`}</div>`}
@@ -1776,6 +1779,7 @@ document.addEventListener("keydown", () => { SFX.init(); MUSIC.start(); }, { onc
 document.addEventListener("visibilitychange", () => { if (document.hidden && S) save(); });
 window.addEventListener("pagehide", () => { if (S) save(); });
 (function boot() {
+  startIcons();
   const linked = decodeCode(location.hash.slice(1));
   if (linked) { S ? renderMap() : renderWelcome(); showCodeFromLink(linked); return; }
   // Class sign-in screen first, unless this device chose guest mode (or sign-in is off and there is saved progress)

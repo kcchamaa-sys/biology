@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#2b2433">
-<title>Mochi Bio Escape</title>
+<title>Biology Study Pals</title>
 <meta name="description" content="A cute kawaii-style biology escape-room adventure for Secondary 4–6.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -755,6 +755,69 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .petreveal.legend .aura { background: conic-gradient(rgba(255,210,60,.0), rgba(255,210,60,.7), rgba(255,210,60,0), rgba(255,240,170,.7), rgba(255,210,60,0)); filter: blur(10px); }
 .petreveal.epic .aura { background: conic-gradient(#FFB7C5, #FDFFB6, #B9F3C9, #A0C4FF, #C9A0FF, #FFB7C5); filter: blur(14px); opacity: .7; }
 @media (prefers-reduced-motion: reduce) { .riskcard.urgent, .lgsky span, .lgsky .orb, .island, .island .ifig, .spop, .almost, .petreveal .aura, .acctbtn.warn { animation: none !important; } }
+
+/* ================= 🎨 Icons (replace emoji) ================= */
+.icw { display: inline-flex; vertical-align: -0.2em; line-height: 1; }
+.ic { width: 1.2em; height: 1.28em; overflow: visible; flex: 0 0 auto; }
+.btn .icw, .iconbtn .icw, .pill .icw { vertical-align: -0.24em; }
+
+/* ================= 🐾 Study Pals ================= */
+.subnav { display: flex; gap: 6px; background: #fff; border: var(--line); border-radius: 999px; padding: 4px; box-shadow: 0 3px 0 var(--ink); }
+.subnav button { flex: 1 1 0; border: 0; background: transparent; border-radius: 999px; font-weight: 800; font-size: .88rem; padding: 6px 8px; min-height: 40px; display: flex; gap: 6px; align-items: center; justify-content: center; white-space: nowrap; }
+.subnav button[aria-selected="true"] { background: var(--pink); box-shadow: inset 0 -3px 0 rgba(74,62,61,.15); }
+.palpanel { background: linear-gradient(160deg, #FFF8EC, #FFFFFF 60%); }
+.palpanel.legend { background: linear-gradient(160deg, #FFF3C4, #FFFFFF 60%); } .palpanel.myth { background: linear-gradient(160deg, #FFE3F4, #E9F4FF 60%); }
+.palhero { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; align-items: center; }
+.palbig svg:not(.ic) { width: 100%; height: auto; overflow: visible; }
+.pill.perk { white-space: normal; line-height: 1.3; }
+.palinfo { display: grid; gap: 6px; min-width: 0; }
+.moodchip { background: var(--cream-2); border: 2px solid var(--ink); border-radius: 999px; padding: 0 8px; font-weight: 800; white-space: nowrap; }
+.meter { display: grid; grid-template-columns: 76px minmax(0, 1fr) 34px; gap: 6px; align-items: center; font-size: .8rem; font-weight: 800; }
+.meter b { text-align: right; font-variant-numeric: tabular-nums; }
+.meter.en .tprog i { background: linear-gradient(180deg, #FFE066, #FFC800 55%, #E0A800); }
+.meter.hp .tprog i { background: linear-gradient(180deg, #FF9C9C, #FF4B4B 55%, #D93636); }
+.meter.xp .tprog i { background: linear-gradient(180deg, #A6F06A, #58CC02 55%, #46A302); }
+.rchip2 { display: inline-block; border: 2px solid; border-radius: 999px; padding: 0 8px; font-weight: 800; font-size: .78rem; }
+.btn.sm { min-height: 36px; padding: 4px 10px; font-size: .82rem; }
+.collhead { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tprog.rainbow i { background: linear-gradient(90deg, #FF4B4B, #FF9600, #FFC800, #58CC02, #1CB0F6, #CE82FF); }
+.palstrip { display: flex; flex-wrap: wrap; gap: 0; }
+.palstrip span { width: 34px; height: 34px; display: inline-block; } .palstrip svg:not(.ic) { width: 100%; height: 100%; overflow: visible; }
+.sil svg { filter: brightness(0) opacity(.28); }
+.palgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.palcard { position: relative; display: grid; justify-items: center; gap: 3px; text-align: center; background: #fff; border: var(--line); border-radius: 16px; padding: 8px 6px 10px; box-shadow: 0 3px 0 var(--ink); min-width: 0; }
+.palcard .ppic { position: relative; width: 92px; height: 86px; } .palcard .ppic svg:not(.ic) { width: 100%; height: 100%; overflow: visible; }
+.palcard .plock { position: absolute; right: 0; bottom: 4px; font-size: 1.2rem; }
+.palcard .tprog { width: 100%; height: 10px; }
+.palcard.active { box-shadow: 0 0 0 3px var(--pink), 0 3px 0 var(--ink); }
+.palcard.legend { background: linear-gradient(170deg, #FFF3C4, #fff 55%); } .palcard.legend.locked .sil svg { filter: brightness(0) drop-shadow(0 0 6px #FFC800) opacity(.45); }
+.palcard.myth { background: linear-gradient(170deg, #FFE3F4, #E6F3FF 55%); } .palcard.myth.locked .sil svg { filter: brightness(0) drop-shadow(0 0 6px #FF86D0) opacity(.45); }
+.palcard.epic { background: linear-gradient(170deg, #F3E6FF, #fff 55%); }
+.pinfo { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--ink); background: #fff; font-weight: 900; font-size: .75rem; padding: 0; }
+.pring { animation: spin 14s linear infinite; transform-origin: 100px 118px; transform-box: view-box; }
+/* food */
+.foodgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+.food { position: relative; }
+.fpic { width: 100%; display: grid; justify-items: center; gap: 2px; background: #fff; border: var(--line); border-radius: 14px; padding: 8px 4px; box-shadow: 0 3px 0 var(--ink); text-align: center; }
+.fpic:disabled { opacity: .5; } .fpic .fe { font-size: 2rem; line-height: 1.1; }
+.fnut { position: absolute; top: 4px; right: 4px; border: 2px solid var(--ink); background: var(--cream); border-radius: 50%; width: 30px; height: 30px; padding: 0; }
+.rdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; }
+.ntab { width: 100%; border-collapse: collapse; font-size: .9rem; } .ntab td { padding: 4px 6px; border-top: 2px dashed #E5DCC9; } .ntab td:last-child { width: 40%; }
+.nbar { height: 10px; border-radius: 999px; background: #F1ECE3; overflow: hidden; } .nbar i { display: block; height: 100%; border-radius: 999px; }
+/* term match */
+.tmatch { display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; } .tcol { display: grid; gap: 8px; align-content: start; }
+.tm { border: var(--line); border-radius: 12px; background: #fff; padding: 8px; font-weight: 800; font-size: .86rem; text-align: left; box-shadow: 0 3px 0 var(--ink); min-height: 44px; }
+.tm.m { font-weight: 600; } .tm.sel { background: var(--yellow); } .tm.ok { background: var(--green); opacity: .7; } .tm.shake { animation: shake .35s; }
+@keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+/* featured pal advert */
+.featpal { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 10px; align-items: center; overflow: visible; margin-top: 18px; }
+.featpal.legend { background: linear-gradient(135deg, #FFF0B3, #FFD6A5 60%, #FFF6D6); }
+.featpal.myth { background: linear-gradient(135deg, #FFD6F0, #D6EBFF 50%, #E8FFD6); }
+.featpal .fpfig { margin-top: -38px; } .featpal .fpfig svg { width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 4px 8px rgba(255,200,0,.5)); }
+.featpal .fptext { display: grid; gap: 4px; min-width: 0; }
+.featpal .row { flex-wrap: nowrap; gap: 6px; } .featpal #fpGo { flex: 1 1 auto; min-width: 0; font-size: .74rem; line-height: 1.2; } .featpal .fparr { flex: 0 0 auto; padding: 4px 8px; background: #fff; }
+@media (max-width: 420px) { .palhero { grid-template-columns: 92px minmax(0, 1fr); gap: 8px; } .meter { grid-template-columns: 64px minmax(0, 1fr) 28px; } .palgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; } .palcard { padding: 6px 3px 8px; font-size: .8rem; } .palcard .ppic { width: 64px; height: 60px; } .palcard .small { font-size: .7rem; line-height: 1.2; } .palcard .btn.sm { font-size: .72rem; padding: 3px 6px; min-height: 32px; } .pinfo { width: 20px; height: 20px; top: 3px; right: 3px; } .tmatch { grid-template-columns: 1fr; } .subnav button { font-size: .8rem; padding: 6px 4px; } }
+@media (prefers-reduced-motion: reduce) { .pring { animation: none; } }
 </style>
 </head>
 <body>
@@ -762,7 +825,7 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
   <filter id="sketch"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="1.6"/></filter>
 </svg>
 <header class="top">
-  <button class="brand" id="home" aria-label="Go to the topic map"><span id="brandav"></span><span class="bt" id="brandText">Mochi Bio Escape</span></button>
+  <button class="brand" id="home" aria-label="Go to the topic map"><span id="brandav"></span><span class="bt" id="brandText">Biology Study Pals</span></button>
   <div class="tools" id="tools"></div>
 </header>
 <main id="app"></main>

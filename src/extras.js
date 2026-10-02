@@ -22,8 +22,8 @@ document.addEventListener("click", e => { const b = e.target.closest && e.target
 
 /* 🔥 Streak bonus: chestnut rewards grow 5% per streak day, up to ×1.5 */
 const streakMult = () => Math.min(1.5, 1 + .05 * Math.max(0, ((S && S.current_streak) || 1) - 1));
-const withStreak = n => Math.round(n * streakMult() * (S && S.ill ? .5 : 1));
-const multTag = () => (streakMult() > 1 ? ` · 🔥 ×${streakMult().toFixed(2).replace(/0$/, "")} streak bonus` : "") + (S && S.ill ? " · 🤒 ×0.5 (Mochi is sick)" : "");
+const withStreak = n => Math.round(n * streakMult() * (S && S.ill ? .5 : 1) * perk("coins"));
+const multTag = () => (streakMult() > 1 ? ` · 🔥 ×${streakMult().toFixed(2).replace(/0$/, "")} streak bonus` : "") + (S && S.ill ? ` · 🤒 ×0.5 (${palName()} is sick)` : "") + (S && perk("coins") > 1 ? ` · ✨ ${palName()} +${Math.round((perk("coins") - 1) * 100)}%` : "");
 
 /* Near-miss check for spelling ("so close!") */
 function lev(a, b) {
@@ -64,7 +64,7 @@ function cheerLines() {
   const nm = mistakeKeys().length; if (nm) out.push(["hachiware", "normal", `📕 ${nm} question${nm > 1 ? "s" : ""} waiting in your Mistake Notebook. Fixing just 3 today makes your brain stronger!`]);
   const nw = Object.keys(S.dict.missed).length; if (nw) out.push(["momonga", "happy", `🎧 ${nw} tricky word${nw > 1 ? "s" : ""} to practise in Word Dictation. I could spell them easily... probably. 💜`]);
   if (ni !== -1) out.push(["hachiware", "normal", `Next right step: <b>${esc(ROOMS[ni].name)}</b>. Just one stage. You've got this! 🌱`]);
-  if (S.ill) out.push(["shisa", "normal", `🤒 Mochi is sick with <b>${esc(illById(S.ill.id).name)}</b>. Open the 🩺 medicine cabinet and pick the right treatment!`]);
+  if (S.ill) out.push(["shisa", "normal", `🤒 ${esc(palName())} is sick with <b>${esc(illById(S.ill.id).name)}</b>. Open the 🩺 medicine cabinet and pick the right treatment!`]);
   out.push(["chiikawa", "happy", esc(pick(DAILY_LIFE))]);
   if (S.coll.pending) out.push(["chiikawa", "sparkle", `🎁 You have ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""} to open! What's inside?!`]);
   out.push(["kurimanju", "happy", "Tired? A 5-minute Cell Rush or a Dictation round still counts. Small steps. *sip* 🍵"]);
@@ -215,7 +215,7 @@ function dictEnd() {
   const n = Math.min(DT.i + (DT.done ? 1 : 0), DT.words.length), perfect = n >= 8 && n === DT.words.length && DT.right === n;
   S.stats.dictRounds = (S.stats.dictRounds || 0) + (n ? 1 : 0);
   S.dict.best = Math.max(S.dict.best, DT.right);
-  const coins = withStreak(DT.right); S.coins += coins;
+  const coins = Math.round(withStreak(DT.right) * perk("dict")); S.coins += coins;
   if (perfect) { S.stats.dictPerfect += 1; S.coll.pending += 1; }
   save(true); checkTrophies();
   activityDone({ mode: "dict", topic: DT.src === "missed" ? "missed" : "", stage: "Dictation", ans: n, cor: DT.right, wrong: DT.missed.map(x => x.w).join(", ") });

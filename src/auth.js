@@ -143,7 +143,7 @@ function renderLogin() {
   const on = cloudOn(), back = authPref() === "google";
   $app.innerHTML = `<section class="login">
     <div class="lgsky" aria-hidden="true">${LG_FLOAT.map((e, i) => `<span style="left:${(i * 37 + 7) % 92}%;top:${(i * 53 + 11) % 80}%;animation-delay:${-i * 1.7}s;font-size:${1.1 + (i % 3) * .45}rem">${e}</span>`).join("")}<i class="orb o1"></i><i class="orb o2"></i></div>
-    <div class="lgtitle"><span class="kicker">${HERO_KICKER}</span><h1>Mochi Bio Escape</h1><p class="sub">From tiny cells to whole ecosystems, one small stage a day.</p></div>
+    <div class="lgtitle"><span class="kicker">${HERO_KICKER}</span><h1>Biology Study Pals</h1><p class="sub">From tiny cells to whole ecosystems, one small stage a day.</p></div>
     <div class="island" aria-hidden="true"><svg class="isl" viewBox="0 0 300 70"><ellipse cx="150" cy="22" rx="146" ry="20" fill="#9ED89A" stroke="${CO}" stroke-width="3"/><path d="M8 24 Q150 120 292 24" fill="#C79A72" stroke="${CO}" stroke-width="3"/><path d="M60 40 q10 8 20 0 M130 52 q10 8 20 0 M200 42 q10 8 20 0" stroke="#A97C57" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="150" cy="18" rx="120" ry="10" fill="#B6E6AE"/></svg>
       <div class="ifig f1">${figure("hachiware", "happy")}</div><div class="ifig f2">${figure("chiikawa", "sparkle")}</div><div class="ifig f3">${figure("usagi", "happy")}</div></div>
     <section class="card lgcard">
