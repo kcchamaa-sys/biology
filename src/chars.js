@@ -1,7 +1,7 @@
 <script>
 /* ============================================================
    1. Characters: original kawaii-style SVG drawings (not official artwork)
-   moods: "normal" | "happy" | "cry" | "shock" | "sparkle" | "brave"
+   moods: "normal" | "happy" | "cry" | "shock" | "sparkle" | "brave" | "sick" | "sleepy"
    ============================================================ */
 const L = en => en; // English-only build: keeps text helpers simple
 const INK = "#4A3E3D";
@@ -22,6 +22,7 @@ function eyes(m, o = {}) {
     + `<path class="tear" d="M${x1 - 3} ${y + 8} Q${x1 - 8} ${y + 22} ${x1 - 3} ${y + 30} Q${x1 + 2} ${y + 22} ${x1 - 3} ${y + 8}Z M${x2 + 3} ${y + 8} Q${x2 - 2} ${y + 22} ${x2 + 3} ${y + 30} Q${x2 + 8} ${y + 22} ${x2 + 3} ${y + 8}Z" fill="#9ED0F0" stroke="#6FAFD8" stroke-width="1.2"/>`;
   if (m === "brave") return dot(x1) + dot(x2) + `<path d="M${x1 - 10} ${y - 16} L${x1 + 7} ${y - 10} M${x2 + 10} ${y - 16} L${x2 - 7} ${y - 10}" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>`;
   if (m === "sick") return `<path d="M${x1 - 9} ${y - 2} h18 M${x2 - 9} ${y - 2} h18" stroke="${CO}" stroke-width="3" stroke-linecap="round"/><path d="M${x1 - 8} ${y} Q${x1} ${y + 8} ${x1 + 8} ${y} M${x2 - 8} ${y} Q${x2} ${y + 8} ${x2 + 8} ${y}" stroke="${CO}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+  if (m === "sleepy") return `<path d="M${x1 - 9} ${y + 1} Q${x1} ${y + 7} ${x1 + 9} ${y + 1} M${x2 - 9} ${y + 1} Q${x2} ${y + 7} ${x2 + 9} ${y + 1}" stroke="${CO}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
   if (m === "line") return `<path d="M${x1 - 8} ${y} h16 M${x2 - 8} ${y} h16" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>`;
   return dot(x1) + dot(x2);
 }
@@ -33,6 +34,7 @@ function mouth(m, open, y = 130) {
   if (m === "cry") return `<path d="M88 ${y + 6} q4 -6 8 0 q4 6 8 0 q4 -6 8 0" fill="none" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>`;
   if (m === "shock") return `<ellipse cx="100" cy="${y + 6}" rx="6" ry="8" fill="#E88A9A" stroke="${CO}" stroke-width="3"/>`;
   if (m === "sick") return `<path d="M90 ${y + 5} q5 -5 10 0 q5 5 10 0" fill="none" stroke="${CO}" stroke-width="3" stroke-linecap="round"/><path d="M106 ${y + 5} L136 ${y + 16}" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="M106 ${y + 5} L136 ${y + 16}" stroke="#9ED0F0" stroke-width="2.5" stroke-linecap="round"/><circle cx="137" cy="${y + 17}" r="4.5" fill="#FF6B6B" stroke="${CO}" stroke-width="1.5"/>`;
+  if (m === "sleepy") return `<ellipse cx="100" cy="${y + 4}" rx="5" ry="6.5" fill="#E88A9A" stroke="${CO}" stroke-width="3"/>`;
   if (m === "brave") return `<path d="M91 ${y + 3} h18" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>`;
   if (open || m === "happy" || m === "sparkle") return `<path d="M89 ${y - 2} Q100 ${y + 18} 111 ${y - 2}Z" fill="#E88A9A" stroke="${CO}" stroke-width="3" stroke-linejoin="round"/><path d="M95 ${y + 7} Q100 ${y + 3} 105 ${y + 7}" fill="#F7B6C2"/>`;
   return `<path d="M91 ${y} q4.5 6 9 0 q4.5 6 9 0" fill="none" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>`;
@@ -100,6 +102,7 @@ function charSvg(who, m = "normal", eq, full = true) {
   if (full && who === "usagi" && m !== "cry") s += `<path d="M14 100 l-10 -8 M18 84 l-6 -12 M186 100 l10 -8" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>`;
   if (m === "sparkle" || m === "happy") s += `<g class="twinkle">${spark4(26, 70, 8, "#FFB3C1")}${spark4(176, 60, 7, "#A9D4EE")}</g>`;
   if (m === "sick") s += `<path d="M82 84 v12 M100 80 v14 M118 84 v12" stroke="#8FB8E8" stroke-width="3.5" stroke-linecap="round" opacity=".85"/><ellipse cx="62" cy="132" rx="13" ry="8" fill="#FF8FA3" opacity=".7"/><ellipse cx="138" cy="132" rx="13" ry="8" fill="#FF8FA3" opacity=".7"/>`;
+  if (m === "sleepy") s += `<g class="zzz" fill="${CO}" font-family="M PLUS Rounded 1c, sans-serif" font-weight="800"><text x="150" y="72" font-size="20">z</text><text x="166" y="54" font-size="15">z</text><text x="178" y="40" font-size="11">z</text></g>`;
   if (m === "shock") s += `<path d="M160 70 Q154 82 160 88 Q166 82 160 70Z" fill="#9ED0F0" stroke="#6FAFD8" stroke-width="1.5"/>`;
   return s;
 }

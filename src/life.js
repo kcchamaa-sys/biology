@@ -131,15 +131,30 @@ function showPetUnlock() {
   if (!petQueue.length) return;
   if ($modal.innerHTML || R || RU || document.getElementById("dIn") || document.querySelector(".nb-hero")) { setTimeout(showPetUnlock, 3000); return; }
   const p = petQueue.shift();
+  if ((p.rar === "epic" || p.rar === "legend") && !p.cer && !reduced()) { p.cer = true; petQueue.unshift(p); return giftCeremony(p.rar, showPetUnlock); }
   SFX.fanfare(); confetti(p.rar === "legend" ? 260 : 140);
   const box = openModal(`<span class="kicker">🐾 New pet!</span><h2>${esc(p.nick)} the ${esc(p.name)} joined Mochi!</h2>
-    <div class="petreveal ${p.rar}">${petSvg(p.id)}</div>
+    <div class="petreveal flipin ${p.rar}">${p.rar === "legend" || p.rar === "epic" ? `<i class="aura" aria-hidden="true"></i>` : ""}${petSvg(p.id)}</div>
     <div class="row" style="justify-content:center">${petChips(p)}</div>
     <p style="text-align:center">${esc(p.story.split(". ")[0])}.</p>
     ${say("chiikawa", p.hk ? "A Hong Kong treasure...! I'll protect you forever! 🥹🇭🇰" : "Waaai~! A new friend! 🥹✨", "sparkle")}
     <div class="row" style="justify-content:center"><button class="btn big" id="puSet">⭐ Make ${esc(p.nick)} my companion</button><button class="btn plain" id="puRead">📖 Read its story</button></div>`, { onClose: () => setTimeout(showPetUnlock, 400) });
   box.querySelector("#puSet").onclick = () => { SFX.item(); S.activePet = p.id; save(); closeModal(); if (!R && !RU) renderMap(); setTimeout(showPetUnlock, 400); };
   box.querySelector("#puRead").onclick = () => { SFX.tap(); openPet(p.id); };
+}
+// ✨ Epic and legendary pets arrive in a gift box: it shakes 3 times, bursts open with light rays, then the card flips in
+function giftCeremony(rar, done) {
+  const d = document.createElement("div"); d.className = `gift ${rar}`; d.setAttribute("aria-hidden", "true");
+  d.innerHTML = `<div class="rays"></div>${rar === "legend" ? Array.from({ length: 18 }, (_, i) => `<i class="gold" style="left:${(i * 53) % 100}%;animation-delay:${(i % 6) * .18}s"></i>`).join("") : ""}
+    <svg class="gbox" viewBox="0 0 120 120"><rect x="16" y="50" width="88" height="62" rx="8" fill="${rar === "legend" ? "#FFD25E" : "#C9A0FF"}" stroke="${CO}" stroke-width="4"/>
+      <rect x="10" y="34" width="100" height="22" rx="6" fill="${rar === "legend" ? "#FFE58F" : "#DCC4FF"}" stroke="${CO}" stroke-width="4"/>
+      <rect x="52" y="34" width="16" height="78" fill="#FF8FA3" stroke="${CO}" stroke-width="3.5"/>
+      <path d="M60 34 C40 8 22 18 34 32 Z M60 34 C80 8 98 18 86 32 Z" fill="#FF8FA3" stroke="${CO}" stroke-width="3.5" stroke-linejoin="round"/>
+      <path d="M24 64 v36" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".6"/></svg>
+    <div class="glabel">${rar === "legend" ? "👑 LEGENDARY" : "💎 EPIC"}</div>`;
+  document.body.appendChild(d); [0, 450, 900].forEach(t => setTimeout(() => SFX.tap(), t));
+  setTimeout(() => { d.classList.add("open"); SFX.fanfare(); confetti(rar === "legend" ? 220 : 120); }, 1400);
+  setTimeout(() => { d.remove(); done(); }, 2500);
 }
 const petChips = p => `<span class="pill" style="background:${PET_RAR[p.rar][1]}">${PET_RAR[p.rar][0]}</span><span class="pill" style="background:#fff">${esc(p.group)}</span>${p.hk ? `<span class="pill" style="background:#FFC2C2">🇭🇰 Hong Kong</span>` : ""}${p.esc ? `<span class="pill" style="background:#2B2433;color:#fff">⏱️ Escape</span>` : ""}`;
 function openPet(id) {

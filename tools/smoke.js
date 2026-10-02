@@ -10,6 +10,9 @@ const out = process.argv[2] || ".";
     page.on("pageerror", e => errors.push(`${tag}: ${e.message}`));
     page.on("console", m => { if (m.type() === "error") errors.push(`${tag} console: ${m.text()}`); });
     await page.goto("file://" + path.resolve("index.html"));
+    await page.screenshot({ path: `${out}/${tag}-0-login.png`, fullPage: true });
+    await page.click("#lgGuest");
+    await page.waitForTimeout(300);
     await page.screenshot({ path: `${out}/${tag}-1-welcome.png`, fullPage: true });
     await page.fill("#nm", "Tester");
     await page.selectOption("#tp", "1");
@@ -50,7 +53,7 @@ const out = process.argv[2] || ".";
     await page.waitForTimeout(400);
     await page.screenshot({ path: `${out}/${tag}-6-map.png`, fullPage: true });
     const scroll2 = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
-    if (scroll2 > 0) errors.push(`${tag}: horizontal scroll ${scroll2}px on map`);
+    if (scroll2 > 0) errors.push(`${tag}: horizontal scroll ${scroll2}px on map: ` + await page.evaluate(() => [...document.querySelectorAll("body *")].filter(e => e.getBoundingClientRect().right > innerWidth + .5).slice(0, 5).map(e => e.tagName + "." + (typeof e.className === "string" ? e.className : "") + " " + Math.round(e.getBoundingClientRect().right)).join(", ")));
     // Save code round trip
     const rt = await page.evaluate(() => { const c = makeCode(); const d = decodeCode(c); return { c, d, done: TOPICS.map((_, i) => stagesDone(i)) }; });
     console.log(tag, "code", rt.c, JSON.stringify(rt.d.done), "expected", JSON.stringify(rt.done));

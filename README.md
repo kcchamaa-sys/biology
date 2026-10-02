@@ -32,7 +32,7 @@ Every topic is open, so students can jump to the one their class is on (the map 
 
 ## 🏠 Layout, art and dress-up
 
-- **Mochi-style home with a bottom tab bar** (🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🏆 Rewards), so each screen is short and students rarely scroll. Home shows Mochi in a cosy room, today's one stage, the streak and the chat card.
+- **Mochi-style home with a bottom tab bar** (🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🐾 Pets · 🏆 Rewards · 🔬 Lab), so each screen is short and students rarely scroll. Home shows Mochi in a cosy room, today's one stage, the daily mission, the streak and the chat card.
 - **Art style:** characters are soft, squishy one-piece blobs with thin warm-brown outlines, big blush, nub arms and sparkles (in the style of the Mochi Science Pals game).
 - **👗 Dress up:** a fitting room with 7 slots (hats, wigs, glasses, outfits, accessories, hand items, frames). Tap to try on for free, tap again to buy with 🌰. 35 items, including 🔥 trend / meme items (Pop-Star Swoop wig, Moonwalk jacket + fedora + sparkly glove, Six-seven signs, Deal-with-it shades, Blind-box monster hood, Dubai chocolate, Aura +1000 chain, idol twin-tails, wolf cut, ballerina cappuccino tutu…) and 🇭🇰 Hong Kong items (pineapple-bun hat, milk tea, ding-ding tram tee, lucky mahjong tile).
 - **⏱️ Escape or 📖 Study mode:** a switch on Home and Stages. Study mode skips the escape room: students answer the stage's 15 questions as a calm series with no time limit. Every answer shows the explanation; wrong ones come back once as a second chance at the end. Finishing the series completes the stage (stars come from first-try answers), and mistakes go to the Mistake Notebook.
@@ -68,7 +68,7 @@ All characters are original: **Mochi** (the player, a little white mochi bun-bea
 
 ## Game systems
 
-Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, gentle anti-guessing penalties (no wait or time loss over 15 s: −10 s, reshuffle, short jams, strikes, chestnut fine, and guessing makes the lock **slip back a notch** so students answer one bonus question), random spooky-but-friendly incidents, ⚡ **Cell Rush** (60-second mixed rush with test-tube colours and organelle spotting), Koma's shop (outfits and power-ups), daily streak with shields, daily snack chest and a class leaderboard.
+Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, gentle anti-guessing penalties (no wait or time loss over 15 s: −10 s, reshuffle, short jams, strikes, chestnut fine, and guessing makes the lock **slip back a notch** so students answer one bonus question), random spooky-but-friendly incidents, ⚡ **Cell Rush** (60-second mixed rush with test-tube colours and organelle spotting), Koma's shop (outfits and power-ups), a study streak with ❄️ Streak Freezes, a daily mission, daily snack chest and a class leaderboard.
 
 ## 🐾 Pets (25)
 
@@ -86,9 +86,22 @@ Mochi sometimes wakes up sick (30% on a new day) or catches something after a st
 - Every wrong choice explains why it can't work (e.g. antibiotics don't work on viruses, vaccines prevent but don't cure). A cure explains the biology and gives a prevention tip.
 - While sick, chestnut rewards are halved. The chat card also shares biology moments from Mochi's daily life (brushing teeth, sleep and growth hormone, ADH, shivering…).
 
+## 🔥 Study streak, ❄️ Streak Freezes and the daily mission
+
+- **The streak grows on days you study**: finish any activity (escape stage, study series, Cell Rush, dictation or notebook round). Just opening the game no longer counts. A 🔥 pop-up celebrates each new day, with confetti at 3/7/14/21/30/50/75/100/150/200 days.
+- **❄️ Streak Freeze**: everyone starts with **3**; **1 free freeze each new month** (never above 3); extra ones cost 🌰 150 (tap the ❄️ on the streak card). A missed day uses a freeze automatically (2 missed days use 2). Frozen days show as ❄ on the week row.
+- **Streak-risk reminder**: until today's study is done, Mochi appears at the top of Home with the time left today and freezes left, plus *Next stage* and *60-second Rush* buttons. It turns red and pulses in the last 3 hours or when no freezes are left.
+- **📅 Daily mission**: one story mission a day (Detective Mochi, Power cut!, Radio host Mochi, Mai Po expedition, Lab day…), aimed at what each student avoids or finds hardest: a stage in their **weakest topic**, 3 Mistake Notebook questions, 5 dictation words, an 80+ Cell Rush, 2 Lab simulations or a brand-new stage. Reward: 🌰 40 + a 🎁 capsule.
+- **💚 Health tips by time of day** (device clock, under Mochi's room): breakfast and blood glucose, water and kidneys, exercise and blood flow, the 20-20-20 eye rule (ciliary muscles), and sleep by 10:30 on school nights. After 10 pm a gentle "time to rest" pop-up (sleep and memory) appears once an hour; after 40 minutes of play a brain-break reminder appears.
+
+## 🧠 Learning rewards (Study mode)
+
+- **Guess alert**: a right multiple-choice answer given faster than anyone could read the question (about 2.5–5 s depending on length, +1 s with a picture) doesn't count for mastery or first-try stars. 5 or more cap the series at 1★.
+- **🤔 "Why?" check**: after each study series, students pick the right explanation for 2 questions they got right first try. Right = +5 🌰; wrong = the question goes to the Mistake Notebook (the answer was remembered but not understood).
+
 ## 🏆 Trophies (31)
 
-Four shelves (Daily habits, Adventure, Brain power, Just for fun) with Bronze, Silver, Gold and Legendary trophies. Each is a drawn cup with a character inside, a rarity ribbon and a shine; gold and legendary ones glow. The map shows the 4 closest to unlocking. Each trophy gives 🌰 30 and a 🎁 capsule.
+Four shelves (Daily habits, Adventure, Brain power, Just for fun) as **trading cards**: a title bar with a rarity symbol (● bronze, ◆ silver, ★ gold, ✦ legendary), a lab-scene art window, the goal, then a date stamp or progress bar and the +30 🌰 reward. Card finishes: matte bronze, silver, embossed gold with a light sweep, and a rainbow legendary. Locked cards reveal step by step: under 25% a dark silhouette behind frosted glass with a padlock, 25–60% colours bleed through, 60–90% thin glass, 90%+ fully visible with a pulsing "Almost there!". The map shows the 4 closest to unlocking. Each trophy gives 🌰 30 and a 🎁 capsule.
 
 ## 🧸 Capsule collection (20)
 
@@ -100,15 +113,23 @@ Students earn 🎁 capsules (first escape = 1, boss = 2, sometimes on replays, d
 
 ## Saving
 
-- Auto-save to `localStorage` key `escapeGame_biology` (separate from the physics game), with a Resume prompt.
-- 🔑 **12-character save code** (e.g. `ABCD-EFGH-JKLM`) or a link ending `#ABCDEFGHJKLM`. It stores stages escaped per topic, the average star rating, locks open in the current stage, streak (up to 31) and shields. The Mistake Notebook, trophies, collectibles and chestnuts stay on the device.
+- Auto-save to `localStorage` key `escapeGame_biology` (separate from the physics game), with a Resume prompt. Signed-in students save under their own key on the device **and** to the class sheet, so they can continue on any device.
+- 🔑 **12-character save code** (e.g. `ABCD-EFGH-JKLM`) or a link ending `#ABCDEFGHJKLM`. It stores stages escaped per topic, the average star rating, locks open in the current stage, streak (up to 31) and Streak Freezes. The Mistake Notebook, trophies, collectibles and chestnuts stay on the device.
 
-## Leaderboard
+## 🔐 Class sign-in (Google) or guest mode
 
-Needs a free Google Sheet: see [`leaderboard/SETUP.md`](leaderboard/SETUP.md), then put the web-app URL in `LEADERBOARD_URL` in `src/engine.js` and rebuild.
+- **Start screen**: Mochi, Hana and Pyon on a floating grassy island with drifting biology icons. Two choices: **Sign in with Google** (school account) or **🎒 Play as guest** (no Google account needed). The choice is remembered; 👤 in the top bar opens the account sheet (sync status, sign out, or sign in later).
+- **Signed in** (students on the class list in the teacher's Google Sheet): progress syncs to the sheet, every finished activity is recorded (mode, topic, stage, answered, correct, accuracy, stars, time, wrong question IDs), and the **🏆 class leaderboard** opens: top 20 for 🌟 effort, 🔥 current streak and 🐾 collection, for "My class" or "Everyone", with a podium and a "only N more to pass #2" bar. If a device already has guest progress, the student is asked once whether to move it into their account.
+- **Guests**: progress stays on the device (🔑 save codes still move it). No leaderboard and no class records.
+- **Setup** (about 15 minutes, once): [`server/SETUP.md`](server/SETUP.md), server code [`server/Code.gs`](server/Code.gs). It reuses the S1 Science game's Users tab and Google Client ID; put the new Apps Script `/exec` URL into `BIO_CONFIG.API_URL` at the top of `src/auth.js` and rebuild. Until then (and always in the claude.ai preview) the game runs in guest mode. Student names and emails stay in the private sheet, never in this repo.
+
+## ✨ UI 2.0
+
+- "Clay" buttons and tabs with a darker bottom edge that sink when pressed; thicker glossy progress bars; speech bubbles that pop in.
+- **Epic and legendary pets** arrive in a gift box that shakes 3 times, bursts open with light rays (and a gold shower for legendary), then the pet card flips in with a glowing aura.
 
 ## Editing
 
-The page is assembled from `src/` by `python3 tools/build.py`. Content lives in `src/stages.js` and `src/stages2.js` (notes, rules, terms), `src/scenes.js` (rooms), `src/q_t*.js`, `src/q_graphs.js` and `src/q_graphs2.js` (questions), `src/graphs.js` (graph data) and `src/rush.js`. Check content with `node tools/check_content.js`.
+The page is assembled from `src/` by `python3 tools/build.py`. Content lives in `src/stages.js` and `src/stages2.js` (notes, rules, terms), `src/scenes.js` (rooms), `src/q_t*.js`, `src/q_graphs.js` and `src/q_graphs2.js` (questions), `src/graphs.js` (graph data) and `src/rush.js`. Daily systems (streak, freezes, mission, health tips) are in `src/daily.js`; sign-in, cloud save and the class leaderboard in `src/auth.js`. Check content with `node tools/check_content.js`.
 
 *Educational project with original kawaii-style characters (Mochi, Ramune, Pyon, Budo, Kurumi, Koma and Ryo).*

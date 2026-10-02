@@ -70,12 +70,13 @@ function freshMastery() { return Object.fromEntries(TOPICS.map(t => [t.id, 0]));
 function freshState() {
   return {
     v: 1, player_name: "Student", current_streak: 0, longest_streak: 0, last_login_date: null,
-    completed_rooms: [], current_room: ROOMS[0].id, streak_shields: 1, chiikawa_badges: [], inventory: [],
+    completed_rooms: [], current_room: ROOMS[0].id, streak_shields: 3, chiikawa_badges: [], inventory: [],
     bio_mastery: freshMastery(),
     room_progress: {}, mastered_puzzles: [], room_stars: {}, room_timer: {}, last_chest_date: null, seen: {}, last_revise_day: null,
     room_run: {}, trophies: {}, stats: freshStats(),
     coins: 0, owned: [], equip: { hat: null, hair: null, face: null, outfit: null, ribbon: null, hand: null, frame: null }, power: { torch: 1, crystal: 1, guard: 1 },
-    rush: { best: 0, lastDay: null }, player_id: newId(), lb_last: 0, mistakes: {}, mistakes_cleared: 0, playMode: "escape", pets: {}, activePet: null, ill: null, lastIllDay: null, lastIll: null, coll: { owned: {}, pending: 0, pity: 0 }, dict: { missed: {}, best: 0 }
+    rush: { best: 0, lastDay: null }, player_id: newId(), lb_last: 0, mistakes: {}, mistakes_cleared: 0, playMode: "escape", pets: {}, activePet: null, ill: null, lastIllDay: null, lastIll: null, coll: { owned: {}, pending: 0, pity: 0 }, dict: { missed: {}, best: 0 },
+    last_study_day: null, study_days: [], frozen_days: [], freeze_month: null, freeze_used: null, mission: null, upd: 0
   };
 }
 function normalise(obj) {
@@ -93,18 +94,24 @@ function normalise(obj) {
   s.rush = Object.assign({ best: 0, lastDay: null }, s.rush); s.owned = [...(s.owned || [])]; if (!s.player_id) s.player_id = newId();
   s.completed_rooms = [...new Set((s.completed_rooms || []).filter(id => ROOMS.some(r => r.id === id)))];
   if (!ROOMS.some(r => r.id === s.current_room)) s.current_room = ROOMS[0].id;
+  // Saves from before the study streak: count the last visit as a study day and hand out the 3 starting Streak Freezes
+  if (obj && !("last_study_day" in obj)) { s.last_study_day = s.last_login_date; s.study_days = s.last_login_date ? [s.last_login_date] : []; s.streak_shields = Math.max(s.streak_shields || 0, 3); }
+  s.study_days = [...(s.study_days || [])]; s.frozen_days = [...(s.frozen_days || [])];
   return s;
 }
-function load() {
+function load(key) {
   try {
-    const raw = localStorage.getItem(SAVE_KEY);
+    const raw = localStorage.getItem(key || storeKey());
     if (raw) return normalise(JSON.parse(raw));
   } catch (e) {}
   return null;
 }
 let savedFlash = 0;
 function save(flash) {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {}
+  if (!S) return;
+  S.upd = Date.now();
+  try { localStorage.setItem(storeKey(), JSON.stringify(S)); } catch (e) {}
+  cloudSaveSoon();
   if (flash) { savedFlash = Date.now(); renderTools(); }
 }
 
@@ -177,7 +184,7 @@ function stateFromCode(d, name) {
   const tr = topicRooms(d.curT), nextR = tr[Math.min(tr.length - 1, d.done[d.curT])];
   s.current_room = nextR.id;
   if (!s.completed_rooms.includes(nextR.id) && d.lock) s.room_progress[nextR.id] = Array.from({ length: d.lock }, (_, i) => i);
-  s.current_streak = d.streak; s.longest_streak = d.streak; s.streak_shields = d.shields; s.last_login_date = today();
+  s.current_streak = d.streak; s.longest_streak = d.streak; s.streak_shields = d.shields; s.last_login_date = today(); s.last_study_day = today(); s.study_days = [today()];
   if (S) { s.trophies = S.trophies || {}; s.stats = Object.assign(freshStats(), S.stats); s.coins = S.coins || 0; s.owned = S.owned || []; s.equip = S.equip || s.equip; s.power = S.power || s.power; s.rush = S.rush || s.rush; s.player_id = S.player_id || s.player_id; s.last_chest_date = S.last_chest_date; s.mistakes = S.mistakes || {}; s.mistakes_cleared = S.mistakes_cleared || 0; s.coll = S.coll || s.coll; s.dict = S.dict || s.dict; s.pets = S.pets || {}; s.activePet = S.activePet || null; s.ill = S.ill || null; s.playMode = S.playMode || "escape"; s.inventory = s.inventory.concat((S.inventory || []).filter(x => SNACKS.includes(x))); }
   return s;
 }
@@ -202,21 +209,11 @@ let S = load();
 let streakNote = "";
 try { SFX.on = localStorage.getItem(SOUND_KEY) !== "off"; } catch (e) {}
 
-// Daily streak: same day → no change; next day → +1; missed days → shields cover them, else restart at 1.
+// Daily check-in: count the day, then let streakCheck() (daily.js) refill freezes and cover missed study days.
 function checkIn() {
   const t = today();
   if (S.last_login_date !== t) S.stats.days += 1;
-  if (!S.last_login_date) { S.current_streak = 1; streakNote = "🔥 Day 1 of your streak!"; }
-  else if (S.last_login_date !== t) {
-    const gap = dayNum(t) - dayNum(S.last_login_date);
-    if (gap === 1) { S.current_streak += 1; streakNote = `🔥 Streak up! ${S.current_streak} days in a row.`; }
-    else if (gap > 1) {
-      const missed = gap - 1;
-      if (S.streak_shields >= missed) { S.streak_shields -= missed; S.current_streak += 1; streakNote = `🛡️ Ramune used ${missed} shield${missed > 1 ? "s" : ""} to protect your streak! Now ${S.current_streak} days.`; }
-      else { S.current_streak = 1; streakNote = "🌱 Welcome back! Mochi missed you. 🥹 Your streak restarted at 1."; }
-    }
-    if (S.current_streak % 7 === 0 && S.streak_shields < 3) { S.streak_shields += 1; streakNote += " 🛡️ 7-day milestone: +1 shield!"; }
-  }
+  streakNote = streakCheck() || (!S.last_login_date ? "🌱 Finish one activity today to start your study streak!" : "");
   S.longest_streak = Math.max(S.longest_streak || 0, S.current_streak);
   S.last_login_date = t;
   if (S.stats.days > 1 && maybeGetSick(.3)) streakNote = (streakNote ? streakNote + " " : "") + "🤒 Uh-oh... Mochi woke up feeling sick. Visit Dr Koma!";
@@ -349,16 +346,26 @@ function trophySvg(t, got) {
     ${got ? "" : `<g transform="translate(78 92)"><rect x="-9" y="-3" width="18" height="14" rx="3" fill="#fff" stroke="${INK}" stroke-width="2.4"/><path d="M-5 -3 v-4 a5 5 0 0 1 10 0 v4" fill="none" stroke="${INK}" stroke-width="2.4"/></g>`}
   </svg>`;
 }
+// Trading-card trophies: title bar + rarity symbol, a lab-scene art window, description, then a date stamp or progress + reward.
+// Locked cards reveal step by step: under 25% a dark silhouette behind frosted glass, 25–60% colours bleed through,
+// 60–90% the art shows under thin glass, 90%+ fully visible with an "Almost there!" banner.
+const RAR_SYM = { bronze: "●", silver: "◆", gold: "★", legend: "✦" };
+const CARD_BG = { habit: ["#FFE9C7", "#FFD6A5"], adventure: ["#D9F2E3", "#AEE3C4"], brain: ["#DDE8FF", "#B7CCF7"], fun: ["#FFE0EC", "#F9BFD3"] };
 function trophyCard(t) {
   const got = !!S.trophies[t.id];
-  const [cur, goal] = t.prog(), v = Math.min(cur, goal);
-  return `<div class="trophy ${got ? `got ${t.rar}` : "locked"}" aria-label="${esc(t.name)}: ${got ? "unlocked" : `${v} / ${goal}`}">
-    <span class="ribbon ${t.rar}">${RAR[t.rar][2]}</span>
-    ${trophySvg(t, got)}
-    <span class="tn">${esc(t.name)}</span>
+  const [cur, goal] = t.prog(), v = Math.min(cur, goal), pc = goal ? v / goal : 0;
+  const stage = got ? "" : pc >= .9 ? "rv3" : pc >= .6 ? "rv2" : pc >= .25 ? "rv1" : "rv0";
+  const [b1, b2] = CARD_BG[t.cat] || CARD_BG.fun;
+  return `<div class="trophy tcard2 ${got ? `got ${t.rar}` : `locked ${stage}`}" aria-label="${esc(t.name)}: ${got ? "unlocked" : `${v} / ${goal}`}">
+    <div class="tbar ${t.rar}"><span class="tn">${esc(t.name)}</span><span class="rsym" title="${RAR[t.rar][2]}">${RAR_SYM[t.rar]}</span></div>
+    <div class="tart" style="background:radial-gradient(circle at 50% 35%, #fff 0, ${b1} 45%, ${b2} 100%)">
+      <svg class="labbg" viewBox="0 0 100 70" aria-hidden="true"><path d="M0 52 H100" stroke="rgba(91,75,73,.25)" stroke-width="2"/><rect x="6" y="30" width="7" height="22" rx="2" fill="rgba(255,255,255,.7)" stroke="rgba(91,75,73,.3)"/><path d="M84 52 l4 -16 h6 l4 16z" fill="rgba(255,255,255,.7)" stroke="rgba(91,75,73,.3)"/><circle cx="20" cy="14" r="2" fill="#fff"/><circle cx="78" cy="10" r="1.6" fill="#fff"/></svg>
+      ${trophySvg(t, true)}
+      ${got ? "" : `<div class="frost"></div><span class="lock" aria-hidden="true">🔒</span>${stage === "rv3" ? `<span class="almost">Almost there!</span>` : ""}`}
+    </div>
     <span class="td">${esc(t.desc)}</span>
-    ${got ? `<span class="pnum">🏆 ${esc(S.trophies[t.id])}</span>`
-          : `<div class="pbar"><i style="width:${Math.round(100 * v / goal)}%"></i></div><span class="pnum">${v} / ${goal}</span>`}
+    ${got ? `<div class="tfoot"><span class="stamp">✓ ${esc(S.trophies[t.id])}</span><span class="reward">+30 🌰</span></div>`
+          : `<div class="pbar"><i style="width:${Math.round(100 * pc)}%"></i></div><div class="tfoot"><span class="pnum">${v} / ${goal}</span><span class="reward dim">+30 🌰</span></div>`}
   </div>`;
 }
 function cabinetHtml(full = true) {
@@ -486,7 +493,7 @@ function checkTrophies() {
     const [cur, goal] = t.prog();
     if (cur >= goal) { S.trophies[t.id] = today(); S.coins = (S.coins || 0) + 30; S.coll.pending += 1; trophyQueue.push(t); }
   });
-  if (trophyQueue.length) { save(); renderTools(); showTrophyBanner(); lbSubmit(true); }
+  if (trophyQueue.length) { save(); renderTools(); showTrophyBanner(); }
   checkPets();
 }
 function showTrophyBanner() {
@@ -597,47 +604,11 @@ function refreshPlayer() {
 }
 
 /* ============================================================
-   6d. Leaderboard: the 10 most dedicated players.
-   Needs a free Google Apps Script web app (see leaderboard/SETUP.md).
-   Paste its /exec URL below. When empty, the game shows your own dedication points only.
+   6d. Dedication points (the class leaderboard lives in auth.js)
    ============================================================ */
-const LEADERBOARD_URL = "";
 function dedication() {
   const t = Object.keys(S.trophies || {}).length;
   return S.stats.days * 10 + S.stats.correct + S.stats.rushRounds * 5 + S.completed_rooms.length * 10 + t * 25;
-}
-function lbPayload() {
-  return { id: S.player_id, name: String(S.player_name || "Student").slice(0, 16), score: dedication(), days: S.stats.days, streak: S.longest_streak, trophies: Object.keys(S.trophies || {}).length };
-}
-async function lbSubmit(force) {
-  if (!LEADERBOARD_URL || !S) return null;
-  if (!force && Date.now() - (S.lb_last || 0) < 60000) return null;
-  S.lb_last = Date.now(); save();
-  try { const r = await fetch(LEADERBOARD_URL, { method: "POST", body: JSON.stringify(lbPayload()) }); return await r.json(); } catch (e) { return null; }
-}
-async function lbFetch() {
-  try { const r = await fetch(`${LEADERBOARD_URL}?id=${encodeURIComponent(S.player_id)}`); return await r.json(); } catch (e) { return null; }
-}
-function openLeaderboard() {
-  const mine = `<div class="preview row" style="justify-content:space-between"><span class="row" style="gap:8px">${playerAv("happy").replace("<svg", '<svg width="40" height="40"')}<b>${esc(S.player_name)}</b></span><span><b>${dedication()}</b> ${"dedication points"}</span></div>`;
-  const how = `<p class="small muted">${"Dedication points = 10 per day played + 1 per lock opened + 10 per room escaped + 5 per Cell Rush round + 25 per trophy. Coming back every day matters most!"}</p>`;
-  const nameBox = `<div class="row"><label for="lbName" class="small"><b>${"Your nickname on the board:"}</b></label><input id="lbName" class="name" maxlength="16" value="${esc(S.player_name)}" style="max-width:200px"><button class="btn plain" id="lbSave">${"Save"}</button></div>
-    <p class="small muted">${"Please use a nickname, not your full name."}</p>`;
-  const box = openModal(`<span class="kicker">🏅 ${"Leaderboard"}</span><h2>${"Top 10 most dedicated players"}</h2>${mine}${how}
-    <div id="lbBody">${LEADERBOARD_URL ? `<p>${"Loading the board... ⏳"}</p>` : say("hachiware", "The class leaderboard isn't switched on yet. Your teacher can connect it in about 5 minutes (see <b>leaderboard/SETUP.md</b> in the project). Until then, your dedication points are saved on this device.", "normal", "hint")}</div>${nameBox}`, { wide: true });
-  document.getElementById("lbSave").onclick = () => {
-    const v = document.getElementById("lbName").value.trim(); if (!v) return;
-    S.player_name = v.slice(0, 16); save(true); toast("Nickname saved ✓"); lbSubmit(true).then(() => openLeaderboard());
-  };
-  if (!LEADERBOARD_URL) return;
-  lbSubmit(true).then(() => lbFetch()).then(d => {
-    const body = document.getElementById("lbBody"); if (!body) return;
-    if (!d || !d.top) { body.innerHTML = say("chiikawa", "Wah... the board couldn't load. Check your internet and try again.", "cry"); return; }
-    const medal = i => ["🥇", "🥈", "🥉"][i] || String(i + 1);
-    body.innerHTML = `<div class="lb-wrap"><table class="lb"><thead><tr><th>#</th><th>${"Player"}</th><th>${"Points"}</th><th>🔥 ${"Best streak"}</th><th>🏆</th></tr></thead><tbody>
-      ${d.top.map((r, i) => `<tr class="${r.id === S.player_id ? "me" : ""}"><td class="rk">${medal(i)}</td><td>${esc(r.name)}</td><td>${Number(r.score) || 0}</td><td>${Number(r.streak) || 0}</td><td>${Number(r.trophies) || 0}</td></tr>`).join("") || `<tr><td colspan="5">${"No players yet. Be the first!"}</td></tr>`}
-    </tbody></table></div>${d.me && d.me.rank > 10 ? `<p class="small"><b>${"Your rank"}: #${d.me.rank}</b>. ${"Keep going to reach the top 10! 💪"}</p>` : ""}`;
-  });
 }
 
 /* ============================================================
@@ -708,7 +679,7 @@ function startRush() {
   renderNav(false);
   closeModal(); stopTimer(); if (R) clearTimeout(R.introT); R = null; stopRush();
   MUSIC.setMode("rush"); renderTools();
-  RU = { score: 0, combo: 0, correct: 0, total: 0, end: Date.now() + RUSH_SECONDS * 1000, lock: false, last: -1 };
+  RU = { score: 0, combo: 0, correct: 0, total: 0, start: new Date().toISOString(), end: Date.now() + RUSH_SECONDS * 1000, lock: false, last: -1 };
   $app.innerHTML = `
     <section class="rushhead">
       <div class="status"><div class="av ${frameCls()}" id="rushAv">${avatar("chiikawa", "normal")}</div><div><div class="rtopic" style="color:var(--yellow)">⚡ ${"Cell Rush · Biology"}</div><div class="big" id="rScore">0 ${"pts"}</div></div></div>
@@ -761,7 +732,8 @@ function rushEnd() {
   if (r.total > 0) { S.rush.lastDay = today(); S.stats.rushRounds += 1; }
   const best = r.score > S.rush.best; S.rush.best = Math.max(S.rush.best, r.score);
   const rcap = r.score >= 120 ? 1 : 0; S.coll.pending += rcap;
-  S.coins += coins; save(true); checkTrophies(); lbSubmit(true);
+  S.coins += coins; save(true); checkTrophies();
+  activityDone({ mode: "rush", ans: r.total, cor: r.correct, score: r.score, secs: RUSH_SECONDS, start: r.start });
   SFX.fanfare(); if (r.score > 0) confetti(120);
   openModal(`<span class="kicker">⚡ ${"Cell Rush · Round over"}</span><h2>${best ? "🎉 New best score!" : "Time's up!"}</h2>
     <div class="row" style="justify-content:center;gap:18px;font-size:1.2rem"><b>${r.score} ${"pts"}</b><span>✅ ${r.correct}/${r.total}</span><span class="pill coinpill">+${coins} 🌰${bonus && r.total > 0 ? " (×2 daily bonus)" : ""}${multTag()}</span>${rcap ? `<span class="pill rpill">🎁 +1 capsule</span>` : ""}</div>
@@ -788,14 +760,16 @@ function renderTools() {
   const justSaved = Date.now() - savedFlash < 2500;
   document.getElementById("tools").innerHTML = `
     ${S ? `<span class="pill" title="Daily streak · chestnut bonus ×${streakMult().toFixed(2)}">🔥 ${S.current_streak}${streakMult() > 1 ? `<span class="lbl"> ×${streakMult().toFixed(2).replace(/0$/, "")}</span>` : ""}</span>` : ""}
-    ${S ? `<span class="pill savepill ${justSaved ? "saved" : ""}" title="${"Your progress saves automatically on this device"}">${justSaved ? `✓<span class="lbl"> ${"Saved"}</span>` : `💾<span class="lbl"> ${"Auto-save"}</span>`}</span>` : ""}
+    ${S ? `<span class="pill savepill ${justSaved ? "saved" : ""}" title="${signedIn() ? "Your progress saves on this device and syncs to your class" : "Your progress saves automatically on this device"}">${justSaved ? `✓<span class="lbl"> ${"Saved"}</span>` : `💾<span class="lbl"> ${"Auto-save"}</span>`}</span>` : ""}
     ${S ? `<button class="iconbtn coinpill" id="tCoins" aria-label="${"Chestnuts"}: ${S.coins}">🌰 ${S.coins}</button>` : ""}
     ${S ? `<button class="iconbtn" id="tTrophy" aria-label="${"Open the Trophy Cabinet"}">🏆<span class="lbl">${"Trophies"}</span></button>` : ""}
     ${S && S.coll.pending ? `<button class="iconbtn capbtn" id="tCap" aria-label="Open ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""}">🎁<span class="lbl"> ${S.coll.pending}</span></button>` : ""}
+    ${S ? `<button class="iconbtn acctbtn ${AUTH.stale ? "warn" : ""}" id="tAcc" aria-label="Account: ${esc(signedIn() ? userName() : "Guest mode")}">${AUTH.stale ? "⚠️" : signedIn() ? "🎓" : "👤"}<span class="lbl"> ${esc(signedIn() ? userName().split(" ")[0] : "Guest")}</span></button>` : ""}
     <button class="iconbtn" id="tJournal" aria-label="${"Open the Study Journal"}">📓<span class="lbl">${"Journal"}</span></button>
     ${S ? `<button class="iconbtn" id="tSave" aria-label="${"Save and share code"}">🔑<span class="lbl">${"Save code"}</span></button>` : ""}
     <button class="iconbtn" id="tMus" aria-label="${MUSIC.on ? "Turn music off" : "Turn music on"}" title="Background music: ${esc((SONGS[MUSIC.mode] || SONGS.map).title)}" aria-pressed="${MUSIC.on}" style="${MUSIC.on ? "" : "opacity:.5;text-decoration:line-through"}">🎵<span class="lbl">${MUSIC.on ? "Music on" : "Music off"}</span></button>
     <button class="iconbtn" id="tSnd" aria-label="${SFX.on ? "Turn sound effects off" : "Turn sound effects on"}" title="${"Sound effects"}">${SFX.on ? "🔊" : "🔇"}</button>`;
+  const ta = document.getElementById("tAcc"); if (ta) ta.onclick = () => { SFX.init(); SFX.tap(); openAccount(); };
   document.getElementById("tJournal").onclick = () => { SFX.init(); SFX.tap(); openJournal(); };
   const tc = document.getElementById("tCoins"); if (tc) tc.onclick = () => { SFX.init(); SFX.tap(); openShop(); };
   const tcap = document.getElementById("tCap"); if (tcap) tcap.onclick = () => { SFX.init(); SFX.tap(); openCapsule(); };
@@ -1053,10 +1027,11 @@ function renderNotebook() {
 }
 function startRevision(ti) {
   const keys = mistakeKeys(ti).sort((a, b) => S.mistakes[a].ok - S.mistakes[b].ok || S.mistakes[b].n - S.mistakes[a].n).slice(0, 10);
-  const RV = { keys, at: 0, right: 0, cleared: 0 };
+  const RV = { keys, at: 0, right: 0, cleared: 0, done: 0, start: new Date().toISOString() };
   const next = () => {
     if (RV.at >= RV.keys.length) {
       const coins = RV.cleared * 2 + RV.right; S.coins += coins; save(true); SFX.fanfare(); if (RV.right) confetti(100);
+      activityDone({ mode: "notebook", topic: ti == null ? "all" : String(TOPICS[ti].no), stage: "Mistake Notebook", ans: RV.done || 0, cor: RV.right, done: (RV.done || 0) > 0, start: RV.start });
       $app.innerHTML = `<section class="card"><span class="kicker">📕 Revision done</span><h2>${RV.right === RV.keys.length ? "Perfect revision! 🎉" : "Revision complete! 🌱"}</h2>
         <div class="cast" style="margin:0">${["chiikawa", "hachiware", "usagi"].map(w => `<div class="fig" style="width:84px">${figure(w, RV.right ? (w === "chiikawa" ? "sparkle" : "happy") : "normal")}</div>`).join("")}</div>
         <p style="text-align:center"><b>${RV.right}/${RV.keys.length}</b> right · <b>${RV.cleared}</b> cleared from the notebook · <span class="pill coinpill">+${coins} 🌰</span></p>
@@ -1078,6 +1053,7 @@ function startRevision(ti) {
     RV.hinted = false;
     miniQuiz(document.getElementById("rvAns"), p, ok => {
       const fb = document.getElementById("rvFb");
+      RV.done++;
       if (ok) { RV.right++; SFX.right(); if (noteRight(r.id, p.id, !RV.hinted)) RV.cleared++; else if (RV.hinted) toast("Right! (Used a hint, so it stays in the notebook for now.)"); }
       else { SFX.wrong(); noteMistake(r.id, p.id); }
       save();
@@ -1682,6 +1658,8 @@ function escapeRoom() {
   const ni = nextRoomIndex(); S.current_room = ni === -1 ? room.id : ROOMS[ni].id;
   const nxt = ni === -1 ? null : ROOMS[ni];
   recomputeMastery(); save(true);
+  activityDone({ mode: R.study ? "study" : "escape", room, done: true, fresh: first, ans: run.qids ? run.qids.length : 5 * LOCK_Q, cor: n, stars, secs: Math.max(0, used),
+    ids: (run.qids || []).join(" "), wrong: Object.keys(S.mistakes).filter(k => k.startsWith(room.id + ":")).map(k => k.split(":")[1]).join(" ") });
   SFX.door();
   document.getElementById("doorG").classList.add("door-open");
   setMood("sparkle"); setLine("usagi", "WAHOO!!! The door is opening!!! 🐰🎊", "happy");
@@ -1705,7 +1683,7 @@ function escapeRoom() {
     if (nxt) document.getElementById("eNext").onclick = () => { SFX.tap(); closeModal(); enterRoom(nxt.id); };
     const ec = document.getElementById("eCap"); if (ec) ec.onclick = () => { SFX.tap(); closeModal(); renderMap(); openCapsule(); };
     document.getElementById("eCode").onclick = () => { SFX.tap(); renderMap(); openSaveModal(); };
-    setTimeout(checkTrophies, 1800); lbSubmit(true);
+    setTimeout(checkTrophies, 1800);
   }, reduced() ? 100 : 1000);
 }
 
@@ -1800,5 +1778,8 @@ window.addEventListener("pagehide", () => { if (S) save(); });
 (function boot() {
   const linked = decodeCode(location.hash.slice(1));
   if (linked) { S ? renderMap() : renderWelcome(); showCodeFromLink(linked); return; }
-  if (S) { checkIn(); renderMap(); showResume(); } else renderWelcome();
+  // Class sign-in screen first, unless this device chose guest mode (or sign-in is off and there is saved progress)
+  const pref = authPref();
+  if (pref === "guest" || (!pref && S && !cloudOn())) { AUTH.mode = "guest"; if (S) { checkIn(); renderMap(); showResume(); } else renderWelcome(); }
+  else renderLogin();
 })();

@@ -218,6 +218,7 @@ function dictEnd() {
   const coins = withStreak(DT.right); S.coins += coins;
   if (perfect) { S.stats.dictPerfect += 1; S.coll.pending += 1; }
   save(true); checkTrophies();
+  activityDone({ mode: "dict", topic: DT.src === "missed" ? "missed" : "", stage: "Dictation", ans: n, cor: DT.right, wrong: DT.missed.map(x => x.w).join(", ") });
   if (DT.right) { SFX.fanfare(); confetti(perfect ? 160 : 60); }
   $app.innerHTML = `
     <section class="hero dict-hero">${starsBg()}

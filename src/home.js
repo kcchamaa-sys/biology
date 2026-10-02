@@ -41,10 +41,6 @@ function roomCard(line, mood = "happy", eq, withPet = true) {
     <div class="rug"></div><div class="pet ${frameCls(eq)}">${figure("chiikawa", mood, eq)}</div>
     ${pet ? `<button class="rpet" data-pet="${pet.id}" aria-label="${esc(pet.nick)} the ${esc(pet.name)}">${petSvg(pet.id)}</button>` : ""}</div>`;
 }
-function weekDots() {
-  const n = Math.min(7, S.current_streak || 0), d = new Date();
-  return `<div class="week">${Array.from({ length: 7 }, (_, k) => { const x = new Date(d); x.setDate(d.getDate() - 6 + k); return `<span class="${k >= 7 - n ? "on" : ""} ${k === 6 ? "today" : ""}">${"SMTWTFS"[x.getDay()]}</span>`; }).join("")}</div>`;
-}
 function greeting() {
   if (streakNote) return esc(streakNote);
   if (S.ill) return `Achoo... I feel sick... 🤒 (${esc(illById(S.ill.id).sym.split(",")[0])})`;
@@ -54,7 +50,7 @@ function greeting() {
 }
 
 function renderMap() {
-  stopRush(); MUSIC.setMode("map"); stopTimer(); lbSubmit(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; recomputeMastery(); save(); renderTools();
+  stopRush(); MUSIC.setMode("map"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; recomputeMastery(); save(); renderTools();
   if (!NAV_TABS.some(t => t[0] === homeTab)) homeTab = "home";
   if (homeTab === "lab") return renderSims();
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni];
@@ -70,8 +66,10 @@ function homeHtml() {
   const mult = streakMult();
   return `<div class="homegrid">
     <section class="card roomwrap">${roomCard(greeting(), S.completed_rooms.length ? "happy" : "normal")}
-      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" id="chest" ${chestReady ? "" : "disabled"}>${chestReady ? "🎁 Daily chest" : "🎁 Back tomorrow"}</button></div></section>
+      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" id="chest" ${chestReady ? "" : "disabled"}>${chestReady ? "🎁 Daily chest" : "🎁 Back tomorrow"}</button></div>
+      ${healthTipHtml()}</section>
     <div class="homeside">
+      ${riskCardHtml()}
       ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>Mochi is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Mochi gets better.</div></div></div>
         <button class="btn big" id="goClinic">🩺 Open the medicine cabinet</button></section>` : ""}
       <section class="card nextcard">
@@ -81,20 +79,19 @@ function homeHtml() {
         ${modeSwitch()}
         <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study it" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">🗺️ All stages</button></div>
       </section>
-      <section class="card streakcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🔥</span>
-        <div style="flex:1;min-width:0"><b>${S.current_streak} day streak</b><div class="small muted">Rewards ×${mult.toFixed(2).replace(/0$/, "")} · 🛡️ ${S.streak_shields} · Best ${S.longest_streak}</div></div></div>
-        ${weekDots()}</section>
+      ${missionCardHtml()}
+      ${streakCardHtml()}
       ${chatCardHtml()}
     </div></div>`;
 }
 function wireHome() {
-  wireCommon(); wireChatCard(); wireModeSwitch($app);
+  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards();
   const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
   const c = document.getElementById("chest");
   if (S.last_chest_date !== today()) c.onclick = () => {
     SFX.init(); SFX.fanfare(); confetti(70);
     const snack = pick(SNACKS); S.inventory.push(snack);
-    let extra = ""; if (Math.random() < .2 && S.streak_shields < 3) { S.streak_shields++; extra = " …and a 🛡️ shield!"; }
+    let extra = ""; if (Math.random() < .2 && S.streak_shields < FREEZE_MAX) { S.streak_shields++; extra = " …and a ❄️ Streak Freeze!"; }
     S.last_chest_date = today(); S.stats.chests += 1; S.coll.pending += 1; streakNote = `🎁 Kurumi opened the chest: ${snack}${extra} …plus a mystery capsule!`; save(true); renderMap(); checkTrophies(); openCapsule();
   };
 }
@@ -136,7 +133,7 @@ function playHtml() {
         <button class="mode rush" id="mRush"><h3>⚡ Cell Rush</h3><span class="muted small">60 seconds of quick mixed questions. Earn 🌰 chestnuts.</span><span class="small">Best: <b>${S.rush.best}</b> pts ${S.rush.lastDay !== today() ? "· <b>×2 today!</b>" : ""}</span></button>
         <button class="mode note" id="mNote"><h3>📕 Mistake Notebook</h3><span class="muted small">Fix the questions you got wrong. Right twice = cleared.</span><span class="small"><b>${mistakeKeys().length}</b> to fix · ${S.mistakes_cleared || 0} cleared</span></button>
         <button class="mode dict-mode" id="mDict"><h3>🎧 Word Dictation</h3><span class="muted small">Hear key terms in a British accent and spell them.</span><span class="small">${nw ? `<b>${nw}</b> missed words to practise` : `Best round: <b>${S.dict.best}</b>/${DICT_N}`}</span></button>
-        <button class="mode" id="mLb"><h3>🏅 Leaderboard</h3><span class="muted small">The 10 most dedicated players.</span><span class="small">Your points: <b>${dedication()}</b></span></button>
+        <button class="mode" id="mLb"><h3>🏆 Class leaderboard</h3><span class="muted small">${signedIn() ? "Effort, streak and collection in your class." : "For signed-in classmates. Guests play privately."}</span><span class="small">Your effort points: <b>${dedication()}</b></span></button>
       </div>
     </section>
     <details class="card">

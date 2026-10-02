@@ -19,7 +19,7 @@ const segBtns = (name, opts, cur) => `<div class="simseg" role="radiogroup">${op
 function renderSims(tab) {
   if (tab) simTab = tab;
   stopRush(); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; MUSIC.setMode("calm"); renderTools(); homeTab = "lab"; renderNav("lab");
-  S.sims = S.sims || {}; if (!S.sims[simTab]) { S.sims[simTab] = today(); save(); checkTrophies(); }
+  S.sims = S.sims || {}; if (!S.sims[simTab]) { S.sims[simTab] = today(); save(); checkTrophies(); } activityDone({ mode: "sim", sim: simTab, ans: 0 });
   const info = SIMS.find(x => x[0] === simTab);
   $app.innerHTML = `
     <section class="card simhead">
