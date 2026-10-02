@@ -269,7 +269,7 @@ function adoptPal(id) {
 }
 function showPalUnlock() {
   if (!palQueue.length) return;
-  if ($modal.innerHTML && !$modal.querySelector(".foodgrid") || R || RU) { setTimeout(showPalUnlock, 3000); return; }
+  if ($modal.innerHTML && !$modal.querySelector(".foodgrid") || R || RU || document.querySelector(".dressgrid")) { setTimeout(showPalUnlock, 3000); return; }
   const P = palQueue[0];
   if ((P.rar === "epic" || P.rar === "legend" || P.rar === "myth") && !P._cer && !reduced()) { P._cer = true; closeModal(); return giftCeremony(P.rar, showPalUnlock); }
   palQueue.shift(); delete P._cer; SFX.fanfare(); confetti(P.rar === "myth" || P.rar === "legend" ? 240 : 120);

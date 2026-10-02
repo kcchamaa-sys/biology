@@ -8,13 +8,13 @@ const INK = "#4A3E3D";
 let clipN = 0;
 /* Mochi-style art: one soft squishy blob (head and body in one), thin warm-brown outlines,
    big blush, tiny nub arms and feet, sparkles. All drawn in a 200 × 200 space. */
-const CO = "#5B4B49";
+const CO = "#6B4A6B"; // soft plum line art (instead of dark brown) for a gentler, more polished look
 const CS = `stroke="${CO}" stroke-width="3.5" stroke-linejoin="round"`;
 const BODY = "M100 62 C148 62 170 98 170 130 C170 164 140 178 100 178 C60 178 30 164 30 130 C30 98 52 62 100 62Z";
 const spark4 = (x, y, r, c) => `<path d="M${x} ${y - r} Q${x + r * .22} ${y - r * .22} ${x + r} ${y} Q${x + r * .22} ${y + r * .22} ${x} ${y + r} Q${x - r * .22} ${y + r * .22} ${x - r} ${y} Q${x - r * .22} ${y - r * .22} ${x} ${y - r}Z" fill="${c}"/>`;
 function eyes(m, o = {}) {
   const [x1, x2, y] = [80, 120, o.y || 116], big = o.big ? 1.25 : 1;
-  const dot = x => `<ellipse cx="${x}" cy="${y}" rx="${6 * big}" ry="${7.5 * big}" fill="${CO}"/><circle cx="${x + 2 * big}" cy="${y - 2.8 * big}" r="${2.3 * big}" fill="#fff"/><circle cx="${x - 2 * big}" cy="${y + 3 * big}" r="${1.1 * big}" fill="#fff"/>`;
+  const dot = x => `<ellipse cx="${x}" cy="${y + 3}" rx="${8.8 * big}" ry="${10.6 * big}" fill="url(#eyeG)"/><ellipse cx="${x}" cy="${y + 9.5 * big}" rx="${5.4 * big}" ry="${2.6 * big}" fill="#C7A2E8" opacity=".8"/><circle cx="${x + 3 * big}" cy="${y - 1.6 * big}" r="${3.6 * big}" fill="#fff"/><circle cx="${x - 3.4 * big}" cy="${y + 6 * big}" r="${1.7 * big}" fill="#fff"/><circle cx="${x + 4 * big}" cy="${y + 7 * big}" r="${1 * big}" fill="#fff" opacity=".9"/>`;
   if (m === "happy") return `<path d="M${x1 - 8} ${y + 4} Q${x1} ${y - 8} ${x1 + 8} ${y + 4} M${x2 - 8} ${y + 4} Q${x2} ${y - 8} ${x2 + 8} ${y + 4}" stroke="${CO}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
   if (m === "sparkle") return spark4(x1, y, 11, "#FDD66B") + spark4(x2, y, 11, "#FDD66B") + `<path d="M${x1} ${y - 11} Q${x1 + 2.4} ${y - 2.4} ${x1 + 11} ${y} Q${x1 + 2.4} ${y + 2.4} ${x1} ${y + 11} Q${x1 - 2.4} ${y + 2.4} ${x1 - 11} ${y} Q${x1 - 2.4} ${y - 2.4} ${x1} ${y - 11}Z M${x2} ${y - 11} Q${x2 + 2.4} ${y - 2.4} ${x2 + 11} ${y} Q${x2 + 2.4} ${y + 2.4} ${x2} ${y + 11} Q${x2 - 2.4} ${y + 2.4} ${x2 - 11} ${y} Q${x2 - 2.4} ${y - 2.4} ${x2} ${y - 11}Z" fill="none" stroke="${CO}" stroke-width="2.2" stroke-linejoin="round"/>`;
   if (m === "shock") return `<circle cx="${x1}" cy="${y}" r="9" fill="#fff" stroke="${CO}" stroke-width="3"/><circle cx="${x2}" cy="${y}" r="9" fill="#fff" stroke="${CO}" stroke-width="3"/><circle cx="${x1}" cy="${y}" r="3" fill="${CO}"/><circle cx="${x2}" cy="${y}" r="3" fill="${CO}"/>`;
@@ -42,7 +42,7 @@ function mouth(m, open, y = 130) {
 const capClip = (d, fill) => { const id = "cc" + (++clipN); return `<clipPath id="${id}"><path d="${BODY}"/></clipPath><path clip-path="url(#${id})" d="${d}" fill="${fill}"/>`; };
 const CHAR = {
   chiikawa: { name: "Mochi", color: "#ffffff",
-    back: () => `<circle cx="62" cy="76" r="15" fill="#fff" ${CS}/><circle cx="138" cy="76" r="15" fill="#fff" ${CS}/><circle cx="62" cy="77" r="6.5" fill="#FFD1DA"/><circle cx="138" cy="77" r="6.5" fill="#FFD1DA"/>`,
+    back: () => `<circle cx="60" cy="75" r="17" fill="#fff" ${CS}/><circle cx="140" cy="75" r="17" fill="#fff" ${CS}/><circle cx="60" cy="77" r="8.5" fill="#FFC2D4"/><circle cx="140" cy="77" r="8.5" fill="#FFC2D4"/><circle cx="57" cy="73" r="3" fill="#fff" opacity=".7"/><circle cx="137" cy="73" r="3" fill="#fff" opacity=".7"/>`,
     face: m => blush(true) + eyes(m) + mouth(m) },
   hachiware: { name: "Ramune", color: "#ffffff", ear: "#9EB9E6",
     back: () => `<path d="M48 104 L56 48 L94 70Z" fill="#9EB9E6" ${CS}/><path d="M152 104 L144 48 L106 70Z" fill="#9EB9E6" ${CS}/><path d="M58 88 L61 62 L80 74Z M142 88 L139 62 L120 74Z" fill="#F7C6D4"/>`,
@@ -80,14 +80,23 @@ function arms(m, c) {
   if (m === "brave") return a(40, 142, 25) + a(164, 112, 30);
   return a(40, 142, 25) + a(160, 142, -25);
 }
+
+// Soft 2.5D shading: lighter top-left, gentle plum shadow at the bottom, a sheen and a rim light
+const hexMix = (a, b, t) => { const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); const A = p(a), B = p(b); return "#" + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, "0")).join(""); };
+const shadeOf = c => /^#[0-9a-f]{6}$/i.test(c) ? hexMix(c, "#B48FC4", .28) : c;
+const tintOf = c => /^#[0-9a-f]{6}$/i.test(c) ? hexMix(c, "#FFFFFF", .55) : c;
+const EYE_GRAD = `<linearGradient id="eyeG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#3B2440"/><stop offset=".65" stop-color="#5A3A6E"/><stop offset="1" stop-color="#8E6BB8"/></linearGradient>`;
+const bodyShine = sh => { const id = "bs" + (++clipN); return `<clipPath id="${id}"><path d="${BODY}"/></clipPath><g clip-path="url(#${id})"><path d="M30 150 Q100 196 170 150 L170 190 L30 190Z" fill="${sh}" opacity=".35"/><ellipse cx="72" cy="88" rx="24" ry="12" fill="#fff" opacity=".55" transform="rotate(-24 72 88)"/><circle cx="96" cy="76" r="3.2" fill="#fff" opacity=".8"/><path d="M158 112 Q166 134 158 156" stroke="#fff" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/></g>`; };
 function charSvg(who, m = "normal", eq, full = true) {
   const C = CHAR[who], c = C.color, d = who === "chiikawa" ? dressParts(eq) : {};
   const o = d.outfit, armC = (o && o.arm) || c;
   let s = full ? `<ellipse cx="100" cy="184" rx="58" ry="8" fill="rgba(91,75,73,.13)"/>` : "";
   if (d.hair && d.hair.back) s += d.hair.back;
   s += C.back ? C.back() : "";
-  if (full) s += `<ellipse cx="76" cy="176" rx="14" ry="8" fill="${c}" ${CS}/><ellipse cx="124" cy="176" rx="14" ry="8" fill="${c}" ${CS}/>`;
-  s += `<path d="${BODY}" fill="${c}" ${CS}/>`;
+  const gid = "bg" + (++clipN), sh = shadeOf(c);
+  s += `<defs><radialGradient id="${gid}" cx=".36" cy=".3" r=".85"><stop offset="0" stop-color="${tintOf(c)}"/><stop offset=".55" stop-color="${c}"/><stop offset="1" stop-color="${sh}"/></radialGradient>${EYE_GRAD}</defs>`;
+  if (full) s += `<ellipse cx="76" cy="176" rx="14" ry="8" fill="${c}" ${CS}/><ellipse cx="124" cy="176" rx="14" ry="8" fill="${c}" ${CS}/><ellipse cx="72" cy="174" rx="5" ry="2" fill="#fff" opacity=".6"/><ellipse cx="120" cy="174" rx="5" ry="2" fill="#fff" opacity=".6"/>`;
+  s += `<path d="${BODY}" fill="url(#${gid})" ${CS}/>` + bodyShine(sh);
   if (C.front) s += C.front();
   if (o) { const id = "oc" + (++clipN); s += `<clipPath id="${id}"><path d="${BODY}"/></clipPath><g clip-path="url(#${id})">${o.svg}</g><path d="${BODY}" fill="none" ${CS}/>`; }
   s += arms(m, armC);
@@ -101,6 +110,8 @@ function charSvg(who, m = "normal", eq, full = true) {
   if (d.hand) s += d.hand.svg;
   if (full && who === "rakko") s += `<path d="M170 176 L190 96" stroke="${CO}" stroke-width="9" stroke-linecap="round"/><path d="M170 176 L190 96" stroke="#D3E4FF" stroke-width="4.5" stroke-linecap="round"/><path d="M160 158 h22" stroke="${CO}" stroke-width="6" stroke-linecap="round"/>`;
   if (full && who === "usagi" && m !== "cry") s += `<path d="M14 100 l-10 -8 M18 84 l-6 -12 M186 100 l10 -8" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>`;
+  if (who === "chiikawa" && !d.hat && !d.hair && m !== "sick") s += `<g transform="rotate(-18 128 76)"><path d="M128 66 l3 6.5 l7 .8 l-5.2 4.8 l1.4 7 l-6.2 -3.6 l-6.2 3.6 l1.4 -7 l-5.2 -4.8 l7 -.8Z" fill="#FF8FB8" stroke="${CO}" stroke-width="2" stroke-linejoin="round"/><circle cx="126" cy="72" r="1.6" fill="#fff"/></g>`;
+  if (full && who === "chiikawa") s += `<g class="buddy"><circle cx="178" cy="44" r="9" fill="#FFF6B8" opacity=".55"/>${spark4(178, 44, 7, "#FFD84D")}<circle cx="176" cy="42" r="1.6" fill="#fff"/></g>`;
   if (m === "sparkle" || m === "happy") s += `<g class="twinkle">${spark4(26, 70, 8, "#FFB3C1")}${spark4(176, 60, 7, "#A9D4EE")}</g>`;
   if (m === "sick") s += `<path d="M82 84 v12 M100 80 v14 M118 84 v12" stroke="#8FB8E8" stroke-width="3.5" stroke-linecap="round" opacity=".85"/><ellipse cx="62" cy="132" rx="13" ry="8" fill="#FF8FA3" opacity=".7"/><ellipse cx="138" cy="132" rx="13" ry="8" fill="#FF8FA3" opacity=".7"/>`;
   if (m === "sleepy") s += `<g class="zzz" fill="${CO}" font-family="M PLUS Rounded 1c, sans-serif" font-weight="800"><text x="150" y="72" font-size="20">z</text><text x="166" y="54" font-size="15">z</text><text x="178" y="40" font-size="11">z</text></g>`;

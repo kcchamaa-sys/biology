@@ -129,7 +129,7 @@ function checkPets() {
 }
 function showPetUnlock() {
   if (!petQueue.length) return;
-  if ($modal.innerHTML || R || RU || document.getElementById("dIn") || document.querySelector(".nb-hero")) { setTimeout(showPetUnlock, 3000); return; }
+  if ($modal.innerHTML || R || RU || document.getElementById("dIn") || document.querySelector(".nb-hero, .dressgrid")) { setTimeout(showPetUnlock, 3000); return; }
   const p = petQueue.shift();
   if ((p.rar === "epic" || p.rar === "legend") && !p.cer && !reduced()) { p.cer = true; petQueue.unshift(p); return giftCeremony(p.rar, showPetUnlock); }
   SFX.fanfare(); confetti(p.rar === "legend" ? 260 : 140);
@@ -247,7 +247,7 @@ function openClinic() {
   box.querySelectorAll("[data-med]").forEach(b => b.onclick = () => {
     const m = medById(b.dataset.med), fb = box.querySelector("#clinicFb");
     if (ill.cure.includes(m.id)) {
-      S.ill = null; S.stats.cured += 1; const bonus = 20; S.coins += bonus; save(true); SFX.fanfare(); confetti(120); checkTrophies();
+      S.ill = null; S.stats.cured += 1; const bonus = 20; gainCoins(bonus); save(true); SFX.fanfare(); confetti(120); checkTrophies();
       box.innerHTML = `<span class="kicker">🩺 Dr Koma's clinic</span><h2>🎉 ${esc(palName())} feels better!</h2>
         <div class="petstory"><div class="petpic">${figure("chiikawa", "sparkle")}</div>
           <div><p><b>${esc(ill.name)}</b> is caused by ${esc(ill.agent)} (${TYPE_LABEL[ill.type]}).</p><p>✅ ${esc(ill.why)}</p></div></div>

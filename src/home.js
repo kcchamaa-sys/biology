@@ -185,9 +185,12 @@ function dressHtml() {
   return `${palsSubnav("dress")}<div class="dressgrid">
     <section class="card roomwrap dresspv">${roomCard(line, "happy", tryEq)}
       <div class="row" style="justify-content:center"><span class="pill coinpill">🌰 ${S.coins}</span>
-        ${ti && !S.owned.includes(ti.id) ? `<button class="btn yellow" data-buy="${ti.id}" ${S.coins < ti.price ? "disabled" : ""}>Buy for 🌰 ${ti.price}</button><button class="btn plain" id="dsBack">Stop trying</button>` : ""}
+        ${ti && !S.owned.includes(ti.id) ? (S.coins >= ti.price ? `<button class="btn primary" data-buy="${ti.id}">Buy for 🌰 ${ti.price}</button>` : `<span class="needmore">Need 🌰 ${ti.price - S.coins} more</span><button class="btn yellow" id="dsEarn">⚡ Earn chestnuts</button>`) + `<button class="btn plain" id="dsBack">Stop trying</button>` : ""}
         <button class="btn plain" id="dsRand">🎲 Random look</button><button class="btn plain" id="dsOff">🧼 Take all off</button></div>
-      <p class="small muted" style="text-align:center;margin:0">Earn 🌰 by escaping stages, Cell Rush, Dictation and trophies.</p></section>
+      <details class="earnguide"><summary>🌰 How do I get chestnuts?</summary><ul class="small">
+        <li><b>+3</b> for every question you get right on the <b>first try</b> (+1 if you'd already mastered it)</li>
+        <li><b>+30</b> for clearing a new stage (<b>+50</b> boss) · <b>+25</b> for your first revision stage each day</li>
+        <li>⚡ Cell Rush (×2 the first round each day) · 🎧 Dictation · 📕 Mistake Notebook · 📅 Daily mission <b>+40</b> · 🏆 every trophy <b>+30</b></li></ul></details></section>
     <section class="card dressshop">
       <div class="slottabs" role="tablist">${EQ_KEYS.map(k => `<button role="tab" aria-selected="${k === slot}" data-slot="${k}"><span aria-hidden="true">${SLOT_ICONS[k]}</span>${SLOT_NAMES[k]}</button>`).join("")}<button role="tab" aria-selected="${slot === "power"}" data-slot="power"><span aria-hidden="true">🎒</span>Power-ups</button></div>
       ${slot === "power" ? `<p class="small muted">Power-ups help in ⏱️ Escape mode. Use them from the 🎒 bar in any lock. Hold up to ${MAX_POWER} of each.</p>
@@ -216,10 +219,11 @@ function wireDress() {
   $app.querySelectorAll("[data-item]").forEach(b => b.onclick = () => {
     const w = itemById(b.dataset.item);
     if (S.owned.includes(w.id)) { SFX.item(); S.equip[w.slot] = S.equip[w.slot] === w.id ? null : w.id; dressTry = null; save(true); refreshPlayer(); redraw(); return; }
-    if (dressTry && dressTry.id === w.id) { if (S.coins >= w.price) buy(w.id); else { SFX.wrong(); toast(`You need 🌰 ${w.price - S.coins} more chestnuts. Try ⚡ Cell Rush!`); } return; }
+    if (dressTry && dressTry.id === w.id) { if (S.coins >= w.price) buy(w.id); else { SFX.wrong(); toast(`You need 🌰 ${w.price - S.coins} more. Every first-try right answer gives +3 🌰!`); } return; }
     SFX.tap(); dressTry = { slot: w.slot, id: w.id }; redraw();
   });
   $app.querySelectorAll("[data-buy]").forEach(b => b.onclick = () => buy(b.dataset.buy));
+  const earn = document.getElementById("dsEarn"); if (earn) earn.onclick = () => { SFX.tap(); rushIntro(); };
   const back = document.getElementById("dsBack"); if (back) back.onclick = () => { SFX.tap(); dressTry = null; redraw(); };
   document.getElementById("dsOff").onclick = () => { SFX.tap(); EQ_KEYS.forEach(k => { if (k !== "frame") S.equip[k] = null; }); dressTry = null; save(); refreshPlayer(); redraw(); };
   document.getElementById("dsRand").onclick = () => {

@@ -219,7 +219,7 @@ function checkIn() {
   streakNote = streakCheck() || (!S.last_login_date ? "🌱 Finish one activity today to start your study streak!" : "");
   S.longest_streak = Math.max(S.longest_streak || 0, S.current_streak);
   S.last_login_date = t;
-  if (S.stats.days > 1 && maybeGetSick(.3)) streakNote = (streakNote ? streakNote + " " : "") + `🤒 Uh-oh... ${palName()} woke up feeling sick. Visit Dr Koma!`;
+  if (S.stats.days > 1 && maybeGetSick(.15)) streakNote = (streakNote ? streakNote + " " : "") + `🤒 Uh-oh... ${palName()} woke up feeling sick. Visit Dr Koma!`;
   save();
   checkTrophies();
 }
@@ -494,7 +494,7 @@ function checkTrophies() {
   TROPHIES.forEach(t => {
     if (S.trophies[t.id]) return;
     const [cur, goal] = t.prog();
-    if (cur >= goal) { S.trophies[t.id] = today(); S.coins = (S.coins || 0) + 30; S.coll.pending += 1; trophyQueue.push(t); }
+    if (cur >= goal) { S.trophies[t.id] = today(); setTimeout(() => gainCoins(30), 600); S.coll.pending += 1; trophyQueue.push(t); }
   });
   if (trophyQueue.length) { save(); renderTools(); showTrophyBanner(); }
   checkPets(); checkPals();
@@ -735,7 +735,7 @@ function rushEnd() {
   if (r.total > 0) { S.rush.lastDay = today(); S.stats.rushRounds += 1; }
   const best = r.score > S.rush.best; S.rush.best = Math.max(S.rush.best, r.score);
   const rcap = r.score >= 120 ? 1 : 0; S.coll.pending += rcap;
-  S.coins += coins; save(true); checkTrophies();
+  gainCoins(coins); checkTrophies();
   activityDone({ mode: "rush", ans: r.total, cor: r.correct, score: r.score, secs: RUSH_SECONDS, start: r.start });
   SFX.fanfare(); if (r.score > 0) confetti(120);
   openModal(`<span class="kicker">⚡ ${"Cell Rush · Round over"}</span><h2>${best ? "🎉 New best score!" : "Time's up!"}</h2>
@@ -760,34 +760,30 @@ const topicNo = n => `Topic ${n}`;
    ============================================================ */
 document.getElementById("brandav").innerHTML = playerAv("happy");
 function renderTools() {
-  const justSaved = Date.now() - savedFlash < 2500;
-  document.getElementById("tools").innerHTML = `
-    ${S ? `<span class="pill" title="Daily streak · chestnut bonus ×${streakMult().toFixed(2)}">🔥 ${S.current_streak}${streakMult() > 1 ? `<span class="lbl"> ×${streakMult().toFixed(2).replace(/0$/, "")}</span>` : ""}</span>` : ""}
-    ${S ? `<span class="pill savepill ${justSaved ? "saved" : ""}" title="${signedIn() ? "Your progress saves on this device and syncs to your class" : "Your progress saves automatically on this device"}">${justSaved ? `✓<span class="lbl"> ${"Saved"}</span>` : `💾<span class="lbl"> ${"Auto-save"}</span>`}</span>` : ""}
-    ${S ? `<button class="iconbtn coinpill" id="tCoins" aria-label="${"Chestnuts"}: ${S.coins}">🌰 ${S.coins}</button>` : ""}
-    ${S ? `<button class="iconbtn" id="tTrophy" aria-label="${"Open the Trophy Cabinet"}">🏆<span class="lbl">${"Trophies"}</span></button>` : ""}
-    ${S && S.coll.pending ? `<button class="iconbtn capbtn" id="tCap" aria-label="Open ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""}">🎁<span class="lbl"> ${S.coll.pending}</span></button>` : ""}
-    ${S ? `<button class="iconbtn acctbtn ${AUTH.stale ? "warn" : ""}" id="tAcc" aria-label="Account: ${esc(signedIn() ? userName() : "Guest mode")}">${AUTH.stale ? "⚠️" : signedIn() ? "🎓" : "👤"}<span class="lbl"> ${esc(signedIn() ? userName().split(" ")[0] : "Guest")}</span></button>` : ""}
-    <button class="iconbtn" id="tJournal" aria-label="${"Open the Study Journal"}">📓<span class="lbl">${"Journal"}</span></button>
-    ${S ? `<button class="iconbtn" id="tSave" aria-label="${"Save and share code"}">🔑<span class="lbl">${"Save code"}</span></button>` : ""}
-    <button class="iconbtn" id="tMus" aria-label="${MUSIC.on ? "Turn music off" : "Turn music on"}" title="Background music: ${esc((SONGS[MUSIC.mode] || SONGS.map).title)}" aria-pressed="${MUSIC.on}" style="${MUSIC.on ? "" : "opacity:.5;text-decoration:line-through"}">🎵<span class="lbl">${MUSIC.on ? "Music on" : "Music off"}</span></button>
-    <button class="iconbtn" id="tSnd" aria-label="${SFX.on ? "Turn sound effects off" : "Turn sound effects on"}" title="${"Sound effects"}">${SFX.on ? "🔊" : "🔇"}</button>`;
-  const ta = document.getElementById("tAcc"); if (ta) ta.onclick = () => { SFX.init(); SFX.tap(); openAccount(); };
-  document.getElementById("tJournal").onclick = () => { SFX.init(); SFX.tap(); openJournal(); };
-  const tc = document.getElementById("tCoins"); if (tc) tc.onclick = () => { SFX.init(); SFX.tap(); openShop(); };
-  const tcap = document.getElementById("tCap"); if (tcap) tcap.onclick = () => { SFX.init(); SFX.tap(); openCapsule(); };
-  const tt = document.getElementById("tTrophy"); if (tt) tt.onclick = () => { SFX.init(); SFX.tap(); openCabinet(); };
-  const ts = document.getElementById("tSave"); if (ts) ts.onclick = () => { SFX.init(); SFX.tap(); openSaveModal(); };
-  document.getElementById("tMus").onclick = () => {
-    MUSIC.on = !MUSIC.on; try { localStorage.setItem(MUSIC_KEY, MUSIC.on ? "on" : "off"); } catch (e) {}
-    MUSIC.on ? MUSIC.start() : MUSIC.stop(); renderTools();
-  };
-  document.getElementById("tSnd").onclick = () => {
-    SFX.on = !SFX.on; try { localStorage.setItem(SOUND_KEY, SFX.on ? "on" : "off"); } catch (e) {}
-    if (SFX.on) { SFX.init(); SFX.tap(); } renderTools();
-  };
-  clearTimeout(renderTools._t);
-  if (justSaved) renderTools._t = setTimeout(renderTools, 2600);
+  // Decluttered top bar: the two game currencies (streak, chestnuts) stay big; everything else lives in the ☰ menu
+  const el = document.getElementById("tools"); if (!el) return;
+  el.innerHTML = S ? `
+    <span class="hcur streak" title="Daily streak · chestnut bonus ×${streakMult().toFixed(2)}"><span class="ci">🔥</span><b>${S.current_streak}</b>${streakMult() > 1 ? `<span class="lbl"> ×${streakMult().toFixed(2).replace(/0$/, "")}</span>` : ""}</span>
+    <button class="hcur coins" id="tCoins" aria-label="Chestnuts: ${S.coins}. Open the shop"><span class="ci">🌰</span><b>${S.coins}</b><span class="plus" aria-hidden="true">+</span></button>
+    ${S.coll.pending ? `<button class="hcur cap capbtn" id="tCap" aria-label="Open ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""}"><span class="ci">🎁</span><b>${S.coll.pending}</b></button>` : ""}
+    <button class="menubtn ${typeof AUTH !== "undefined" && AUTH.stale ? "warn" : ""}" id="tMenu" aria-label="Menu"><span></span><span></span><span></span></button>` : "";
+  const g = id => document.getElementById(id);
+  if (g("tCoins")) g("tCoins").onclick = () => { SFX.init(); SFX.tap(); openShop(); };
+  if (g("tCap")) g("tCap").onclick = () => { SFX.init(); SFX.tap(); openCapsule(); };
+  if (g("tMenu")) g("tMenu").onclick = () => { SFX.init(); SFX.tap(); openMenu(); };
+}
+function openMenu() {
+  const acc = signedIn() ? userName().split(" ")[0] : "Guest";
+  const tiles = [["mTro", "🏆", "Trophies", `${Object.keys(S.trophies).length} / ${TROPHIES.length}`], ["mAcc", signedIn() ? "🎓" : "👤", "Account", acc + (AUTH.stale ? " · sign in again" : "")],
+    ["mJou", "📓", "Journal", "Textbook notes"], ["mSave", "🔑", "Save code", "Move to another device"], ["mLb", "🏆", "Leaderboard", signedIn() ? "Your class" : "Signed-in only"],
+    ["mMus", "🎵", "Music", MUSIC.on ? "On" : "Off"], ["mSnd", SFX.on ? "🔊" : "🔇", "Sound effects", SFX.on ? "On" : "Off"], ["mHome", "🏠", "Home", "Back to Mochi's room"]];
+  const box = openModal(`<span class="kicker">☰ Menu</span><h2>${esc(S.player_name)}'s settings</h2>
+    <div class="menugrid">${tiles.map(([id, ic, t, sub]) => `<button class="mtile" id="${id}"><span class="mi">${ic}</span><b>${t}</b><span class="small muted">${esc(sub)}</span></button>`).join("")}</div>`);
+  const on = (id, f) => { box.querySelector("#" + id).onclick = () => { SFX.tap(); f(); }; };
+  on("mTro", () => { closeModal(); openCabinet(); }); on("mAcc", () => { closeModal(); openAccount(); }); on("mJou", () => { closeModal(); openJournal(); });
+  on("mSave", () => { closeModal(); openSaveModal(); }); on("mLb", () => { closeModal(); openLeaderboard(); }); on("mHome", () => { closeModal(); homeTab = "home"; renderMap(); });
+  on("mMus", () => { MUSIC.on = !MUSIC.on; try { localStorage.setItem(MUSIC_KEY, MUSIC.on ? "on" : "off"); } catch (e) {} MUSIC.on ? MUSIC.start() : MUSIC.stop(); openMenu(); });
+  on("mSnd", () => { SFX.on = !SFX.on; try { localStorage.setItem(SOUND_KEY, SFX.on ? "on" : "off"); } catch (e) {} if (SFX.on) SFX.init(); openMenu(); });
 }
 
 /* ============================================================
@@ -1033,7 +1029,7 @@ function startRevision(ti) {
   const RV = { keys, at: 0, right: 0, cleared: 0, done: 0, start: new Date().toISOString() };
   const next = () => {
     if (RV.at >= RV.keys.length) {
-      const coins = Math.round((RV.cleared * 2 + RV.right) * perk("notebook")); S.coins += coins; save(true); SFX.fanfare(); if (RV.right) confetti(100);
+      const coins = Math.round((RV.cleared * 2 + RV.right) * perk("notebook")); gainCoins(coins); SFX.fanfare(); if (RV.right) confetti(100);
       activityDone({ mode: "notebook", topic: ti == null ? "all" : String(TOPICS[ti].no), stage: "Mistake Notebook", ans: RV.done || 0, cor: RV.right, done: (RV.done || 0) > 0, start: RV.start });
       $app.innerHTML = `<section class="card"><span class="kicker">📕 Revision done</span><h2>${RV.right === RV.keys.length ? "Perfect revision! 🎉" : "Revision complete! 🌱"}</h2>
         <div class="cast" style="margin:0">${["chiikawa", "hachiware", "usagi"].map(w => `<div class="fig" style="width:84px">${figure(w, RV.right ? (w === "chiikawa" ? "sparkle" : "happy") : "normal")}</div>`).join("")}</div>
@@ -1215,7 +1211,7 @@ function playIntro() {
     if (R !== me) return;
     const [w, m, t] = lines[k++];
     setLine(w, t, m);
-    me.introT = setTimeout(k < lines.length ? step : () => R === me && (R.study ? setLine("hachiware", "📖 <b>Study mode:</b> no timer, no penalties, no spooky surprises. Take your time, and tap 📓 for the textbook notes whenever you like. Tap a glowing <b>?</b> to start! 🌱") : setLine("hachiware", "Tap a glowing <b>?</b> to start. ⚠️ Careful: a wrong answer costs <b>10 seconds</b> and shuffles the lock. Guessing makes the lock <b>slip back a notch</b> (one bonus question to climb back), jams it for a few seconds, costs 🌰 chestnuts and can make the lights go dim. Think first! And watch out for strange happenings in the dark... 👀 (Stuck? Tap 📓 for the textbook notes.)")), k < lines.length ? 2600 : 3200);
+    me.introT = setTimeout(k < lines.length ? step : () => R === me && (R.study ? setLine("hachiware", "📖 <b>Study mode:</b> no timer, no penalties, no spooky surprises. Take your time, and tap 📓 for the textbook notes whenever you like. Tap a glowing <b>?</b> to start! 🌱") : setLine("hachiware", "<b>Your mission:</b> 🔦 find 3 shimmering specimens in the dark, wire them into the ⚙️ Bio-Machine, open the 5 <b>?</b> locks, then escape through the 🚪! ⚠️ Careful: a wrong answer costs <b>10 seconds</b> and shuffles the lock. Guessing makes the lock <b>slip back a notch</b> (one bonus question to climb back), jams it for a few seconds, costs 🌰 chestnuts and can make the lights go dim. Think first! And watch out for strange happenings in the dark... 👀 (Stuck? Tap 📓 for the textbook notes.)")), k < lines.length ? 2600 : 3200);
   };
   step();
 }
@@ -1264,6 +1260,7 @@ function renderRoom() {
         <span class="strikes" id="strikes" ${R.study ? "hidden" : ""} title="${"Guess strikes: 3 strikes = −1 star, 6 strikes = −2 stars"}">⚠️ ${"Strikes"} ${S.room_run[room.id].strikes}</span>
       </div>
     </section>
+    ${goalHtml()}
     <div id="line"></div>
     <section class="scene-wrap">
       <div class="scene ${R.blackUntil > Date.now() ? "blackout" : ""}" id="scene" style="--dim:${R.blackUntil > Date.now() ? .94 : room.dim}">
@@ -1275,6 +1272,7 @@ function renderRoom() {
           return `<button class="hs ${done ? "done" : ""}" data-hs="${i}" style="left:${h.x}%;top:${h.y}%" aria-label="${esc(nm)}${done ? " (solved)" : stepOf(i) ? ` (${stepOf(i)} of ${LOCK_Q} questions done)` : ""}">${done ? "✓" : stepOf(i) ? `<small>${stepOf(i)}/${LOCK_Q}</small>` : "?"}<span class="lbl">${esc(nm)}</span></button>`;
         }).join("")}
         ${R.stolen !== null ? `<button class="hs wolv" data-wolf="1" style="left:${R.wolfX}%;top:${R.wolfY}%" aria-label="${"Catch the wolverine"}">🐾<span class="lbl">${"Wolverine!"}</span></button>` : ""}
+        ${specHtml()}
         <button class="hs door" data-hs="door" style="left:${DOOR.x}%;top:${DOOR.y}%" aria-label="${"Exit door"}">🚪<span class="lbl">${"Exit door"}</span></button>
       </div>
     </section>
@@ -1288,10 +1286,11 @@ function renderRoom() {
   scene.addEventListener("pointermove", move); scene.addEventListener("pointerdown", move);
   $app.querySelectorAll("[data-hs]").forEach(el => el.addEventListener("click", () => { SFX.init(); el.dataset.hs === "door" ? openDoor() : openPuzzle(Number(el.dataset.hs)); }));
   const wolf = $app.querySelector("[data-wolf]"); if (wolf) wolf.onclick = () => { SFX.init(); chaseWolverine(); };
+  wireRoom2();
   wireSlots();
   document.getElementById("toMap").onclick = () => { SFX.tap(); save(); renderMap(); };
   document.getElementById("openJ").onclick = () => { SFX.tap(); openJournal(room.id); };
-  setLine("hachiware", "Tap a glowing <b>?</b> to find a puzzle.");
+  setLine("hachiware", "Tap a glowing <b>?</b> to find a puzzle, or sweep the torch for shimmering specimens 🔦.");
 }
 function wireSlots() { $app.querySelectorAll(".slot.full").forEach(el => el.onclick = () => { SFX.tap(); toast(el.dataset.info); }); }
 function itemName(i) { return i === 2 ? R.room.specialName + " charm" : HOTSPOTS[i].itemName; }
@@ -1563,6 +1562,7 @@ function slipLock(i) {
 function solve() {
   const { room } = R, i = R.cur, step = stepOf(i), p = curQ(i), k = akey(i);
   const firstTry = !R.att[k] && !R.hinted[k], pid = `${room.id}:${p.id}`, run = S.room_run[room.id];
+  const qc = answerCoins(pid, firstTry);
   if (firstTry && !S.mastered_puzzles.includes(pid)) S.mastered_puzzles.push(pid);
   if (firstTry && !run.firsts.includes(k)) run.firsts.push(k);
   noteRight(room.id, p.id, firstTry);
@@ -1573,7 +1573,7 @@ function solve() {
   const last = step >= LOCK_Q - 1;
   if (last) { const solved = S.room_progress[room.id] || []; if (!solved.includes(i)) solved.push(i); S.room_progress[room.id] = solved; }
   else run.steps[i] = step + 1;
-  recomputeMastery(); save(true);
+  recomputeMastery(); save(true); if (qc) gainCoins(qc, "", document.querySelector(".modal .choice.right, #mbox h2"));
   SFX.right(); if (last) setTimeout(() => yaha(), 150); setMood(firstTry ? "sparkle" : "happy", 4000);
   const [cw, cm, ct] = S.stats.run >= 3 ? ["momonga", "sparkle", `${S.stats.run} first-try answers in a row?! You're almost as amazing as me! 💜`] : firstTry ? pick(REACT.right) : ["chiikawa", "happy", "Phew... we got it! 🥹"];
   const kt = termsIn(room, p).map(t => room.terms.find(x => x[0] === t));
@@ -1582,7 +1582,7 @@ function solve() {
   document.getElementById("hint").hidden = true;
   const lp = document.querySelector(".lockprog"); if (lp) lp.querySelectorAll("i")[step].className = "on";
   document.getElementById("pfb").innerHTML = `<div class="fb ok">
-    ${say(cw, `${esc(ct)} <b>${firstTry ? "First try! Mastery up 📈" : "Correct! ✔️"}</b>`, cm)}
+    ${say(cw, `${esc(ct)} <b>${firstTry ? `First try! Mastery up 📈 +${qc} 🌰` : "Correct! ✔️ (first-try answers earn 🌰)"}</b>`, cm)}
     <p>${esc(p.explain)}</p>
     ${p.tip ? `<p class="tip"><b>📝 Top tip:</b> ${esc(p.tip)}</p>` : ""}
     ${kt.length ? `<div class="terms">${kt.map(([t, m]) => `<span class="term"><b>${esc(t)}</b><span class="def">${esc(m)}</span></span>`).join("")}</div>` : ""}
@@ -1603,7 +1603,7 @@ function collect(i) {
   document.getElementById("inv").innerHTML = invHtml(i); wireSlots();
   const n = (S.room_progress[R.room.id] || []).length;
   if (n < 5 && R.incidents < 3 && Math.random() < (R.replay ? 0.55 : 0.4)) { const me = R; setTimeout(() => tryIncident(me), 1500); }
-  if (n === 5) setLine("hachiware", "All 5 code digits found! Tap the 🚪 <b>exit door</b> and enter the code!");
+  if (n === 5) setLine("hachiware", specRun().power ? "All 5 code digits found and the power is on! Tap the 🚪 <b>exit door</b>!" : "All 5 code digits found! But the door has no power yet: find the 🔦 specimens and fix the ⚙️ Bio-Machine.");
   else setLine("chiikawa", `Ya...! ${5 - n} more lock${5 - n === 1 ? "" : "s"} to go! 🔍`, "happy");
 }
 
@@ -1613,6 +1613,7 @@ function openDoor() {
   const solved = S.room_progress[room.id] || [];
   if (R.stolen !== null) { SFX.wrong(); setMood("cry", 2000); setLine("chiikawa", `The wolverine still has item #${R.stolen + 1}! Tap the 🐾 to catch it first.`, "cry"); return; }
   if (solved.length < 5) { SFX.wrong(); setMood("cry", 2000); setLine("chiikawa", `The door needs a 5-digit code... We have ${solved.length}/5 digits. Let's open more locks! 🔍`, "cry"); return; }
+  if (!specRun().power) { SFX.wrong(); setMood("shock", 2000); setLine("chiikawa", `The keypad is dark... the door has <b>no power</b>! 😱 Find the 3 shimmering specimens 🔦 (${specRun().found.length}/3) and fix the ⚙️ Bio-Machine.`, "shock"); return; }
   SFX.click();
   const box = openModal(`
     <span class="kicker">${"Exit door · Keypad"}</span>
@@ -1649,10 +1650,10 @@ function escapeRoom() {
   S.room_stars[room.id] = Math.max(S.room_stars[room.id] || 0, stars);
   if (!first) S.stats.replays += 1;
   const revise = !first && S.last_revise_day !== today(); if (revise) S.last_revise_day = today();
-  const earned = withStreak(first ? (room.boss ? 25 : 15) : revise ? 20 : 5); S.coins = (S.coins || 0) + earned; R.done = true; clearTimeout(R.incT);
+  const earned = withStreak(first ? (room.boss ? 50 : 30) : revise ? 25 : 10); S.coins = (S.coins || 0) + earned; R.done = true; clearTimeout(R.incT);
   if (!R.study && tLeft >= 0 && run.strikes === 0) S.stats.cleanEscapes += 1;
   if (!R.study) { S.stats.escClears += 1; if (room.boss) S.stats.escBosses += 1; if (!run.hints) S.stats.escNoHint += 1; }
-  const gotSick = maybeGetSick(.12);
+  const gotSick = maybeGetSick(.08);
   if (!run.hints) S.stats.noHintEscapes += 1;
   if (new Date().getHours() >= 21) S.stats.night += 1;
   const caps = first ? (room.boss ? 2 : 1) : Math.random() < .4 ? 1 : 0; S.coll.pending += caps;

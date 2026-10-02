@@ -257,7 +257,8 @@ const ICN = (() => {
     circleO: L("M16 4 A12 12 0 1 1 15.99 4", "r", 5),
     asterisk: R(3, 3, 26, 26, 6, "g") + L("M16 8 V24 M9 12 L23 20 M23 12 L9 20", "w", 2.8),
     greencircle: C(16, 16, 12, "g") + H(9, 9, 4, 3, -30),
-    sparkleHeart: heart("k")
+    sparkleHeart: heart("k"),
+    gear: [0, 45, 90, 135, 180, 225, 270, 315].map(a => `<g transform="rotate(${a} 16 16)">${R(13, 1.5, 6, 7, 2, "s")}</g>`).join("") + C(16, 16, 10.5, "s") + fc(16, 16, 4.5, "w") + H(9, 9, 3, 4, 40)
   };
   // faces
   Object.assign(I, {
@@ -287,7 +288,7 @@ const EMOJI_ICON = {
   "🦶": "foot", "😮‍💨": "f_exhale", "😵‍💫": "f_dizzy2", "🪥": "toothbrush", "🚶": "footprints", "🌞": "sunface", "🥶": "cold", "🤩": "f_starry", "😊": "f_happy", "🍎": "apple", "🍌": "banana", "🥛": "milk", "🥗": "salad",
   "🥣": "soup", "🥟": "dumpling", "🍢": "oden", "🥧": "pie", "🟢": "greencircle", "👈": "point", "◀": "back", "✋": "hand", "⭕": "circleO", "✳": "asterisk", "🎚": "slider", "🗣": "speakhead", "🐦": "bird", "📱": "phone",
   "🤫": "hush", "🥩": "meat", "⛓": "chain", "🏙": "city", "🥔": "potato", "📠": "fax", "🪞": "mirror", "🧰": "toolbox", "📸": "camera", "🎨": "palette", "🍭": "lolly", "😪": "f_sleepy", "🍗": "drumstick", "🎢": "coaster",
-  "📏": "ruler", "🏷": "tag", "🏝": "island", "🐚": "shell", "🍯": "honey", "🚂": "train", "🎈": "balloon", "🚭": "nosmoke", "👶": "baby", "🍰": "cake", "⛰": "mountain", "🐌": "snail", "🕸": "web", "🔲": "squarebtn", "🧽": "sponge",
+  "📏": "ruler", "🏷": "tag", "🏝": "island", "🐚": "shell", "🍯": "honey", "🚂": "train", "🎈": "balloon", "🚭": "nosmoke", "👶": "baby", "🍰": "cake", "⛰": "mountain", "🐌": "snail", "🕸": "web", "🔲": "squarebtn", "🧽": "sponge", "⚙": "gear",
   "🤩": "f_starry", "🦜": "parrot", "🍙": "onigiri", "🍦": "cake"
 };
 // a few icons are built from others

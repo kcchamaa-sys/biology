@@ -164,11 +164,31 @@ function missionProgress(ev) {
   if (!add) return;
   m.prog = Math.min(m.n, m.prog + add);
   if (m.prog >= m.n) {
-    m.done = true; S.coins += 40; S.coll.pending += 1; S.stats.missions = (S.stats.missions || 0) + 1;
-    setTimeout(() => { SFX.fanfare(); confetti(120); toast(`📅 Daily mission complete: ${missionText(m).title}! +40 🌰 and a capsule 🎁`); renderTools(); }, 1600);
+    m.done = true; S.coll.pending += 1; setTimeout(() => gainCoins(40), 1600); S.stats.missions = (S.stats.missions || 0) + 1;
+    setTimeout(() => { SFX.fanfare(); confetti(120); toast(`📅 Daily mission complete: ${missionText(m).title}! +40 🌰 and a capsule 🎁`); }, 1600);
   }
   save();
 }
+
+/* ----- 🌰 Chestnuts: one helper for every reward, so the top-bar counter always updates and a "+N" pops up ----- */
+function gainCoins(n, why, at) {
+  if (!S || !n) return 0;
+  S.coins = Math.max(0, (S.coins || 0) + n); if (n > 0) S.stats.earned = (S.stats.earned || 0) + n;
+  save(); renderTools(); coinPop(n, at); if (why) toast(`${n > 0 ? "+" : ""}${n} 🌰 ${why}`);
+  return n;
+}
+function coinPop(n, at) {
+  if (reduced()) return;
+  const tc = document.getElementById("tCoins"), src = at && at.getBoundingClientRect ? at.getBoundingClientRect() : null, dst = tc ? tc.getBoundingClientRect() : null;
+  const d = document.createElement("div"); d.className = "cpop" + (n < 0 ? " neg" : ""); d.textContent = `${n > 0 ? "+" : ""}${n} 🌰`;
+  const x = src ? src.left + src.width / 2 : dst ? dst.left + dst.width / 2 : innerWidth / 2, y = src ? src.top : dst ? dst.bottom + 10 : 80;
+  d.style.left = x + "px"; d.style.top = y + "px"; document.body.appendChild(d);
+  if (dst && src && n > 0) requestAnimationFrame(() => { d.style.transform = `translate(${dst.left + dst.width / 2 - x}px, ${dst.top - y}px) scale(.6)`; d.style.opacity = ".2"; });
+  setTimeout(() => d.remove(), 1100);
+  if (tc) { tc.classList.remove("bump"); void tc.offsetWidth; tc.classList.add("bump"); }
+}
+// A right answer on the first try pays 3 🌰 for a question you've never mastered, 1 🌰 for one you already know
+const answerCoins = (pid, firstTry) => !firstTry ? 0 : Math.round((S.mastered_puzzles.includes(pid) ? 1 : 3) * (S.ill ? .8 : 1) * perk("coins"));
 
 /* ----- One hook for every finished activity: streak, mission and class records ----- */
 function activityDone(ev) {

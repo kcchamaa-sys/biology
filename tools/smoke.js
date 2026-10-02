@@ -43,6 +43,11 @@ const out = process.argv[2] || ".";
         await page.waitForTimeout(120);
       }
     }
+    // Escape 2.0: find the 3 specimens and wire them into the Bio-Machine, then open the door
+    await page.evaluate(() => { closeModal(); renderRoom(); document.querySelectorAll("[data-spec]").forEach(b => b.click()); closeModal(); openMachine(); });
+    for (let k = 0; k < 3; k++) await page.evaluate(k => { const sp = specRun(), m = R.room.terms[sp.terms[k]][1]; document.querySelector(`[data-plug="${k}"]`).click(); [...document.querySelectorAll("[data-sock]")].find(b => b.textContent === m).click(); }, k);
+    if (!(await page.evaluate(() => specRun().power))) errors.push(`${tag}: Bio-Machine did not power up`);
+    await page.evaluate(() => { closeModal(); renderRoom(); });
     await page.evaluate(() => openDoor());
     const code = await page.evaluate(() => R.room.code);
     for (const k of code) await page.click(`.key[data-k="${k}"]`);

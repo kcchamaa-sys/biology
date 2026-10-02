@@ -22,8 +22,8 @@ document.addEventListener("click", e => { const b = e.target.closest && e.target
 
 /* 🔥 Streak bonus: chestnut rewards grow 5% per streak day, up to ×1.5 */
 const streakMult = () => Math.min(1.5, 1 + .05 * Math.max(0, ((S && S.current_streak) || 1) - 1));
-const withStreak = n => Math.round(n * streakMult() * (S && S.ill ? .5 : 1) * perk("coins"));
-const multTag = () => (streakMult() > 1 ? ` · 🔥 ×${streakMult().toFixed(2).replace(/0$/, "")} streak bonus` : "") + (S && S.ill ? ` · 🤒 ×0.5 (${palName()} is sick)` : "") + (S && perk("coins") > 1 ? ` · ✨ ${palName()} +${Math.round((perk("coins") - 1) * 100)}%` : "");
+const withStreak = n => Math.round(n * streakMult() * (S && S.ill ? .8 : 1) * perk("coins"));
+const multTag = () => (streakMult() > 1 ? ` · 🔥 ×${streakMult().toFixed(2).replace(/0$/, "")} streak bonus` : "") + (S && S.ill ? ` · 🤒 ×0.8 (${palName()} is sick)` : "") + (S && perk("coins") > 1 ? ` · ✨ ${palName()} +${Math.round((perk("coins") - 1) * 100)}%` : "");
 
 /* Near-miss check for spelling ("so close!") */
 function lev(a, b) {
@@ -215,7 +215,7 @@ function dictEnd() {
   const n = Math.min(DT.i + (DT.done ? 1 : 0), DT.words.length), perfect = n >= 8 && n === DT.words.length && DT.right === n;
   S.stats.dictRounds = (S.stats.dictRounds || 0) + (n ? 1 : 0);
   S.dict.best = Math.max(S.dict.best, DT.right);
-  const coins = Math.round(withStreak(DT.right) * perk("dict")); S.coins += coins;
+  const coins = Math.round(withStreak(DT.right * 2) * perk("dict")); gainCoins(coins);
   if (perfect) { S.stats.dictPerfect += 1; S.coll.pending += 1; }
   save(true); checkTrophies();
   activityDone({ mode: "dict", topic: DT.src === "missed" ? "missed" : "", stage: "Dictation", ans: n, cor: DT.right, wrong: DT.missed.map(x => x.w).join(", ") });

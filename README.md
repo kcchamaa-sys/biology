@@ -70,6 +70,26 @@ All characters are original: **Mochi** (the player, a little white mochi bun-bea
 
 Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, gentle anti-guessing penalties (no wait or time loss over 15 s: −10 s, reshuffle, short jams, strikes, chestnut fine, and guessing makes the lock **slip back a notch** so students answer one bonus question), random spooky-but-friendly incidents, ⚡ **Cell Rush** (60-second mixed rush with test-tube colours and organelle spotting), Koma's shop (outfits and power-ups), a study streak with ❄️ Streak Freezes, a daily mission, daily snack chest and a class leaderboard.
 
+## 🌰 Chestnuts (economy fix)
+
+Students reported that chestnuts were too hard to get: a whole stage paid only 15 🌰. Now:
+- **+3 🌰 for every question right on the first try** (+1 if already mastered), with a "+3" that flies into the counter.
+- Clearing a new stage **+30** (boss **+50**), first revision stage of the day **+25**, replays **+10**; specimens **+2**, Bio-Machine **+5**, daily mission **+40**, every trophy **+30**.
+- Being sick now reduces rewards to ×0.8 (was ×0.5) and happens less often.
+- The top-bar counter always updates straight away; the shop shows "Need 🌰 N more" with an *Earn chestnuts* button and a "How do I get chestnuts?" guide; unlock pop-ups no longer cover the shop.
+
+## 🔦 Escape room 2.0 (discover → manipulate → escape)
+
+- **Discovery:** 3 specimens shimmer faintly in each dark room. Sweep the torch and tap them; each specimen card carries a key term from the stage.
+- **Process:** the ⚙️ **Bio-Machine**. Wire each specimen to its function (one socket is a decoy). Each right cable fills the glowing tank; a wrong cable sparks (−10 s in Escape mode).
+- **Escape:** the door needs both the 5-digit code from the locks **and** power from the machine. Goal chips (🔦 Specimens · ⚙️ Machine · 🔓 Locks · 🚪 Escape) show progress; opened lock objects glow in the scene.
+
+## ✨ Look and feel
+
+- **Pals:** soft 2.5D shading (light top-left, plum shadow, sheen and rim light), plum line art instead of dark brown, bigger sparkly eyes set a little lower, plush ears, a pink star hair clip and a floating sparkle buddy.
+- **UI:** soft frosted panels without thick borders, one glossy primary button style (soft secondary buttons), a decluttered top bar (🔥 streak, big 🌰 counter, 🎁, and a ☰ menu for trophies, account, journal, save code, leaderboard, music and sound), a glowing pill behind the active bottom tab, and a full-bleed room where the pal pops out of the frame.
+- Checked at iPhone (390 px), iPad portrait (820 px) and landscape (1180 px), and desktop (1440 px): no sideways scrolling.
+
 ## 🐾 Study Pals (27)
 
 Your **Study Pal** is the character you raise: it lives in the room, talks in the dialogue, wears your outfits and appears in your avatar. Mochi is the starter pal.

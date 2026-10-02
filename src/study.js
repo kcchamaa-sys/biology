@@ -38,12 +38,12 @@ function startStudy(id) {
     miniQuiz(document.getElementById("stAns"), p, ok => {
       const quick = ok && (Date.now() - shownAt) / 1000 < READ_SECS(p);
       if (quick) ST.guesses++;
-      const pid = `${room.id}:${p.id}`, first = ok && !retry && !hinted && !quick;
+      const pid = `${room.id}:${p.id}`, first = ok && !retry && !hinted && !quick, qc = answerCoins(pid, first);
       if (ok) {
         ST.right++; S.stats.correct += 1; if (first) { ST.firsts++; ST.firstIds.push(p.id); if (!S.mastered_puzzles.includes(pid)) S.mastered_puzzles.push(pid); }
         if (p.type === "spell" || p.gen) S.stats.spellRight += 1; if (p.graph && first) S.stats.graphFirst += 1;
         S.stats.run = first ? S.stats.run + 1 : 0; S.stats.bestRun = Math.max(S.stats.bestRun, S.stats.run);
-        noteRight(room.id, p.id, first); SFX.right(); if (first) confetti(18);
+        noteRight(room.id, p.id, first); SFX.right(); if (first) confetti(18); if (qc) setTimeout(() => gainCoins(qc, "", document.querySelector("#stAns .choice.right, #stAns")), 50);
       } else {
         S.stats.run = 0; noteMistake(room.id, p.id); SFX.wrong(); if (!ST.wrongIds.includes(p.id)) ST.wrongIds.push(p.id);
         if (!retry) { ST.queue.push({ p, retry: true }); ST.retried++; }
@@ -79,7 +79,7 @@ function whyCheck(ST) {
     $app.querySelectorAll("[data-w]").forEach(b => b.onclick = () => {
       const ok = b.dataset.w === p.id;
       $app.querySelectorAll("[data-w]").forEach(x => { x.disabled = true; if (x.dataset.w === p.id) x.classList.add("right"); });
-      if (ok) { ST.why.right++; S.coins += 5; SFX.right(); } else { b.classList.add("wrong"); SFX.wrong(); noteMistake(room.id, p.id); }
+      if (ok) { ST.why.right++; gainCoins(5, "", b); SFX.right(); } else { b.classList.add("wrong"); SFX.wrong(); noteMistake(room.id, p.id); }
       save();
       document.getElementById("whyFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("usagi", "Yes! You really understand it! +5 🌰 🐰", "happy") : say("chiikawa", "Uu... the answer was right but the reason was tricky. It's in your 📕 Mistake Notebook now, so we can practise it. 🌱", "cry")}
         <div class="row"><button class="btn big" id="whyNext">${i + 1 < qs.length ? "Next →" : "See results 🎉"}</button></div></div>`;
@@ -98,11 +98,11 @@ function finishStudy(ST) {
   S.room_stars[room.id] = Math.max(S.room_stars[room.id] || 0, stars);
   if (!first) S.stats.replays += 1;
   const revise = !first && S.last_revise_day !== today(); if (revise) S.last_revise_day = today();
-  const earned = withStreak(first ? (room.boss ? 25 : 15) : revise ? 20 : 5); S.coins += earned;
+  const earned = withStreak(first ? (room.boss ? 50 : 30) : revise ? 25 : 10); S.coins += earned;
   const caps = first ? (room.boss ? 2 : 1) : Math.random() < .4 ? 1 : 0; S.coll.pending += caps;
   S.stats.studyClears = (S.stats.studyClears || 0) + 1;
   if (new Date().getHours() >= 21) S.stats.night += 1;
-  const gotSick = maybeGetSick(.12);
+  const gotSick = maybeGetSick(.08);
   S.room_run[room.id] = freshRun(); S.room_progress[room.id] = [];
   const ni = nextRoomIndex(); S.current_room = ni === -1 ? room.id : ROOMS[ni].id; const nxt = ni === -1 ? null : ROOMS[ni];
   recomputeMastery(); save(true); SFX.fanfare(); confetti(topicDone ? 240 : 150);
