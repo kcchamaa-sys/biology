@@ -19,9 +19,21 @@ const isGraphSvg = s => /^g[A-Z]/.test(s) || /Graph$/.test(s);
 const INVEST_RE = /\b(plan(s|ned|ning)?|fair test\w*|variables?|repeat(s|ed|ing)?|replicates?|conclu(sion|sions|de|ded|des)|evaluat\w*|control (group|experiment|set-?up|tube)|investigat\w*)\b/i;
 const INVEST_WEAK_RE = /\b(experiment\w*|hypothes\w*|reliab\w*|valid\w*|predict\w*|measure\w*)\b/i;
 const DATA_WORDS_RE = /\b(table|results?|data|readings?|per ?cent|rate of)\b|\d+\s?%/i;
+// Hand-set skills for questions the heuristic got wrong, keyed like saved progress (`room:qN`), so ids never change.
+const SKILL_SET = {
+  // experiment method / controls / reliability -> Investigate
+  "t3s2:q12": "invest", "t5s3:q18": "invest", "t6s3:q10": "invest", "t6s6:q1": "invest", "t6s6:q5": "invest", "t6s6:q17": "invest",
+  "t6s6:q19": "invest", "t7s3:q3": "invest", "t7s3:q6": "invest", "t7s3:q18": "invest", "t7s3:q19": "invest", "t12s2:q6": "invest",
+  "t12s2:q9": "invest", "t12s2:q17": "invest", "t15s3:q2": "invest", "t16s3:q13": "invest", "t16s3:q18": "invest",
+  // numbers given in the stem -> Data
+  "t17s2:q12": "data", "t19s3:q19": "data",
+  // "table" with no numbers is really a comparison -> Concepts
+  "t4s3:q13": "concept", "t16s3:q14": "concept", "t17s1:q7": "concept"
+};
 // Returns { skill, unsure } where unsure is a short reason when the heuristic could reasonably go another way.
 function skillOf(p) {
   if (p.skill && SKILL_IDS.includes(p.skill)) return { skill: p.skill, unsure: null };
+  if (SKILL_SET[`${p.rid}:${p.id}`]) return { skill: SKILL_SET[`${p.rid}:${p.id}`], unsure: null };
   if (p.gen === "spell" || p.gen === "spellmc" || p.type === "spell") return { skill: "word", unsure: null };
   const q = p.q || "", inv = INVEST_RE.test(q);
   if ((p.svg && isGraphSvg(p.svg)) || p.graph) return { skill: "data", unsure: inv ? "graph + investigation wording" : null };

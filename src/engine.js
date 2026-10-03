@@ -37,6 +37,8 @@ function buildPools() {
       if (/^[a-z]+$/.test(t) && t.length >= 6) { const bad = misspell(t); if (bad.length === 3) r.pool.push({ id: "m" + j, b: 1, type: "mc", gen: "spellmc", fix: false, q: `Which spelling is correct? (${m})`, choices: [t, ...bad], answer: 0, hint: "Say it slowly, syllable by syllable.", explain: `The correct spelling is “${t}”.` }); }
     });
     r.pool.forEach(p => { p.rid = r.id; p.skill = skillOf(p).skill; });
+    // Real questions per skill (word = distinct terms, since a term's spell + spellmc pair counts once)
+    r.skillN = Object.fromEntries(SKILL_IDS.map(k => [k, k === "word" ? new Set(r.pool.filter(p => p.gen).map(p => p.id.slice(1))).size : r.pool.filter(p => p.skill === k).length]));
   });
 }
 buildPools();
@@ -1057,31 +1059,34 @@ let R = null, timerId = null, moodTimer = null;
 const masteredIn = r => r.pool.filter(p => S.mastered_puzzles.includes(`${r.id}:${p.id}`)).length;
 /* Each lock needs 3 questions in a row and has ONE skill strand (SKILLS in skills.js):
    Words, Concepts, See it, Data, Investigate. Questions climb Bloom's levels inside a lock, spelling only
-   appears in lock 1, and recently seen questions are skipped when possible. A strand that runs short borrows
-   from its nearest strand (SKILL_NEAR) and the gap is recorded in SKILL_GAPS for the teacher. */
+   appears in lock 1 (never the same term twice), and recently seen questions are skipped when possible.
+   Pass 1 fills every lock from its own strand; pass 2 fills what is left from the nearest strand (SKILL_NEAR),
+   so a short lock never takes questions another lock needs. Gaps are recorded in SKILL_GAPS. */
 const LOCK_Q = 3;
 const LOCK_SKILLS = SKILL_IDS;
 const LOCK_BANDS = [[1, 3], [2, 4], [3, 6]];
 const SKILL_GAPS = {};
+const termOf = p => p.gen ? p.id.slice(1) : null;   // spell "s7" and spellmc "m7" test the same term
 function pickRun(room) {
-  const seen = S.seen[room.id] || [], chosen = [], gaps = [];
+  const seen = S.seen[room.id] || [], locks = LOCK_SKILLS.map(() => []), used = new Set(), gaps = [];
+  const ok = (li, p) => !used.has(p.id) && (p.gen ? li === 0 && !locks[0].some(x => termOf(x) === termOf(p)) : true);
+  const take = (li, c) => {
+    const [lo, hi] = LOCK_BANDS[locks[li].length]; let band = c.filter(p => p.b >= lo && p.b <= hi); if (!band.length) band = c;
+    const fresh = band.filter(p => !seen.includes(p.id)), q = pick(fresh.length ? fresh : band);
+    locks[li].push(q); used.add(q.id); return q;
+  };
   LOCK_SKILLS.forEach((sk, li) => {
-    const lock = [];
-    const ok = p => !chosen.includes(p.id) && !lock.includes(p) && (li === 0 || !p.gen);
-    LOCK_BANDS.forEach(([lo, hi]) => {
-      let q = null;
-      for (const s of [sk, ...SKILL_NEAR[sk]]) {
-        const all = room.pool.filter(p => ok(p) && p.skill === s); if (!all.length) continue;
-        let c = all.filter(p => p.b >= lo && p.b <= hi); if (!c.length) c = all;
-        const fresh = c.filter(p => !seen.includes(p.id)); q = pick(fresh.length ? fresh : c);
-        if (s !== sk) gaps.push({ lock: li, want: sk, got: s });
-        break;
-      }
-      if (!q) { const c = room.pool.filter(p => ok(p)); q = pick(c.length ? c : room.pool.filter(p => !p.gen)); gaps.push({ lock: li, want: sk, got: q.skill }); }
-      lock.push(q); chosen.push(q.id);
-    });
-    lock.sort((a, b) => a.b - b.b).forEach((q, n) => { chosen[li * LOCK_Q + n] = q.id; });
+    while (locks[li].length < LOCK_Q) { const c = room.pool.filter(p => ok(li, p) && p.skill === sk); if (!c.length) break; take(li, c); }
   });
+  LOCK_SKILLS.forEach((sk, li) => {
+    while (locks[li].length < LOCK_Q) {
+      let q = null;
+      for (const s of SKILL_NEAR[sk]) { const c = room.pool.filter(p => ok(li, p) && p.skill === s); if (c.length) { q = take(li, c); break; } }
+      if (!q) { let c = room.pool.filter(p => ok(li, p)); if (!c.length) c = room.pool.filter(p => !p.gen); q = take(li, c); }
+      gaps.push({ lock: li, want: sk, got: q.skill });
+    }
+  });
+  const chosen = locks.flatMap(l => l.sort((a, b) => a.b - b.b).map(q => q.id));
   SKILL_GAPS[room.id] = gaps;
   S.seen[room.id] = seen.concat(chosen).slice(-45);
   return chosen;
@@ -1090,8 +1095,9 @@ const runQs = room => { const ids = S.room_run[room.id].qids; return [0, 1, 2, 3
 const stepOf = i => ((S.room_run[R.room.id].steps || {})[i]) || 0;
 const curQ = i => R.qs[i][Math.min(LOCK_Q - 1, stepOf(i))];
 const akey = i => `${i}_${stepOf(i)}`;
-// Themed strand label for lock i (hidden for runs saved before strands existed)
-const lockSkill = i => S.room_run[R.room.id].sk ? SKILLS[i] : null;
+// Themed strand label for lock i (hidden for runs saved before strands existed,
+// and for strands the stage has fewer than 3 real questions of: those locks show no label and no "stand-in" tag)
+const lockSkill = i => S.room_run[R.room.id].sk && (R.room.skillN || {})[SKILLS[i].id] >= LOCK_Q ? SKILLS[i] : null;
 const skillTag = (i, cls = "") => { const k = lockSkill(i); return k ? `<span class="sktag sk-${k.id} ${cls}" title="${esc(k.tip)}">${k.icon} ${esc(k.name)}</span>` : ""; };
 function stopTimer() { if (timerId) clearInterval(timerId); timerId = null; }
 
@@ -1465,7 +1471,7 @@ function miss(box) {
 /* Lock slip: step back one notch and swap in a fresh question of the same strand and a similar level for that step. */
 function slipLock(i) {
   const run = S.room_run[R.room.id], s = stepOf(i) - 1, old = R.qs[i][s], used = R.qs.flat().map(q => q.id);
-  const okQ = q => !used.includes(q.id) && (i === 0 || !q.gen);
+  const okQ = q => !used.includes(q.id) && (q.gen ? i === 0 && !R.qs[i].some(x => termOf(x) === termOf(q)) : true);
   let c = R.room.pool.filter(q => okQ(q) && q.skill === old.skill && Math.abs(q.b - old.b) <= 1);
   if (!c.length) c = R.room.pool.filter(q => okQ(q) && q.skill === old.skill);
   if (!c.length) c = R.room.pool.filter(q => !used.includes(q.id) && !q.gen && Math.abs(q.b - old.b) <= 1);
