@@ -43,6 +43,15 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 
 ## Cross-project log (newest first)
 
+- 2026-10-02 (s1science): **Fog battle 2.0** for the Nobel Quest boss (`nqbattle.js` + `nqextra.js` in the s1 build), reusable for any quiz boss.
+  - Correct answers earn Knowledge Points, spent on Quick Strike / Mend / Heavy Blast.
+  - Pre-battle prep: pal stance (Striker / Protector / Scholar) plus 2 chapter-reward items equipped as functional gear.
+  - Phase 2 at half HP: Fog Shield broken only by "Shield Breaker" science questions, plus a countdown.
+  - The boss mutates based on the task the student leaves for last; the first task completed sets an opening bonus.
+  - Story dates glow if the Timeline was done first.
+  - Question pool per chapter is now 90–110: hand-written + linked textbook section + generated date / order / word / true-false items with fresh distractors and seen-question down-weighting.
+  - Also new in s1: trading-card trophies 3.0 (two-pal lab-incident scenes baked to cached images for smooth scrolling).
+
 - 2026-10-02 (biology): **Chestnut economy fix** (per-answer rewards via one `gainCoins()` helper that refreshes the counter and flies a "+N" into it; stage rewards ×2). **Escape 2.0** in `src/escape2.js`: hidden specimens (discovery) → Bio-Machine term↔function wiring (process) → door needs code + power. **UI 3.0** override block at the end of `src/head.html` (soft tokens, glossy primary buttons, ☰ menu top bar, glowing active tab). Pal art: radial body gradient + clipped sheen (`bodyShine`), plum line colour, larger multi-highlight eyes. Gotcha: generic rules like `.x svg { width }` also hit the emoji icons; `.ic` sizes are now `!important`.
 
 - 2026-10-02 (biology): Renamed to **Biology Study Pals**. Ported the s1science **Science Pals** system as Study Pals (`src/pals.js`): 19 animal pals reused + 8 new biology pals, energy/happiness/XP, moods, 3 evolution stages, perks, rarity auras, food with nutrition cards and sugar crash, Term Match play, featured-pal advert. The active pal *is* the main character (it replaces the `chiikawa` char via getters, so dialogue and outfits follow it). New reusable **emoji → icon swapper** (`src/icons.js`): ~250 original 2-tone icons plus a MutationObserver that converts emoji in any rendered text (skips SVG/option text; only rewrites text that contains a mapped emoji, to avoid observer loops).
