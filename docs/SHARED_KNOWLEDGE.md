@@ -87,3 +87,5 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 - 2026-10-02 (biology): Ported from s1science: Google class sign-in with **guest mode** (`src/auth.js`, `server/Code.gs`, tabs `Biology Records` / `Biology Progress`, reuses the s1 Users tab and Client ID); study-day streak with Streak Freezes (3, +1/month, 150 to buy) and a streak-risk card; daily mission aimed at the weakest topic; health tips by time of day + late-night rest pop-up; guess alert + "Why?" check after study series; clay buttons, trading-card trophies with progressive reveal, gift-box ceremony for epic/legendary pets (`src/daily.js`, `src/head.html`). The old anonymous `leaderboard/` was removed.
 
 - 2026-10-02: Multi-repo setup created; shared knowledge hub added.
+
+- 2026-10-03 (biology): Class sign-in switched on for S4–S6 Biology. `BIO_CONFIG.API_URL` in `src/auth.js` now points at the deployed Apps Script web app (Users tab holds the Biology students and 2 teachers; records go to `Biology Records` / `Biology Progress`).
