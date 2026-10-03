@@ -268,6 +268,7 @@ const ICN = (() => {
     f_cool: face("y", "shades", "smile"), f_persevere: face("w", "squeeze", "frown"), f_nausea: face("#C8F0A0", "line", "wave"), f_exhale: face("w", "line", "tiny", L("M20 21 Q25 20 28 22 M21 24 Q25 24 27 26", "s", 1.6)),
     f_starry: face("y", "star", "open"), f_happy: face("w", "arc", "smile"), f_think: face("y", "dot", "flat", P("M20 26 C22 22 26 23 26 26 C26 29 22 30 20 28Z", "f")), f_sleepy: face("w", "line", "tiny", drop(23, 17, .45, "a"))
   });
+  Object.defineProperty(I, "__h", { value: { P, C, E, R, f, fc, fe, fr, L, H, star, spark, col }, enumerable: false });
   return I;
 })();
 const EMOJI_ICON = {

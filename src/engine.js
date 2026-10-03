@@ -88,7 +88,7 @@ function normalise(obj) {
   s.room_progress = Object.assign({}, s.room_progress); s.room_stars = Object.assign({}, s.room_stars); s.room_timer = Object.assign({}, s.room_timer);
   s.mastered_puzzles = [...new Set(s.mastered_puzzles || [])];
   s.mistakes = Object.assign({}, s.mistakes);
-  s.coll = Object.assign({ owned: {}, pending: 0, pity: 0 }, s.coll); s.coll.owned = Object.assign({}, s.coll.owned);
+  s.coll = Object.assign({ owned: {}, pending: 0, pity: 0, pityL: 0 }, s.coll); s.coll.owned = Object.assign({}, s.coll.owned); migrateCards(s.coll);
   s.pets = Object.assign({}, s.pets);
   s.dict = Object.assign({ missed: {}, best: 0 }, s.dict); s.dict.missed = Object.assign({}, s.dict.missed);
   s.equip = Object.assign({ hat: null, hair: null, face: null, outfit: null, ribbon: null, hand: null, frame: null }, s.equip); s.power = Object.assign({ torch: 0, crystal: 0, guard: 0 }, s.power);
@@ -289,7 +289,6 @@ const ICONS = {
 const topicsCleared = () => TOPICS.filter((_, ti) => stagesDone(ti) === topicRooms(ti).length).length;
 const partsCleared = () => PARTS.filter((_, pi) => TOPICS.every((T, ti) => T.p !== pi || stagesDone(ti) === topicRooms(ti).length)).length;
 const bossesBeaten = () => ROOMS.filter(r => r.boss && S.completed_rooms.includes(r.id)).length;
-const collOwned = rare => COLLECTIBLES.filter(c => (rare == null || c.rare === rare) && (S.coll.owned[c.id] || 0) > 0).length;
 const TROPHY_CATS = [["habit", "🔥 Daily habits"], ["adventure", "🗺️ Adventure"], ["brain", "🧠 Brain power"], ["fun", "🎀 Fun & style"]];
 const TROPHIES = [
   { id: "week", cat: "habit", name: "Week Warrior", rar: "bronze", who: "chiikawa", desc: "Play 7 days in a row", prog: () => [S.longest_streak, 7] },
@@ -316,8 +315,8 @@ const TROPHIES = [
   { id: "spooky", cat: "fun", name: "Spooky Survivor", rar: "silver", who: "chiikawa", desc: "Survive 20 random incidents", prog: () => [S.stats.incidents, 20] },
   { id: "fashion", cat: "fun", name: "Fashion Icon", rar: "silver", who: "momonga", desc: "Own 8 outfits from Koma's shop", prog: () => [S.owned.length, 8] },
   { id: "rush2", cat: "fun", name: "Lightning Brain", rar: "gold", who: "usagi", desc: "Score 300 points in one Cell Rush", prog: () => [S.rush.best, 300] },
-  { id: "coll", cat: "fun", name: "Collector", rar: "gold", who: "shisa", desc: "Collect 15 different collectibles", prog: () => [collOwned(), 15] },
-  { id: "rare", cat: "fun", name: "Rare Hunter", rar: "legend", who: "chiikawa", desc: "Collect all 5 rare collectibles", prog: () => [collOwned(true), 5] },
+  { id: "coll", cat: "fun", name: "Collector", rar: "gold", who: "shisa", desc: "Collect 20 different biology cards", prog: () => [collOwned(), 20] },
+  { id: "rare", cat: "fun", name: "Rare Hunter", rar: "legend", who: "chiikawa", desc: "Collect 12 cards that are Rare or better", prog: () => [collOwned(true), 12] },
   { id: "dict", cat: "brain", name: "Dictation Star", rar: "gold", who: "hachiware", desc: "Get 10 perfect Word Dictation rounds", prog: () => [S.stats.dictPerfect, 10] },
   { id: "doctor", cat: "fun", name: "Little Doctor", rar: "silver", who: "shisa", desc: "Cure your Study Pal 5 times with the right treatment", prog: () => [S.stats.cured, 5] },
   { id: "petpal", cat: "adventure", name: "Pet Pal", rar: "gold", who: "momonga", desc: "Adopt 10 pets", prog: () => [Object.keys(S.pets).length, 10] },
@@ -386,107 +385,6 @@ function cabinetHtml(full = true) {
     ${TROPHY_CATS.map(([c, label]) => `<h3 class="shelf-title">${label}</h3><div class="shelf wood">${TROPHIES.filter(t => t.cat === c).map(trophyCard).join("")}</div>`).join("")}`;
 }
 function openCabinet() { openModal(cabinetHtml(true), { wide: true }); }
-
-/* ============================================================
-   6b2. Collectibles: 20 capsule toys (15 common, 5 rare). Earn 🎁 capsules by playing; open them to collect.
-   ============================================================ */
-const COLL_ART = {
-  photocard: `<svg viewBox="0 0 80 100" aria-hidden="true"><defs><linearGradient id="holoA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB7C5"/><stop offset=".3" stop-color="#FDFFB6"/><stop offset=".55" stop-color="#B9F3C9"/><stop offset=".8" stop-color="#A0C4FF"/><stop offset="1" stop-color="#C9C3F0"/></linearGradient></defs>
-    <rect x="6" y="4" width="68" height="92" rx="10" fill="url(#holoA)" stroke="${INK}" stroke-width="3"/><rect x="13" y="12" width="54" height="56" rx="6" fill="#FFF1E6" stroke="${INK}" stroke-width="2"/>
-    <g transform="rotate(-12 40 42)"><ellipse cx="40" cy="42" rx="20" ry="11" fill="#F9C9A6" stroke="${INK}" stroke-width="2.2"/><path d="M24 42 h5 v-6 h5 v12 h5 v-12 h5 v12 h5 v-6 h6" fill="none" stroke="${INK}" stroke-width="1.8"/></g>
-    <circle cx="33" cy="40" r="1.8" fill="${INK}"/><circle cx="46" cy="38" r="1.8" fill="${INK}"/><path d="M20 20 l3 5 5 1 -5 1 -3 5 -1 -5 -5 -1 5 -1z" fill="#fff"/>
-    <text x="40" y="80" text-anchor="middle" font-size="7.5" font-weight="800" fill="${INK}">POWERHOUSE</text><text x="40" y="89" text-anchor="middle" font-size="7.5" font-weight="800" fill="${INK}">ERA ✦</text></svg>`,
-  blindbox: `<svg viewBox="0 0 80 100" aria-hidden="true"><rect x="10" y="50" width="60" height="44" rx="6" fill="#2B2433" stroke="${INK}" stroke-width="3"/><path d="M10 50 l8 -10 h44 l8 10" fill="#3E3350" stroke="${INK}" stroke-width="3"/>
-    <text x="40" y="78" text-anchor="middle" font-size="9" font-weight="800" fill="#FDD66B">SECRET</text><text x="40" y="89" text-anchor="middle" font-size="6.5" fill="#C9A0FF">1 / 144</text>
-    <g transform="translate(20 4) scale(.62)"><circle cx="17" cy="17" r="7" fill="#3A3145" stroke="${INK}" stroke-width="2.4"/><circle cx="47" cy="17" r="7" fill="#3A3145" stroke="${INK}" stroke-width="2.4"/><ellipse cx="32" cy="37" rx="25" ry="21" fill="#3A3145" stroke="${INK}" stroke-width="2.4"/><ellipse cx="24" cy="36" rx="3" ry="3.6" fill="#FDD66B"/><ellipse cx="40" cy="36" rx="3" ry="3.6" fill="#FDD66B"/><ellipse cx="15" cy="43" rx="5" ry="3" fill="#C9A0FF"/><ellipse cx="49" cy="43" rx="5" ry="3" fill="#C9A0FF"/><path d="M52 8 a8 8 0 1 0 6 10 a6 6 0 1 1 -6 -10z" fill="#FDD66B"/></g></svg>`,
-  aura: `<svg viewBox="0 0 80 100" aria-hidden="true"><circle cx="40" cy="58" r="34" fill="rgba(201,160,255,.35)"/><circle cx="40" cy="58" r="26" fill="rgba(160,196,255,.35)"/><path d="M40 6 v18" stroke="${INK}" stroke-width="3"/><circle cx="40" cy="8" r="5" fill="none" stroke="${INK}" stroke-width="3"/>
-    <circle cx="40" cy="56" r="22" fill="#FFFDF0" stroke="${INK}" stroke-width="3"/><circle cx="28" cy="38" r="6" fill="#FFFDF0" stroke="${INK}" stroke-width="2.4"/><circle cx="52" cy="38" r="6" fill="#FFFDF0" stroke="${INK}" stroke-width="2.4"/>
-    <path d="M31 54 l3 -3 3 3 M43 54 l3 -3 3 3" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/><path d="M36 62 q4 4 8 0" fill="none" stroke="${INK}" stroke-width="2"/><ellipse cx="28" cy="60" rx="4" ry="2.4" fill="#FFB7C5"/><ellipse cx="52" cy="60" rx="4" ry="2.4" fill="#FFB7C5"/>
-    <text x="40" y="94" text-anchor="middle" font-size="10" font-weight="800" fill="#6B4E8C">+1000 ✦</text></svg>`,
-  matcha: `<svg viewBox="0 0 80 100" aria-hidden="true"><path d="M18 30 H62 L56 92 H24 Z" fill="rgba(255,255,255,.7)" stroke="${INK}" stroke-width="3"/><path d="M20 52 H60 L56 90 H24Z" fill="#9CCB6B"/><path d="M19 42 H61 L60 52 H20Z" fill="#F4F0E8"/>
-    ${[[32, 70], [46, 76], [38, 84]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="6" ry="3.5" fill="#6BBF5F" stroke="${INK}" stroke-width="1.4"/>`).join("")}<rect x="14" y="24" width="52" height="8" rx="3" fill="#FFFDF0" stroke="${INK}" stroke-width="2.4"/><path d="M48 24 L56 4" stroke="#FFB7C5" stroke-width="5" stroke-linecap="round"/>
-    <path d="M40 60 q-8 -6 -4 -12 q6 -2 4 12 q-2 -14 4 -12 q4 6 -4 12" fill="#FFFDF0" opacity=".8"/></svg>`,
-  flip: `<svg viewBox="0 0 80 100" aria-hidden="true"><rect x="22" y="6" width="36" height="42" rx="8" fill="#FFB7C5" stroke="${INK}" stroke-width="3"/><rect x="27" y="11" width="26" height="26" rx="4" fill="#D3E4FF" stroke="${INK}" stroke-width="2"/><path d="M40 31 C34 27 32 24 32 21.5 C32 19 34 18 36 18 C38 18 39.5 19.5 40 21 C40.5 19.5 42 18 44 18 C46 18 48 19 48 21.5 C48 24 46 27 40 31Z" fill="#FF86D0"/>
-    <rect x="22" y="50" width="36" height="42" rx="8" fill="#FFB7C5" stroke="${INK}" stroke-width="3"/>${[0, 1, 2].map(r => [0, 1, 2].map(c => `<rect x="${28 + c * 9}" y="${58 + r * 9}" width="6" height="5" rx="2" fill="#FFFDF0" stroke="${INK}" stroke-width="1"/>`).join("")).join("")}
-    <path d="M58 70 q14 4 12 16" fill="none" stroke="${INK}" stroke-width="1.6"/><path d="M66 84 q4 4 0 8 q-4 4 0 8 M72 84 q-4 4 0 8 q4 4 0 8" fill="none" stroke="#5B8FE0" stroke-width="2"/>${[[16, 10], [64, 44], [12, 60]].map(([x, y]) => `<path d="M${x} ${y - 5} l1.5 3.5 3.5 1.5 -3.5 1.5 -1.5 3.5 -1.5 -3.5 -3.5 -1.5 3.5 -1.5z" fill="#FDD66B"/>`).join("")}</svg>`
-};
-const COLLECTIBLES = [
-  { id: "mochi", e: "🍡", name: "Mitochondria Mochi", desc: "The powerhouse of the cell, but squishy." },
-  { id: "onigiri", e: "🍙", name: "Chloroplast Onigiri", desc: "Packed with green goodness and sunshine." },
-  { id: "boba", e: "🧋", name: "Ribosome Boba", desc: "Every pearl is a tiny protein factory." },
-  { id: "dango", e: "🔑", name: "Enzyme Key Charm", desc: "Fits exactly one lock. Very specific." },
-  { id: "donut", e: "🍩", name: "Red Blood Cell Donut", desc: "Biconcave, no nucleus, extra cute." },
-  { id: "grapes", e: "🍇", name: "Alveoli Grapes", desc: "Huge surface area, tiny and juicy." },
-  { id: "villi", e: "🧸", name: "Villi Plushie", desc: "Soft, finger-shaped and absorbent." },
-  { id: "virus", e: "🦠", name: "Virus Squishy", desc: "Harmless. Probably. Wash your hands!" },
-  { id: "jelly", e: "🪼", name: "Amoeba Jelly", desc: "Changes shape whenever it wants." },
-  { id: "pollen", e: "🌼", name: "Pollen Puff", desc: "Sticky, spiky and ready to travel." },
-  { id: "peapod", e: "🫛", name: "Pea-Pod Pals", desc: "Round and wrinkled friends, Mendel-approved." },
-  { id: "dnastick", e: "🧬", name: "DNA Biscuit Stick", desc: "A–T, C–G, crunch!" },
-  { id: "heartkey", e: "💓", name: "Heartbeat Keychain", desc: "Ba-dum, ba-dum, double circulation." },
-  { id: "stomaclip", e: "🍃", name: "Stomata Hair Clip", desc: "Opens in the day, closes when it's dry." },
-  { id: "noodles", e: "🍜", name: "Neuron Noodles", desc: "Long, fast and full of impulses." },
-  { id: "photocard", rare: true, art: "photocard", name: "Powerhouse Era Holo Photocard", desc: "Holographic idol photocard of Mitochondria. It's in its powerhouse era. ✦" },
-  { id: "blindbox", rare: true, art: "blindbox", name: "Secret Blind-Box: Midnight Mochi", desc: "The 1-in-144 secret figure. Collectors everywhere are screaming." },
-  { id: "aura", rare: true, art: "aura", name: "Aura +1000 Bag Charm", desc: "Clip it on your bag for instant main-character energy." },
-  { id: "matcha", rare: true, art: "matcha", name: "Chloroplast Matcha Latte", desc: "Iced, aesthetic, and it's giving photosynthesis." },
-  { id: "flip", rare: true, art: "flip", name: "Y2K Flip-Phone DNA Charm", desc: "Sparkly retro flip phone with a double-helix strap. Y2K core." }
-];
-const RARE_CHANCE = .08, RARE_PITY = 12;
-function collArt(c) { return c.rare ? COLL_ART[c.art] : `<span class="cemoji" aria-hidden="true">${c.e}</span>`; }
-function collCard(c, own) {
-  return `<div class="coll ${c.rare ? "rare" : ""} ${own ? "own" : "missing"}" aria-label="${own ? esc(c.name) : "Not collected yet"}">
-    <div class="cart">${own ? collArt(c) : `<span class="cq">?</span>`}</div>
-    <b class="small">${own ? esc(c.name) : c.rare ? "??? Rare" : "???"}</b>
-    <span class="tag ${c.rare ? "rtag" : ""}">${c.rare ? "✨ Rare" : "Common"}</span>
-    ${own && own > 1 ? `<span class="small muted">×${own}</span>` : ""}</div>`;
-}
-function openAlbum() {
-  const n = collOwned(), nr = collOwned(true), cap = S.coll.pending;
-  const box = openModal(`<span class="kicker">🧸 Collection</span><h2>Capsule Collection</h2>
-    <div class="row" style="justify-content:space-between"><span class="pill">${n} / ${COLLECTIBLES.length} collected</span><span class="pill rpill">✨ ${nr} / 5 rare</span></div>
-    ${say("shisa", cap ? `You have <b>${cap}</b> capsule${cap > 1 ? "s" : ""} waiting! Open ${cap > 1 ? "them" : "it"}~ 🦁🎁` : "Earn 🎁 capsules by escaping stages, beating bosses, opening the daily chest, scoring 120+ in Cell Rush and unlocking trophies!", "happy")}
-    ${cap ? `<div class="row"><button class="btn big" id="alOpen">🎁 Open a capsule (${cap})</button></div>` : ""}
-    <h3>✨ Rare</h3><div class="collgrid">${COLLECTIBLES.filter(c => c.rare).map(c => collCard(c, S.coll.owned[c.id])).join("")}</div>
-    <h3>Common</h3><div class="collgrid">${COLLECTIBLES.filter(c => !c.rare).map(c => collCard(c, S.coll.owned[c.id])).join("")}</div>
-    <p class="small muted">Rare pulls are about 1 in 12, and you're guaranteed one within ${RARE_PITY} capsules. Duplicates turn into 🌰 5.</p>`, { wide: true });
-  const b = box.querySelector("#alOpen"); if (b) b.onclick = () => { SFX.tap(); openCapsule(true); };
-}
-function grantCapsule(n = 1, why = "") {
-  S.coll.pending += n; save(true);
-  if (why) toast(`🎁 +${n} capsule${n > 1 ? "s" : ""}: ${why}`);
-}
-function rollCollectible() {
-  const rareHit = S.coll.pity + 1 >= RARE_PITY || Math.random() < RARE_CHANCE;
-  const pool = COLLECTIBLES.filter(c => !!c.rare === rareHit), fresh = pool.filter(c => !S.coll.owned[c.id]);
-  const c = pick(fresh.length && Math.random() < .75 ? fresh : pool);
-  S.coll.pity = c.rare ? 0 : S.coll.pity + 1;
-  return c;
-}
-function openCapsule(fromAlbum) {
-  if (!(S.coll.pending > 0)) return;
-  const box = openModal(`<span class="kicker">🎁 Mystery capsule</span><h2>What's inside?</h2>
-    <div class="capsule" id="cap" aria-hidden="true"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="44" fill="#FFB7C5" stroke="${INK}" stroke-width="4"/><path d="M16 60 H104 A44 44 0 0 1 16 60Z" fill="#FFFDF0" stroke="${INK}" stroke-width="4"/><circle cx="60" cy="60" r="9" fill="#FDFFB6" stroke="${INK}" stroke-width="3"/><path d="M36 34 q10 -10 22 -10" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg></div>
-    ${say("chiikawa", "Uu... I'm so nervous... please be something cute! 🥺🙏", "brave")}
-    <div class="row" style="justify-content:center"><button class="btn big" id="capGo">Twist and open! 🔄</button></div>`, { closable: false });
-  box.querySelector("#capGo").onclick = () => {
-    SFX.click(); const cap = document.getElementById("cap"); cap.classList.add("shake"); box.querySelector("#capGo").disabled = true;
-    setTimeout(() => {
-      const c = rollCollectible(), dup = (S.coll.owned[c.id] || 0) > 0;
-      S.coll.owned[c.id] = (S.coll.owned[c.id] || 0) + 1; S.coll.pending -= 1; if (dup) S.coins += 5;
-      save(true); checkTrophies();
-      if (c.rare) { SFX.fanfare(); setTimeout(() => SFX.yaha(), 400); confetti(220); } else { SFX.item(); confetti(60); }
-      box.innerHTML = `<span class="kicker">${c.rare ? "✨ RARE PULL! ✨" : "🎁 Capsule opened"}</span><h2>${c.rare ? "No way... it's RARE!!" : dup ? "A friend you already have!" : "New collectible!"}</h2>
-        <div class="reveal ${c.rare ? "rare" : ""}">${collCard(c, 1)}</div>
-        <p style="text-align:center">${esc(c.desc)}</p>
-        ${c.rare ? say("usagi", "WAHOO!!! WOOOO!!! That's SO rare!!! 🐰✨", "sparkle") : dup ? say("kurimanju", "A duplicate... traded for 🌰 5. *sip* 🍵", "happy") : say("hachiware", "Cute! It's in your collection now. ✨", "happy", "hint")}
-        <div class="row" style="justify-content:center">${S.coll.pending ? `<button class="btn big" id="capMore">🎁 Open another (${S.coll.pending})</button>` : ""}<button class="btn yellow" id="capAlbum">🧸 See collection</button><button class="btn plain" id="capDone">Done</button></div>`;
-      const more = box.querySelector("#capMore"); if (more) more.onclick = () => { SFX.tap(); openCapsule(fromAlbum); };
-      box.querySelector("#capAlbum").onclick = () => { SFX.tap(); openAlbum(); };
-      box.querySelector("#capDone").onclick = () => { SFX.tap(); closeModal(); if (!R && !RU) renderMap(); };
-    }, reduced() ? 50 : 1100);
-  };
-}
 
 let trophyQueue = [];
 function checkTrophies() {

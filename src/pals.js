@@ -306,16 +306,17 @@ function palsHtml() {
   return `${palsSubnav("pals")}<div class="homegrid">${palPanelHtml()}
     <section class="card palcoll"><div class="collhead"><h2 style="margin:0">Collect every Study Pal!</h2><span class="pill">${own} / ${PALS.length}</span></div>
       <div class="tprog rainbow"><i style="width:${Math.round(100 * own / PALS.length)}%"></i></div>
-      <div class="palstrip" aria-hidden="true">${list.map(P => `<span class="${S.pals[P.id] ? "" : "sil"}">${palFig(P.id, "happy")}</span>`).join("")}</div>
+      <div class="palstrip" aria-hidden="true">${list.map(P => `<span class="${S.pals[P.id] || !palMystery(P) ? "" : "sil"}">${palFig(P.id, "happy")}</span>`).join("")}</div>
       <div class="palgrid">${list.map(P => palCard(P)).join("")}</div>
       <p class="small muted" style="margin:0">Only your <b>active</b> pal's perk works. Common, rare and epic pals: reach the goal, then adopt with 🌰. Legendary pals come by themselves after a very hard goal. Mythic pals can only be adopted with 🌰.</p></section></div>`;
 }
+const palMystery = P => !S.pals[P.id] && (P.rar === "legend" || P.rar === "myth");
 function palCard(P) {
   const got = !!S.pals[P.id], act = activePalId() === P.id, met = condMet(P), pc = Math.round(100 * condPct(P));
   const st = got ? S.pals[P.id] : null;
   return `<div class="palcard ${P.rar} ${got ? "own" : "locked"} ${act ? "active" : ""}">
-    <div class="ppic">${got ? palFig(P.id, act ? "sparkle" : "happy", { stage: st.stage }) : `<span class="sil">${palFig(P.id, "normal")}</span><span class="plock" aria-hidden="true">🔒</span>`}</div>
-    <b>${esc(P.name)}</b><span class="rchip2 small" style="background:${PAL_RAR[P.rar][1]};border-color:${PAL_RAR[P.rar][2]}">${PAL_RAR[P.rar][0]}</span>
+    <div class="ppic">${got ? palFig(P.id, act ? "sparkle" : "happy", { stage: st.stage }) : palMystery(P) ? `<span class="sil">${palFig(P.id, "normal")}</span><span class="plock" aria-hidden="true">🔒</span>` : `<span class="palprev">${palFig(P.id, "happy")}</span><span class="plock" aria-hidden="true">🔒</span>`}</div>
+    <b>${palMystery(P) ? "???" : esc(P.name)}</b><span class="rchip2 small" style="background:${PAL_RAR[P.rar][1]};border-color:${PAL_RAR[P.rar][2]}">${PAL_RAR[P.rar][0]}</span>
     <span class="small muted">${got ? `Lv ${palLevel(st.xp)} · ${STAGES[st.stage]}` : P.cond ? esc(P.cond[2]) : "Adopt with chestnuts"}</span>
     ${got ? (act ? `<span class="pill saved">⭐ Active</span>` : `<button class="btn plain sm" data-usepal="${P.id}">Make active</button>`)
       : P.rar === "legend" ? `<div class="tprog"><i style="width:${pc}%"></i></div><span class="small">${Math.min(palVal(P.cond[0]), P.cond[1])} / ${P.cond[1]}</span>`
@@ -325,9 +326,9 @@ function palCard(P) {
 }
 function openPalInfo(id) {
   const P = palById(id), got = !!S.pals[id];
-  openModal(`<span class="kicker">🐾 Study Pal</span><h2>${esc(P.name)}</h2><div class="petreveal ${P.rar === "myth" ? "epic" : P.rar}" style="width:150px;height:150px">${got ? palFig(id, "happy") : `<span class="sil">${palFig(id, "normal")}</span>`}</div>
-    <div class="row" style="justify-content:center">${palChips(P)}</div><p style="margin:0">${esc(P.desc)}</p>
-    <section class="jsec"><h3>🔬 Real biology</h3><p style="margin:0">${esc(P.fact)}</p></section>
+  openModal(`<span class="kicker">🐾 Study Pal</span><h2>${palMystery(P) ? "A mysterious pal..." : esc(P.name)}</h2><div class="petreveal ${P.rar === "myth" ? "epic" : P.rar}" style="width:150px;height:150px">${got || !palMystery(P) ? palFig(id, "happy") : `<span class="sil">${palFig(id, "normal")}</span>`}</div>
+    <div class="row" style="justify-content:center">${palChips(P)}</div>${palMystery(P) ? `<p style="margin:0" class="muted">Only the most dedicated students will meet this one. Reach the goal below to reveal who it is!</p>` : `<p style="margin:0">${esc(P.desc)}</p>
+    <section class="jsec"><h3>🔬 Real biology</h3><p style="margin:0">${esc(P.fact)}</p></section>`}
     <p class="small"><b>How to get:</b> ${P.cond ? esc(P.cond[2]) + (P.price ? `, then adopt for 🌰 ${P.price}` : " (arrives by itself)") : `Adopt for 🌰 ${P.price}`} · <b>Favourite food:</b> ${esc(FOODS.find(f => f.id === P.fav).name)} · <b>Evolves at</b> Lv ${EVO[P.rar][0][0]} and Lv ${EVO[P.rar][1][0]}</p>`);
 }
 function wirePals() {

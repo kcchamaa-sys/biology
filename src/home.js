@@ -75,7 +75,7 @@ function renderMap() {
 function homeHtml() {
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni], chestReady = S.last_chest_date !== today(), T = nr && TOPICS[nr.t];
   const mult = streakMult();
-  return `<div class="homegrid">
+  return `${capsuleAdHtml()}<div class="homegrid">
     <section class="card roomwrap">${roomCard(greeting(), S.completed_rooms.length ? "happy" : "normal")}
       <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" id="chest" ${chestReady ? "" : "disabled"}>${chestReady ? "🎁 Daily chest" : "🎁 Back tomorrow"}</button></div>
       ${healthTipHtml()}</section>
@@ -97,7 +97,7 @@ function homeHtml() {
     </div></div>`;
 }
 function wireHome() {
-  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured();
+  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured(); wireCapsuleAd();
   const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
   const c = document.getElementById("chest");
   if (S.last_chest_date !== today()) c.onclick = () => {
@@ -168,9 +168,9 @@ function rewardsHtml() {
   return `<div class="homegrid">
     <section class="card cream cabinet" id="cabinet">${cabinetHtml(false)}</section>
     <div class="homeside">
-      <section class="card coll-mode"><div class="row" style="justify-content:space-between"><h2>🧸 Capsules</h2><span class="pill">${collOwned()} / ${COLLECTIBLES.length} · ✨ ${collOwned(true)} / 5 rare</span></div>
-        <p class="small muted" style="margin:0">20 collectibles to find, including 5 rare ones.</p>
-        <div class="row">${S.coll.pending ? `<button class="btn pink" id="rwCap">🎁 Open capsule (${S.coll.pending})</button>` : ""}<button class="btn yellow" id="rwAlbum">🧸 See collection</button></div></section>
+      <section class="card coll-mode"><div class="row" style="justify-content:space-between"><h2>🃏 Biology cards</h2><span class="pill">${collOwned()} / ${CARD_N} · ✨ ${collOwned(true)} / ${CARD_N - collTotal("common")} rare+</span></div>
+        <p class="small muted" style="margin:0">${CARD_N} biology cards from Common to Mythic. Keep your 🔥 streak to earn capsules.</p>
+        <div class="row">${S.coll.pending ? `<button class="btn pink" id="rwCap">🎁 Open capsule (${S.coll.pending})</button>` : ""}<button class="btn yellow" id="rwAlbum">📚 See collection</button></div></section>
       <section class="card"><h2>🎒 Backpack</h2>
         <div class="bag">${S.chiikawa_badges.concat(S.inventory).map(b => `<span class="tag">${esc(b)}</span>`).join("") || `<span class="muted small">Empty. Escape a stage or open the daily chest!</span>`}</div></section>
     </div></div>`;

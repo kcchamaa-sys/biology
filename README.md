@@ -42,7 +42,7 @@ Every topic is open, so students can jump to the one their class is on (the map 
 - 🔊 **British pronunciation** (normal and 🐢 slow, Web Speech API) for every key term in the Study Journal and on spelling locks.
 - 🎧 **Word Dictation** mode: 10 words a round from any topic or from *My missed words*. Two modes: listen and spell, or read the meaning and spell. 2 tries per word, letter boxes, a hint, and a "so close!" nudge for near-misses. Words missed here or in spelling locks come back until spelled right twice. A perfect round gives a 🎁 capsule.
 - 💬 **Chat card** on the map: the characters share biology fun facts (many with Hong Kong examples) and personal encouragement (streak, mistakes to fix, next stage). It changes every 20 s; the same facts appear as 💡 *Did you know?* in the Journal.
-- 🔥 **Streak bonus:** chestnut rewards grow 5% per streak day, up to ×1.5.
+- 🔥 **Streak bonus:** chestnut rewards grow 5% per streak day, up to ×1.5. Streaks also earn capsules (see Biology Capsule Lab).
 
 ## 🔬 Simulation Lab (🔬 Lab tab in the bottom bar)
 
@@ -86,7 +86,7 @@ Students reported that chestnuts were too hard to get: a whole stage paid only 1
 
 ## ✨ Look and feel
 
-- **Pals:** soft 2.5D shading (light top-left, plum shadow, sheen and rim light), plum line art instead of dark brown, bigger sparkly eyes set a little lower, plush ears, a pink star hair clip and a floating sparkle buddy.
+- **Pals:** soft 2.5D shading (light top-left, plum shadow, sheen and rim light), plum line art instead of dark brown, bigger sparkly eyes set a little lower, plush ears, a pink star hair clip and a floating sparkle buddy. The eyes are the regular cute style (dark with two highlights); star eyes are no longer used.
 - **UI:** soft frosted panels without thick borders, one glossy primary button style (soft secondary buttons), a decluttered top bar (🔥 streak, big 🌰 counter, 🎁, and a ☰ menu for trophies, account, journal, save code, leaderboard, music and sound), a glowing pill behind the active bottom tab, and a full-bleed room where the pal pops out of the frame.
 - Checked at iPhone (390 px), iPad portrait (820 px) and landscape (1180 px), and desktop (1440 px): no sideways scrolling.
 
@@ -141,13 +141,16 @@ Mochi sometimes wakes up sick (30% on a new day) or catches something after a st
 
 Four shelves (Daily habits, Adventure, Brain power, Just for fun) as **trading cards**: a title bar with a rarity symbol (● bronze, ◆ silver, ★ gold, ✦ legendary), a lab-scene art window, the goal, then a date stamp or progress bar and the +30 🌰 reward. Card finishes: matte bronze, silver, embossed gold with a light sweep, and a rainbow legendary. Locked cards reveal step by step: under 25% a dark silhouette behind frosted glass with a padlock, 25–60% colours bleed through, 60–90% thin glass, 90%+ fully visible with a pulsing "Almost there!". The map shows the 4 closest to unlocking. Each trophy gives 🌰 30 and a 🎁 capsule.
 
-## 🧸 Capsule collection (20)
+## 🃏 Biology Capsule Lab (40 cards)
 
-Students earn 🎁 capsules (first escape = 1, boss = 2, sometimes on replays, daily chest, 120+ in Cell Rush, every trophy) and open them for collectibles:
+A big banner at the top of the 🏠 Home tab advertises the capsule machine (animated gashapon, capsule count, streak reward bar, mystery cards and rarity counters).
 
-- **15 common** biology-snack items (Mitochondria Mochi, Ribosome Boba, Villi Plushie…).
-- **5 ✨ rare** Gen-Z-style items with holographic cards: Powerhouse Era holo photocard, secret blind-box figure, Aura +1000 bag charm, Chloroplast matcha latte, Y2K flip-phone DNA charm.
-- About 1 in 12 pulls is rare, with a guaranteed rare within 12 capsules. Duplicates become 🌰 5.
+- **40 collectible trading cards**, each a real biology term, structure or concept with a short, precise description (e.g. *Mitochondrion*, *Haemoglobin*, *Krebs cycle*, *PCR*, *CRISPR-Cas9*, *Chinese pangolin*, *Endosymbiosis*).
+- **5 rarities:** Common 16 (matte bronze) · Rare 12 (silver holo, sweeping shine) · Epic 7 (embossed gold glow) · Legendary 3 (animated rainbow holo) · Mythic 2 (cosmic foil with a turning rainbow ring and twinkling stars). Locked cards are dark mystery foil; Legendary and Mythic stay fully hidden.
+- **Card layout** (like the S1 Science trophy cards): title bar with rarity symbol, illustration window, category and rarity, description, number and a collected stamp. Tap a card in the collection to read it; drag or tilt it for a 3D holo effect.
+- **Odds:** 58% Common, 27% Rare, 10% Epic, 4% Legendary, 1% Mythic. **Pity:** Epic or better is guaranteed every 10 capsules, Legendary or better every 40. Duplicates become 🌰 (5 / 10 / 25 / 60 / 120).
+- **Streaks feed the machine:** +1 capsule on every 3rd streak day, +2 on days 7, 14, 21, 30, 50, 75, 100, 150 and 200, and **streak luck** (+0.4% better odds per streak day, up to +8%). Other sources: stages, bosses, the daily chest, Cell Rush 120+, perfect dictation, daily missions, trophies.
+- Saves from the old 20-item collection are converted automatically (each old item became the matching biology card).
 
 ## Saving
 

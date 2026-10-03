@@ -42,7 +42,8 @@ function markStudied() {
   S.current_streak = gap === 1 && S.current_streak > 0 ? S.current_streak + 1 : 1;
   S.last_study_day = t; S.longest_streak = Math.max(S.longest_streak || 0, S.current_streak);
   S.study_days = S.study_days.filter(d => dayNum(t) - dayNum(d) < 14).concat(t);
-  const ms = STREAK_MILESTONES.includes(S.current_streak);
+  const ms = STREAK_MILESTONES.includes(S.current_streak), sc = streakCapsuleFor(S.current_streak);
+  if (sc) { S.coll.pending += sc; setTimeout(() => toast(`🎁 Streak reward: +${sc} capsule${sc > 1 ? "s" : ""} for day ${S.current_streak}!`), 3400); }
   setTimeout(() => streakPop(S.current_streak, ms), 900);
   return true;
 }

@@ -788,6 +788,8 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .palstrip { display: flex; flex-wrap: wrap; gap: 0; }
 .palstrip span { width: 34px; height: 34px; display: inline-block; } .palstrip svg:not(.ic) { width: 100%; height: 100%; overflow: visible; }
 .sil svg { filter: brightness(0) opacity(.28); }
+.palprev svg { filter: saturate(.85) brightness(1.02); }
+.palcard.locked .palprev { opacity: .92; }
 .palgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
 .palcard { position: relative; display: grid; justify-items: center; gap: 3px; text-align: center; background: #fff; border: var(--line); border-radius: 16px; padding: 8px 6px 10px; box-shadow: 0 3px 0 var(--ink); min-width: 0; }
 .palcard .ppic { position: relative; width: 92px; height: 86px; } .palcard .ppic svg:not(.ic) { width: 100%; height: 100%; overflow: visible; }
@@ -962,6 +964,85 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
 .selopt .tn { flex: 0 0 auto; width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: #F4EAF6; color: #7A4F8A; font-weight: 900; font-size: .85rem; }
 .selopt.on .tn { background: #fff; color: #C2407E; }
 .selopt .tick { margin-left: auto; flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; background: #58CC02; color: #fff; display: grid; place-items: center; font-size: .8rem; }
+
+/* ================= 🃏 Biology cards ================= */
+.cardgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; margin: 6px 0 10px; }
+.bcard { grid-template-columns: minmax(0, 1fr); --rx: 0deg; --ry: 0deg; position: relative; display: grid; gap: 5px; padding: 6px; border-radius: 16px; text-align: left; cursor: pointer; isolation: isolate; overflow: hidden; min-width: 0; transform: perspective(700px) rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .12s ease-out, box-shadow .2s; box-shadow: 0 6px 16px rgba(107,74,107,.16), inset 0 0 0 1.5px rgba(255,255,255,.55); }
+.bcard:active { transform: perspective(700px) scale(.98); }
+.bbar { display: flex; justify-content: space-between; align-items: center; gap: 4px; background: rgba(255,255,255,.9); border-radius: 10px; padding: 3px 8px; min-height: 26px; }
+.bn { font-weight: 900; font-size: .74rem; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
+.bsym { font-weight: 900; font-size: .9rem; flex: 0 0 auto; }
+.bart { position: relative; border-radius: 10px; aspect-ratio: 1 / .92; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 50% 35%, #fff 0, var(--c1) 48%, var(--c2) 100%); box-shadow: inset 0 0 0 2px rgba(255,255,255,.7), inset 0 -8px 16px rgba(107,74,107,.12); }
+.cardart { width: 78%; height: 86%; overflow: visible; filter: drop-shadow(0 3px 3px rgba(107,74,107,.25)); }
+.bcat { display: flex; justify-content: space-between; gap: 4px; font-size: .62rem; font-weight: 800; color: rgba(60,40,70,.75); padding: 0 2px; }
+.brar { text-transform: uppercase; letter-spacing: .06em; }
+.bdesc { background: rgba(255,255,255,.9); border-radius: 10px; padding: 7px 9px; font-size: .8rem; line-height: 1.4; font-weight: 600; color: var(--ink); margin: 0; }
+.bfoot { display: flex; justify-content: space-between; align-items: center; font-size: .62rem; font-weight: 800; color: rgba(60,40,70,.7); padding: 0 2px; }
+.bstamp { background: #fff; border-radius: 6px; padding: 0 6px; font-weight: 900; transform: rotate(-3deg); color: #46A302; }
+.bfoil { position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit; opacity: 0; }
+.bcard.own.r-common { background: linear-gradient(160deg, #F4CFA9, #DB9E70 60%, #F0C39B); }
+.bcard.own.r-rare { background: linear-gradient(160deg, #F6F9FD, #BAC7DC 50%, #F1F5FB); box-shadow: 0 6px 18px rgba(130,150,190,.35), inset 0 0 0 1.5px #fff; }
+.bcard.own.r-rare .bfoil, .bcard.own.r-epic .bfoil { opacity: 1; background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.75) 48%, rgba(190,225,255,.5) 52%, transparent 65%); background-size: 260% 100%; animation: foil 4.2s ease-in-out infinite; mix-blend-mode: soft-light; }
+.bcard.own.r-epic { background: linear-gradient(160deg, #FFF3AE, #F2C43E 55%, #FFE58F); box-shadow: 0 8px 22px rgba(240,180,30,.45), inset 0 0 0 2px #FFF6C8, inset 0 0 14px rgba(255,255,255,.7); }
+.bcard.own.r-legend { background: linear-gradient(120deg, #FFB7C5, #FDFFB6, #B9F3C9, #A0C4FF, #C9A0FF, #FFB7C5); background-size: 300% 300%; animation: holo 6s linear infinite; box-shadow: 0 8px 24px rgba(201,160,255,.6), 0 0 0 2px rgba(255,255,255,.8); }
+.bcard.own.r-legend .bfoil { opacity: 1; background: radial-gradient(circle at var(--sx, 30%) var(--sy, 20%), rgba(255,255,255,.65), transparent 45%); mix-blend-mode: overlay; }
+.bcard.own.r-myth { background: linear-gradient(160deg, #3A2480, #6A4BE0 50%, #231552); color: #fff; box-shadow: 0 10px 30px rgba(110,80,255,.55), 0 0 0 2px rgba(190,170,255,.8), 0 0 22px rgba(255,134,208,.5); }
+.bcard.own.r-myth .bfoil { opacity: 1; background: conic-gradient(from 0deg, rgba(255,75,75,.0), rgba(255,200,0,.35), rgba(88,204,2,.0), rgba(28,176,246,.35), rgba(206,130,255,.0), rgba(255,134,208,.35), rgba(255,75,75,0)); mix-blend-mode: screen; animation: spin 7s linear infinite; inset: -30%; border-radius: 50%; }
+.bcard.own.r-myth .bcat, .bcard.own.r-myth .bfoot { color: rgba(255,255,255,.85); }
+.bcard.own.r-myth .bsym { color: #A99BFF; } .bcard.own.r-legend .bsym { color: #C24C7B; } .bcard.own.r-epic .bsym { color: #C89200; } .bcard.own.r-rare .bsym { color: #6F7E96; } .bcard.own.r-common .bsym { color: #A8653A; }
+.bcard.own.r-myth .bart { background: radial-gradient(circle at 50% 40%, #6C5BD9 0, #2A1B63 60%, #140C33 100%); }
+.bart .gal { position: absolute; inset: 0; background-image: radial-gradient(1.4px 1.4px at 20% 30%, #fff, transparent), radial-gradient(1.2px 1.2px at 70% 20%, #fff, transparent), radial-gradient(1.6px 1.6px at 40% 75%, #FFD6F5, transparent), radial-gradient(1.2px 1.2px at 85% 65%, #fff, transparent), radial-gradient(1px 1px at 10% 80%, #CFE5FF, transparent); animation: twinkle 2.4s ease-in-out infinite; }
+.bart .sparkly { position: absolute; inset: 0; background-image: radial-gradient(2px 2px at 18% 25%, #fff, transparent), radial-gradient(2px 2px at 82% 30%, #FFF3B0, transparent), radial-gradient(2.4px 2.4px at 70% 80%, #fff, transparent); animation: twinkle 2s ease-in-out infinite; pointer-events: none; }
+.bcard.locked { background: linear-gradient(160deg, #3A3345, #2A2433); box-shadow: 0 4px 12px rgba(40,30,50,.35), inset 0 0 0 1.5px rgba(255,255,255,.08); }
+.bcard.locked .bbar { background: rgba(255,255,255,.12); } .bcard.locked .bn { color: rgba(255,255,255,.7); }
+.bcard.locked .bart { background: radial-gradient(circle at 50% 40%, #51485F, #2F2838); box-shadow: inset 0 0 0 2px rgba(255,255,255,.08); }
+.bcard.locked .bcat, .bcard.locked .bfoot, .bcard.locked .bsym { color: rgba(255,255,255,.5); }
+.bcard.locked .sil svg { filter: brightness(0) invert(.25) opacity(.9); } .bcard.locked .qm { position: absolute; font-size: 1.8rem; font-weight: 900; color: rgba(255,255,255,.55); text-shadow: 0 0 10px rgba(255,255,255,.35); }
+.bcard.locked.r-legend { box-shadow: 0 0 0 2px rgba(255,200,0,.45), 0 0 16px rgba(255,200,0,.35); } .bcard.locked.r-myth { box-shadow: 0 0 0 2px rgba(255,134,208,.55), 0 0 18px rgba(155,123,255,.5); }
+.bcard.full { width: min(268px, 100%); gap: 7px; padding: 8px; border-radius: 20px; cursor: grab; touch-action: pan-y; }
+.bcard.full .bn { font-size: 1rem; } .bcard.full .bbar { padding: 5px 10px; } .bcard.full .bcat, .bcard.full .bfoot { font-size: .72rem; } .bcard.full .bart { aspect-ratio: 1 / .85; }
+.reveal { display: grid; justify-items: center; margin: 4px auto; perspective: 900px; animation: cardin .8s cubic-bezier(.2, 1.3, .4, 1); }
+@keyframes cardin { from { transform: perspective(700px) rotateY(180deg) scale(.5); opacity: 0; } 60% { opacity: 1; } }
+@keyframes foil { 0%, 30% { background-position: 130% 0; } 70%, 100% { background-position: -30% 0; } }
+@keyframes holo { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+.reveal.r-legend { filter: drop-shadow(0 0 22px rgba(201,160,255,.8)); } .reveal.r-myth { filter: drop-shadow(0 0 26px rgba(130,100,255,.9)); } .reveal.r-epic { filter: drop-shadow(0 0 18px rgba(255,200,40,.7)); }
+.bcard:not(.full) .bcat { display: none; } .bcard:not(.full) .bfoot { justify-content: center; }
+@media (max-width: 520px) { .cardgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; } .bcard:not(.full) .bn { font-size: .66rem; } .bcard:not(.full) .bfoot .bno { font-size: .55rem; } }
+@media (prefers-reduced-motion: reduce) { .bcard, .bfoil, .bart .gal, .bart .sparkly, .reveal { animation: none !important; } }
+
+/* ================= 🌟 Home advert: Biology Capsule Lab ================= */
+.capad { position: relative; display: grid; gap: 14px; padding: 20px; border-radius: 30px; color: #fff; overflow: hidden; background: linear-gradient(135deg, #FF8FC4 0%, #B488FF 48%, #5EC2FF 100%); box-shadow: 0 18px 44px rgba(180,120,255,.45), inset 0 2px 0 rgba(255,255,255,.5); isolation: isolate; }
+.capad .adglow { position: absolute; inset: -20%; z-index: -1; background: radial-gradient(circle at 18% 30%, rgba(255,255,255,.5), transparent 32%), radial-gradient(circle at 85% 80%, rgba(255,240,150,.45), transparent 34%); animation: breathe 7s ease-in-out infinite; }
+.capad .adspark { position: absolute; width: 24px; height: 24px; z-index: -1; animation: twinkle 2.6s ease-in-out infinite; } .capad .adspark svg { width: 100%; height: 100%; }
+.adspark.s1 { left: 46%; top: 12px; } .adspark.s2 { right: 18px; top: 40%; animation-delay: .8s; } .adspark.s3 { left: 12px; bottom: 30%; animation-delay: 1.4s; }
+.admain { display: grid; grid-template-columns: minmax(120px, 190px) minmax(0, 1fr); gap: 16px; align-items: center; }
+.admach { position: relative; } .admach .machine { width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 10px 14px rgba(60,20,90,.3)); animation: machbob 3.4s ease-in-out infinite; }
+@keyframes machbob { 50% { transform: translateY(-5px) rotate(-1.5deg); } }
+.machine .mc { transform-box: fill-box; transform-origin: center; animation: mcjig 2.4s ease-in-out infinite; } .machine .m1 { animation-delay: -.4s; } .machine .m2 { animation-delay: -.9s; } .machine .m3 { animation-delay: -1.3s; } .machine .m4 { animation-delay: -1.7s; } .machine .m5 { animation-delay: -.2s; } .machine .m6 { animation-delay: -1s; }
+@keyframes mcjig { 50% { transform: translateY(-4px) rotate(12deg); } }
+.machine .crank { transform-origin: 82px 104px; animation: spin 5s linear infinite; }
+.adbadge { position: absolute; top: -4px; right: 4px; min-width: 34px; height: 34px; padding: 0 8px; border-radius: 999px; background: #FF4B4B; color: #fff; font-weight: 900; font-size: 1.1rem; display: grid; place-items: center; box-shadow: 0 4px 0 #C73030, 0 8px 16px rgba(255,75,75,.5); animation: pop 1s ease-in-out infinite alternate; }
+.adtext { display: grid; gap: 8px; justify-items: start; min-width: 0; }
+.adnew { background: #fff; color: #C2407E; font-weight: 900; font-size: .72rem; letter-spacing: .08em; padding: 3px 10px; border-radius: 999px; box-shadow: 0 3px 8px rgba(0,0,0,.12); }
+.adtext h2 { font-size: clamp(1.6rem, 5.5vw, 2.4rem); color: #fff; text-shadow: 0 3px 0 rgba(120,40,140,.35), 0 8px 18px rgba(80,20,120,.3); line-height: 1.05; padding: 0; }
+.adtext p { color: rgba(255,255,255,.95); font-weight: 700; font-size: .98rem; line-height: 1.4; margin: 0; text-shadow: 0 1px 2px rgba(80,20,120,.3); }
+.adgo { background: linear-gradient(180deg, #FFF4B8 0%, #FFE16B 50%, #FFC82E 100%) !important; color: #6B4500 !important; text-shadow: none !important; box-shadow: inset 0 2px 0 rgba(255,255,255,.8), inset 0 -3px 0 rgba(150,100,0,.16), 0 5px 0 #D99A00, 0 12px 22px rgba(217,154,0,.4) !important; animation: adpulse 2s ease-in-out infinite; }
+@keyframes adpulse { 50% { transform: scale(1.03); } }
+.adalbum { border: 0; background: rgba(255,255,255,.25); color: #fff; font-weight: 800; border-radius: 999px; padding: 6px 14px; min-height: 40px; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.5); backdrop-filter: blur(4px); }
+.adstreak { background: rgba(255,255,255,.2); border-radius: 20px; padding: 12px 14px; display: grid; gap: 6px; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.35); backdrop-filter: blur(6px); }
+.adstreak .tprog { background: rgba(255,255,255,.35); box-shadow: none; } .adstreak .tprog i { background: linear-gradient(180deg, #FFE680, #FFB300); }
+.adstreak .muted { color: rgba(255,255,255,.88); } .adsrow { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.adrow { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.adtease-row { display: flex; gap: 8px; } .adtease { width: 52px; height: 62px; border-radius: 12px; background: linear-gradient(160deg, #3A3345, #2A2433); display: grid; place-items: center; box-shadow: 0 0 0 2px rgba(255,255,255,.35), 0 6px 14px rgba(0,0,0,.2); }
+.adtease.r-legend { box-shadow: 0 0 0 2px #FFD84D, 0 0 14px rgba(255,216,77,.7); } .adtease.r-myth { box-shadow: 0 0 0 2px #FF86D0, 0 0 16px rgba(155,123,255,.9); }
+.adtease svg { width: 38px; height: 40px; } .adtease .sil svg { filter: brightness(0) invert(.28); } .adtease:not(.own)::after { content: "?"; position: absolute; font-weight: 900; font-size: 1.2rem; color: rgba(255,255,255,.7); } .adtease { position: relative; }
+.adrars { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; flex: 1 1 260px; min-width: 0; }
+.adrar { display: grid; justify-items: center; gap: 0; background: rgba(255,255,255,.22); border-radius: 14px; padding: 5px 2px; line-height: 1.2; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.3); }
+.adrar b { font-size: .95rem; } .adrar .small { font-size: .62rem; font-weight: 800; opacity: .95; } .adsym { font-weight: 900; }
+.adrar.r-common .adsym { color: #FFC391; } .adrar.r-rare .adsym { color: #E3ECFF; } .adrar.r-epic .adsym { color: #FFE680; } .adrar.r-legend .adsym { color: #FFD1F1; } .adrar.r-myth .adsym { color: #D8CCFF; }
+@media (max-width: 560px) { .capad { padding: 16px; border-radius: 26px; } .admain { grid-template-columns: 112px minmax(0, 1fr); gap: 12px; } .adtext p { font-size: .88rem; } .adtext h2 { font-size: 1.5rem; } .adrars { flex-basis: 100%; } .adtease-row { display: none; } .adbadge { min-width: 30px; height: 30px; font-size: 1rem; } }
+@media (min-width: 761px) { .capad { padding: 24px 28px; } .admain { grid-template-columns: 210px minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .capad .adglow, .admach .machine, .machine .mc, .machine .crank, .adbadge, .adgo, .capad .adspark { animation: none !important; } }
 </style>
 </head>
 <body>
@@ -996,9 +1077,8 @@ const BODY = "M100 62 C148 62 170 98 170 130 C170 164 140 178 100 178 C60 178 30
 const spark4 = (x, y, r, c) => `<path d="M${x} ${y - r} Q${x + r * .22} ${y - r * .22} ${x + r} ${y} Q${x + r * .22} ${y + r * .22} ${x} ${y + r} Q${x - r * .22} ${y + r * .22} ${x - r} ${y} Q${x - r * .22} ${y - r * .22} ${x} ${y - r}Z" fill="${c}"/>`;
 function eyes(m, o = {}) {
   const [x1, x2, y] = [80, 120, o.y || 116], big = o.big ? 1.25 : 1;
-  const dot = x => `<ellipse cx="${x}" cy="${y + 3}" rx="${8.8 * big}" ry="${10.6 * big}" fill="url(#eyeG)"/><ellipse cx="${x}" cy="${y + 9.5 * big}" rx="${5.4 * big}" ry="${2.6 * big}" fill="#C7A2E8" opacity=".8"/><circle cx="${x + 3 * big}" cy="${y - 1.6 * big}" r="${3.6 * big}" fill="#fff"/><circle cx="${x - 3.4 * big}" cy="${y + 6 * big}" r="${1.7 * big}" fill="#fff"/><circle cx="${x + 4 * big}" cy="${y + 7 * big}" r="${1 * big}" fill="#fff" opacity=".9"/>`;
+  const dot = x => `<ellipse cx="${x}" cy="${y + 1}" rx="${6.6 * big}" ry="${8.2 * big}" fill="#4B3350"/><circle cx="${x + 2.3 * big}" cy="${y - 2.4 * big}" r="${2.8 * big}" fill="#fff"/><circle cx="${x - 2.2 * big}" cy="${y + 4 * big}" r="${1.3 * big}" fill="#fff"/>`;
   if (m === "happy") return `<path d="M${x1 - 8} ${y + 4} Q${x1} ${y - 8} ${x1 + 8} ${y + 4} M${x2 - 8} ${y + 4} Q${x2} ${y - 8} ${x2 + 8} ${y + 4}" stroke="${CO}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
-  if (m === "sparkle") return spark4(x1, y, 11, "#FDD66B") + spark4(x2, y, 11, "#FDD66B") + `<path d="M${x1} ${y - 11} Q${x1 + 2.4} ${y - 2.4} ${x1 + 11} ${y} Q${x1 + 2.4} ${y + 2.4} ${x1} ${y + 11} Q${x1 - 2.4} ${y + 2.4} ${x1 - 11} ${y} Q${x1 - 2.4} ${y - 2.4} ${x1} ${y - 11}Z M${x2} ${y - 11} Q${x2 + 2.4} ${y - 2.4} ${x2 + 11} ${y} Q${x2 + 2.4} ${y + 2.4} ${x2} ${y + 11} Q${x2 - 2.4} ${y + 2.4} ${x2 - 11} ${y} Q${x2 - 2.4} ${y - 2.4} ${x2} ${y - 11}Z" fill="none" stroke="${CO}" stroke-width="2.2" stroke-linejoin="round"/>`;
   if (m === "shock") return `<circle cx="${x1}" cy="${y}" r="9" fill="#fff" stroke="${CO}" stroke-width="3"/><circle cx="${x2}" cy="${y}" r="9" fill="#fff" stroke="${CO}" stroke-width="3"/><circle cx="${x1}" cy="${y}" r="3" fill="${CO}"/><circle cx="${x2}" cy="${y}" r="3" fill="${CO}"/>`;
   if (m === "cry") return `<path d="M${x1 - 10} ${y - 12} L${x1 + 6} ${y - 16} M${x2 + 10} ${y - 12} L${x2 - 6} ${y - 16}" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>` + dot(x1) + dot(x2)
     + `<path class="tear" d="M${x1 - 3} ${y + 8} Q${x1 - 8} ${y + 22} ${x1 - 3} ${y + 30} Q${x1 + 2} ${y + 22} ${x1 - 3} ${y + 8}Z M${x2 + 3} ${y + 8} Q${x2 - 2} ${y + 22} ${x2 + 3} ${y + 30} Q${x2 + 8} ${y + 22} ${x2 + 3} ${y + 8}Z" fill="#9ED0F0" stroke="#6FAFD8" stroke-width="1.2"/>`;
@@ -1067,7 +1147,7 @@ function arms(m, c) {
 const hexMix = (a, b, t) => { const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); const A = p(a), B = p(b); return "#" + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, "0")).join(""); };
 const shadeOf = c => /^#[0-9a-f]{6}$/i.test(c) ? hexMix(c, "#B48FC4", .28) : c;
 const tintOf = c => /^#[0-9a-f]{6}$/i.test(c) ? hexMix(c, "#FFFFFF", .55) : c;
-const EYE_GRAD = `<linearGradient id="eyeG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#3B2440"/><stop offset=".65" stop-color="#5A3A6E"/><stop offset="1" stop-color="#8E6BB8"/></linearGradient>`;
+const EYE_GRAD = "";
 const bodyShine = sh => { const id = "bs" + (++clipN); return `<clipPath id="${id}"><path d="${BODY}"/></clipPath><g clip-path="url(#${id})"><path d="M30 150 Q100 196 170 150 L170 190 L30 190Z" fill="${sh}" opacity=".35"/><ellipse cx="72" cy="88" rx="24" ry="12" fill="#fff" opacity=".55" transform="rotate(-24 72 88)"/><circle cx="96" cy="76" r="3.2" fill="#fff" opacity=".8"/><path d="M158 112 Q166 134 158 156" stroke="#fff" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/></g>`; };
 function charSvg(who, m = "normal", eq, full = true) {
   const C = CHAR[who], c = C.color, d = who === "chiikawa" ? dressParts(eq) : {};
@@ -1557,6 +1637,7 @@ const ICN = (() => {
     f_cool: face("y", "shades", "smile"), f_persevere: face("w", "squeeze", "frown"), f_nausea: face("#C8F0A0", "line", "wave"), f_exhale: face("w", "line", "tiny", L("M20 21 Q25 20 28 22 M21 24 Q25 24 27 26", "s", 1.6)),
     f_starry: face("y", "star", "open"), f_happy: face("w", "arc", "smile"), f_think: face("y", "dot", "flat", P("M20 26 C22 22 26 23 26 26 C26 29 22 30 20 28Z", "f")), f_sleepy: face("w", "line", "tiny", drop(23, 17, .45, "a"))
   });
+  Object.defineProperty(I, "__h", { value: { P, C, E, R, f, fc, fe, fr, L, H, star, spark, col }, enumerable: false });
   return I;
 })();
 const EMOJI_ICON = {
@@ -5592,16 +5673,17 @@ function palsHtml() {
   return `${palsSubnav("pals")}<div class="homegrid">${palPanelHtml()}
     <section class="card palcoll"><div class="collhead"><h2 style="margin:0">Collect every Study Pal!</h2><span class="pill">${own} / ${PALS.length}</span></div>
       <div class="tprog rainbow"><i style="width:${Math.round(100 * own / PALS.length)}%"></i></div>
-      <div class="palstrip" aria-hidden="true">${list.map(P => `<span class="${S.pals[P.id] ? "" : "sil"}">${palFig(P.id, "happy")}</span>`).join("")}</div>
+      <div class="palstrip" aria-hidden="true">${list.map(P => `<span class="${S.pals[P.id] || !palMystery(P) ? "" : "sil"}">${palFig(P.id, "happy")}</span>`).join("")}</div>
       <div class="palgrid">${list.map(P => palCard(P)).join("")}</div>
       <p class="small muted" style="margin:0">Only your <b>active</b> pal's perk works. Common, rare and epic pals: reach the goal, then adopt with 🌰. Legendary pals come by themselves after a very hard goal. Mythic pals can only be adopted with 🌰.</p></section></div>`;
 }
+const palMystery = P => !S.pals[P.id] && (P.rar === "legend" || P.rar === "myth");
 function palCard(P) {
   const got = !!S.pals[P.id], act = activePalId() === P.id, met = condMet(P), pc = Math.round(100 * condPct(P));
   const st = got ? S.pals[P.id] : null;
   return `<div class="palcard ${P.rar} ${got ? "own" : "locked"} ${act ? "active" : ""}">
-    <div class="ppic">${got ? palFig(P.id, act ? "sparkle" : "happy", { stage: st.stage }) : `<span class="sil">${palFig(P.id, "normal")}</span><span class="plock" aria-hidden="true">🔒</span>`}</div>
-    <b>${esc(P.name)}</b><span class="rchip2 small" style="background:${PAL_RAR[P.rar][1]};border-color:${PAL_RAR[P.rar][2]}">${PAL_RAR[P.rar][0]}</span>
+    <div class="ppic">${got ? palFig(P.id, act ? "sparkle" : "happy", { stage: st.stage }) : palMystery(P) ? `<span class="sil">${palFig(P.id, "normal")}</span><span class="plock" aria-hidden="true">🔒</span>` : `<span class="palprev">${palFig(P.id, "happy")}</span><span class="plock" aria-hidden="true">🔒</span>`}</div>
+    <b>${palMystery(P) ? "???" : esc(P.name)}</b><span class="rchip2 small" style="background:${PAL_RAR[P.rar][1]};border-color:${PAL_RAR[P.rar][2]}">${PAL_RAR[P.rar][0]}</span>
     <span class="small muted">${got ? `Lv ${palLevel(st.xp)} · ${STAGES[st.stage]}` : P.cond ? esc(P.cond[2]) : "Adopt with chestnuts"}</span>
     ${got ? (act ? `<span class="pill saved">⭐ Active</span>` : `<button class="btn plain sm" data-usepal="${P.id}">Make active</button>`)
       : P.rar === "legend" ? `<div class="tprog"><i style="width:${pc}%"></i></div><span class="small">${Math.min(palVal(P.cond[0]), P.cond[1])} / ${P.cond[1]}</span>`
@@ -5611,9 +5693,9 @@ function palCard(P) {
 }
 function openPalInfo(id) {
   const P = palById(id), got = !!S.pals[id];
-  openModal(`<span class="kicker">🐾 Study Pal</span><h2>${esc(P.name)}</h2><div class="petreveal ${P.rar === "myth" ? "epic" : P.rar}" style="width:150px;height:150px">${got ? palFig(id, "happy") : `<span class="sil">${palFig(id, "normal")}</span>`}</div>
-    <div class="row" style="justify-content:center">${palChips(P)}</div><p style="margin:0">${esc(P.desc)}</p>
-    <section class="jsec"><h3>🔬 Real biology</h3><p style="margin:0">${esc(P.fact)}</p></section>
+  openModal(`<span class="kicker">🐾 Study Pal</span><h2>${palMystery(P) ? "A mysterious pal..." : esc(P.name)}</h2><div class="petreveal ${P.rar === "myth" ? "epic" : P.rar}" style="width:150px;height:150px">${got || !palMystery(P) ? palFig(id, "happy") : `<span class="sil">${palFig(id, "normal")}</span>`}</div>
+    <div class="row" style="justify-content:center">${palChips(P)}</div>${palMystery(P) ? `<p style="margin:0" class="muted">Only the most dedicated students will meet this one. Reach the goal below to reveal who it is!</p>` : `<p style="margin:0">${esc(P.desc)}</p>
+    <section class="jsec"><h3>🔬 Real biology</h3><p style="margin:0">${esc(P.fact)}</p></section>`}
     <p class="small"><b>How to get:</b> ${P.cond ? esc(P.cond[2]) + (P.price ? `, then adopt for 🌰 ${P.price}` : " (arrives by itself)") : `Adopt for 🌰 ${P.price}`} · <b>Favourite food:</b> ${esc(FOODS.find(f => f.id === P.fav).name)} · <b>Evolves at</b> Lv ${EVO[P.rar][0][0]} and Lv ${EVO[P.rar][1][0]}</p>`);
 }
 function wirePals() {
@@ -6526,7 +6608,7 @@ function renderMap() {
 function homeHtml() {
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni], chestReady = S.last_chest_date !== today(), T = nr && TOPICS[nr.t];
   const mult = streakMult();
-  return `<div class="homegrid">
+  return `${capsuleAdHtml()}<div class="homegrid">
     <section class="card roomwrap">${roomCard(greeting(), S.completed_rooms.length ? "happy" : "normal")}
       <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" id="chest" ${chestReady ? "" : "disabled"}>${chestReady ? "🎁 Daily chest" : "🎁 Back tomorrow"}</button></div>
       ${healthTipHtml()}</section>
@@ -6548,7 +6630,7 @@ function homeHtml() {
     </div></div>`;
 }
 function wireHome() {
-  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured();
+  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured(); wireCapsuleAd();
   const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
   const c = document.getElementById("chest");
   if (S.last_chest_date !== today()) c.onclick = () => {
@@ -6619,9 +6701,9 @@ function rewardsHtml() {
   return `<div class="homegrid">
     <section class="card cream cabinet" id="cabinet">${cabinetHtml(false)}</section>
     <div class="homeside">
-      <section class="card coll-mode"><div class="row" style="justify-content:space-between"><h2>🧸 Capsules</h2><span class="pill">${collOwned()} / ${COLLECTIBLES.length} · ✨ ${collOwned(true)} / 5 rare</span></div>
-        <p class="small muted" style="margin:0">20 collectibles to find, including 5 rare ones.</p>
-        <div class="row">${S.coll.pending ? `<button class="btn pink" id="rwCap">🎁 Open capsule (${S.coll.pending})</button>` : ""}<button class="btn yellow" id="rwAlbum">🧸 See collection</button></div></section>
+      <section class="card coll-mode"><div class="row" style="justify-content:space-between"><h2>🃏 Biology cards</h2><span class="pill">${collOwned()} / ${CARD_N} · ✨ ${collOwned(true)} / ${CARD_N - collTotal("common")} rare+</span></div>
+        <p class="small muted" style="margin:0">${CARD_N} biology cards from Common to Mythic. Keep your 🔥 streak to earn capsules.</p>
+        <div class="row">${S.coll.pending ? `<button class="btn pink" id="rwCap">🎁 Open capsule (${S.coll.pending})</button>` : ""}<button class="btn yellow" id="rwAlbum">📚 See collection</button></div></section>
       <section class="card"><h2>🎒 Backpack</h2>
         <div class="bag">${S.chiikawa_badges.concat(S.inventory).map(b => `<span class="tag">${esc(b)}</span>`).join("") || `<span class="muted small">Empty. Escape a stage or open the daily chest!</span>`}</div></section>
     </div></div>`;
@@ -6764,7 +6846,8 @@ function markStudied() {
   S.current_streak = gap === 1 && S.current_streak > 0 ? S.current_streak + 1 : 1;
   S.last_study_day = t; S.longest_streak = Math.max(S.longest_streak || 0, S.current_streak);
   S.study_days = S.study_days.filter(d => dayNum(t) - dayNum(d) < 14).concat(t);
-  const ms = STREAK_MILESTONES.includes(S.current_streak);
+  const ms = STREAK_MILESTONES.includes(S.current_streak), sc = streakCapsuleFor(S.current_streak);
+  if (sc) { S.coll.pending += sc; setTimeout(() => toast(`🎁 Streak reward: +${sc} capsule${sc > 1 ? "s" : ""} for day ${S.current_streak}!`), 3400); }
   setTimeout(() => streakPop(S.current_streak, ms), 900);
   return true;
 }
@@ -7179,6 +7262,282 @@ function openLeaderboard() {
   cloudSave();
   api("board", { scope: lbScope }).then(d => { if (d && d.ok) lbData[key] = { t: Date.now(), d }; show(d); });
 }
+
+/* ============================================================
+   5k. 🃏 Biology Capsule Lab: 40 collectible trading cards (each a real biology term, structure or concept).
+   Rarities: Common (bronze) · Rare (silver holo) · Epic (gold) · Legendary (rainbow holo) · Mythic (cosmic foil).
+   Cards are won from capsules; streaks give bonus capsules and a little extra luck.
+   ============================================================ */
+const CARD_RAR = {
+  common: { n: "Common", sym: "●", w: 58, dup: 5, c: "#C9824F" }, rare: { n: "Rare", sym: "◆", w: 27, dup: 10, c: "#8FA1BC" },
+  epic: { n: "Epic", sym: "★", w: 10, dup: 25, c: "#E0A92A" }, legend: { n: "Legendary", sym: "✦", w: 4, dup: 60, c: "#E27893" }, myth: { n: "Mythic", sym: "✺", w: 1, dup: 120, c: "#9B7BFF" }
+};
+const CARD_ORDER = ["common", "rare", "epic", "legend", "myth"];
+// art background tint per category
+const CATEGORY_BG = { Organelle: ["#F3E6FF", "#D9B8FF"], "Cell structure": ["#FFE6F0", "#FFB8D2"], Cell: ["#FFE1E1", "#FFA9A9"], Molecule: ["#DFF3FF", "#9AD5FF"], Process: ["#FFEBD0", "#FFC27A"], Tissue: ["#E3F8D8", "#A9E58B"],
+  "Plant structure": ["#E3F8D8", "#A9E58B"], "Organ structure": ["#FFE1EA", "#FFA7C0"], Organ: ["#FFE1EA", "#FFA7C0"], Hormone: ["#FFF3C9", "#FFD966"], Immunity: ["#E3E9FF", "#A9B9FF"], Nervous: ["#EDE3FF", "#C2A6FF"],
+  Genetics: ["#E3E6FF", "#A9AEFF"], Biotechnology: ["#DDF7F3", "#8FE3D6"], Ecology: ["#DDF8E6", "#8FE3AE"], Evolution: ["#E8F7DD", "#B5E58B"], Biodiversity: ["#E0F5E8", "#8FD9A8"], Control: ["#FFEFD6", "#FFC98A"] };
+
+const ART = (() => {
+const _h = ICN.__h, { P, C, E, R, f, fc, fe, fr, L, H } = _h;
+const spk = (x, y, r, k = "w") => `<path d="${_h.spark(x, y, r)}" fill="${_h.col(k)[0]}"/>`;
+const A = {
+  nucleus: C(16, 16, 13, "v") + fc(11, 11, 2.2, "#B9AEF0") + fc(22, 13, 1.8, "#B9AEF0") + fc(14, 24, 1.6, "#B9AEF0") + C(17, 16, 5.5, "p") + L("M9 19 Q12 16 14 19 M19 21 Q22 18 24 21", "#E7DDFF", 1.6) + H(8, 7, 5, 3, -30),
+  membrane: [5, 9, 13, 17, 21, 25].map(x => (x > 12 && x < 20 ? "" : L(`M${x} 11 V15 M${x} 21 V17`, "#E0A800", 1.5) + C(x, 9.5, 2.6, "k") + C(x, 24.5, 2.6, "k"))).join("") + R(12.5, 5, 7, 24, 3.5, "b") + L("M16 9 V25", "#1899D6", 1.4) + H(13.6, 7, 1.6, 7),
+  ribosome: E(14, 20, 11, 7, "o") + E(18, 11, 7.5, 5, "y") + L("M2 29 Q10 27 16 29 Q22 31 30 28", "k", 2) + [[6, 28], [11, 28.3], [22, 29.8]].map(([x, y]) => fc(x, y, 1.6, "r")).join("") + H(8, 17, 4, 2),
+  mitochondrion: `<g transform="rotate(-18 16 17)">${E(16, 17, 14, 9, "o")}${E(16, 17, 11.5, 6.6, "#FFB066")}${L("M7 17 Q9 11 11 17 Q13 23 15 17 Q17 11 19 17 Q21 23 23 17", "#B15A00", 1.8)}</g>` + H(8, 9, 4, 2, -20),
+  chloroplast: E(16, 17, 14, 10, "g") + E(16, 17, 11.5, 7.6, "#9BE15A") + [[9, 16], [16, 18], [22.5, 16]].map(([x, y]) => [0, 1, 2].map(i => fe(x, y - 2.4 + i * 2.4, 3.4, 1.1, "#2D8A00")).join("")).join("") + H(6, 10, 4, 2, -25),
+  cellwall: R(2, 4, 28, 26, 7, "n") + R(5.5, 7.5, 21, 19, 4, "l") + C(16, 17, 4, "v") + L("M8 11 H10 M22 24 H24", "#46A302", 1.6) + H(4, 6, 4, 2),
+  vacuole: R(2, 4, 28, 26, 6, "l") + E(16, 17, 9.5, 10.5, "a") + fc(13, 14, 1.2, "w") + fc(18, 21, 1.6, "w") + fc(19, 13, 1, "w") + L("M7 8 L9 10", "#46A302", 1.6),
+  rbc: C(16, 16, 13, "r") + E(16, 16, 7, 5, "#C73030") + H(7, 8, 5, 3, -35) + E(16, 16, 7, 5, "#FF9A9A").replace('fill="#FF9A9A"', 'fill="#FF9A9A" opacity=".5"'),
+  stoma: `<g transform="rotate(-12 16 16)">${P("M2 16 C2 5 14 4 16 9 C18 4 30 5 30 16 C30 27 18 28 16 23 C14 28 2 27 2 16Z", "g")}${E(16, 16, 3.2, 6.6, "#1F5E00")}${fc(8, 14, 1.5, "#9BE15A")}${fc(24, 14, 1.5, "#9BE15A")}${fc(8, 19, 1.3, "#9BE15A")}${fc(24, 19, 1.3, "#9BE15A")}</g>` + L("M16 1 V4 M13 2 L16 4 L19 2", "a", 1.4),
+  alveolus: [[11, 12, 7], [22, 12, 6.5], [16, 22, 8]].map(([x, y, r]) => C(x, y, r, "k")).join("") + L("M4 8 Q8 15 4 22 M28 7 Q24 14 28 21 M10 30 Q16 25 22 30", "r", 1.8) + L("M5 5 L8 9 M27 5 L24 9", "a", 1.6) + H(8, 7, 3, 3),
+  villus: P("M10 31 V11 C10 1 22 1 22 11 V31Z", "k") + L("M14 29 V9", "#FFE066", 2.4) + L("M18 29 C22 24 18 20 18 16 C18 12 20 11 18 9", "r", 1.8) + L("M7 6 L10 9 M25 6 L22 9", "#9AD9FF", 1.5) + H(11, 6, 2.5, 6),
+  xylem: R(10, 2, 12, 28, 4, "n") + fr(12, 3, 8, 26, 3, "#F6D9AE") + [7, 12, 17, 22].map(y => L(`M12 ${y} Q16 ${y + 2.4} 20 ${y}`, "#8C5219", 1.8)).join("") + L("M16 27 V6 M13 9 L16 5 L19 9", "a", 1.8) + fc(16, 19, 1.4, "b"),
+  neurone: L("M9 22 L3 28 M9 22 L4 17 M9 22 L8 29", "p", 2) + C(9, 21, 5.5, "p") + fc(9, 21, 2, "#E6D5FF") + L("M13 19 L27 9", "p", 2.2) + [[16, 17], [20.5, 14.2], [25, 11.4]].map(([x, y]) => E(x, y, 2.6, 1.7, "y", -33)).join("") + L("M27 9 L30 5 M27 9 L31 10 M27 9 L29 13", "p", 1.6),
+  enzyme: P("M16 4 C6 4 2 12 5 19 C8 26 17 29 25 25 C29 22 29 14 24 12 L19 12 L22 18 C20 20 14 18 14 14 C14 10 18 9 20 7 C21 5 19 4 16 4Z", "p") + P("M22 3 L29 5 L26 11Z", "y") + spk(8, 8, 3, "w") + H(6, 12, 3, 6, 10),
+  glucose: P("M16 2 L27 8.5 V21.5 L16 28 L5 21.5 V8.5Z", "a") + f("M16 6 L23.5 10.4 V19.6 L16 24 L8.5 19.6 V10.4Z", "w") + `<text x="16" y="18.2" text-anchor="middle" font-size="7.5" font-weight="900" fill="#1899D6" font-family="sans-serif">C₆</text>` + L("M16 2 V-1", "#1899D6", 1) + R(11, 29, 10, 3.4, 1.7, "b"),
+  pollen: [0, 36, 72, 108, 144, 180, 216, 252, 288, 324].map(a => `<g transform="rotate(${a} 16 16)">${fc(16, 2.8, 2.2, "o")}</g>`).join("") + C(16, 16, 10, "y") + fc(12, 13, 2, "#FFF3B0") + fc(20, 18, 2.4, "#FFB84D") + L("M10 20 Q16 25 22 20", "#E0A800", 1.4),
+  dna: ICN.dna,
+  chromosome: `<g transform="rotate(14 16 16)">${P("M12 2 C7 2 8 12 14 16 C8 20 7 30 12 30 C17 30 16 22 16 16 C16 10 17 2 12 2Z", "p")}${P("M20 2 C25 2 24 12 18 16 C24 20 25 30 20 30 C15 30 16 22 16 16 C16 10 15 2 20 2Z", "#B78AF0")}${fc(16, 16, 2.6, "y")}</g>`,
+  haemoglobin: [[10, 10], [22, 10], [10, 22], [22, 22]].map(([x, y], i) => C(x, y, 7.5, i % 2 ? "b" : "a")).join("") + [[10, 10], [22, 10], [10, 22], [22, 22]].map(([x, y]) => fc(x, y, 3.3, "r")).join("") + `<text x="16" y="18.6" text-anchor="middle" font-size="6" font-weight="900" fill="#fff" font-family="sans-serif">Fe</text>`,
+  phloem: R(10, 1, 12, 30, 3, "t") + [8, 16, 24].map(y => fr(10, y, 12, 2, 0, "#17AE9D")).join("") + [[13, 5], [19, 12], [13, 20], [19, 28]].map(([x, y]) => fc(x, y, 1.6, "w")).join("") + R(2, 5, 6, 22, 3, "g") + R(24, 5, 6, 22, 3, "g") + L("M16 29 V4 M13 7 L16 3 L19 7", "#fff", 1.4),
+  synapse: P("M2 6 C2 2 10 2 12 8 C13 12 13 20 12 24 C10 30 2 30 2 26Z", "p") + P("M30 6 C30 2 22 2 20 8 C19 12 19 20 20 24 C22 30 30 30 30 26Z", "k") + [[6, 11], [8, 17], [6, 22]].map(([x, y]) => fc(x, y, 2, "#EBDDFF")).join("") + [[14.5, 12], [16, 16], [17.5, 20]].map(([x, y]) => fc(x, y, 1.3, "y")).join("") + L("M23 11 V21", "#C73C8C", 1.4),
+  antibody: L("M16 30 V17 M16 17 L7 6 M16 17 L25 6", "b", 5) + L("M16 30 V17 M16 17 L7 6 M16 17 L25 6", "a", 2.2) + P("M2 3 L9 2 L7 8Z", "r") + P("M23 8 L25 1 L30 6Z", "r") + fc(16, 29, 2, "#1899D6"),
+  insulin: P("M3 16 C3 8 12 6 18 9 C24 5 30 9 29 15 C28 22 20 24 15 22 C11 26 3 24 3 16Z", "o") + [[9, 14], [14, 12], [20, 15], [25, 13], [12, 19], [19, 20]].map(([x, y]) => fc(x, y, 1.7, "y")).join("") + P("M26 20 C29 24 31 26 29 29 C26 31 22 29 24 25Z", "a") + H(5, 12, 3, 4, 20),
+  nephron: C(8, 9, 6.5, "o") + fc(8, 9, 3.2, "r") + L("M14 10 C22 8 24 16 20 18 C16 20 14 24 20 25 C26 26 28 20 26 14 V4", "y", 2.6) + L("M26 14 V28", "#FFD966", 3) + fc(26, 29, 1.6, "k") + H(4, 4, 3, 3),
+  spindle: C(16, 16, 14, "#FFE0C2") + L("M16 4 C6 9 6 23 16 28 M16 4 C26 9 26 23 16 28 M16 4 V28 M16 4 C11 10 11 22 16 28 M16 4 C21 10 21 22 16 28", "#6EC2F2", 1.6) + fc(16, 4, 2.6, "d") + fc(16, 28, 2.6, "d") + [[11.5, 16, "k"], [15, 16, "p"], [18.5, 16, "k"], [22, 16, "p"]].map(([x, y, k]) => R(x - 1.6, y - 4, 3.2, 8, 1.6, k)).join(""),
+  atp: [[7, 12], [16, 8], [25, 12]].map(([x, y]) => C(x, y, 5, "y")).join("") + `<text x="7" y="14.3" text-anchor="middle" font-size="6" font-weight="900" fill="#8A5A00" font-family="sans-serif">P</text><text x="16" y="10.3" text-anchor="middle" font-size="6" font-weight="900" fill="#8A5A00" font-family="sans-serif">P</text><text x="25" y="14.3" text-anchor="middle" font-size="6" font-weight="900" fill="#8A5A00" font-family="sans-serif">P</text>` + P("M12 18 L20 18 L22 25 L16 29 L10 25Z", "o") + P("M17 21 L12 29 H17 L15 33 L22 25 H17Z", "r").replace(/translate\(0 2\)/, "translate(0 0)"),
+  heart: P("M16 29 C6 22 2 17 2 12 C2 8 5 5 9 5 C12 5 14.5 7 16 9.5 C17.5 7 20 5 23 5 C27 5 30 8 30 12 C30 17 26 22 16 29Z", "r") + L("M16 10 C14 16 17 22 16 27", "#B72A2A", 1.4) + L("M10 5 C10 0 17 -1 21 3", "r", 3.4) + L("M8 6 V1", "b", 3) + L("M24 6 V1", "b", 3) + L("M4 14 H9", "#fff", 1.2) + H(6, 8, 5, 4, -35),
+  peapod: ICN.peapod + `<text x="16" y="31" text-anchor="middle" font-size="6" font-weight="900" fill="#46A302" font-family="sans-serif">3 : 1</text>`,
+  krebs: L("M16 4 A12 12 0 1 1 5 11", "o", 3.2) + P("M2 6 L9 11 L2 15Z", "o") + [[16, 4], [28, 16], [16, 28], [4, 16]].map(([x, y]) => C(x, y, 3.4, "y")).join("") + fc(16, 16, 4, "#FFE9B5") + `<text x="16" y="18" text-anchor="middle" font-size="5" font-weight="900" fill="#B15A00" font-family="sans-serif">CO₂</text>`,
+  chlorophyll: ICN.leaves + C(16, 17, 7, "g") + fc(16, 17, 3, "#C9F29A") + `<text x="16" y="19" text-anchor="middle" font-size="5" font-weight="900" fill="#1F5E00" font-family="sans-serif">Mg</text>` + L("M23 18 Q29 20 29 27", "#2D8A00", 1.6),
+  restriction: "",
+  pcr: "",
+  feedback: L("M5 13 A11 11 0 0 1 24 7 M27 19 A11 11 0 0 1 8 25", "o", 3) + P("M25 2 L28 10 L20 9Z", "o") + P("M7 30 L4 22 L12 23Z", "o") + R(14, 8, 4, 14, 2, "w") + C(16, 23, 3.4, "r") + fr(15, 13, 2, 9, 1, "r"),
+  selection: R(9, 2, 14, 30, 4, "n") + L("M12 6 V28 M17 4 V30 M21 8 V26", "#8C5219", 1.6) + `<g transform="translate(5 9)">${P("M5 4 L0 0 Q-1 5 3 8Z M5 4 L10 0 Q11 5 7 8Z", "w")}${E(5, 6, 1.5, 4.5, "#E5E5E5")}</g>` + `<g transform="translate(17 19)">${P("M5 4 L0 0 Q-1 5 3 8Z M5 4 L10 0 Q11 5 7 8Z", "#5A4A42")}${E(5, 6, 1.5, 4.5, "d")}</g>` + P("M26 4 C30 3 31 8 28 11 L26 8Z", "y") + L("M25 12 L28 11", "o", 1.6),
+  carbon: ICN.tree.replace(/translate\(0 2\)/g, "translate(0 2)") + C(25, 6, 4, "w") + `<text x="25" y="8" text-anchor="middle" font-size="4" font-weight="900" fill="#4B4B4B" font-family="sans-serif">CO₂</text>` + L("M20 9 Q14 14 13 20", "a", 1.6),
+  crispr: L("M7 3 C7 12 25 12 25 17 C25 22 7 22 7 31", "b", 3) + L("M25 3 C25 12 7 12 7 17 C7 22 25 22 25 31", "a", 3) + C(16, 16, 8, "p") + fc(16, 16, 3.4, "#EBDDFF") + L("M4 16 H10", "r", 2.2) + spk(26, 8, 3.4, "y") + L("M24 25 L28 29 M28 25 L24 29", "y", 1.6),
+  stemcell: C(16, 9, 7, "p") + fc(16, 9, 3, "#EBDDFF") + L("M11 16 L6 21 M16 17 V21 M21 16 L26 21", "s", 1.8) + E(6, 26, 4.5, 3.4, "r") + E(16, 26, 3.6, 4.4, "b") + P("M22 22 L30 22 L28 30 L24 30Z", "g") + spk(26, 5, 3, "y"),
+  pangolin: P("M2 22 C2 12 12 7 20 9 C27 11 29 18 26 24 C23 29 8 29 4 25 C3 24 2 23 2 22Z", "n") + P("M22 9 C27 7 31 10 30 14 C28 12 25 11 22 12Z", "#A87A4C") + [[10, 13], [15, 12], [20, 14], [8, 18], [13, 17], [18, 18], [23, 19], [11, 23], [16, 23], [21, 24]].map(([x, y]) => `<path d="M${x - 3} ${y} Q${x} ${y + 5} ${x + 3} ${y}Z" fill="#8C5219" stroke="#6B3E10" stroke-width=".7"/>`).join("") + fc(28, 14, 1.2, "d") + L("M26 30 Q30 28 31 22", "n", 2.6),
+  luca: R(14, 14, 4, 16, 2, "n") + L("M16 16 C8 14 6 8 6 3 M16 16 C24 14 26 8 26 3 M16 12 C12 9 12 5 12 2 M16 12 C20 9 20 5 20 2", "n", 2.2) + [[6, 3], [26, 3], [12, 2], [20, 2], [9, 8], [23, 8]].map(([x, y], i) => C(x, y, 2.4, ["g", "o", "p", "b", "r", "y"][i])).join("") + E(16, 31, 8, 2.4, "y") + spk(16, 20, 3.4, "y"),
+  endosym: C(16, 16, 14, "a") + C(16, 16, 12, "#C5ECFF") + `<g transform="rotate(-20 16 17)">${E(16, 17, 8.5, 5.4, "o")}${E(16, 17, 6.8, 3.8, "#FFB066")}${L("M11 17 Q13 14 15 17 Q17 20 19 17", "#B15A00", 1.2)}</g>` + L("M16 3 V8 M12 5 L16 8 L20 5", "w", 1.4) + fc(8, 9, 1.4, "w") + fc(24, 23, 1.6, "w")
+};
+A.pcr = `<g transform="translate(-2 3) scale(.7)">${ICN.dna}</g><g transform="translate(15 3) scale(.7)">${ICN.dna}</g>` + L("M13 6 L15 6", "o", 1) + `<text x="16" y="32" text-anchor="middle" font-size="5.5" font-weight="900" fill="#D93636" font-family="sans-serif">95°→72°</text>`;
+A.restriction = `<g transform="translate(0 4) scale(.9)">${ICN.scissors}</g>` + L("M2 6 H13 M19 6 H30", "b", 2) + L("M2 10 H13 M19 10 H30", "k", 2) + spk(16, 8, 2.6, "y");
+
+return A;
+})();
+
+const spk = (x, y, r, k = "w") => `<path d="${ICN.__h.spark(x, y, r)}" fill="${ICN.__h.col(k)[0]}"/>`;
+const K_ = (id, name, rar, cat, art, d) => ({ id, name, rar, cat, art, d });
+const COLLECTIBLES = [
+  // ---- Common (16) ----
+  K_("nucleus", "Nucleus", "common", "Organelle", "nucleus", "Surrounded by a double membrane with pores. Contains chromosomes (DNA and protein) and controls the cell's activities."),
+  K_("membrane", "Cell membrane", "common", "Cell structure", "membrane", "A partially permeable phospholipid bilayer with embedded proteins. It controls which substances enter and leave the cell."),
+  K_("ribosome", "Ribosome", "common", "Organelle", "ribosome", "A tiny particle of rRNA and protein with no membrane. It is the site of protein synthesis (translation of mRNA)."),
+  K_("mitochondrion", "Mitochondrion", "common", "Organelle", "mitochondrion", "Has a double membrane, with the inner one folded into cristae. Aerobic respiration here releases most of the cell's ATP."),
+  K_("chloroplast", "Chloroplast", "common", "Organelle", "chloroplast", "Found in plant cells. Chlorophyll in the thylakoid membranes (grana) absorbs light for photosynthesis."),
+  K_("cellwall", "Cell wall", "common", "Cell structure", "cellwall", "Made of cellulose in plants. It is fully permeable, supports the cell and stops it bursting in a hypotonic solution."),
+  K_("vacuole", "Vacuole", "common", "Organelle", "vacuole", "A large sac of cell sap in plant cells, bounded by the tonoplast. It stores sugars and ions and keeps the cell turgid."),
+  K_("rbc", "Red blood cell", "common", "Cell", "rbc", "A biconcave disc with no nucleus, packed with haemoglobin. The large surface area makes oxygen transport efficient."),
+  K_("stoma", "Stoma", "common", "Plant structure", "stoma", "A pore between two guard cells in the leaf epidermis. It lets CO₂ in and water vapour out (transpiration)."),
+  K_("alveolus", "Alveolus", "common", "Organ structure", "alveolus", "A lung air sac with a wall one cell thick, wrapped in capillaries. Oxygen and CO₂ swap by diffusion."),
+  K_("villus", "Villus", "common", "Organ structure", "villus", "A finger-like fold of the small intestine wall with capillaries and a lacteal. It increases the area for absorption."),
+  K_("xylem", "Xylem vessel", "common", "Tissue", "xylem", "Dead, hollow tubes strengthened with lignin. They carry water and minerals up from the roots and support the plant."),
+  K_("neurone", "Neurone", "common", "Cell", "neurone", "A long cell body extension (axon) carries electrical impulses. A myelin sheath speeds them up."),
+  K_("enzyme", "Enzyme", "common", "Molecule", "enzyme", "A globular protein that acts as a biological catalyst. Its active site fits one substrate; heat or extreme pH denatures it."),
+  K_("glucose", "Glucose", "common", "Molecule", "glucose", "C₆H₁₂O₆, a monosaccharide. It is the main respiratory substrate and the product of photosynthesis."),
+  K_("pollen", "Pollen grain", "common", "Plant structure", "pollen", "Contains the male gamete nucleus. It is carried from the anther to the stigma during pollination."),
+  // ---- Rare (12) ----
+  K_("dna", "DNA double helix", "rare", "Molecule", "dna", "Two antiparallel polynucleotide strands held by hydrogen bonds between bases: A pairs with T, C pairs with G."),
+  K_("chromosome", "Chromosome", "rare", "Genetics", "chromosome", "DNA wrapped around histone proteins and condensed. Human body cells have 46 chromosomes (23 pairs)."),
+  K_("haemoglobin", "Haemoglobin", "rare", "Molecule", "haemoglobin", "A protein of four polypeptides, each with an iron-containing haem group that binds one O₂ to form oxyhaemoglobin."),
+  K_("phloem", "Phloem", "rare", "Tissue", "phloem", "Living sieve tubes with companion cells. They transport sucrose and amino acids to where they are needed (translocation)."),
+  K_("synapse", "Synapse", "rare", "Nervous", "synapse", "The gap between two neurones. Neurotransmitter diffuses across it, so impulses pass in one direction only."),
+  K_("antibody", "Antibody", "rare", "Immunity", "antibody", "A Y-shaped protein made by plasma cells (B lymphocytes). It binds one specific antigen to mark pathogens for destruction."),
+  K_("insulin", "Insulin", "rare", "Hormone", "insulin", "Secreted by β cells of the pancreas. It lowers blood glucose by promoting uptake and storage as glycogen."),
+  K_("nephron", "Nephron", "rare", "Organ structure", "nephron", "The kidney's functional unit. Ultrafiltration in the glomerulus, then selective reabsorption in the tubule, forms urine."),
+  K_("spindle", "Spindle fibre", "rare", "Process", "spindle", "Protein microtubules that attach to centromeres and pull sister chromatids apart to opposite poles in anaphase."),
+  K_("atp", "ATP", "rare", "Molecule", "atp", "Adenosine triphosphate, the cell's energy currency. Breaking its terminal phosphate bond releases energy for cell work."),
+  K_("heart", "Heart", "rare", "Organ", "heart", "A four-chambered muscular pump with valves. Its double circulation sends blood to the lungs and then to the body."),
+  K_("mendel", "Mendel's peas", "rare", "Genetics", "peapod", "Crossing pure-breeding pea plants gave a 3 : 1 ratio in the F₂, showing dominant and recessive alleles."),
+  // ---- Epic (7) ----
+  K_("krebs", "Krebs cycle", "epic", "Process", "krebs", "Occurs in the mitochondrial matrix. Acetyl groups are oxidised to CO₂, producing reduced NAD and FAD for ATP synthesis."),
+  K_("chlorophyll", "Chlorophyll", "epic", "Molecule", "chlorophyll", "A green pigment containing magnesium. It absorbs mainly red and blue light and reflects green."),
+  K_("restriction", "Restriction enzyme", "epic", "Biotechnology", "restriction", "Cuts DNA at a specific base sequence, often leaving sticky ends. DNA ligase then joins the cut pieces together."),
+  K_("pcr", "PCR", "epic", "Biotechnology", "pcr", "Copies DNA in cycles: heat to separate strands (~95 °C), cool to bind primers, then heat-stable Taq polymerase builds new strands."),
+  K_("feedback", "Negative feedback", "epic", "Control", "feedback", "A change is detected and reversed to restore the set point, as the hypothalamus does to keep body temperature near 37 °C."),
+  K_("selection", "Natural selection", "epic", "Evolution", "selection", "Individuals with advantageous variations survive and reproduce more, so those alleles become more common over generations."),
+  K_("carbon", "Carbon cycle", "epic", "Ecology", "carbon", "Plants fix CO₂ by photosynthesis. Respiration, decomposition and combustion return it to the atmosphere."),
+  // ---- Legendary (3) ----
+  K_("crispr", "CRISPR-Cas9", "legend", "Biotechnology", "crispr", "A guide RNA leads the Cas9 enzyme to a matching DNA sequence, where it cuts both strands so the gene can be edited."),
+  K_("stemcell", "Stem cell", "legend", "Cell", "stemcell", "An unspecialised cell that can divide and differentiate into specialised cell types. It is used in research and therapy."),
+  K_("pangolin", "Chinese pangolin", "legend", "Biodiversity", "pangolin", "A critically endangered mammal found in Hong Kong. Its scales are made of keratin; it eats ants and termites."),
+  // ---- Mythic (2) ----
+  K_("luca", "LUCA", "myth", "Evolution", "luca", "The last universal common ancestor of all life, about 3.5 to 4 billion years ago. All living things share the same genetic code."),
+  K_("endosym", "Endosymbiosis", "myth", "Evolution", "endosym", "Mitochondria and chloroplasts descend from engulfed prokaryotes. They have their own circular DNA, 70S ribosomes and double membranes.")
+];
+const CARD_N = COLLECTIBLES.length;
+const cardById = id => COLLECTIBLES.find(c => c.id === id);
+const OLD_CARD_MAP = { mochi: "mitochondrion", onigiri: "chloroplast", boba: "ribosome", dango: "enzyme", donut: "rbc", grapes: "alveolus", villi: "villus", virus: "nucleus", jelly: "membrane", pollen: "pollen", peapod: "mendel",
+  dnastick: "dna", heartkey: "heart", stomaclip: "stoma", noodles: "neurone", photocard: "krebs", blindbox: "pcr", aura: "selection", matcha: "chlorophyll", flip: "restriction" };
+function migrateCards(coll) {
+  Object.keys(coll.owned).forEach(k => { if (OLD_CARD_MAP[k]) { const n = OLD_CARD_MAP[k]; coll.owned[n] = (coll.owned[n] || 0) + coll.owned[k]; delete coll.owned[k]; } });
+  Object.keys(coll.owned).forEach(k => { if (!cardById(k)) delete coll.owned[k]; });
+  coll.pityL = coll.pityL || 0;
+}
+const collOwned = r => COLLECTIBLES.filter(c => (r == null || (r === true ? c.rar !== "common" : c.rar === r)) && (S.coll.owned[c.id] || 0) > 0).length;
+const collTotal = r => COLLECTIBLES.filter(c => r == null || c.rar === r).length;
+
+/* ----- Card drawing ----- */
+const cardArt = c => `<svg viewBox="0 0 32 34" class="cardart" aria-hidden="true">${ART[c.art] || ICN.sparkles}</svg>`;
+function cardTile(c, own, full = false) {
+  const R_ = CARD_RAR[c.rar], bg = CATEGORY_BG[c.cat] || ["#EEE", "#CCC"], no = String(COLLECTIBLES.indexOf(c) + 1).padStart(2, "0");
+  const hid = !own, deep = hid && (c.rar === "legend" || c.rar === "myth");
+  return `<div class="bcard r-${c.rar} ${own ? "own" : "locked"} ${full ? "full" : ""}" data-card="${c.id}" aria-label="${own ? esc(c.name) : "Locked card"}">
+    <span class="bfoil" aria-hidden="true"></span>
+    <div class="bbar"><span class="bn">${own ? esc(c.name) : deep ? "? ? ?" : "???"}</span><span class="bsym" title="${R_.n}">${R_.sym}</span></div>
+    <div class="bart" style="--c1:${bg[0]};--c2:${bg[1]}">${c.rar === "myth" ? `<i class="gal" aria-hidden="true"></i>` : ""}${hid ? `<span class="sil">${cardArt(c)}</span><span class="qm">?</span>` : cardArt(c)}${own && (c.rar === "legend" || c.rar === "myth") ? `<i class="sparkly" aria-hidden="true"></i>` : ""}</div>
+    <div class="bcat"><span>${hid ? "Mystery card" : esc(c.cat)}</span><span class="brar">${R_.n}</span></div>
+    ${full ? `<p class="bdesc">${own ? esc(c.d) : "Open capsules to discover this card."}</p>` : ""}
+    <div class="bfoot"><span class="bno">No. ${no}/${CARD_N}</span>${own ? `<span class="bstamp">${own > 1 ? `×${own}` : "✓"}</span>` : ""}</div></div>`;
+}
+
+/* ----- Odds: five rarities; streaks add luck; pity guarantees Epic+ every 10 capsules and Legendary+ every 40 ----- */
+const PITY_E = 10, PITY_L = 40;
+const streakLuck = () => Math.min(8, .4 * (S.current_streak || 0));
+function oddsNow() {
+  const L_ = streakLuck(), w = { common: 58 - L_, rare: 27, epic: 10 + .6 * L_, legend: 4 + .3 * L_, myth: 1 + .1 * L_ };
+  return w;
+}
+function rollRarity() {
+  const c = S.coll;
+  if (c.pityL + 1 >= PITY_L) return Math.random() < .85 ? "legend" : "myth";
+  if (c.pity + 1 >= PITY_E) { const r = Math.random(); return r < .8 ? "epic" : r < .97 ? "legend" : "myth"; }
+  const w = oddsNow(); let x = Math.random() * CARD_ORDER.reduce((a, k) => a + w[k], 0);
+  for (const k of CARD_ORDER) { if ((x -= w[k]) < 0) return k; }
+  return "common";
+}
+function rollCollectible() {
+  const rar = rollRarity(), pool = COLLECTIBLES.filter(c => c.rar === rar), fresh = pool.filter(c => !S.coll.owned[c.id]);
+  const c = pick(fresh.length && Math.random() < .85 ? fresh : pool), k = CARD_ORDER.indexOf(c.rar);
+  S.coll.pity = k >= 2 ? 0 : S.coll.pity + 1; S.coll.pityL = k >= 3 ? 0 : S.coll.pityL + 1;
+  return c;
+}
+function grantCapsule(n = 1, why = "") { S.coll.pending += n; save(true); if (why) toast(`🎁 +${n} capsule${n > 1 ? "s" : ""}: ${why}`); }
+
+/* ----- Streak capsules: +1 every 3rd streak day, +2 on milestone days ----- */
+const STREAK_BIG = [7, 14, 21, 30, 50, 75, 100, 150, 200];
+const streakCapsuleFor = d => (STREAK_BIG.includes(d) ? 2 : d > 0 && d % 3 === 0 ? 1 : 0);
+function nextStreakCapsule() { const cur = S.current_streak || 0; for (let d = cur + 1; d < cur + 40; d++) if (streakCapsuleFor(d)) return { day: d, n: streakCapsuleFor(d), left: d - cur }; return { day: cur + 3, n: 1, left: 3 }; }
+
+/* ----- Capsule opening ----- */
+const CAP_COL = { common: ["#FFB7C5", "#FF86B4"], rare: ["#BDE7FF", "#5AB4F0"], epic: ["#FFE680", "#F2B800"], legend: ["#FFC2E8", "#B77BFF"], myth: ["#B9A6FF", "#5B3FD1"] };
+const capsuleSvg = (rar = "common") => { const [a, b] = CAP_COL[rar]; return `<svg viewBox="0 0 120 120"><defs><linearGradient id="capg${rar}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs>
+  <ellipse cx="60" cy="108" rx="34" ry="6" fill="rgba(107,74,107,.18)"/><circle cx="60" cy="58" r="44" fill="url(#capg${rar})" stroke="${CO}" stroke-width="4"/><path d="M16 58 H104 A44 44 0 0 1 16 58Z" fill="#FFFDF8" stroke="${CO}" stroke-width="4"/>
+  <circle cx="60" cy="58" r="9" fill="#FFF3B0" stroke="${CO}" stroke-width="3"/><path d="M34 32 q12 -12 26 -12" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".85"/><circle cx="82" cy="40" r="3" fill="#fff" opacity=".8"/></svg>`; };
+function openCapsule(fromAlbum) {
+  if (!(S.coll.pending > 0)) return;
+  const box = openModal(`<span class="kicker">🎁 Mystery capsule</span><h2>What biology card is inside?</h2>
+    <div class="capsule" id="cap" aria-hidden="true">${capsuleSvg("common")}</div>
+    ${say("chiikawa", "Please be a rare one... 🙏", "brave")}
+    <p class="small muted" style="text-align:center;margin:0">${PITY_E - S.coll.pity - 1 > 0 ? `Epic or better guaranteed in ${PITY_E - S.coll.pity} capsule${PITY_E - S.coll.pity > 1 ? "s" : ""}` : "This one is guaranteed Epic or better!"} · 🔥 streak luck +${streakLuck().toFixed(1)}%</p>
+    <div class="row" style="justify-content:center"><button class="btn primary big" id="capGo">Twist and open! 🔄</button></div>`, { closable: false });
+  box.querySelector("#capGo").onclick = () => {
+    SFX.click(); const cap = document.getElementById("cap"); cap.classList.add("shake"); box.querySelector("#capGo").disabled = true;
+    const c = rollCollectible(), dup = (S.coll.owned[c.id] || 0) > 0, rr = CARD_RAR[c.rar];
+    S.coll.owned[c.id] = (S.coll.owned[c.id] || 0) + 1; S.coll.pending -= 1; S.stats.pulls = (S.stats.pulls || 0) + 1;
+    const reveal = () => {
+      if (dup) gainCoins(rr.dup); else save(true);
+      checkTrophies();
+      const big = CARD_ORDER.indexOf(c.rar) >= 2;
+      if (big) { SFX.fanfare(); setTimeout(() => SFX.yaha(), 400); confetti(c.rar === "common" ? 60 : 160 + 40 * CARD_ORDER.indexOf(c.rar)); } else { SFX.item(); confetti(50); }
+      const owned = collOwned(), total = CARD_N;
+      box.innerHTML = `<span class="kicker">${big ? `✨ ${rr.n.toUpperCase()} PULL! ✨` : "🎁 Capsule opened"}</span><h2>${dup ? "You already have this one!" : c.rar === "myth" ? "MYTHIC!!! It's real!" : big ? "What a pull!" : "New card!"}</h2>
+        <div class="reveal r-${c.rar}">${cardTile(c, S.coll.owned[c.id], true)}</div>
+        ${dup ? `<p class="small" style="text-align:center;margin:0">Duplicate card turned into <b>🌰 ${rr.dup}</b>.</p>` : `<p class="small" style="text-align:center;margin:0">New! <b>${owned} / ${total}</b> cards collected.</p>`}
+        <div class="row" style="justify-content:center">${S.coll.pending ? `<button class="btn primary big" id="capMore">🎁 Open another (${S.coll.pending})</button>` : ""}<button class="btn yellow" id="capAlbum">📚 Collection</button><button class="btn plain" id="capDone">Done</button></div>`;
+      const more = box.querySelector("#capMore"); if (more) more.onclick = () => { SFX.tap(); openCapsule(fromAlbum); };
+      box.querySelector("#capAlbum").onclick = () => { SFX.tap(); openAlbum(); };
+      box.querySelector("#capDone").onclick = () => { SFX.tap(); closeModal(); if (!R && !RU) renderMap(); };
+      wireTilt(box);
+    };
+    if (CARD_ORDER.indexOf(c.rar) >= 2 && !reduced()) { cap.innerHTML = capsuleSvg(c.rar); setTimeout(() => giftCeremony(c.rar === "epic" ? "epic" : c.rar === "legend" ? "legend" : "myth", reveal), 900); }
+    else setTimeout(reveal, reduced() ? 50 : 1000);
+  };
+}
+// 3D tilt: drag or hover over a card to tilt it and move the holo shine
+function wireTilt(root) {
+  root.querySelectorAll(".bcard.full").forEach(card => {
+    const mv = e => { const b = card.getBoundingClientRect(), x = (e.clientX - b.left) / b.width, y = (e.clientY - b.top) / b.height; card.style.setProperty("--rx", `${(.5 - y) * 16}deg`); card.style.setProperty("--ry", `${(x - .5) * 18}deg`); card.style.setProperty("--sx", `${x * 100}%`); card.style.setProperty("--sy", `${y * 100}%`); };
+    const rs = () => { card.style.setProperty("--rx", "0deg"); card.style.setProperty("--ry", "0deg"); };
+    card.addEventListener("pointermove", mv); card.addEventListener("pointerdown", mv); card.addEventListener("pointerleave", rs); card.addEventListener("pointerup", rs);
+  });
+}
+
+/* ----- Collection album ----- */
+let albumFilter = "all";
+function openAlbum() {
+  const cap = S.coll.pending, flt = albumFilter;
+  const list = COLLECTIBLES.filter(c => flt === "all" ? true : flt === "missing" ? !(S.coll.owned[c.id] > 0) : c.rar === flt);
+  const chips = [["all", "All", `${collOwned()}/${CARD_N}`], ...CARD_ORDER.map(r => [r, CARD_RAR[r].n, `${collOwned(r)}/${collTotal(r)}`]), ["missing", "Missing", ""]];
+  const box = openModal(`<span class="kicker">📚 Collection</span><h2>Biology Card Collection</h2>
+    <div class="tprog rainbow thick"><i style="width:${Math.round(100 * collOwned() / CARD_N)}%"></i></div>
+    ${cap ? `<div class="row"><button class="btn primary big" id="alOpen">🎁 Open a capsule (${cap})</button></div>` : `<p class="small muted" style="margin:0">No capsule ready. Study today to keep your streak and earn the next one!</p>`}
+    <div class="slottabs" role="tablist">${chips.map(([k, n, c]) => `<button role="tab" aria-selected="${k === flt}" data-af="${k}">${n}${c ? ` <span class="small">${c}</span>` : ""}</button>`).join("")}</div>
+    <div class="cardgrid">${list.map(c => cardTile(c, S.coll.owned[c.id])).join("") || `<p class="muted">Nothing here. Great job!</p>`}</div>
+    <p class="small muted">Tap a card to read it. Duplicates turn into 🌰 (5 / 10 / 25 / 60 / 120). Epic or better is guaranteed every ${PITY_E} capsules.</p>`, { wide: true });
+  const b = box.querySelector("#alOpen"); if (b) b.onclick = () => { SFX.tap(); openCapsule(true); };
+  box.querySelectorAll("[data-af]").forEach(x => x.onclick = () => { SFX.tap(); albumFilter = x.dataset.af; openAlbum(); });
+  box.querySelectorAll(".bcard").forEach(x => x.onclick = () => { const c = cardById(x.dataset.card); SFX.tap(); openCardDetail(c); });
+}
+function openCardDetail(c) {
+  const own = S.coll.owned[c.id] || 0;
+  const box = openModal(`<span class="kicker">🃏 ${CARD_RAR[c.rar].n} card</span><div class="reveal r-${c.rar}">${cardTile(c, own, true)}</div><div class="row" style="justify-content:center"><button class="btn plain" id="cdBack">← Collection</button></div>`);
+  box.querySelector("#cdBack").onclick = () => { SFX.tap(); openAlbum(); }; wireTilt(box);
+}
+
+/* ----- 🌟 The big Home advert: Biology Capsule Lab ----- */
+function machineSvg2() {
+  const caps = [["#FF86B4", 30, 44], ["#5AB4F0", 52, 36], ["#FFD13D", 74, 44], ["#B77BFF", 40, 62], ["#58CC02", 64, 62], ["#FF9600", 86, 60], ["#FFC2E8", 52, 80]];
+  return `<svg viewBox="0 0 120 150" class="machine" aria-hidden="true"><defs><linearGradient id="mglass" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#CFE9FF" stop-opacity=".55"/></linearGradient><linearGradient id="mbase" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#FF86B4"/><stop offset="1" stop-color="#E0508F"/></linearGradient></defs>
+    <ellipse cx="60" cy="144" rx="44" ry="5" fill="rgba(107,74,107,.2)"/>
+    <circle cx="60" cy="52" r="44" fill="url(#mglass)" stroke="${CO}" stroke-width="3.5"/>
+    <g class="mcaps">${caps.map(([c, x, y], i) => `<g class="mc m${i}"><circle cx="${x}" cy="${y}" r="11" fill="${c}" stroke="${CO}" stroke-width="2.4"/><path d="M${x - 11} ${y} H${x + 11}" stroke="${CO}" stroke-width="2"/><circle cx="${x - 4}" cy="${y - 5}" r="2.4" fill="#fff" opacity=".8"/></g>`).join("")}</g>
+    <path d="M26 30 q10 -14 28 -16" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".9"/>
+    <rect x="14" y="88" width="92" height="46" rx="14" fill="url(#mbase)" stroke="${CO}" stroke-width="3.5"/><rect x="24" y="96" width="30" height="14" rx="7" fill="#FFF3B0" stroke="${CO}" stroke-width="2.5"/>
+    <circle cx="82" cy="104" r="10" fill="#fff" stroke="${CO}" stroke-width="3"/><path d="M82 96 V112 M74 104 H90" stroke="${CO}" stroke-width="3" stroke-linecap="round" class="crank"/>
+    <rect x="42" y="118" width="36" height="14" rx="6" fill="#4B3350" stroke="${CO}" stroke-width="2.5"/></svg>`;
+}
+function capsuleAdHtml() {
+  const pend = S.coll.pending, nx = nextStreakCapsule(), cur = S.current_streak || 0, studied = studiedToday();
+  const L_ = streakLuck(), prev = cur - (cur % 3), pc = Math.min(100, Math.round(100 * (cur - prev) / (nx.day - prev || 3)));
+  const stagger = CARD_ORDER.map(r => { const o = collOwned(r), t = collTotal(r); return `<div class="adrar r-${r}"><span class="adsym">${CARD_RAR[r].sym}</span><b>${r === "myth" && !o ? "?" : `${o}/${t}`}</b><span class="small">${CARD_RAR[r].n}</span></div>`; }).join("");
+  const mystery = ["luca", "endosym", "crispr"].map(id => { const c = cardById(id); return `<span class="adtease r-${c.rar} ${S.coll.owned[id] ? "own" : ""}"><span class="${S.coll.owned[id] ? "" : "sil"}">${cardArt(c)}</span></span>`; }).join("");
+  return `<section class="capad" aria-label="Biology Capsule Lab">
+    <i class="adglow" aria-hidden="true"></i><span class="adspark s1" aria-hidden="true">${spk(5, 5, 5, "y")}</span><span class="adspark s2" aria-hidden="true">${spk(5, 5, 4, "k")}</span><span class="adspark s3" aria-hidden="true">${spk(5, 5, 3, "a")}</span>
+    <div class="admain">
+      <div class="admach">${machineSvg2()}${pend ? `<span class="adbadge">${pend}</span>` : ""}</div>
+      <div class="adtext">
+        <span class="adnew">NEW · ${CARD_N} BIOLOGY CARDS</span>
+        <h2>Biology Capsule Lab</h2>
+        <p>Collect real biology terms and structures as shiny trading cards, from Common to <b>Mythic</b>.</p>
+        ${pend ? `<button class="btn primary big adgo" id="adOpen">🎁 Open capsule (${pend})</button>` : `<button class="btn primary big adgo" id="adStudy">${studied ? "⚡ Play a Cell Rush to earn one" : "🔥 Study today to earn one"}</button>`}
+        <button class="adalbum" id="adAlbum">📚 Collection ${collOwned()}/${CARD_N}</button>
+      </div></div>
+    <div class="adstreak"><div class="adsrow"><b>🔥 Streak reward</b><span class="small">${nx.left === 1 && !studied ? "Study today for" : `In ${nx.left} day${nx.left > 1 ? "s" : ""}:`} <b>+${nx.n} capsule${nx.n > 1 ? "s" : ""}</b> (day ${nx.day})</span></div>
+      <div class="tprog thick"><i style="width:${pc}%"></i></div>
+      <span class="small muted">Streak luck: <b>+${L_.toFixed(1)}%</b> better odds (up to +8%). A capsule every 3rd day, 2 on day 7, 14, 21, 30...</span></div>
+    <div class="adrow"><div class="adtease-row" aria-label="Mystery cards">${mystery}</div><div class="adrars">${stagger}</div></div>
+  </section>`;
+}
+function wireCapsuleAd() {
+  const g = id => document.getElementById(id);
+  if (g("adOpen")) g("adOpen").onclick = () => { SFX.init(); SFX.tap(); openCapsule(); };
+  if (g("adStudy")) g("adStudy").onclick = () => { SFX.init(); SFX.tap(); const ni = nextRoomIndex(); if (S.playMode === "study" || ni === -1) { goTab("stages"); } else enterRoom(ROOMS[ni].id); };
+  if (g("adAlbum")) g("adAlbum").onclick = () => { SFX.init(); SFX.tap(); openAlbum(); };
+}
 // Each stage's pool: its questions, converted to one shape. Internally each has a Bloom level b (1–6);
 // students only ever see a friendly difficulty label.
 const DIFF = b => b <= 2 ? { t: "Easy", i: "🌱", c: "easy" } : b <= 4 ? { t: "Medium", i: "🌿", c: "medium" } : b === 5 ? { t: "Hard", i: "🔥", c: "hard" } : { t: "Expert", i: "⭐", c: "expert" };
@@ -7269,7 +7628,7 @@ function normalise(obj) {
   s.room_progress = Object.assign({}, s.room_progress); s.room_stars = Object.assign({}, s.room_stars); s.room_timer = Object.assign({}, s.room_timer);
   s.mastered_puzzles = [...new Set(s.mastered_puzzles || [])];
   s.mistakes = Object.assign({}, s.mistakes);
-  s.coll = Object.assign({ owned: {}, pending: 0, pity: 0 }, s.coll); s.coll.owned = Object.assign({}, s.coll.owned);
+  s.coll = Object.assign({ owned: {}, pending: 0, pity: 0, pityL: 0 }, s.coll); s.coll.owned = Object.assign({}, s.coll.owned); migrateCards(s.coll);
   s.pets = Object.assign({}, s.pets);
   s.dict = Object.assign({ missed: {}, best: 0 }, s.dict); s.dict.missed = Object.assign({}, s.dict.missed);
   s.equip = Object.assign({ hat: null, hair: null, face: null, outfit: null, ribbon: null, hand: null, frame: null }, s.equip); s.power = Object.assign({ torch: 0, crystal: 0, guard: 0 }, s.power);
@@ -7470,7 +7829,6 @@ const ICONS = {
 const topicsCleared = () => TOPICS.filter((_, ti) => stagesDone(ti) === topicRooms(ti).length).length;
 const partsCleared = () => PARTS.filter((_, pi) => TOPICS.every((T, ti) => T.p !== pi || stagesDone(ti) === topicRooms(ti).length)).length;
 const bossesBeaten = () => ROOMS.filter(r => r.boss && S.completed_rooms.includes(r.id)).length;
-const collOwned = rare => COLLECTIBLES.filter(c => (rare == null || c.rare === rare) && (S.coll.owned[c.id] || 0) > 0).length;
 const TROPHY_CATS = [["habit", "🔥 Daily habits"], ["adventure", "🗺️ Adventure"], ["brain", "🧠 Brain power"], ["fun", "🎀 Fun & style"]];
 const TROPHIES = [
   { id: "week", cat: "habit", name: "Week Warrior", rar: "bronze", who: "chiikawa", desc: "Play 7 days in a row", prog: () => [S.longest_streak, 7] },
@@ -7497,8 +7855,8 @@ const TROPHIES = [
   { id: "spooky", cat: "fun", name: "Spooky Survivor", rar: "silver", who: "chiikawa", desc: "Survive 20 random incidents", prog: () => [S.stats.incidents, 20] },
   { id: "fashion", cat: "fun", name: "Fashion Icon", rar: "silver", who: "momonga", desc: "Own 8 outfits from Koma's shop", prog: () => [S.owned.length, 8] },
   { id: "rush2", cat: "fun", name: "Lightning Brain", rar: "gold", who: "usagi", desc: "Score 300 points in one Cell Rush", prog: () => [S.rush.best, 300] },
-  { id: "coll", cat: "fun", name: "Collector", rar: "gold", who: "shisa", desc: "Collect 15 different collectibles", prog: () => [collOwned(), 15] },
-  { id: "rare", cat: "fun", name: "Rare Hunter", rar: "legend", who: "chiikawa", desc: "Collect all 5 rare collectibles", prog: () => [collOwned(true), 5] },
+  { id: "coll", cat: "fun", name: "Collector", rar: "gold", who: "shisa", desc: "Collect 20 different biology cards", prog: () => [collOwned(), 20] },
+  { id: "rare", cat: "fun", name: "Rare Hunter", rar: "legend", who: "chiikawa", desc: "Collect 12 cards that are Rare or better", prog: () => [collOwned(true), 12] },
   { id: "dict", cat: "brain", name: "Dictation Star", rar: "gold", who: "hachiware", desc: "Get 10 perfect Word Dictation rounds", prog: () => [S.stats.dictPerfect, 10] },
   { id: "doctor", cat: "fun", name: "Little Doctor", rar: "silver", who: "shisa", desc: "Cure your Study Pal 5 times with the right treatment", prog: () => [S.stats.cured, 5] },
   { id: "petpal", cat: "adventure", name: "Pet Pal", rar: "gold", who: "momonga", desc: "Adopt 10 pets", prog: () => [Object.keys(S.pets).length, 10] },
@@ -7567,107 +7925,6 @@ function cabinetHtml(full = true) {
     ${TROPHY_CATS.map(([c, label]) => `<h3 class="shelf-title">${label}</h3><div class="shelf wood">${TROPHIES.filter(t => t.cat === c).map(trophyCard).join("")}</div>`).join("")}`;
 }
 function openCabinet() { openModal(cabinetHtml(true), { wide: true }); }
-
-/* ============================================================
-   6b2. Collectibles: 20 capsule toys (15 common, 5 rare). Earn 🎁 capsules by playing; open them to collect.
-   ============================================================ */
-const COLL_ART = {
-  photocard: `<svg viewBox="0 0 80 100" aria-hidden="true"><defs><linearGradient id="holoA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB7C5"/><stop offset=".3" stop-color="#FDFFB6"/><stop offset=".55" stop-color="#B9F3C9"/><stop offset=".8" stop-color="#A0C4FF"/><stop offset="1" stop-color="#C9C3F0"/></linearGradient></defs>
-    <rect x="6" y="4" width="68" height="92" rx="10" fill="url(#holoA)" stroke="${INK}" stroke-width="3"/><rect x="13" y="12" width="54" height="56" rx="6" fill="#FFF1E6" stroke="${INK}" stroke-width="2"/>
-    <g transform="rotate(-12 40 42)"><ellipse cx="40" cy="42" rx="20" ry="11" fill="#F9C9A6" stroke="${INK}" stroke-width="2.2"/><path d="M24 42 h5 v-6 h5 v12 h5 v-12 h5 v12 h5 v-6 h6" fill="none" stroke="${INK}" stroke-width="1.8"/></g>
-    <circle cx="33" cy="40" r="1.8" fill="${INK}"/><circle cx="46" cy="38" r="1.8" fill="${INK}"/><path d="M20 20 l3 5 5 1 -5 1 -3 5 -1 -5 -5 -1 5 -1z" fill="#fff"/>
-    <text x="40" y="80" text-anchor="middle" font-size="7.5" font-weight="800" fill="${INK}">POWERHOUSE</text><text x="40" y="89" text-anchor="middle" font-size="7.5" font-weight="800" fill="${INK}">ERA ✦</text></svg>`,
-  blindbox: `<svg viewBox="0 0 80 100" aria-hidden="true"><rect x="10" y="50" width="60" height="44" rx="6" fill="#2B2433" stroke="${INK}" stroke-width="3"/><path d="M10 50 l8 -10 h44 l8 10" fill="#3E3350" stroke="${INK}" stroke-width="3"/>
-    <text x="40" y="78" text-anchor="middle" font-size="9" font-weight="800" fill="#FDD66B">SECRET</text><text x="40" y="89" text-anchor="middle" font-size="6.5" fill="#C9A0FF">1 / 144</text>
-    <g transform="translate(20 4) scale(.62)"><circle cx="17" cy="17" r="7" fill="#3A3145" stroke="${INK}" stroke-width="2.4"/><circle cx="47" cy="17" r="7" fill="#3A3145" stroke="${INK}" stroke-width="2.4"/><ellipse cx="32" cy="37" rx="25" ry="21" fill="#3A3145" stroke="${INK}" stroke-width="2.4"/><ellipse cx="24" cy="36" rx="3" ry="3.6" fill="#FDD66B"/><ellipse cx="40" cy="36" rx="3" ry="3.6" fill="#FDD66B"/><ellipse cx="15" cy="43" rx="5" ry="3" fill="#C9A0FF"/><ellipse cx="49" cy="43" rx="5" ry="3" fill="#C9A0FF"/><path d="M52 8 a8 8 0 1 0 6 10 a6 6 0 1 1 -6 -10z" fill="#FDD66B"/></g></svg>`,
-  aura: `<svg viewBox="0 0 80 100" aria-hidden="true"><circle cx="40" cy="58" r="34" fill="rgba(201,160,255,.35)"/><circle cx="40" cy="58" r="26" fill="rgba(160,196,255,.35)"/><path d="M40 6 v18" stroke="${INK}" stroke-width="3"/><circle cx="40" cy="8" r="5" fill="none" stroke="${INK}" stroke-width="3"/>
-    <circle cx="40" cy="56" r="22" fill="#FFFDF0" stroke="${INK}" stroke-width="3"/><circle cx="28" cy="38" r="6" fill="#FFFDF0" stroke="${INK}" stroke-width="2.4"/><circle cx="52" cy="38" r="6" fill="#FFFDF0" stroke="${INK}" stroke-width="2.4"/>
-    <path d="M31 54 l3 -3 3 3 M43 54 l3 -3 3 3" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/><path d="M36 62 q4 4 8 0" fill="none" stroke="${INK}" stroke-width="2"/><ellipse cx="28" cy="60" rx="4" ry="2.4" fill="#FFB7C5"/><ellipse cx="52" cy="60" rx="4" ry="2.4" fill="#FFB7C5"/>
-    <text x="40" y="94" text-anchor="middle" font-size="10" font-weight="800" fill="#6B4E8C">+1000 ✦</text></svg>`,
-  matcha: `<svg viewBox="0 0 80 100" aria-hidden="true"><path d="M18 30 H62 L56 92 H24 Z" fill="rgba(255,255,255,.7)" stroke="${INK}" stroke-width="3"/><path d="M20 52 H60 L56 90 H24Z" fill="#9CCB6B"/><path d="M19 42 H61 L60 52 H20Z" fill="#F4F0E8"/>
-    ${[[32, 70], [46, 76], [38, 84]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="6" ry="3.5" fill="#6BBF5F" stroke="${INK}" stroke-width="1.4"/>`).join("")}<rect x="14" y="24" width="52" height="8" rx="3" fill="#FFFDF0" stroke="${INK}" stroke-width="2.4"/><path d="M48 24 L56 4" stroke="#FFB7C5" stroke-width="5" stroke-linecap="round"/>
-    <path d="M40 60 q-8 -6 -4 -12 q6 -2 4 12 q-2 -14 4 -12 q4 6 -4 12" fill="#FFFDF0" opacity=".8"/></svg>`,
-  flip: `<svg viewBox="0 0 80 100" aria-hidden="true"><rect x="22" y="6" width="36" height="42" rx="8" fill="#FFB7C5" stroke="${INK}" stroke-width="3"/><rect x="27" y="11" width="26" height="26" rx="4" fill="#D3E4FF" stroke="${INK}" stroke-width="2"/><path d="M40 31 C34 27 32 24 32 21.5 C32 19 34 18 36 18 C38 18 39.5 19.5 40 21 C40.5 19.5 42 18 44 18 C46 18 48 19 48 21.5 C48 24 46 27 40 31Z" fill="#FF86D0"/>
-    <rect x="22" y="50" width="36" height="42" rx="8" fill="#FFB7C5" stroke="${INK}" stroke-width="3"/>${[0, 1, 2].map(r => [0, 1, 2].map(c => `<rect x="${28 + c * 9}" y="${58 + r * 9}" width="6" height="5" rx="2" fill="#FFFDF0" stroke="${INK}" stroke-width="1"/>`).join("")).join("")}
-    <path d="M58 70 q14 4 12 16" fill="none" stroke="${INK}" stroke-width="1.6"/><path d="M66 84 q4 4 0 8 q-4 4 0 8 M72 84 q-4 4 0 8 q4 4 0 8" fill="none" stroke="#5B8FE0" stroke-width="2"/>${[[16, 10], [64, 44], [12, 60]].map(([x, y]) => `<path d="M${x} ${y - 5} l1.5 3.5 3.5 1.5 -3.5 1.5 -1.5 3.5 -1.5 -3.5 -3.5 -1.5 3.5 -1.5z" fill="#FDD66B"/>`).join("")}</svg>`
-};
-const COLLECTIBLES = [
-  { id: "mochi", e: "🍡", name: "Mitochondria Mochi", desc: "The powerhouse of the cell, but squishy." },
-  { id: "onigiri", e: "🍙", name: "Chloroplast Onigiri", desc: "Packed with green goodness and sunshine." },
-  { id: "boba", e: "🧋", name: "Ribosome Boba", desc: "Every pearl is a tiny protein factory." },
-  { id: "dango", e: "🔑", name: "Enzyme Key Charm", desc: "Fits exactly one lock. Very specific." },
-  { id: "donut", e: "🍩", name: "Red Blood Cell Donut", desc: "Biconcave, no nucleus, extra cute." },
-  { id: "grapes", e: "🍇", name: "Alveoli Grapes", desc: "Huge surface area, tiny and juicy." },
-  { id: "villi", e: "🧸", name: "Villi Plushie", desc: "Soft, finger-shaped and absorbent." },
-  { id: "virus", e: "🦠", name: "Virus Squishy", desc: "Harmless. Probably. Wash your hands!" },
-  { id: "jelly", e: "🪼", name: "Amoeba Jelly", desc: "Changes shape whenever it wants." },
-  { id: "pollen", e: "🌼", name: "Pollen Puff", desc: "Sticky, spiky and ready to travel." },
-  { id: "peapod", e: "🫛", name: "Pea-Pod Pals", desc: "Round and wrinkled friends, Mendel-approved." },
-  { id: "dnastick", e: "🧬", name: "DNA Biscuit Stick", desc: "A–T, C–G, crunch!" },
-  { id: "heartkey", e: "💓", name: "Heartbeat Keychain", desc: "Ba-dum, ba-dum, double circulation." },
-  { id: "stomaclip", e: "🍃", name: "Stomata Hair Clip", desc: "Opens in the day, closes when it's dry." },
-  { id: "noodles", e: "🍜", name: "Neuron Noodles", desc: "Long, fast and full of impulses." },
-  { id: "photocard", rare: true, art: "photocard", name: "Powerhouse Era Holo Photocard", desc: "Holographic idol photocard of Mitochondria. It's in its powerhouse era. ✦" },
-  { id: "blindbox", rare: true, art: "blindbox", name: "Secret Blind-Box: Midnight Mochi", desc: "The 1-in-144 secret figure. Collectors everywhere are screaming." },
-  { id: "aura", rare: true, art: "aura", name: "Aura +1000 Bag Charm", desc: "Clip it on your bag for instant main-character energy." },
-  { id: "matcha", rare: true, art: "matcha", name: "Chloroplast Matcha Latte", desc: "Iced, aesthetic, and it's giving photosynthesis." },
-  { id: "flip", rare: true, art: "flip", name: "Y2K Flip-Phone DNA Charm", desc: "Sparkly retro flip phone with a double-helix strap. Y2K core." }
-];
-const RARE_CHANCE = .08, RARE_PITY = 12;
-function collArt(c) { return c.rare ? COLL_ART[c.art] : `<span class="cemoji" aria-hidden="true">${c.e}</span>`; }
-function collCard(c, own) {
-  return `<div class="coll ${c.rare ? "rare" : ""} ${own ? "own" : "missing"}" aria-label="${own ? esc(c.name) : "Not collected yet"}">
-    <div class="cart">${own ? collArt(c) : `<span class="cq">?</span>`}</div>
-    <b class="small">${own ? esc(c.name) : c.rare ? "??? Rare" : "???"}</b>
-    <span class="tag ${c.rare ? "rtag" : ""}">${c.rare ? "✨ Rare" : "Common"}</span>
-    ${own && own > 1 ? `<span class="small muted">×${own}</span>` : ""}</div>`;
-}
-function openAlbum() {
-  const n = collOwned(), nr = collOwned(true), cap = S.coll.pending;
-  const box = openModal(`<span class="kicker">🧸 Collection</span><h2>Capsule Collection</h2>
-    <div class="row" style="justify-content:space-between"><span class="pill">${n} / ${COLLECTIBLES.length} collected</span><span class="pill rpill">✨ ${nr} / 5 rare</span></div>
-    ${say("shisa", cap ? `You have <b>${cap}</b> capsule${cap > 1 ? "s" : ""} waiting! Open ${cap > 1 ? "them" : "it"}~ 🦁🎁` : "Earn 🎁 capsules by escaping stages, beating bosses, opening the daily chest, scoring 120+ in Cell Rush and unlocking trophies!", "happy")}
-    ${cap ? `<div class="row"><button class="btn big" id="alOpen">🎁 Open a capsule (${cap})</button></div>` : ""}
-    <h3>✨ Rare</h3><div class="collgrid">${COLLECTIBLES.filter(c => c.rare).map(c => collCard(c, S.coll.owned[c.id])).join("")}</div>
-    <h3>Common</h3><div class="collgrid">${COLLECTIBLES.filter(c => !c.rare).map(c => collCard(c, S.coll.owned[c.id])).join("")}</div>
-    <p class="small muted">Rare pulls are about 1 in 12, and you're guaranteed one within ${RARE_PITY} capsules. Duplicates turn into 🌰 5.</p>`, { wide: true });
-  const b = box.querySelector("#alOpen"); if (b) b.onclick = () => { SFX.tap(); openCapsule(true); };
-}
-function grantCapsule(n = 1, why = "") {
-  S.coll.pending += n; save(true);
-  if (why) toast(`🎁 +${n} capsule${n > 1 ? "s" : ""}: ${why}`);
-}
-function rollCollectible() {
-  const rareHit = S.coll.pity + 1 >= RARE_PITY || Math.random() < RARE_CHANCE;
-  const pool = COLLECTIBLES.filter(c => !!c.rare === rareHit), fresh = pool.filter(c => !S.coll.owned[c.id]);
-  const c = pick(fresh.length && Math.random() < .75 ? fresh : pool);
-  S.coll.pity = c.rare ? 0 : S.coll.pity + 1;
-  return c;
-}
-function openCapsule(fromAlbum) {
-  if (!(S.coll.pending > 0)) return;
-  const box = openModal(`<span class="kicker">🎁 Mystery capsule</span><h2>What's inside?</h2>
-    <div class="capsule" id="cap" aria-hidden="true"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="44" fill="#FFB7C5" stroke="${INK}" stroke-width="4"/><path d="M16 60 H104 A44 44 0 0 1 16 60Z" fill="#FFFDF0" stroke="${INK}" stroke-width="4"/><circle cx="60" cy="60" r="9" fill="#FDFFB6" stroke="${INK}" stroke-width="3"/><path d="M36 34 q10 -10 22 -10" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg></div>
-    ${say("chiikawa", "Uu... I'm so nervous... please be something cute! 🥺🙏", "brave")}
-    <div class="row" style="justify-content:center"><button class="btn big" id="capGo">Twist and open! 🔄</button></div>`, { closable: false });
-  box.querySelector("#capGo").onclick = () => {
-    SFX.click(); const cap = document.getElementById("cap"); cap.classList.add("shake"); box.querySelector("#capGo").disabled = true;
-    setTimeout(() => {
-      const c = rollCollectible(), dup = (S.coll.owned[c.id] || 0) > 0;
-      S.coll.owned[c.id] = (S.coll.owned[c.id] || 0) + 1; S.coll.pending -= 1; if (dup) S.coins += 5;
-      save(true); checkTrophies();
-      if (c.rare) { SFX.fanfare(); setTimeout(() => SFX.yaha(), 400); confetti(220); } else { SFX.item(); confetti(60); }
-      box.innerHTML = `<span class="kicker">${c.rare ? "✨ RARE PULL! ✨" : "🎁 Capsule opened"}</span><h2>${c.rare ? "No way... it's RARE!!" : dup ? "A friend you already have!" : "New collectible!"}</h2>
-        <div class="reveal ${c.rare ? "rare" : ""}">${collCard(c, 1)}</div>
-        <p style="text-align:center">${esc(c.desc)}</p>
-        ${c.rare ? say("usagi", "WAHOO!!! WOOOO!!! That's SO rare!!! 🐰✨", "sparkle") : dup ? say("kurimanju", "A duplicate... traded for 🌰 5. *sip* 🍵", "happy") : say("hachiware", "Cute! It's in your collection now. ✨", "happy", "hint")}
-        <div class="row" style="justify-content:center">${S.coll.pending ? `<button class="btn big" id="capMore">🎁 Open another (${S.coll.pending})</button>` : ""}<button class="btn yellow" id="capAlbum">🧸 See collection</button><button class="btn plain" id="capDone">Done</button></div>`;
-      const more = box.querySelector("#capMore"); if (more) more.onclick = () => { SFX.tap(); openCapsule(fromAlbum); };
-      box.querySelector("#capAlbum").onclick = () => { SFX.tap(); openAlbum(); };
-      box.querySelector("#capDone").onclick = () => { SFX.tap(); closeModal(); if (!R && !RU) renderMap(); };
-    }, reduced() ? 50 : 1100);
-  };
-}
 
 let trophyQueue = [];
 function checkTrophies() {
