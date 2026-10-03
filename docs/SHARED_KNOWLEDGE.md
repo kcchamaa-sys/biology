@@ -44,6 +44,14 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 
 ## Cross-project log (newest first)
 
+- 2026-10-03 (s1science): **Living Island 3.0, Phase 1** (`server/Coop.gs` world section + Island block in `index.html`). Reusable patterns:
+  - **Deterministic class-wide weather:** a hash of the date + season weights, walked forward from an anchor with memo so that mercy rules (no back-to-back severe nights, max 2 in 7) stay a pure function.
+  - **Lazy night tick inside the daily roll**, using one uniform formula: capacity ÷ load → OK / strained / crisis.
+  - **Action + Reason prep:** the server keeps the right reason id, so the client can't cheat.
+  - **Server-issued task seeds** (template + seed, with a stale check) behind a client task registry: order and sort tasks, 12 templates.
+  - **Side-by-side "flag off = identical" test**, loading the previous Coop.gs from git into the fake Apps Script harness.
+  - **Bug class to watch:** `h ^= x` in JS hashes yields negative numbers unless you `>>> 0` after every XOR. It silently skewed the weather and broke array picks.
+
 - 2026-10-03 (s1science): **Island 2.0 art direction** (`coop2.js` + `coop2.css` in the s1 build), a reusable "dark ink cinematic" kit for any scene.
   - Shared SVG `<defs>` injected once per screen: hatch / cross-hatch patterns, glow filters, an animated `feTurbulence`+`feDisplacementMap` "ink smoke" filter, and a grey+animated-noise "corroded" filter.
   - Building art as `CO_ART[key](level)` functions (3 stages each).
