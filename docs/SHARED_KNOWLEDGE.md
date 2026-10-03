@@ -83,3 +83,5 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 - 2026-10-03 (s1science): Island squad rules reusable for any co-op mode: **no join/leave cooldown**, host leaving = delete squad with a "all progress lost" warning (server needs `b.disband`), teammates leave freely and progress stays with the squad. Also: light pastel island theme (`coLite()` lightens dark SVG fills), `condVal()` now guards non-numeric state (fixed `NaN/1`), and long pal stories use a 2-line clamp + "Read story" modal (`palDescHTML`).
 
 - 2026-10-03 (s1science): Island **day/night lighting** (`coTod()` real-clock palette, sun/moon arc, key light via soft-light blend, rim light, lamp bloom, colour grade). Preview any hour with `__coop.tod(hour)`. Reusable for any SVG scene.
+
+- 2026-10-03 (s1science): Island 3.0 FX pattern: parallax via CSS vars on SVG layer groups (`--px/--py` from pointer, tilt, scroll), CSS-only ambient life (clouds, birds, boat, petals, fireflies), film grain overlay, finish moment (speed lines, chromatic edge, island punch, squash residents), plus a saved **Effects on/off** switch (`localStorage coFx`) for slow phones.
