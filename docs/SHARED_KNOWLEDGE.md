@@ -44,6 +44,19 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 
 ## Cross-project log (newest first)
 
+- 2026-10-03 (s1science): **Living Island 3.0, Phase 1** (`server/Coop.gs` world section + Island block in `index.html`). Reusable patterns:
+  - **Deterministic class-wide weather:** a hash of the date + season weights, walked forward from an anchor with memo so that mercy rules (no back-to-back severe nights, max 2 in 7) stay a pure function.
+  - **Lazy night tick inside the daily roll**, using one uniform formula: capacity ÷ load → OK / strained / crisis.
+  - **Action + Reason prep:** the server keeps the right reason id, so the client can't cheat.
+  - **Server-issued task seeds** (template + seed, with a stale check) behind a client task registry: order and sort tasks, 12 templates.
+  - **Side-by-side "flag off = identical" test**, loading the previous Coop.gs from git into the fake Apps Script harness.
+  - **Bug class to watch:** `h ^= x` in JS hashes yields negative numbers unless you `>>> 0` after every XOR. It silently skewed the weather and broke array picks.
+
+- 2026-10-03 (s1science): **Island 2.0 art direction** (`coop2.js` + `coop2.css` in the s1 build), a reusable "dark ink cinematic" kit for any scene.
+  - Shared SVG `<defs>` injected once per screen: hatch / cross-hatch patterns, glow filters, an animated `feTurbulence`+`feDisplacementMap` "ink smoke" filter, and a grey+animated-noise "corroded" filter.
+  - Building art as `CO_ART[key](level)` functions (3 stages each).
+  - FX that diff the last-seen state in `localStorage`: a level-up overlay with charge-up → 2 one-frame impact frames (white/black silhouettes) → shockwave, repair shockwave, fog creep, and Web-Animations "material pop" chips flying into the inventory. All of it respects `prefers-reduced-motion`.
+
 - 2026-10-03 (s1science): **Co-op squads, "Mochi Science Island"** (`server/Coop.gs` + `coop.js` in the s1 build), reusable for any subject with class sign-in.
   - Squads of 2–4 (any class) join with a 6-letter code. Squad state is one JSON row per squad in a `Coop Squads` sheet, rolled forward lazily day by day on each request (no time triggers needed).
   - Correct answers in records become per-unit materials, with a soft daily cap (full rate to 30, slower to 45, overflow becomes coins).
@@ -74,3 +87,5 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 - 2026-10-02 (biology): Ported from s1science: Google class sign-in with **guest mode** (`src/auth.js`, `server/Code.gs`, tabs `Biology Records` / `Biology Progress`, reuses the s1 Users tab and Client ID); study-day streak with Streak Freezes (3, +1/month, 150 to buy) and a streak-risk card; daily mission aimed at the weakest topic; health tips by time of day + late-night rest pop-up; guess alert + "Why?" check after study series; clay buttons, trading-card trophies with progressive reveal, gift-box ceremony for epic/legendary pets (`src/daily.js`, `src/head.html`). The old anonymous `leaderboard/` was removed.
 
 - 2026-10-02: Multi-repo setup created; shared knowledge hub added.
+
+- 2026-10-03 (biology): Class sign-in switched on for S4–S6 Biology. `BIO_CONFIG.API_URL` in `src/auth.js` now points at the deployed Apps Script web app (Users tab holds the Biology students and 2 teachers; records go to `Biology Records` / `Biology Progress`).
