@@ -91,14 +91,15 @@ function signOut() {
   if (signedIn()) { try { cloudSave(); flushQueue(); } catch (e) {} }
   save();
   try { if (window.google && google.accounts) google.accounts.id.disableAutoSelect(); } catch (e) {}
-  Object.assign(AUTH, { mode: null, user: null, token: null, exp: 0, stale: false, lastSync: 0 }); authPref("");
+  Object.assign(AUTH, { mode: null, user: null, token: null, exp: 0, stale: false, lastSync: 0 }); authPref(""); TS.data = null; lbData = {};
   S = load(); closeModal(); renderLogin();
 }
 function playAsGuest() {
   SFX.init(); SFX.tap(); authPref("guest"); AUTH.mode = "guest";
   S = load(); S ? enterGame() : renderWelcome();
 }
-function enterGame() { checkIn(); homeTab = "home"; renderMap(); showResume(); }
+// After sign-in (or choosing guest) everyone lands on the Home tab
+function enterGame() { checkIn(); homeTab = "home"; closeModal(); renderMap(); window.scrollTo({ top: 0 }); }
 
 /* ----- records queue + cloud save (signed-in only) ----- */
 const qKey = () => `${SAVE_KEY}_queue_${signedIn() ? AUTH.user.email : ""}`;
@@ -220,4 +221,38 @@ function openLeaderboard() {
   if (lbData[key] && Date.now() - lbData[key].t < 60000) return show(lbData[key].d);
   cloudSave();
   api("board", { scope: lbScope }).then(d => { if (d && d.ok) lbData[key] = { t: Date.now(), d }; show(d); });
+}
+
+/* ----- 🏆 Home leaderboard card: live top 5 for signed-in students, a teaser for guests ----- */
+let homeLbCat = "xp";
+function homeBoardHtml() {
+  const tabs = `<div class="hbtabs" role="tablist">${LB_CATS.map(([k, ic, nm]) => `<button role="tab" aria-selected="${k === homeLbCat}" data-hbc="${k}">${ic} ${nm}</button>`).join("")}</div>`;
+  if (!signedIn()) {
+    return `<section class="card homeboard"><div class="hbhead"><h3 style="margin:0">🏆 Class leaderboard</h3><span class="pill">You: ${dedication()} pts</span></div>
+      <div class="hbghost" aria-hidden="true">${[1, 2, 3].map(i => `<div class="hbrow"><span class="hbrk">${["🥇", "🥈", "🥉"][i - 1]}</span><span class="hbname"><i></i></span><span class="hbval"><i></i></span></div>`).join("")}</div>
+      <p class="small muted" style="margin:0">${cloudOn() ? "Sign in with your school Google account to see how you rank against your class!" : "Class sign-in isn't switched on in this copy. Your effort points are saved on this device."}</p>
+      ${cloudOn() ? `<div class="row"><button class="btn blue" id="hbSign">🎓 Sign in to join</button></div>` : ""}</section>`;
+  }
+  return `<section class="card homeboard"><div class="hbhead"><h3 style="margin:0">🏆 ${esc(AUTH.user.cls ? `Class ${AUTH.user.cls}` : "Class")} leaderboard</h3><button class="hbmore" id="hbMore">See all ›</button></div>${tabs}<div id="hbBody"><p class="small muted" style="margin:0">Loading… ⏳</p></div></section>`;
+}
+function wireHomeBoard() {
+  const sb = document.getElementById("hbSign"); if (sb) sb.onclick = () => { SFX.tap(); save(); authPref(""); renderLogin(); };
+  const mb = document.getElementById("hbMore"); if (mb) mb.onclick = () => { SFX.tap(); lbCat = homeLbCat; lbScope = "class"; openLeaderboard(); };
+  document.querySelectorAll("[data-hbc]").forEach(b => b.onclick = () => { SFX.tap(); homeLbCat = b.dataset.hbc; document.querySelectorAll("[data-hbc]").forEach(x => x.setAttribute("aria-selected", x === b)); fillHomeBoard(); });
+  if (signedIn()) fillHomeBoard();
+}
+function fillHomeBoard() {
+  const body = document.getElementById("hbBody"); if (!body) return;
+  const show = d => {
+    if (!document.getElementById("hbBody")) return;
+    if (!d || !d.ok) { body.innerHTML = `<p class="small muted" style="margin:0">${esc(errText(d ? d.error : "network"))}</p>`; return; }
+    const c = d.cats[homeLbCat], [, ic, , unit] = LB_CATS.find(x => x[0] === homeLbCat), top = c.top.slice(0, 5), me = c.me;
+    if (!top.length) { body.innerHTML = `<p class="small muted" style="margin:0">Nobody on the board yet. Finish an activity to be first! 🌱</p>`; return; }
+    body.innerHTML = top.map((r, i) => `<div class="hbrow ${r.me ? "me" : ""} p${i + 1}"><span class="hbrk">${["🥇", "🥈", "🥉"][i] || i + 1}</span><span class="hbname">${esc(r.n)}</span><span class="hbval">${ic} ${r.v}</span></div>`).join("")
+      + (me && me.rank > 5 ? `<div class="hbrow me"><span class="hbrk">${me.rank}</span><span class="hbname">You</span><span class="hbval">${ic} ${me.v}</span></div>` : "")
+      + `<p class="small muted" style="margin:0">${me ? (me.rank === 1 ? "You're #1! Keep it up! 👑" : `You're #${me.rank}. ${top[Math.min(me.rank - 2, top.length - 1)] ? `Only <b>${top[Math.min(me.rank - 2, top.length - 1)].v - me.v + 1}</b> ${unit} to move up!` : ""}`) : "Finish an activity today to join the board! 🌱"}</p>`;
+  };
+  const key = "class";
+  if (lbData[key] && Date.now() - lbData[key].t < 90000) return show(lbData[key].d);
+  api("board", { scope: "class" }).then(d => { if (d && d.ok) lbData[key] = { t: Date.now(), d }; show(d); });
 }

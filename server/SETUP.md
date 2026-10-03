@@ -27,6 +27,7 @@ Class sign-in needs three things: your **Google Sheet** (name list + records), a
   | `SHEET_ID` | the Sheet ID from Step 1 |
   | `CLIENT_ID` | the Client ID from Step 2 |
   | `USERS_SHEET` | *(optional)* only if your users tab has a different name |
+  | `TEACHER_EMAILS` | *(optional)* e.g. `abc@school.edu.hk, def@school.edu.hk`. If set, only these accounts see 📊 Stats; if empty, every staff account in the Users tab does |
 
 ## Step 4 · Deploy it
 - **Deploy → New deployment → ⚙️ Web app**
@@ -45,6 +46,10 @@ Class sign-in needs three things: your **Google Sheet** (name list + records), a
 - Open the game → **Sign in with Google** with a student test account → finish one study series → check that a row appears in `Biology Records` and `Biology Progress`.
 
 ---
+
+### 📊 Teacher statistics
+- Teacher accounts get a **📊 Stats** tab (class and period filters, accuracy by topic, activity per day, most-missed questions, student table, CSV download).
+- **After updating `Code.gs`, redeploy:** Deploy → Manage deployments → ✏️ → Version: **New version** → Deploy. The /exec URL stays the same. Until then the Stats tab says the server needs updating.
 
 ### What gets recorded
 - **Biology Records**: one row per finished (or stopped) activity: escape stage, study series, Cell Rush round, dictation round, Mistake Notebook round. Columns include the topic, stage, questions answered, correct, accuracy, stars, time and the IDs of wrong questions.

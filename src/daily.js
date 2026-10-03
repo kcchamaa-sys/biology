@@ -45,6 +45,7 @@ function markStudied() {
   const ms = STREAK_MILESTONES.includes(S.current_streak), sc = streakCapsuleFor(S.current_streak);
   if (sc) { S.coll.pending += sc; setTimeout(() => toast(`🎁 Streak reward: +${sc} capsule${sc > 1 ? "s" : ""} for day ${S.current_streak}!`), 3400); }
   setTimeout(() => streakPop(S.current_streak, ms), 900);
+  if (S.lucky && S.lucky.day !== t) setTimeout(() => toast("🎰 Your daily Lucky Capsule is unlocked! Draw it on 🏠 Home."), 5200);
   return true;
 }
 function streakPop(n, big) {

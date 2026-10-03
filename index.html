@@ -1043,6 +1043,103 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
 @media (max-width: 560px) { .capad { padding: 16px; border-radius: 26px; } .admain { grid-template-columns: 112px minmax(0, 1fr); gap: 12px; } .adtext p { font-size: .88rem; } .adtext h2 { font-size: 1.5rem; } .adrars { flex-basis: 100%; } .adtease-row { display: none; } .adbadge { min-width: 30px; height: 30px; font-size: 1rem; } }
 @media (min-width: 761px) { .capad { padding: 24px 28px; } .admain { grid-template-columns: 210px minmax(0, 1fr); } }
 @media (prefers-reduced-motion: reduce) { .capad .adglow, .admach .machine, .machine .mc, .machine .crank, .adbadge, .adgo, .capad .adspark { animation: none !important; } }
+.pill.capchip { background: linear-gradient(90deg, #FFE27A, #FFB0DA); color: #7A2F5A; font-size: .72rem; }
+.fpic.free { box-shadow: 0 0 0 2.5px #58CC02, 0 3px 0 #46A302 !important; } .pill.freepill { background: #DDF7C8; color: #2F7A00; }
+
+/* ================= 🎰 Daily Lucky Capsule ================= */
+.t-common { --tc: #FFB3CC; --tc2: #FF86B4; } .t-rare { --tc: #8CCBFF; --tc2: #3A9FE8; } .t-epic { --tc: #CFA6FF; --tc2: #9B5CF0; } .t-legend { --tc: #FFE16B; --tc2: #F2A900; } .t-myth { --tc: #FF86D0; --tc2: #7C6BDB; }
+.oddsbar { display: flex; height: 14px; border-radius: 999px; overflow: hidden; box-shadow: inset 0 0 0 2px rgba(255,255,255,.55); }
+.oddsbar i { display: block; background: linear-gradient(180deg, var(--tc), var(--tc2)); }
+.oddsbar i.t-myth, .oddsleg i.t-myth { background: linear-gradient(90deg, #FF4B4B, #FFC800, #58CC02, #1CB0F6, #CE82FF); }
+.oddsleg { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: .72rem; font-weight: 800; }
+.oddsleg i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; background: linear-gradient(180deg, var(--tc), var(--tc2)); }
+.adprizes { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.adprizes .pz { flex: 0 0 auto; display: grid; justify-items: center; gap: 2px; min-width: 64px; padding: 8px 6px 6px; border-radius: 16px; background: rgba(255,255,255,.24); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.4); font-size: 1.5rem; line-height: 1.1; }
+.adprizes .pz small { font-size: .62rem; font-weight: 800; }
+.adprizes .pz.pal { width: 72px; } .adprizes .pz.pal > span { width: 46px; height: 42px; display: block; } .adprizes .pz.pal svg { width: 100%; height: 100%; overflow: visible; }
+.adprizes .pz.pal .sil svg { filter: brightness(0) invert(1) opacity(.55); }
+.adprizes .pz.pal.r-legend { box-shadow: inset 0 0 0 2px #FFE16B, 0 0 12px rgba(255,225,107,.6); } .adprizes .pz.pal.r-myth { box-shadow: inset 0 0 0 2px #FF86D0, 0 0 14px rgba(255,134,208,.7); }
+.adcards { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: .9rem; background: rgba(255,255,255,.18); border-radius: 16px; padding: 8px 12px; }
+.adlast { font-size: .85rem; font-weight: 700; background: rgba(255,255,255,.22); border-radius: 999px; padding: 4px 12px; }
+.adgo.done, .adgo.locked { animation: none !important; } .adgo.done { opacity: .85; } .adgo.locked { background: linear-gradient(180deg, #fff, #F1E8F6) !important; color: #7A4F8A !important; box-shadow: 0 4px 0 #D8C6E2, 0 8px 18px rgba(80,40,110,.2) !important; }
+.admach.ready .machine { filter: drop-shadow(0 0 18px rgba(255,240,150,.95)) drop-shadow(0 10px 14px rgba(60,20,90,.3)); }
+/* draw animation */
+.luckybox { overflow: hidden; }
+.lstage { position: relative; height: 270px; display: grid; place-items: center; }
+.lmach { width: 180px; } .lmach .machine { width: 100%; height: auto; overflow: visible; }
+.lmach.spin .machine { animation: lshake .18s linear infinite; } .lmach.spin .machine .crank { animation: spin .5s linear infinite; } .lmach.spin .machine .mc { animation: mcjig .3s ease-in-out infinite; }
+@keyframes lshake { 25% { transform: translate(-2px, 1px) rotate(-1.5deg); } 75% { transform: translate(2px, -1px) rotate(1.5deg); } }
+.lcap { position: absolute; left: 50%; bottom: 6px; width: 78px; height: 78px; margin-left: -39px; border-radius: 50%; overflow: hidden; background: #fff; box-shadow: 0 0 0 4px #6B4A6B, 0 10px 20px rgba(60,30,70,.3); z-index: 2; }
+.lcap .lhalf { position: absolute; inset: 0 0 50% 0; background: linear-gradient(180deg, var(--tc), var(--tc2)); }
+.lcap.t-myth .lhalf { background: conic-gradient(from 0deg, #FF4B4B, #FFC800, #58CC02, #1CB0F6, #CE82FF, #FF4B4B); animation: spin 2s linear infinite; inset: -50% -50% 50% -50%; }
+.lcap .lband { position: absolute; left: 0; right: 0; top: calc(50% - 3px); height: 6px; background: #6B4A6B; }
+.lcap::after { content: ""; position: absolute; left: 14px; top: 10px; width: 22px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.75); transform: rotate(-25deg); }
+.lcap.drop { animation: ldrop .7s cubic-bezier(.3, 1.6, .5, 1); }
+.lcap.flash { animation: lflash .55s ease-out; }
+.lcap.burst { animation: lburst .6s ease-in forwards; }
+@keyframes ldrop { from { transform: translateY(-150px) scale(.6); } }
+@keyframes lflash { 0% { filter: brightness(2.2); transform: scale(1.25); } 100% { filter: none; transform: scale(1); } }
+@keyframes lburst { 40% { transform: scale(1.4); filter: brightness(1.8); } 100% { transform: scale(2.4); opacity: 0; } }
+.lrays { position: absolute; left: 50%; bottom: -60px; width: 340px; height: 340px; margin-left: -170px; border-radius: 50%; background: repeating-conic-gradient(rgba(255,230,120,.55) 0 9deg, transparent 9deg 22deg); animation: spin 5s linear infinite; mask: radial-gradient(circle, #000 15%, transparent 65%); -webkit-mask: radial-gradient(circle, #000 15%, transparent 65%); }
+.lodds { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.lodds .lo { display: grid; justify-items: center; font-size: .66rem; font-weight: 800; color: #7E6378; background: #fff; border-radius: 12px; padding: 4px 8px; box-shadow: inset 0 -3px 0 var(--tc), 0 0 0 1.5px rgba(107,74,107,.1); }
+.lodds .lo b { font-size: .9rem; color: var(--ink); }
+.prizecard { position: relative; display: grid; justify-items: center; gap: 6px; text-align: center; padding: 22px 16px 18px; border-radius: 24px; overflow: hidden; isolation: isolate; background: linear-gradient(170deg, #fff, color-mix(in srgb, var(--tc) 35%, #fff)); box-shadow: 0 0 0 3px var(--tc2), 0 14px 34px color-mix(in srgb, var(--tc2) 45%, transparent); animation: cardin .7s cubic-bezier(.2, 1.3, .4, 1); }
+.prizecard.t-myth { background: linear-gradient(160deg, #3A2480, #6A4BE0 55%, #231552); color: #fff; } .prizecard.t-myth p { color: rgba(255,255,255,.9); }
+.prizecard .pzrays { position: absolute; inset: -40%; z-index: -1; background: repeating-conic-gradient(color-mix(in srgb, var(--tc) 40%, transparent) 0 10deg, transparent 10deg 24deg); animation: spin 9s linear infinite; opacity: .7; }
+.prizecard h2 { padding: 0; } .prizecard p { margin: 0; font-weight: 600; max-width: 34ch; }
+.pzrar { font-size: .72rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; background: linear-gradient(180deg, var(--tc), var(--tc2)); color: #fff; border-radius: 999px; padding: 3px 12px; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.pzbig { font-size: 4.6rem; line-height: 1.1; } .pzbig .ic { width: 1.1em !important; height: 1.18em !important; }
+.pzcap { width: 110px; height: 110px; } .pzcap svg { width: 100%; height: 100%; }
+.pzfig { width: 150px; } .pzfig svg { width: 100%; height: auto; overflow: visible; }
+.lbanner { position: absolute; left: 0; right: 0; top: 0; z-index: 5; text-align: center; font-weight: 900; font-size: 1.6rem; letter-spacing: .06em; color: #fff; padding: 10px; background: linear-gradient(90deg, var(--tc2), var(--tc), var(--tc2)); text-shadow: 0 2px 4px rgba(0,0,0,.3); animation: lban .6s cubic-bezier(.2, 1.4, .4, 1); }
+.lbanner.t-myth { background: linear-gradient(90deg, #FF4B4B, #FFC800, #58CC02, #1CB0F6, #CE82FF); }
+.luckybox:has(.lbanner) { padding-top: 64px; }
+@keyframes lban { from { transform: translateY(-100%); } }
+.modal.shakey { animation: shake .5s ease-in-out; }
+@media (prefers-reduced-motion: reduce) { .lcap, .lrays, .prizecard, .prizecard .pzrays, .lbanner, .modal.shakey, .lmach.spin .machine { animation: none !important; } }
+/* 🏆 Home leaderboard */
+.homeboard { gap: 10px; background: linear-gradient(170deg, #FFFDF2, #FFF4DA); }
+.hbhead { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.hbmore { border: 0; background: transparent; color: #A0336B; font-weight: 900; font-size: .9rem; }
+.hbtabs { display: flex; gap: 6px; } .hbtabs button { flex: 1 1 0; border: 0; border-radius: 999px; padding: 6px 4px; font-weight: 800; font-size: .8rem; background: #fff; box-shadow: 0 0 0 1.5px rgba(107,74,107,.1); min-height: 36px; }
+.hbtabs button[aria-selected="true"] { background: linear-gradient(180deg, #FFF0A6, #FFD84D); box-shadow: 0 2px 0 #E0A800; }
+.hbrow { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 14px; background: #fff; box-shadow: 0 2px 6px rgba(107,74,107,.08); }
+.hbrow.p1 { background: linear-gradient(90deg, #FFF3C4, #fff); } .hbrow.me { box-shadow: 0 0 0 2px #FF9EC2, 0 4px 10px rgba(255,141,187,.25); }
+.hbrk { font-size: 1.2rem; font-weight: 900; text-align: center; } .hbname { font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .hbval { font-weight: 900; font-variant-numeric: tabular-nums; }
+.hbghost .hbname i, .hbghost .hbval i { display: block; height: 10px; border-radius: 6px; background: #EFE6EE; } .hbghost .hbname i { width: 70%; } .hbghost .hbval i { width: 40px; }
+.hbghost { display: grid; gap: 6px; opacity: .75; }
+/* 📊 Teacher statistics */
+.stfilters { gap: 10px; } .stfilters .selbtn { min-height: 42px; max-width: 220px; padding: 8px 12px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.kpi { background: #fff; border-radius: 20px; padding: 14px 16px; display: grid; gap: 2px; box-shadow: var(--shadow); }
+.kpi b { font-size: 1.9rem; font-weight: 900; line-height: 1.1; font-variant-numeric: tabular-nums; color: #2B2433; } .kpi span { font-weight: 800; color: #4B3350; } .kpi small { color: #7E6378; font-weight: 600; }
+.statgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+.hbars { display: grid; gap: 6px; }
+.hbar { display: grid; grid-template-columns: minmax(0, 11em) minmax(0, 1fr) 3.2em; gap: 8px; align-items: center; font-size: .82rem; }
+.hbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #4B3350; font-weight: 700; }
+.hbt { height: 14px; background: #F3EDF4; border-radius: 4px; overflow: hidden; } .hbt i { display: block; height: 100%; background: #2a78d6; border-radius: 0 4px 4px 0; }
+.hbv { text-align: right; font-variant-numeric: tabular-nums; color: #2B2433; }
+.vchart { width: 100%; height: auto; display: block; }
+.sttable-wrap { overflow-x: auto; } .sttable { width: 100%; border-collapse: collapse; font-size: .88rem; font-variant-numeric: tabular-nums; }
+.sttable th { text-align: left; padding: 4px 6px; font-weight: 900; font-size: .72rem; letter-spacing: .05em; text-transform: uppercase; color: #A0789A; } .sttable td { padding: 8px 6px; border-top: 1.5px solid #F1E8F2; vertical-align: top; }
+.sttable tr.idle td { color: #9C8A98; }
+.sortb { border: 0; background: transparent; font-weight: 900; font-size: .72rem; letter-spacing: .05em; text-transform: uppercase; color: #A0789A; padding: 4px 0; } .sortb.on { color: #A0336B; }
+.acc { display: inline-block; border-radius: 999px; padding: 1px 8px; font-weight: 900; } .acc.hi { background: #DDF7C8; color: #2F7A00; } .acc.mid { background: #FFF1C2; color: #8A5A00; } .acc.lo { background: #FFE1E1; color: #B42D2D; }
+.tagx { font-size: .68rem; font-weight: 800; background: #F1E8F2; color: #7E6378; border-radius: 999px; padding: 0 6px; }
+.missed { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: .88rem; }
+@media (max-width: 640px) {
+  .sttable thead { display: none; } .sttable, .sttable tbody, .sttable tr, .sttable td { display: block; width: 100%; }
+  .sttable tr { background: #fff; border-radius: 16px; padding: 8px 10px; margin-bottom: 8px; box-shadow: 0 2px 8px rgba(107,74,107,.08); }
+  .sttable td { border: 0; padding: 3px 0; display: flex; justify-content: space-between; gap: 10px; } .sttable td::before { content: attr(data-l); font-weight: 800; font-size: .72rem; color: #A0789A; text-transform: uppercase; }
+  .hbar { grid-template-columns: minmax(0, 8em) minmax(0, 1fr) 3em; }
+}
+@media (max-width: 560px) {
+  .capad.lucky .admain { grid-template-columns: 96px minmax(0, 1fr); gap: 10px; }
+  .capad.lucky .adnew { font-size: .6rem; padding: 2px 8px; white-space: nowrap; }
+  .capad.lucky .adtext h2 { font-size: 1.4rem; } .capad.lucky .adtext p { font-size: .82rem; }
+  .capad.lucky .adgo { font-size: .95rem; padding: 10px 14px; min-height: 46px; width: 100%; }
+}
 </style>
 </head>
 <body>
@@ -5404,6 +5501,9 @@ const PALS = [
   P_("petal", "Petal", "fawn", "#E9B98E", "#FFF3E6", "legend", 0, ["topics", 10, "Clear 10 whole topics"], ["coins", .1], "salad", "A legendary blossom fawn who grows a little every day.", "Deer antlers are bone that falls off and regrows every year, one of the fastest-growing tissues in any animal."),
   P_("riccio", "Riccio", "pangolin", "#C98B6B", "#FBEFE6", "legend", 0, ["streak", 30, "Reach a 30-day streak"], ["xp", .1], "egg", "A legendary Hong Kong pangolin who rolls into a ball when exams get scary.", "The Chinese pangolin lives wild in Hong Kong and is critically endangered. Its scales are made of keratin."),
   P_("hikari", "Hikari", "firefly", "#FFF3B0", "#FFFBE0", "legend", 0, ["correct", 1500, "Answer 1,500 questions right"], ["xp", .1], "banana", "A legendary firefly whose tail glows brighter with every right answer.", "Fireflies glow by bioluminescence: an enzyme (luciferase) uses ATP to make light with almost no heat."),
+  P_("mito", "Mito", "mito", "#FFB066", "#FFE6C7", "legend", 0, null, ["coins", .1], "rice", "A legendary mitochondrion pal who powers every study session. Found only in the Lucky Capsule.", "Mitochondria release energy from glucose by aerobic respiration, making most of the cell's ATP.", { cap: true }),
+  P_("chloe", "Chloe", "chloro", "#A6E07A", "#E6F8D4", "legend", 0, null, ["xp", .1], "salad", "A legendary chloroplast pal who sunbathes between lessons. Found only in the Lucky Capsule.", "Chloroplasts trap light energy with chlorophyll and use it to make glucose from CO\u2082 and water.", { cap: true }),
+  P_("helix", "Helix", "helix", "#CDB8FF", "#F2ECFF", "myth", 0, null, ["coins", .12], "fish", "A mythic DNA pal whose antenna is a real double helix. The rarest prize in the Lucky Capsule.", "DNA is a double helix of two antiparallel strands joined by complementary base pairs (A\u2013T, C\u2013G).", { cap: true }),
   P_("finn", "Finn", "shark", "#8FBCE6", "#FFFFFF", "myth", 1500, null, ["coins", .08], "fish", "A mythic baby shark who never stops swimming, just like a streak.", "A shark's skeleton is cartilage, not bone, and many sharks must keep swimming to push water over their gills."),
   P_("tardi", "Tardi", "tardigrade", "#D8CBB5", "#F5EEDF", "myth", 2500, null, ["energy", 1], "rice", "A mythic water bear who survives absolutely anything.", "Tardigrades can dry out almost completely and survive boiling, freezing, radiation and even outer space."),
   P_("luna", "Luna", "owl", "#8A86C9", "#F3EEFF", "myth", 3500, null, ["notebook", .3], "fish", "A mythic moon owl who reads every textbook at night.", "Owls can turn their heads about 270°, and their ears sit at different heights to pinpoint sounds.")
@@ -5424,7 +5524,7 @@ const palVal = k => !S ? 0 : ({ streak: S.longest_streak, days: S.stats.days, st
   sims: Object.keys(S.sims || {}).length, three: Object.values(S.room_stars || {}).filter(v => v >= 3).length, dict: S.stats.dictPerfect, rush: S.rush.best, spell: S.stats.spellRight,
   missions: S.stats.missions || 0, topics: typeof topicsCleared === "function" ? topicsCleared() : 0 })[k] || 0;
 const condMet = P => !P.cond || palVal(P.cond[0]) >= P.cond[1];
-const condPct = P => !P.cond ? (P.price ? Math.min(1, S.coins / P.price) : 1) : Math.min(1, palVal(P.cond[0]) / P.cond[1]);
+const condPct = P => P.cap ? 0 : !P.cond ? (P.price ? Math.min(1, S.coins / P.price) : 1) : Math.min(1, palVal(P.cond[0]) / P.cond[1]);
 
 /* ----- Art: every pal shares Mochi's squishy body; species features are layered on (ported from the S1 Science pals) ----- */
 const PST = `stroke="${CO}" stroke-width="3.5" stroke-linejoin="round"`;
@@ -5459,6 +5559,13 @@ const PAL_ART = {
     front: (b, be) => bellyEl(be, 22) + [[72, 84, 100, 116, 128], [62, 76, 90, 110, 124, 138]].map((row, j) => row.map((x, i) => { const y = j ? 88 : (i === 0 || i === 4 ? 78 : 74); return `<path d="M${x - 9} ${y} Q${x} ${y + 15} ${x + 9} ${y}Z" fill="#8A5A3C" stroke="${CO}" stroke-width="2"/>`; }).join("")).join("") },
   firefly: { back: () => `<circle cx="150" cy="166" r="34" fill="rgba(255,240,120,.45)"/><circle cx="150" cy="166" r="20" fill="#FFF07A" ${PST}/><ellipse cx="46" cy="100" rx="22" ry="12" fill="rgba(230,245,255,.85)" ${PST} transform="rotate(-24 46 100)"/><ellipse cx="154" cy="100" rx="22" ry="12" fill="rgba(230,245,255,.85)" ${PST} transform="rotate(24 154 100)"/><path d="M88 66 Q82 42 72 38 M112 66 Q118 42 128 38" stroke="${CO}" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="72" cy="38" r="5" fill="#FFC800" ${PST}/><circle cx="128" cy="38" r="5" fill="#FFC800" ${PST}/>`,
     front: () => clipBody(`<path d="M0 0 H200 V92 Q100 72 0 92Z" fill="#4B4B4B"/>`) + bellyEl("#FFFBE0") },
+  mito: { back: b => `<circle cx="62" cy="78" r="11" fill="${b}" ${PST}/><circle cx="138" cy="78" r="11" fill="${b}" ${PST}/>`,
+    front: (b, be) => bellyEl(be, 18) + clipBody(`<path d="M20 146 Q32 134 44 146 T68 146 T92 146 T116 146 T140 146 T164 146 T188 146" stroke="#E07B1A" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M20 164 Q32 152 44 164 T68 164 T92 164 T116 164 T140 164 T164 164 T188 164" stroke="#E07B1A" stroke-width="4.5" fill="none" stroke-linecap="round"/>`) },
+  chloro: { back: b => `<circle cx="64" cy="78" r="11" fill="${b}" ${PST}/><circle cx="136" cy="78" r="11" fill="${b}" ${PST}/><path d="M100 64 C100 50 100 44 102 36" stroke="#3E8E1E" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M102 40 C88 26 74 30 72 38 C84 46 96 44 102 40Z" fill="#7CCB4E" ${PST}/><path d="M102 40 C114 24 130 28 132 36 C120 44 108 44 102 40Z" fill="#9BE15A" ${PST}/>`,
+    front: (b, be) => bellyEl(be) + [[78, 150], [100, 156], [122, 150]].map(([x, y]) => [0, 1, 2].map(i => `<ellipse cx="${x}" cy="${y - 5 + i * 5}" rx="8" ry="2.4" fill="#3E8E1E"/>`).join("")).join("") },
+  helix: { back: () => { let d1 = "", d2 = "", rungs = ""; for (let i = 0; i <= 12; i++) { const y = 64 - i * 4, x1 = 100 + 10 * Math.sin(i * .7), x2 = 100 - 10 * Math.sin(i * .7); d1 += (i ? "L" : "M") + x1.toFixed(1) + " " + y; d2 += (i ? "L" : "M") + x2.toFixed(1) + " " + y; if (i % 2) rungs += `<path d="M${x1.toFixed(1)} ${y} L${x2.toFixed(1)} ${y}" stroke="#FFD84D" stroke-width="2.5"/>`; }
+      return `${rungs}<path d="${d1}" stroke="#7C6BDB" stroke-width="4" fill="none" stroke-linecap="round"/><path d="${d2}" stroke="#FF86D0" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="100" cy="14" r="7" fill="#FFF3B0" ${PST}/><circle cx="62" cy="80" r="10" fill="#CDB8FF" ${PST}/><circle cx="138" cy="80" r="10" fill="#CDB8FF" ${PST}/>`; },
+    front: (b, be) => bellyEl(be) + `<path d="M84 142 Q92 152 100 142 Q108 132 116 142 M84 152 Q92 162 100 152 Q108 142 116 152" stroke="#B9A6F2" stroke-width="3" fill="none"/>` },
   shark: { back: b => `<path d="M166 150 Q196 128 198 104 Q186 128 170 132Z" fill="${b}" ${PST}/><path d="M166 150 Q194 160 204 178 Q184 170 164 164Z" fill="${b}" ${PST}/><path d="M82 70 Q96 14 128 30 Q112 44 118 66Z" fill="${b}" ${PST}/>`,
     front: () => `<path d="M40 148 Q100 196 160 148 Q150 176 100 178 Q50 176 40 148Z" fill="#fff" opacity=".95"/><path d="M44 112 q-5 6 0 12 M52 108 q-5 7 0 14 M156 112 q5 6 0 12 M148 108 q5 7 0 14" stroke="#5C8DC2" stroke-width="2.5" fill="none" stroke-linecap="round"/>` },
   tardigrade: { back: b => [[34, 132], [166, 132], [44, 160], [156, 160]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="12" ry="9" fill="${b}" ${PST}/><path d="M${x + (x < 100 ? -12 : 8)} ${y + 2} l4 4 M${x + (x < 100 ? -9 : 5)} ${y + 6} l3 4" stroke="${CO}" stroke-width="2" stroke-linecap="round"/>`).join(""),
@@ -5567,7 +5674,7 @@ function openFeed() {
   const P = activePal();
   openModal(`<span class="kicker">🍱 Feed ${esc(P.name)}</span><h2>What's for ${new Date().getHours() < 11 ? "breakfast" : new Date().getHours() < 16 ? "lunch" : "dinner"}?</h2>
     <p class="small muted" style="margin:0">❤️ ${esc(P.name)}'s favourite: <b>${esc(FOODS.find(f => f.id === P.fav).name)}</b> (double happiness). Tap 🔍 for the nutrition card. 3 treats in one day = sugar crash!</p>
-    <div class="foodgrid">${FOODS.map(f => `<div class="food"><button class="fpic" data-feed="${f.id}" aria-label="Feed ${esc(f.name)} for ${foodPrice(f)} chestnuts" ${S.coins < foodPrice(f) ? "disabled" : ""}><span class="fe">${f.e}</span><b class="small">${esc(f.name)}</b><span class="small"><i class="rdot" style="background:${FOOD_R[f.r][1]}"></i>${FOOD_R[f.r][0]}</span><span class="pill coinpill">🌰 ${foodPrice(f)}</span></button><button class="fnut" data-nut="${f.id}" aria-label="Nutrition card for ${esc(f.name)}">🔍</button></div>`).join("")}</div>`, { wide: true });
+    <div class="foodgrid">${FOODS.map(f => `<div class="food"><button class="fpic ${S.pantry[f.id] ? "free" : ""}" data-feed="${f.id}" aria-label="Feed ${esc(f.name)}${S.pantry[f.id] ? " (free from your pantry)" : ` for ${foodPrice(f)} chestnuts`}" ${!S.pantry[f.id] && S.coins < foodPrice(f) ? "disabled" : ""}><span class="fe">${f.e}</span><b class="small">${esc(f.name)}</b><span class="small"><i class="rdot" style="background:${FOOD_R[f.r][1]}"></i>${FOOD_R[f.r][0]}</span>${S.pantry[f.id] ? `<span class="pill freepill">🎁 Free ×${S.pantry[f.id]}</span>` : `<span class="pill coinpill">🌰 ${foodPrice(f)}</span>`}</button><button class="fnut" data-nut="${f.id}" aria-label="Nutrition card for ${esc(f.name)}">🔍</button></div>`).join("")}</div>`, { wide: true });
   $modal.querySelectorAll("[data-feed]").forEach(b => b.onclick = () => feed(b.dataset.feed));
   $modal.querySelectorAll("[data-nut]").forEach(b => b.onclick = () => { SFX.tap(); nutritionCard(b.dataset.nut); });
 }
@@ -5589,8 +5696,8 @@ function nutritionCard(id) {
   document.getElementById("nBack").onclick = () => { SFX.tap(); openFeed(); };
 }
 function feed(id) {
-  const f = FOODS.find(x => x.id === id), P = activePal(), p = palState(P.id), cost = foodPrice(f); if (S.coins < cost) return;
-  S.coins -= cost; const fav = P.fav === id;
+  const f = FOODS.find(x => x.id === id), P = activePal(), p = palState(P.id), free = (S.pantry[id] || 0) > 0, cost = free ? 0 : foodPrice(f); if (S.coins < cost) return;
+  if (free) { S.pantry[id] -= 1; if (!S.pantry[id]) delete S.pantry[id]; } else S.coins -= cost; const fav = P.fav === id;
   p.energy = Math.min(100, p.energy + f.en); p.happy = Math.min(100, p.happy + f.hp * (fav ? 2 : 1)); p.xp += Math.round(f.xp * perk("xp")); p.meals = (p.meals || 0) + 1;
   S.treats = S.treats && S.treats.day === today() ? S.treats : { day: today(), n: 0 };
   let crash = false; if (f.r === "r") { S.treats.n += 1; if (S.treats.n === 3) { crash = true; p.energy = Math.max(5, p.energy - 15); } }
@@ -5627,11 +5734,11 @@ function playMatch() {
 let palQueue = [];
 function checkPals() {
   if (!S) return;
-  PALS.forEach(P => { if (P.rar === "legend" && !S.pals[P.id] && condMet(P)) { S.pals[P.id] = newPal(); palQueue.push(P); } });
+  PALS.forEach(P => { if (P.rar === "legend" && !P.cap && !S.pals[P.id] && condMet(P)) { S.pals[P.id] = newPal(); palQueue.push(P); } });
   if (palQueue.length) { save(); setTimeout(showPalUnlock, 2600); }
 }
 function adoptPal(id) {
-  const P = palById(id); if (S.pals[id] || !condMet(P) || S.coins < P.price) return;
+  const P = palById(id); if (P.cap || S.pals[id] || !condMet(P) || S.coins < P.price) return;
   S.coins -= P.price; S.pals[id] = newPal(); save(true); palQueue.push(P); showPalUnlock();
 }
 function showPalUnlock() {
@@ -5684,8 +5791,9 @@ function palCard(P) {
   return `<div class="palcard ${P.rar} ${got ? "own" : "locked"} ${act ? "active" : ""}">
     <div class="ppic">${got ? palFig(P.id, act ? "sparkle" : "happy", { stage: st.stage }) : palMystery(P) ? `<span class="sil">${palFig(P.id, "normal")}</span><span class="plock" aria-hidden="true">🔒</span>` : `<span class="palprev">${palFig(P.id, "happy")}</span><span class="plock" aria-hidden="true">🔒</span>`}</div>
     <b>${palMystery(P) ? "???" : esc(P.name)}</b><span class="rchip2 small" style="background:${PAL_RAR[P.rar][1]};border-color:${PAL_RAR[P.rar][2]}">${PAL_RAR[P.rar][0]}</span>
-    <span class="small muted">${got ? `Lv ${palLevel(st.xp)} · ${STAGES[st.stage]}` : P.cond ? esc(P.cond[2]) : "Adopt with chestnuts"}</span>
+    <span class="small muted">${got ? `Lv ${palLevel(st.xp)} · ${STAGES[st.stage]}` : P.cap ? "🎰 Lucky Capsule only" : P.cond ? esc(P.cond[2]) : "Adopt with chestnuts"}</span>
     ${got ? (act ? `<span class="pill saved">⭐ Active</span>` : `<button class="btn plain sm" data-usepal="${P.id}">Make active</button>`)
+      : P.cap ? `<span class="pill capchip">Very rare prize</span>`
       : P.rar === "legend" ? `<div class="tprog"><i style="width:${pc}%"></i></div><span class="small">${Math.min(palVal(P.cond[0]), P.cond[1])} / ${P.cond[1]}</span>`
       : met ? `<button class="btn yellow sm" data-adopt="${P.id}" ${S.coins < P.price ? "disabled" : ""}>Adopt 🌰 ${P.price}</button>`
       : `<div class="tprog"><i style="width:${pc}%"></i></div><span class="small">${Math.min(palVal(P.cond[0]), P.cond[1])} / ${P.cond[1]}</span>`}
@@ -5696,7 +5804,7 @@ function openPalInfo(id) {
   openModal(`<span class="kicker">🐾 Study Pal</span><h2>${palMystery(P) ? "A mysterious pal..." : esc(P.name)}</h2><div class="petreveal ${P.rar === "myth" ? "epic" : P.rar}" style="width:150px;height:150px">${got || !palMystery(P) ? palFig(id, "happy") : `<span class="sil">${palFig(id, "normal")}</span>`}</div>
     <div class="row" style="justify-content:center">${palChips(P)}</div>${palMystery(P) ? `<p style="margin:0" class="muted">Only the most dedicated students will meet this one. Reach the goal below to reveal who it is!</p>` : `<p style="margin:0">${esc(P.desc)}</p>
     <section class="jsec"><h3>🔬 Real biology</h3><p style="margin:0">${esc(P.fact)}</p></section>`}
-    <p class="small"><b>How to get:</b> ${P.cond ? esc(P.cond[2]) + (P.price ? `, then adopt for 🌰 ${P.price}` : " (arrives by itself)") : `Adopt for 🌰 ${P.price}`} · <b>Favourite food:</b> ${esc(FOODS.find(f => f.id === P.fav).name)} · <b>Evolves at</b> Lv ${EVO[P.rar][0][0]} and Lv ${EVO[P.rar][1][0]}</p>`);
+    <p class="small"><b>How to get:</b> ${P.cap ? "Only from the daily 🎰 Lucky Capsule (very rare). A longer streak gives better odds" : P.cond ? esc(P.cond[2]) + (P.price ? `, then adopt for 🌰 ${P.price}` : " (arrives by itself)") : `Adopt for 🌰 ${P.price}`} · <b>Favourite food:</b> ${esc(FOODS.find(f => f.id === P.fav).name)} · <b>Evolves at</b> Lv ${EVO[P.rar][0][0]} and Lv ${EVO[P.rar][1][0]}</p>`);
 }
 function wirePals() {
   wireCommon();
@@ -5719,13 +5827,13 @@ function featuredHtml() {
     <div class="fptext"><span class="kicker" style="padding:0">🌟 Featured ${P.rar === "myth" ? "Mythic" : "Legendary"} Pal</span><h3 style="margin:0">${esc(P.name)}</h3>
       <p class="small" style="margin:0">${esc(P.desc)}</p><span class="pill perk" style="background:#fff">✨ ${esc(perkLabel(P))}</span>
       <div class="tprog"><i style="width:${pc}%"></i></div>
-      <div class="row" style="gap:6px"><button class="btn sm fparr" id="fpPrev" aria-label="Previous pal">◀</button><button class="btn ${P.rar === "myth" ? "pink" : "yellow"} sm" id="fpGo">${P.rar === "myth" ? `🌰 ${P.price} ADOPT` : esc(P.cond[2]).toUpperCase()}</button><button class="btn sm fparr" id="fpNext" aria-label="Next pal">▶</button></div></div></section>`;
+      <div class="row" style="gap:6px"><button class="btn sm fparr" id="fpPrev" aria-label="Previous pal">◀</button><button class="btn ${P.rar === "myth" ? "pink" : "yellow"} sm" id="fpGo">${P.cap ? "🎰 LUCKY CAPSULE ONLY" : P.rar === "myth" ? `🌰 ${P.price} ADOPT` : esc(P.cond[2]).toUpperCase()}</button><button class="btn sm fparr" id="fpNext" aria-label="Next pal">▶</button></div></div></section>`;
 }
 function wireFeatured() {
   const g = id => document.getElementById(id);
   if (g("fpPrev")) g("fpPrev").onclick = () => { SFX.tap(); featIdx--; renderMap(); };
   if (g("fpNext")) g("fpNext").onclick = () => { SFX.tap(); featIdx++; renderMap(); };
-  if (g("fpGo")) g("fpGo").onclick = () => { SFX.tap(); goTab("pals"); };
+  if (g("fpGo")) g("fpGo").onclick = () => { SFX.tap(); const L_ = PALS.filter(P => (P.rar === "legend" || P.rar === "myth") && !S.pals[P.id]); const P = L_[(featIdx + L_.length) % L_.length]; if (P && P.cap) { goTab("home"); } else goTab("pals"); };
 }
 
 /* ============================================================
@@ -6546,7 +6654,8 @@ function renderNav(active) {
   if (active === false || !S) { nav.hidden = true; document.body.classList.remove("has-nav"); return; }
   nav.hidden = false; document.body.classList.add("has-nav");
   const badge = { play: mistakeKeys().length, rewards: S.coll.pending, home: S.ill ? "🤒" : 0 };
-  nav.innerHTML = `<div class="nav-in">${NAV_TABS.map(([id, ic, label]) => `<button data-nav="${id}" ${active === id ? 'aria-current="page"' : ""}><span class="ni" aria-hidden="true">${ic}</span>${label}${badge[id] ? `<span class="nbadge">${badge[id]}</span>` : ""}</button>`).join("")}</div>`;
+  const tabs = isTeacher() ? NAV_TABS.concat([["stats", "📊", "Stats"]]) : NAV_TABS;
+  nav.innerHTML = `<div class="nav-in">${tabs.map(([id, ic, label]) => `<button data-nav="${id}" ${active === id ? 'aria-current="page"' : ""}><span class="ni" aria-hidden="true">${ic}</span>${label}${badge[id] ? `<span class="nbadge">${badge[id]}</span>` : ""}</button>`).join("")}</div>`;
   nav.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); homeTab = b.dataset.nav; renderMap(); window.scrollTo({ top: 0 }); });
 }
 const goTab = t => { homeTab = t; renderMap(); window.scrollTo({ top: 0 }); };
@@ -6594,13 +6703,13 @@ function greeting0() {
 function renderMap() {
   stopRush(); MUSIC.setMode("map"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; recomputeMastery(); save(); renderTools();
   palTick();
-  if (!NAV_TABS.some(t => t[0] === homeTab) && !PAL_TABS.includes(homeTab)) homeTab = "home";
+  if (!NAV_TABS.some(t => t[0] === homeTab) && !PAL_TABS.includes(homeTab) && !(homeTab === "stats" && isTeacher())) homeTab = "home";
   if (homeTab === "lab") return renderSims();
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni];
   if (mapPart === null) mapPart = nr ? TOPICS[nr.t].p : 0;
-  $app.innerHTML = { home: homeHtml, stages: stagesHtml, play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml }[homeTab]();
+  $app.innerHTML = { home: homeHtml, stages: stagesHtml, play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml, stats: statsHtml }[homeTab]();
   renderNav(homeTab);
-  ({ home: wireHome, stages: wireStages, play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards })[homeTab]();
+  ({ home: wireHome, stages: wireStages, play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards, stats: wireStats })[homeTab]();
   $app.querySelectorAll(".subnav [data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });
 }
 
@@ -6610,7 +6719,7 @@ function homeHtml() {
   const mult = streakMult();
   return `${capsuleAdHtml()}<div class="homegrid">
     <section class="card roomwrap">${roomCard(greeting(), S.completed_rooms.length ? "happy" : "normal")}
-      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" id="chest" ${chestReady ? "" : "disabled"}>${chestReady ? "🎁 Daily chest" : "🎁 Back tomorrow"}</button></div>
+      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" data-go="pals">🍱 Feed & care</button></div>
       ${healthTipHtml()}</section>
     <div class="homeside">
       ${riskCardHtml()}
@@ -6624,21 +6733,16 @@ function homeHtml() {
         <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study it" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">🗺️ All stages</button></div>
       </section>
       ${missionCardHtml()}
+      ${homeBoardHtml()}
       ${featuredHtml()}
       ${streakCardHtml()}
       ${chatCardHtml()}
     </div></div>`;
 }
 function wireHome() {
-  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured(); wireCapsuleAd();
+  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured(); wireCapsuleAd(); wireHomeBoard();
   const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
-  const c = document.getElementById("chest");
-  if (S.last_chest_date !== today()) c.onclick = () => {
-    SFX.init(); SFX.fanfare(); confetti(70);
-    const snack = pick(SNACKS); S.inventory.push(snack);
-    let extra = ""; if (Math.random() < .2 && S.streak_shields < FREEZE_MAX) { S.streak_shields++; extra = " …and a ❄️ Streak Freeze!"; }
-    S.last_chest_date = today(); S.stats.chests += 1; S.coll.pending += 1; streakNote = `🎁 Kurumi opened the chest: ${snack}${extra} …plus a mystery capsule!`; save(true); renderMap(); checkTrophies(); openCapsule();
-  };
+
 }
 let lastPat = 0;
 function wireCommon() {
@@ -6849,6 +6953,7 @@ function markStudied() {
   const ms = STREAK_MILESTONES.includes(S.current_streak), sc = streakCapsuleFor(S.current_streak);
   if (sc) { S.coll.pending += sc; setTimeout(() => toast(`🎁 Streak reward: +${sc} capsule${sc > 1 ? "s" : ""} for day ${S.current_streak}!`), 3400); }
   setTimeout(() => streakPop(S.current_streak, ms), 900);
+  if (S.lucky && S.lucky.day !== t) setTimeout(() => toast("🎰 Your daily Lucky Capsule is unlocked! Draw it on 🏠 Home."), 5200);
   return true;
 }
 function streakPop(n, big) {
@@ -7132,14 +7237,15 @@ function signOut() {
   if (signedIn()) { try { cloudSave(); flushQueue(); } catch (e) {} }
   save();
   try { if (window.google && google.accounts) google.accounts.id.disableAutoSelect(); } catch (e) {}
-  Object.assign(AUTH, { mode: null, user: null, token: null, exp: 0, stale: false, lastSync: 0 }); authPref("");
+  Object.assign(AUTH, { mode: null, user: null, token: null, exp: 0, stale: false, lastSync: 0 }); authPref(""); TS.data = null; lbData = {};
   S = load(); closeModal(); renderLogin();
 }
 function playAsGuest() {
   SFX.init(); SFX.tap(); authPref("guest"); AUTH.mode = "guest";
   S = load(); S ? enterGame() : renderWelcome();
 }
-function enterGame() { checkIn(); homeTab = "home"; renderMap(); showResume(); }
+// After sign-in (or choosing guest) everyone lands on the Home tab
+function enterGame() { checkIn(); homeTab = "home"; closeModal(); renderMap(); window.scrollTo({ top: 0 }); }
 
 /* ----- records queue + cloud save (signed-in only) ----- */
 const qKey = () => `${SAVE_KEY}_queue_${signedIn() ? AUTH.user.email : ""}`;
@@ -7261,6 +7367,147 @@ function openLeaderboard() {
   if (lbData[key] && Date.now() - lbData[key].t < 60000) return show(lbData[key].d);
   cloudSave();
   api("board", { scope: lbScope }).then(d => { if (d && d.ok) lbData[key] = { t: Date.now(), d }; show(d); });
+}
+
+/* ----- 🏆 Home leaderboard card: live top 5 for signed-in students, a teaser for guests ----- */
+let homeLbCat = "xp";
+function homeBoardHtml() {
+  const tabs = `<div class="hbtabs" role="tablist">${LB_CATS.map(([k, ic, nm]) => `<button role="tab" aria-selected="${k === homeLbCat}" data-hbc="${k}">${ic} ${nm}</button>`).join("")}</div>`;
+  if (!signedIn()) {
+    return `<section class="card homeboard"><div class="hbhead"><h3 style="margin:0">🏆 Class leaderboard</h3><span class="pill">You: ${dedication()} pts</span></div>
+      <div class="hbghost" aria-hidden="true">${[1, 2, 3].map(i => `<div class="hbrow"><span class="hbrk">${["🥇", "🥈", "🥉"][i - 1]}</span><span class="hbname"><i></i></span><span class="hbval"><i></i></span></div>`).join("")}</div>
+      <p class="small muted" style="margin:0">${cloudOn() ? "Sign in with your school Google account to see how you rank against your class!" : "Class sign-in isn't switched on in this copy. Your effort points are saved on this device."}</p>
+      ${cloudOn() ? `<div class="row"><button class="btn blue" id="hbSign">🎓 Sign in to join</button></div>` : ""}</section>`;
+  }
+  return `<section class="card homeboard"><div class="hbhead"><h3 style="margin:0">🏆 ${esc(AUTH.user.cls ? `Class ${AUTH.user.cls}` : "Class")} leaderboard</h3><button class="hbmore" id="hbMore">See all ›</button></div>${tabs}<div id="hbBody"><p class="small muted" style="margin:0">Loading… ⏳</p></div></section>`;
+}
+function wireHomeBoard() {
+  const sb = document.getElementById("hbSign"); if (sb) sb.onclick = () => { SFX.tap(); save(); authPref(""); renderLogin(); };
+  const mb = document.getElementById("hbMore"); if (mb) mb.onclick = () => { SFX.tap(); lbCat = homeLbCat; lbScope = "class"; openLeaderboard(); };
+  document.querySelectorAll("[data-hbc]").forEach(b => b.onclick = () => { SFX.tap(); homeLbCat = b.dataset.hbc; document.querySelectorAll("[data-hbc]").forEach(x => x.setAttribute("aria-selected", x === b)); fillHomeBoard(); });
+  if (signedIn()) fillHomeBoard();
+}
+function fillHomeBoard() {
+  const body = document.getElementById("hbBody"); if (!body) return;
+  const show = d => {
+    if (!document.getElementById("hbBody")) return;
+    if (!d || !d.ok) { body.innerHTML = `<p class="small muted" style="margin:0">${esc(errText(d ? d.error : "network"))}</p>`; return; }
+    const c = d.cats[homeLbCat], [, ic, , unit] = LB_CATS.find(x => x[0] === homeLbCat), top = c.top.slice(0, 5), me = c.me;
+    if (!top.length) { body.innerHTML = `<p class="small muted" style="margin:0">Nobody on the board yet. Finish an activity to be first! 🌱</p>`; return; }
+    body.innerHTML = top.map((r, i) => `<div class="hbrow ${r.me ? "me" : ""} p${i + 1}"><span class="hbrk">${["🥇", "🥈", "🥉"][i] || i + 1}</span><span class="hbname">${esc(r.n)}</span><span class="hbval">${ic} ${r.v}</span></div>`).join("")
+      + (me && me.rank > 5 ? `<div class="hbrow me"><span class="hbrk">${me.rank}</span><span class="hbname">You</span><span class="hbval">${ic} ${me.v}</span></div>` : "")
+      + `<p class="small muted" style="margin:0">${me ? (me.rank === 1 ? "You're #1! Keep it up! 👑" : `You're #${me.rank}. ${top[Math.min(me.rank - 2, top.length - 1)] ? `Only <b>${top[Math.min(me.rank - 2, top.length - 1)].v - me.v + 1}</b> ${unit} to move up!` : ""}`) : "Finish an activity today to join the board! 🌱"}</p>`;
+  };
+  const key = "class";
+  if (lbData[key] && Date.now() - lbData[key].t < 90000) return show(lbData[key].d);
+  api("board", { scope: "class" }).then(d => { if (d && d.ok) lbData[key] = { t: Date.now(), d }; show(d); });
+}
+
+/* ============================================================
+   5m. 📊 Teacher statistics (teacher accounts only).
+   Shown as an extra bottom-bar tab when the signed-in account is staff (or listed in TEACHER_EMAILS on the server).
+   Data comes from the class Google Sheet via the server's "stats" action; nothing is stored on the device.
+   ============================================================ */
+const isTeacher = () => signedIn() && !!(AUTH.user && AUTH.user.teacher);
+const TS = { data: null, loading: false, err: "", cls: "all", period: "30", sort: "no", dir: 1, at: 0 };
+const MODE_LABEL = { escape: "Escape stages", study: "Study series", rush: "Cell Rush", dict: "Dictation", notebook: "Mistake Notebook" };
+function loadStats(force) {
+  if (TS.loading || (!force && TS.data && Date.now() - TS.at < 120000)) return;
+  TS.loading = true; TS.err = "";
+  api("stats", {}).then(j => { TS.loading = false; if (j && j.ok) { TS.data = j; TS.at = Date.now(); } else TS.err = j && j.error === "unknown_action" ? "update" : errText(j ? j.error : "network"); if (homeTab === "stats") renderMap(); });
+}
+const pctOf = (c, a) => (a ? Math.round(100 * c / a) : null);
+const fmtDay = iso => { const d = new Date(iso); return isNaN(d) ? "–" : `${d.getDate()}/${d.getMonth() + 1}`; };
+const yesterday = () => shiftDay(today(), -1);
+function computeStats() {
+  const D = TS.data, since = TS.period === "all" ? 0 : Date.now() - Number(TS.period) * 864e5;
+  const studs = D.students.filter(s => TS.cls === "all" || s.cls === TS.cls).sort((a, b) => a.cls < b.cls ? -1 : a.cls > b.cls ? 1 : (Number(a.no) || 0) - (Number(b.no) || 0));
+  const by = {}; studs.forEach(s => { by[s.email] = { s, sess: 0, ans: 0, cor: 0, secs: 0, last: "", modes: {} }; });
+  const topic = {}, day = {}, modes = {}, missed = {}; let recs = 0;
+  D.records.forEach(r => {
+    const st = by[r.email]; if (!st) return; const tm = Date.parse(r.t); if (tm < since) return;
+    recs++; st.sess++; st.ans += r.ans; st.cor += r.cor; st.secs += r.secs; if (!st.last || r.t > st.last) st.last = r.t; st.modes[r.mode] = (st.modes[r.mode] || 0) + 1;
+    modes[r.mode] = (modes[r.mode] || 0) + 1;
+    const dk = r.t.slice(0, 10); day[dk] = (day[dk] || 0) + 1;
+    if ((r.mode === "escape" || r.mode === "study" || r.mode === "notebook") && /^\d+$/.test(r.topic)) { const t = topic[r.topic] || (topic[r.topic] = { a: 0, c: 0 }); t.a += r.ans; t.c += r.cor; }
+    if ((r.mode === "escape" || r.mode === "study") && r.wrong) { const rid = String(r.stage).split(" ")[0]; r.wrong.split(/\s+/).filter(Boolean).forEach(q => { const k = `${rid}:${q}`; missed[k] = (missed[k] || 0) + 1; }); }
+  });
+  const rows = studs.map(s => { const b = by[s.email], pr = D.progress[s.email] || {}; return { s, sess: b.sess, ans: b.ans, cor: b.cor, acc: pctOf(b.cor, b.ans), mins: Math.round(b.secs / 60), last: b.last,
+    streak: pr.lastDay >= yesterday() ? pr.streak || 0 : 0, best: pr.best || 0, stages: pr.stages || 0, stars: pr.stars || 0, xp: pr.xp || 0, mistakes: pr.mistakes || 0, trophies: pr.trophies || 0, signed: !!D.progress[s.email] }; });
+  const active = rows.filter(r => r.sess > 0), ans = rows.reduce((a, r) => a + r.ans, 0), cor = rows.reduce((a, r) => a + r.cor, 0);
+  return { rows, active, recs, ans, acc: pctOf(cor, ans), topic, day, modes, missed, classes: [...new Set(D.students.map(s => s.cls).filter(Boolean))].sort() };
+}
+/* ----- tiny SVG charts: one series each, one blue, values labelled on the bars ----- */
+const VIZ = "#2a78d6";
+function hbars(items, max, fmtV) {
+  if (!items.length) return `<p class="small muted">No data in this period yet.</p>`;
+  return `<div class="hbars">${items.map(([label, v, tip]) => `<div class="hbar" title="${esc(tip || `${label}: ${fmtV(v)}`)}"><span class="hbl">${esc(label)}</span><span class="hbt"><i style="width:${max ? Math.max(2, 100 * v / max) : 0}%"></i></span><b class="hbv">${fmtV(v)}</b></div>`).join("")}</div>`;
+}
+function dayBars(day, n) {
+  const days = Array.from({ length: n }, (_, i) => shiftDay(today(), i - n + 1)), vals = days.map(d => day[d] || 0), max = Math.max(1, ...vals), W = 640, H = 150, bw = W / n;
+  const peak = vals.indexOf(Math.max(...vals));
+  return `<svg class="vchart" viewBox="0 0 ${W} ${H + 22}" role="img" aria-label="Activities per day for the last ${n} days">
+    <line x1="0" y1="${H}" x2="${W}" y2="${H}" stroke="#E5DCE6" stroke-width="1"/>
+    ${vals.map((v, i) => { const h = v ? Math.max(3, (H - 18) * v / max) : 0, x = i * bw + bw * .18, w = bw * .64; return `<g><title>${days[i]}: ${v} activit${v === 1 ? "y" : "ies"}</title><rect x="${i * bw}" y="0" width="${bw}" height="${H}" fill="transparent"/>${h ? `<path d="M${x} ${H} V${H - h + 4} Q${x} ${H - h} ${x + 4} ${H - h} H${x + w - 4} Q${x + w} ${H - h} ${x + w} ${H - h + 4} V${H}Z" fill="${VIZ}"/>` : ""}${i === peak && v ? `<text x="${x + w / 2}" y="${H - h - 5}" text-anchor="middle" font-size="12" font-weight="800" fill="#4B3350">${v}</text>` : ""}</g>`; }).join("")}
+    ${[0, Math.floor(n / 2), n - 1].map(i => `<text x="${i * bw + bw / 2}" y="${H + 16}" text-anchor="middle" font-size="11" fill="#7E6378">${fmtDay(days[i])}</text>`).join("")}</svg>`;
+}
+function statsHtml() {
+  if (!isTeacher()) return `<section class="card"><h2>📊 Statistics</h2><p>This page is for teacher accounts only.</p></section>`;
+  if (!TS.data) {
+    loadStats();
+    return `<section class="card"><h2>📊 Class statistics</h2>${TS.err === "update" ? say("hachiware", "The class server needs the latest <b>server/Code.gs</b> to show statistics. In Apps Script: paste the new code, then <b>Deploy → Manage deployments → ✏️ → New version</b>. The web address stays the same.", "normal", "hint")
+      : TS.err ? `<p class="bad">${esc(TS.err)}</p><button class="btn" id="stRetry">Try again</button>` : `<p class="muted">Loading class data… ⏳</p>`}</section>`;
+  }
+  const C = computeStats(), per = { 7: "7 days", 30: "30 days", 90: "90 days", all: "All time" }[TS.period];
+  const tile = (v, l, sub) => `<div class="kpi"><b>${v}</b><span>${l}</span>${sub ? `<small>${sub}</small>` : ""}</div>`;
+  const avgStreak = C.rows.length ? (C.rows.reduce((a, r) => a + r.streak, 0) / C.rows.length).toFixed(1) : "0";
+  const tItems = TOPICS.map(T => { const t = C.topic[String(T.no)]; return t && t.a ? [`T${T.no} ${T.name}`, pctOf(t.c, t.a), `Topic ${T.no} ${T.name}: ${pctOf(t.c, t.a)}% of ${t.a} answers right`] : null; }).filter(Boolean);
+  const mItems = Object.keys(MODE_LABEL).map(k => [MODE_LABEL[k], C.modes[k] || 0]).filter(x => x[1]).sort((a, b) => b[1] - a[1]);
+  const clsItems = TS.cls === "all" && C.classes.length > 1 ? C.classes.map(c => { const rs = C.rows.filter(r => r.s.cls === c), a = rs.reduce((x, r) => x + r.ans, 0), k = rs.reduce((x, r) => x + r.cor, 0); return a ? [`Class ${c}`, pctOf(k, a), `Class ${c}: ${pctOf(k, a)}% right (${rs.filter(r => r.sess).length}/${rs.length} active)`] : null; }).filter(Boolean) : [];
+  const weak = tItems.slice().sort((a, b) => a[1] - b[1])[0];
+  const missed = Object.entries(C.missed).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k, n]) => { const [rid, qid] = k.split(":"), r = ROOMS[roomIndex(rid)], p = r && r.pool.find(x => x.id === qid); return p ? { r, p, n } : null; }).filter(Boolean);
+  const sortKey = { no: r => `${r.s.cls}${String(r.s.no).padStart(3, "0")}`, name: r => (r.s.en || r.s.zh).toLowerCase(), sess: r => r.sess, acc: r => r.acc == null ? -1 : r.acc, streak: r => r.streak, stages: r => r.stages, last: r => r.last || "" }[TS.sort];
+  const rows = C.rows.slice().sort((a, b) => { const x = sortKey(a), y = sortKey(b); return (x < y ? -1 : x > y ? 1 : 0) * TS.dir; });
+  const inactive = C.rows.filter(r => !r.sess);
+  const th = (k, l) => `<th><button class="sortb ${TS.sort === k ? "on" : ""}" data-sort="${k}">${l}${TS.sort === k ? (TS.dir > 0 ? " ▲" : " ▼") : ""}</button></th>`;
+  return `<section class="card stathead"><div class="row" style="justify-content:space-between"><h2 style="margin:0">📊 Class statistics</h2><span class="small muted">Updated ${new Date(TS.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span></div>
+      <div class="row stfilters"><label class="small"><b>Class</b> <select id="stCls" class="name">${["all", ...C.classes].map(c => `<option value="${esc(c)}" ${c === TS.cls ? "selected" : ""}>${c === "all" ? "All classes" : `Class ${esc(c)}`}</option>`).join("")}</select></label>
+        <div class="slottabs" role="tablist">${["7", "30", "90", "all"].map(p => `<button role="tab" aria-selected="${p === TS.period}" data-per="${p}">${{ 7: "7 days", 30: "30 days", 90: "90 days", all: "All" }[p]}</button>`).join("")}</div>
+        <button class="btn plain sm" id="stRefresh">🔄 Refresh</button><button class="btn yellow sm" id="stCsv">⬇️ Download CSV</button></div></section>
+    <div class="kpis">${tile(`${C.active.length}/${C.rows.length}`, "students active", per)}${tile(C.recs, "activities finished", per)}${tile(C.ans, "questions answered", per)}${tile(C.acc == null ? "–" : `${C.acc}%`, "answered right", "first-try and retries")}${tile(avgStreak, "average streak", "days, today")}</div>
+    <div class="statgrid">
+      <section class="card"><h3>Accuracy by topic</h3><p class="small muted" style="margin:0">${weak ? `💡 Weakest topic: <b>${esc(weak[0])}</b> (${weak[1]}%).` : ""}</p>${hbars(tItems, 100, v => `${v}%`)}</section>
+      <section class="card"><h3>Activities per day</h3><p class="small muted" style="margin:0">Last ${TS.period === "7" ? 7 : TS.period === "90" ? 90 : 30} days, all finished activities.</p>${dayBars(C.day, TS.period === "7" ? 7 : TS.period === "90" ? 90 : 30)}</section>
+      <section class="card"><h3>How students practise</h3>${hbars(mItems, Math.max(1, ...mItems.map(x => x[1])), v => `${v}`)}</section>
+      ${clsItems.length ? `<section class="card"><h3>Accuracy by class</h3>${hbars(clsItems, 100, v => `${v}%`)}</section>` : `<section class="card"><h3>Most-missed questions</h3>${missedHtml(missed)}</section>`}
+    </div>
+    ${clsItems.length ? `<section class="card"><h3>Most-missed questions</h3>${missedHtml(missed)}</section>` : ""}
+    <section class="card"><h3>Students (${rows.length})</h3><div class="sttable-wrap"><table class="sttable"><thead><tr>${th("no", "Class · No.")}${th("name", "Name")}${th("sess", "Activities")}${th("acc", "Accuracy")}${th("streak", "Streak")}${th("stages", "Stages")}${th("last", "Last active")}<th>Mistakes</th></tr></thead>
+      <tbody>${rows.map(r => `<tr class="${r.sess ? "" : "idle"}"><td data-l="Class · No.">${esc(r.s.cls)}${r.s.no ? ` · ${esc(r.s.no)}` : ""}</td><td data-l="Name"><b>${esc(r.s.en || r.s.zh)}</b>${r.s.en && r.s.zh ? ` <span class="small muted">${esc(r.s.zh)}</span>` : ""}${r.signed ? "" : ` <span class="tagx">never signed in</span>`}</td><td data-l="Activities">${r.sess}</td><td data-l="Accuracy">${accChip(r.acc)}</td><td data-l="Streak">🔥 ${r.streak}</td><td data-l="Stages">${r.stages}</td><td data-l="Last active">${r.last ? fmtDay(r.last) : "–"}</td><td data-l="Mistakes">${r.mistakes}</td></tr>`).join("")}</tbody></table></div></section>
+    ${inactive.length ? `<section class="card"><h3>Not active in this period (${inactive.length})</h3><p class="small">${inactive.map(r => `${esc(r.s.cls)}${r.s.no ? `-${esc(r.s.no)}` : ""} ${esc(r.s.en || r.s.zh)}`).join(" · ")}</p></section>` : ""}
+    <p class="small muted">Only teacher accounts can see this page. Data comes from your private Google Sheet and is not stored on this device.</p>`;
+}
+const accChip = p => p == null ? `<span class="muted">–</span>` : `<span class="acc ${p >= 80 ? "hi" : p >= 60 ? "mid" : "lo"}">${p}%</span>`;
+function missedHtml(list) {
+  if (!list.length) return `<p class="small muted">No missed questions recorded in this period.</p>`;
+  return `<ol class="missed">${list.map(x => `<li><span class="small muted">T${x.r.topicNo} · ${esc(x.r.name)} · <b>${x.n}×</b> wrong</span><br>${esc(x.p.q)}</li>`).join("")}</ol>`;
+}
+function wireStats() {
+  const g = id => document.getElementById(id);
+  if (g("stRetry")) g("stRetry").onclick = () => { SFX.tap(); loadStats(true); renderMap(); };
+  if (!TS.data) return;
+  g("stCls").onchange = e => { TS.cls = e.target.value; renderMap(); };
+  $app.querySelectorAll("[data-per]").forEach(b => b.onclick = () => { SFX.tap(); TS.period = b.dataset.per; renderMap(); });
+  $app.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.sort; TS.dir = TS.sort === k ? -TS.dir : (k === "no" || k === "name" ? 1 : -1); TS.sort = k; renderMap(); });
+  g("stRefresh").onclick = () => { SFX.tap(); TS.data = null; loadStats(true); renderMap(); };
+  g("stCsv").onclick = () => { SFX.tap(); downloadStatsCsv(); };
+}
+function downloadStatsCsv() {
+  const C = computeStats(), q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
+  const head = ["Class", "No.", "English name", "Chinese name", "Activities", "Questions", "Correct", "Accuracy %", "Minutes", "Current streak", "Best streak", "Stages cleared", "Stars", "Mistakes waiting", "Trophies", "Last active"];
+  const lines = [head.map(q).join(",")].concat(C.rows.map(r => [r.s.cls, r.s.no, r.s.en, r.s.zh, r.sess, r.ans, r.cor, r.acc == null ? "" : r.acc, r.mins, r.streak, r.best, r.stages, r.stars, r.mistakes, r.trophies, r.last ? r.last.slice(0, 10) : ""].map(q).join(",")));
+  const blob = new Blob(["﻿" + lines.join("\n")], { type: "text/csv;charset=utf-8" }), a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = `biology-stats-${TS.cls === "all" ? "all" : TS.cls}-${today()}.csv`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 
 /* ============================================================
@@ -7510,32 +7757,144 @@ function machineSvg2() {
     <circle cx="82" cy="104" r="10" fill="#fff" stroke="${CO}" stroke-width="3"/><path d="M82 96 V112 M74 104 H90" stroke="${CO}" stroke-width="3" stroke-linecap="round" class="crank"/>
     <rect x="42" y="118" width="36" height="14" rx="6" fill="#4B3350" stroke="${CO}" stroke-width="2.5"/></svg>`;
 }
+
+/* ============================================================
+   5l. 🎰 Daily Lucky Capsule (replaces the daily snack chest).
+   One free draw per study day, unlocked by today's first finished activity, so every draw is also a streak day.
+   Luck rises with the streak at 20 / 40 / 60 / 80 / 100 days (same idea as the S1 Science game).
+   Epic or better is guaranteed within 10 draws. The capsule can "upgrade" colour before it bursts open.
+   Prizes: chestnuts, food for your pal (pantry), Streak Freezes, outfits, biology card capsules,
+   and 3 capsule-only Study Pals (Mito, Chloe: legendary; Helix: mythic).
+   ============================================================ */
+const LUCK_TIERS = ["common", "rare", "epic", "legend", "myth"];
+const LUCK_NAMES = { common: "Common", rare: "Rare", epic: "Epic", legend: "Legendary", myth: "Mythic" };
+// odds (%) by streak level: 0–19, 20–39, 40–59, 60–79, 80–99, 100+ days
+const LUCK_TABLE = [[60, 28, 9, 2.5, .5], [52, 28, 13, 5, 2], [44, 28, 17, 8, 3], [36, 28, 21, 11, 4], [28, 28, 25, 13, 6], [20, 28, 28, 16, 8]];
+const LUCK_PITY = 10;
+const luckLevel = () => Math.min(5, Math.floor((S.current_streak || 0) / 20));
+const luckOdds = () => LUCK_TABLE[luckLevel()];
+const luckyDrawn = () => S.lucky.day === today();
+const luckyReady = () => studiedToday() && !luckyDrawn();
+
+function rollLuckyTier() {
+  if (S.lucky.pity + 1 >= LUCK_PITY) { const o = luckOdds().slice(2), t = o.reduce((a, b) => a + b, 0); let x = Math.random() * t; for (let i = 0; i < 3; i++) if ((x -= o[i]) < 0) return LUCK_TIERS[i + 2]; return "epic"; }
+  let x = Math.random() * 100; const o = luckOdds();
+  for (let i = 0; i < 5; i++) if ((x -= o[i]) < 0) return LUCK_TIERS[i];
+  return "common";
+}
+const capPals = r => PALS.filter(P => P.cap && P.rar === r && !S.pals[P.id]);
+const unownedOutfits = max => WARDROBE.filter(w => !S.owned.includes(w.id) && w.slot !== "frame" && w.price <= max);
+// Build the prize for a tier (falls back to chestnuts or card capsules when something is already owned)
+function makePrize(tier) {
+  const r = Math.random(), coin = n => ({ kind: "coins", n, title: `${n} chestnuts`, sub: "Spend them on food, outfits and pals." });
+  const food = (pool, n) => { const f = pick(pool); return { kind: "food", id: f.id, n, title: `${f.name}${n > 1 ? ` ×${n}` : ""}`, sub: `Saved in your pantry: feed ${palName()} for free!` }; };
+  const caps = n => ({ kind: "caps", n, title: `${n} card capsule${n > 1 ? "s" : ""}`, sub: "Open them for biology trading cards." });
+  const outfit = max => { const o = unownedOutfits(max); if (!o.length) return null; const w = pick(o); return { kind: "outfit", id: w.id, title: w.name, sub: "A new outfit! Wear it in 👗 Dress up." }; };
+  const pal = r_ => { const ps = capPals(r_); if (!ps.length) return null; const P = pick(ps); return { kind: "pal", id: P.id, title: `${P.name} the Study Pal`, sub: P.desc }; };
+  const everyday = FOODS.filter(f => f.r === "g"), fancy = FOODS.filter(f => f.r !== "g");
+  if (tier === "common") return r < .55 ? coin(15 + Math.floor(Math.random() * 16)) : food(everyday, 1);
+  if (tier === "rare") return r < .3 ? coin(40 + Math.floor(Math.random() * 21)) : r < .6 ? food(fancy, 2) : r < .8 && S.streak_shields < FREEZE_MAX ? { kind: "freeze", n: 1, title: "Streak Freeze", sub: "Protects your streak on a missed day." } : caps(1);
+  if (tier === "epic") return (r < .45 && outfit(140)) || (r < .75 ? caps(2) : coin(120));
+  if (tier === "legend") return (r < .3 && pal("legend")) || (r < .65 && outfit(9999)) || (r < .85 ? caps(3) : coin(300));
+  return pal("myth") || pal("legend") || Object.assign(coin(800), { bonusCaps: 5, title: "800 chestnuts + 5 card capsules" });
+}
+function applyPrize(p) {
+  if (p.kind === "coins") gainCoins(p.n);
+  if (p.kind === "food") S.pantry[p.id] = (S.pantry[p.id] || 0) + p.n;
+  if (p.kind === "freeze") S.streak_shields = Math.min(FREEZE_MAX, S.streak_shields + 1);
+  if (p.kind === "caps") S.coll.pending += p.n;
+  if (p.bonusCaps) S.coll.pending += p.bonusCaps;
+  if (p.kind === "outfit") S.owned.push(p.id);
+  if (p.kind === "pal") S.pals[p.id] = newPal();
+  save(true);
+}
+function prizeArt(p) {
+  if (p.kind === "coins") return `<div class="pzbig">🌰</div>`;
+  if (p.kind === "food") return `<div class="pzbig">${FOODS.find(f => f.id === p.id).e}</div>`;
+  if (p.kind === "freeze") return `<div class="pzbig">❄️</div>`;
+  if (p.kind === "caps") return `<div class="pzcap">${capsuleSvg("rare")}</div>`;
+  if (p.kind === "outfit") return `<div class="pzfig">${figure("chiikawa", "happy", Object.assign({}, S.equip, { [itemById(p.id).slot]: p.id }))}</div>`;
+  if (p.kind === "pal") return `<div class="pzfig">${palFig(p.id, "sparkle")}</div>`;
+  return "";
+}
+
+/* ----- The draw: crank → mix → drop → colour upgrades → burst → prize card ----- */
+function openLucky() {
+  if (!luckyReady()) { if (luckyDrawn()) toast("🎰 You've drawn today's capsule. Come back tomorrow!"); else toast("🔒 Finish one activity today to unlock the Lucky Capsule."); return; }
+  const o = luckOdds();
+  const box = openModal(`<span class="kicker">🎰 Daily Lucky Capsule</span><h2>Turn the crank!</h2>
+    <div class="lstage"><div class="lmach" id="lmach">${machineSvg2()}</div><div class="lcap t-common" id="lcap" hidden><i class="lhalf"></i><i class="lband"></i></div><i class="lrays" id="lrays" hidden></i></div>
+    <div class="lodds">${LUCK_TIERS.map((t, i) => `<span class="lo t-${t}"><b>${o[i]}%</b>${LUCK_NAMES[t]}</span>`).join("")}</div>
+    <p class="small muted" style="text-align:center;margin:0">🍀 Streak luck level ${luckLevel()} (day ${S.current_streak}) · Epic or better within ${LUCK_PITY - S.lucky.pity} draw${LUCK_PITY - S.lucky.pity > 1 ? "s" : ""}</p>
+    <div class="row" style="justify-content:center"><button class="btn primary big" id="lGo">🎰 Turn the crank!</button></div>`, { closable: false });
+  box.classList.add("luckybox");
+  box.querySelector("#lGo").onclick = () => {
+    SFX.init(); SFX.click(); box.querySelector("#lGo").disabled = true;
+    const tier = rollLuckyTier(), prize = makePrize(tier), k = LUCK_TIERS.indexOf(tier);
+    S.lucky.day = today(); S.lucky.draws += 1; S.lucky.pity = k >= 2 ? 0 : S.lucky.pity + 1; S.lucky.last = { tier, title: prize.title, day: today() };
+    S.stats.chests += 1; applyPrize(prize); checkTrophies();
+    const mach = document.getElementById("lmach"), cap = document.getElementById("lcap"), fast = reduced();
+    mach.classList.add("spin");
+    let t = fast ? 50 : 1100;
+    setTimeout(() => { mach.classList.remove("spin"); cap.hidden = false; cap.classList.add("drop"); SFX.tap(); }, t);
+    t += fast ? 50 : 800;
+    for (let i = 1; i <= k; i++) setTimeout(() => { cap.className = `lcap t-${LUCK_TIERS[i]} drop up`; void cap.offsetWidth; cap.classList.add("flash"); SFX.tone && SFX.tone(440 + i * 160, .18, { type: "triangle", vol: .12 }); }, t + (fast ? 0 : i * 480));
+    t += fast ? 50 : k * 480 + 450;
+    setTimeout(() => { cap.classList.add("burst"); document.getElementById("lrays").hidden = false; SFX.fanfare(); }, t);
+    setTimeout(() => showPrize(box, tier, prize), t + (fast ? 50 : 650));
+  };
+}
+function showPrize(box, tier, prize) {
+  const big = tier === "legend" || tier === "myth";
+  if (big) { box.classList.add("shakey"); setTimeout(() => box.classList.remove("shakey"), 600); confetti(260); setTimeout(() => confetti(200), 900); } else confetti(tier === "epic" ? 160 : 70);
+  box.innerHTML = `${big ? `<div class="lbanner t-${tier}">${tier === "myth" ? "🌈 MYTHIC!" : "👑 LEGENDARY!"}</div>` : ""}
+    <span class="kicker">🎰 Lucky Capsule · ${LUCK_NAMES[tier]}</span>
+    <div class="prizecard t-${tier}"><i class="pzrays" aria-hidden="true"></i><span class="pzrar">${LUCK_NAMES[tier]}</span>${prizeArt(prize)}<h2>${esc(prize.title)}</h2><p>${esc(prize.sub)}</p></div>
+    <div class="row" style="justify-content:center">${prize.kind === "pal" ? `<button class="btn primary big" id="pzUse">⭐ Make ${esc(palById(prize.id).name)} my active pal</button>` : prize.kind === "outfit" ? `<button class="btn primary big" id="pzUse">👗 Wear it now</button>` : prize.kind === "caps" || prize.bonusCaps ? `<button class="btn primary big" id="pzUse">🎁 Open card capsules</button>` : prize.kind === "food" ? `<button class="btn primary big" id="pzUse">🍱 Feed ${esc(palName())} now</button>` : ""}<button class="btn plain" id="pzOk">Yay! 🥳</button></div>
+    <p class="small muted" style="text-align:center;margin:0">Come back tomorrow for another draw. Keep your 🔥 streak to raise your luck!</p>`;
+  const done = () => { closeModal(); renderMap(); };
+  box.querySelector("#pzOk").onclick = () => { SFX.tap(); done(); };
+  const u = box.querySelector("#pzUse");
+  if (u) u.onclick = () => { SFX.tap(); closeModal();
+    if (prize.kind === "pal") setActivePal(prize.id);
+    else if (prize.kind === "outfit") { const w = itemById(prize.id); S.equip[w.slot] = w.id; save(true); refreshPlayer(); dressSlot = w.slot; goTab("dress"); }
+    else if (prize.kind === "food") { renderMap(); openFeed(); }
+    else { renderMap(); openCapsule(); } };
+}
+
+/* ----- 🌟 Home banner: the Lucky Capsule machine (and the card capsules) ----- */
 function capsuleAdHtml() {
-  const pend = S.coll.pending, nx = nextStreakCapsule(), cur = S.current_streak || 0, studied = studiedToday();
-  const L_ = streakLuck(), prev = cur - (cur % 3), pc = Math.min(100, Math.round(100 * (cur - prev) / (nx.day - prev || 3)));
-  const stagger = CARD_ORDER.map(r => { const o = collOwned(r), t = collTotal(r); return `<div class="adrar r-${r}"><span class="adsym">${CARD_RAR[r].sym}</span><b>${r === "myth" && !o ? "?" : `${o}/${t}`}</b><span class="small">${CARD_RAR[r].n}</span></div>`; }).join("");
-  const mystery = ["luca", "endosym", "crispr"].map(id => { const c = cardById(id); return `<span class="adtease r-${c.rar} ${S.coll.owned[id] ? "own" : ""}"><span class="${S.coll.owned[id] ? "" : "sil"}">${cardArt(c)}</span></span>`; }).join("");
-  return `<section class="capad" aria-label="Biology Capsule Lab">
+  const ready = luckyReady(), drawn = luckyDrawn(), o = luckOdds(), lv = luckLevel(), cur = S.current_streak || 0, nextLv = Math.min(5, lv + 1);
+  const end = new Date(); end.setHours(24, 0, 0, 0); const hrs = Math.max(0, Math.ceil((end - new Date()) / 3600e3));
+  const last = S.lucky.last;
+  const btn = ready ? `<button class="btn big adgo" id="luckGo">🎰 Draw today's capsule!</button>`
+    : drawn ? `<button class="btn big adgo done" id="luckDone" disabled>✓ Drawn today · next in ${hrs} h</button>`
+    : `<button class="btn big adgo locked" id="luckLock">🔒 Finish 1 activity to unlock</button>`;
+  return `<section class="capad lucky" aria-label="Daily Lucky Capsule">
     <i class="adglow" aria-hidden="true"></i><span class="adspark s1" aria-hidden="true">${spk(5, 5, 5, "y")}</span><span class="adspark s2" aria-hidden="true">${spk(5, 5, 4, "k")}</span><span class="adspark s3" aria-hidden="true">${spk(5, 5, 3, "a")}</span>
     <div class="admain">
-      <div class="admach">${machineSvg2()}${pend ? `<span class="adbadge">${pend}</span>` : ""}</div>
+      <div class="admach ${ready ? "ready" : ""}">${machineSvg2()}${ready ? `<span class="adbadge">1</span>` : ""}</div>
       <div class="adtext">
-        <span class="adnew">NEW · ${CARD_N} BIOLOGY CARDS</span>
-        <h2>Biology Capsule Lab</h2>
-        <p>Collect real biology terms and structures as shiny trading cards, from Common to <b>Mythic</b>.</p>
-        ${pend ? `<button class="btn primary big adgo" id="adOpen">🎁 Open capsule (${pend})</button>` : `<button class="btn primary big adgo" id="adStudy">${studied ? "⚡ Play a Cell Rush to earn one" : "🔥 Study today to earn one"}</button>`}
-        <button class="adalbum" id="adAlbum">📚 Collection ${collOwned()}/${CARD_N}</button>
+        <span class="adnew">🎰 DAILY LUCKY CAPSULE</span>
+        <h2>Lucky Capsule</h2>
+        <p>One free draw every study day: chestnuts, food, outfits, Streak Freezes, biology cards... and <b>very rare Study Pals</b>!</p>
+        ${btn}
+        ${drawn && last ? `<span class="adlast">Today: <b>${esc(last.title)}</b> (${LUCK_NAMES[last.tier]})</span>` : ""}
       </div></div>
-    <div class="adstreak"><div class="adsrow"><b>🔥 Streak reward</b><span class="small">${nx.left === 1 && !studied ? "Study today for" : `In ${nx.left} day${nx.left > 1 ? "s" : ""}:`} <b>+${nx.n} capsule${nx.n > 1 ? "s" : ""}</b> (day ${nx.day})</span></div>
-      <div class="tprog thick"><i style="width:${pc}%"></i></div>
-      <span class="small muted">Streak luck: <b>+${L_.toFixed(1)}%</b> better odds (up to +8%). A capsule every 3rd day, 2 on day 7, 14, 21, 30...</span></div>
-    <div class="adrow"><div class="adtease-row" aria-label="Mystery cards">${mystery}</div><div class="adrars">${stagger}</div></div>
+    <div class="adstreak"><div class="adsrow"><b>🍀 Streak luck · level ${lv}</b><span class="small">${lv < 5 ? `Day ${nextLv * 20}: Epic ${LUCK_TABLE[nextLv][2]}%, Legendary ${LUCK_TABLE[nextLv][3]}%` : "Maximum luck!"}</span></div>
+      <div class="oddsbar" aria-label="Today's odds">${LUCK_TIERS.map((t, i) => `<i class="t-${t}" style="flex:${o[i]}"></i>`).join("")}</div>
+      <div class="oddsleg">${LUCK_TIERS.map((t, i) => `<span><i class="t-${t}"></i>${LUCK_NAMES[t]} ${o[i]}%</span>`).join("")}</div>
+      ${lv < 5 ? `<div class="tprog thick"><i style="width:${Math.round(100 * (cur - lv * 20) / 20)}%"></i></div><span class="small muted">🔥 ${cur}-day streak · ${nextLv * 20 - cur} more day${nextLv * 20 - cur === 1 ? "" : "s"} to luck level ${nextLv}</span>` : ""}</div>
+    <div class="adprizes" aria-label="Possible prizes"><span class="pz">🌰<small>Chestnuts</small></span><span class="pz">🍱<small>Food</small></span><span class="pz">❄️<small>Freeze</small></span><span class="pz">👗<small>Outfits</small></span><span class="pz">🃏<small>Cards</small></span>${PALS.filter(P => P.cap).map(P => `<span class="pz pal ${S.pals[P.id] ? "own" : ""} r-${P.rar}"><span class="${S.pals[P.id] ? "" : "sil"}">${palFig(P.id, "happy")}</span><small>${S.pals[P.id] ? esc(P.name) : P.rar === "myth" ? "Mythic pal" : "Rare pal"}</small></span>`).join("")}</div>
+    <div class="adcards"><span>🃏 <b>Biology cards</b> ${collOwned()}/${CARD_N}${S.coll.pending ? ` · <b>${S.coll.pending}</b> capsule${S.coll.pending > 1 ? "s" : ""} to open` : ""}</span>
+      <span class="row" style="gap:6px">${S.coll.pending ? `<button class="adalbum" id="adOpen">🎁 Open (${S.coll.pending})</button>` : ""}<button class="adalbum" id="adAlbum">📚 Collection</button></span></div>
   </section>`;
 }
 function wireCapsuleAd() {
   const g = id => document.getElementById(id);
+  if (g("luckGo")) g("luckGo").onclick = () => { SFX.init(); SFX.tap(); openLucky(); };
+  if (g("luckLock")) g("luckLock").onclick = () => { SFX.init(); SFX.tap(); toast("🔒 Finish one stage, study series, Rush or dictation round today to unlock your draw!"); const ni = nextRoomIndex(); ni === -1 ? goTab("stages") : enterRoom(ROOMS[ni].id); };
   if (g("adOpen")) g("adOpen").onclick = () => { SFX.init(); SFX.tap(); openCapsule(); };
-  if (g("adStudy")) g("adStudy").onclick = () => { SFX.init(); SFX.tap(); const ni = nextRoomIndex(); if (S.playMode === "study" || ni === -1) { goTab("stages"); } else enterRoom(ROOMS[ni].id); };
   if (g("adAlbum")) g("adAlbum").onclick = () => { SFX.init(); SFX.tap(); openAlbum(); };
 }
 // Each stage's pool: its questions, converted to one shape. Internally each has a Bloom level b (1–6);
@@ -7617,7 +7976,7 @@ function freshState() {
     coins: 0, owned: [], equip: { hat: null, hair: null, face: null, outfit: null, ribbon: null, hand: null, frame: null }, power: { torch: 1, crystal: 1, guard: 1 },
     rush: { best: 0, lastDay: null }, player_id: newId(), lb_last: 0, mistakes: {}, mistakes_cleared: 0, playMode: "escape", pets: {}, activePet: null, ill: null, lastIllDay: null, lastIll: null, coll: { owned: {}, pending: 0, pity: 0 }, dict: { missed: {}, best: 0 },
     last_study_day: null, study_days: [], frozen_days: [], freeze_month: null, freeze_used: null, mission: null, upd: 0,
-    pals: { mochi: newPal() }, activePal: "mochi"
+    pals: { mochi: newPal() }, activePal: "mochi", lucky: { day: null, pity: 0, draws: 0, last: null }, pantry: {}
   };
 }
 function normalise(obj) {
@@ -7637,6 +7996,7 @@ function normalise(obj) {
   if (!ROOMS.some(r => r.id === s.current_room)) s.current_room = ROOMS[0].id;
   // Saves from before the study streak: count the last visit as a study day and hand out the 3 starting Streak Freezes
   if (obj && !("last_study_day" in obj)) { s.last_study_day = s.last_login_date; s.study_days = s.last_login_date ? [s.last_login_date] : []; s.streak_shields = Math.max(s.streak_shields || 0, 3); }
+  s.lucky = Object.assign({ day: null, pity: 0, draws: 0, last: null }, s.lucky); s.pantry = Object.assign({}, s.pantry);
   s.pals = Object.assign({ mochi: newPal() }, s.pals); if (!s.pals[s.activePal]) s.activePal = "mochi";
   s.study_days = [...(s.study_days || [])]; s.frozen_days = [...(s.frozen_days || [])];
   return s;
@@ -7832,7 +8192,7 @@ const bossesBeaten = () => ROOMS.filter(r => r.boss && S.completed_rooms.include
 const TROPHY_CATS = [["habit", "🔥 Daily habits"], ["adventure", "🗺️ Adventure"], ["brain", "🧠 Brain power"], ["fun", "🎀 Fun & style"]];
 const TROPHIES = [
   { id: "week", cat: "habit", name: "Week Warrior", rar: "bronze", who: "chiikawa", desc: "Play 7 days in a row", prog: () => [S.longest_streak, 7] },
-  { id: "chest", cat: "habit", name: "Snack Stash", rar: "bronze", who: "kurimanju", desc: "Open the daily snack chest 10 times", prog: () => [S.stats.chests, 10] },
+  { id: "chest", cat: "habit", name: "Snack Stash", rar: "bronze", who: "kurimanju", desc: "Draw the daily Lucky Capsule 10 times", prog: () => [S.stats.chests, 10] },
   { id: "steady", cat: "habit", name: "Steady Explorer", rar: "silver", who: "hachiware", desc: "Play on 20 different days", prog: () => [S.stats.days, 20] },
   { id: "night", cat: "habit", name: "Night Owl", rar: "bronze", who: "momonga", desc: "Escape a stage after 9 pm", prog: () => [S.stats.night, 1] },
   { id: "flame", cat: "habit", name: "Eternal Flame", rar: "legend", who: "usagi", desc: "Reach a 30-day streak", prog: () => [S.longest_streak, 30] },
@@ -8214,12 +8574,13 @@ function openMenu() {
   const acc = signedIn() ? userName().split(" ")[0] : "Guest";
   const tiles = [["mTro", "🏆", "Trophies", `${Object.keys(S.trophies).length} / ${TROPHIES.length}`], ["mAcc", signedIn() ? "🎓" : "👤", "Account", acc + (AUTH.stale ? " · sign in again" : "")],
     ["mJou", "📓", "Journal", "Textbook notes"], ["mSave", "🔑", "Save code", "Move to another device"], ["mLb", "🏆", "Leaderboard", signedIn() ? "Your class" : "Signed-in only"],
-    ["mMus", "🎵", "Music", MUSIC.on ? "On" : "Off"], ["mSnd", SFX.on ? "🔊" : "🔇", "Sound effects", SFX.on ? "On" : "Off"], ["mHome", "🏠", "Home", "Back to Mochi's room"]];
+    ...(isTeacher() ? [["mStats", "📊", "Class statistics", "Teachers only"]] : []), ["mMus", "🎵", "Music", MUSIC.on ? "On" : "Off"], ["mSnd", SFX.on ? "🔊" : "🔇", "Sound effects", SFX.on ? "On" : "Off"], ["mHome", "🏠", "Home", "Back to Mochi's room"]];
   const box = openModal(`<span class="kicker">☰ Menu</span><h2>${esc(S.player_name)}'s settings</h2>
     <div class="menugrid">${tiles.map(([id, ic, t, sub]) => `<button class="mtile" id="${id}"><span class="mi">${ic}</span><b>${t}</b><span class="small muted">${esc(sub)}</span></button>`).join("")}</div>`);
   const on = (id, f) => { box.querySelector("#" + id).onclick = () => { SFX.tap(); f(); }; };
   on("mTro", () => { closeModal(); openCabinet(); }); on("mAcc", () => { closeModal(); openAccount(); }); on("mJou", () => { closeModal(); openJournal(); });
   on("mSave", () => { closeModal(); openSaveModal(); }); on("mLb", () => { closeModal(); openLeaderboard(); }); on("mHome", () => { closeModal(); homeTab = "home"; renderMap(); });
+  if (isTeacher()) on("mStats", () => { closeModal(); goTab("stats"); });
   on("mMus", () => { MUSIC.on = !MUSIC.on; try { localStorage.setItem(MUSIC_KEY, MUSIC.on ? "on" : "off"); } catch (e) {} MUSIC.on ? MUSIC.start() : MUSIC.stop(); openMenu(); });
   on("mSnd", () => { SFX.on = !SFX.on; try { localStorage.setItem(SOUND_KEY, SFX.on ? "on" : "off"); } catch (e) {} if (SFX.on) SFX.init(); openMenu(); });
 }
@@ -8397,7 +8758,7 @@ function renderWelcome() {
     SFX.init(); SFX.item();
     S = freshState(); const v = document.getElementById("nm").value.trim(); if (v) S.player_name = v;
     const ti = Number(document.getElementById("tp").value) || 0;
-    checkIn(); save(true); enterRoom(topicRooms(ti)[0].id);
+    S.current_room = topicRooms(ti)[0].id; checkIn(); save(true); homeTab = "home"; renderMap(); window.scrollTo({ top: 0 });
   };
   document.getElementById("go").onclick = go;
   document.getElementById("nm").addEventListener("keydown", e => { if (e.key === "Enter") go(); });
@@ -9223,7 +9584,7 @@ window.addEventListener("pagehide", () => { if (S) save(); });
   if (linked) { S ? renderMap() : renderWelcome(); showCodeFromLink(linked); return; }
   // Class sign-in screen first, unless this device chose guest mode (or sign-in is off and there is saved progress)
   const pref = authPref();
-  if (pref === "guest" || (!pref && S && !cloudOn())) { AUTH.mode = "guest"; if (S) { checkIn(); renderMap(); showResume(); } else renderWelcome(); }
+  if (pref === "guest" || (!pref && S && !cloudOn())) { AUTH.mode = "guest"; if (S) enterGame(); else renderWelcome(); }
   else renderLogin();
 })();
 </script>

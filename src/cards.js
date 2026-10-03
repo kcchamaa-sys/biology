@@ -246,31 +246,3 @@ function machineSvg2() {
     <circle cx="82" cy="104" r="10" fill="#fff" stroke="${CO}" stroke-width="3"/><path d="M82 96 V112 M74 104 H90" stroke="${CO}" stroke-width="3" stroke-linecap="round" class="crank"/>
     <rect x="42" y="118" width="36" height="14" rx="6" fill="#4B3350" stroke="${CO}" stroke-width="2.5"/></svg>`;
 }
-function capsuleAdHtml() {
-  const pend = S.coll.pending, nx = nextStreakCapsule(), cur = S.current_streak || 0, studied = studiedToday();
-  const L_ = streakLuck(), prev = cur - (cur % 3), pc = Math.min(100, Math.round(100 * (cur - prev) / (nx.day - prev || 3)));
-  const stagger = CARD_ORDER.map(r => { const o = collOwned(r), t = collTotal(r); return `<div class="adrar r-${r}"><span class="adsym">${CARD_RAR[r].sym}</span><b>${r === "myth" && !o ? "?" : `${o}/${t}`}</b><span class="small">${CARD_RAR[r].n}</span></div>`; }).join("");
-  const mystery = ["luca", "endosym", "crispr"].map(id => { const c = cardById(id); return `<span class="adtease r-${c.rar} ${S.coll.owned[id] ? "own" : ""}"><span class="${S.coll.owned[id] ? "" : "sil"}">${cardArt(c)}</span></span>`; }).join("");
-  return `<section class="capad" aria-label="Biology Capsule Lab">
-    <i class="adglow" aria-hidden="true"></i><span class="adspark s1" aria-hidden="true">${spk(5, 5, 5, "y")}</span><span class="adspark s2" aria-hidden="true">${spk(5, 5, 4, "k")}</span><span class="adspark s3" aria-hidden="true">${spk(5, 5, 3, "a")}</span>
-    <div class="admain">
-      <div class="admach">${machineSvg2()}${pend ? `<span class="adbadge">${pend}</span>` : ""}</div>
-      <div class="adtext">
-        <span class="adnew">NEW · ${CARD_N} BIOLOGY CARDS</span>
-        <h2>Biology Capsule Lab</h2>
-        <p>Collect real biology terms and structures as shiny trading cards, from Common to <b>Mythic</b>.</p>
-        ${pend ? `<button class="btn primary big adgo" id="adOpen">🎁 Open capsule (${pend})</button>` : `<button class="btn primary big adgo" id="adStudy">${studied ? "⚡ Play a Cell Rush to earn one" : "🔥 Study today to earn one"}</button>`}
-        <button class="adalbum" id="adAlbum">📚 Collection ${collOwned()}/${CARD_N}</button>
-      </div></div>
-    <div class="adstreak"><div class="adsrow"><b>🔥 Streak reward</b><span class="small">${nx.left === 1 && !studied ? "Study today for" : `In ${nx.left} day${nx.left > 1 ? "s" : ""}:`} <b>+${nx.n} capsule${nx.n > 1 ? "s" : ""}</b> (day ${nx.day})</span></div>
-      <div class="tprog thick"><i style="width:${pc}%"></i></div>
-      <span class="small muted">Streak luck: <b>+${L_.toFixed(1)}%</b> better odds (up to +8%). A capsule every 3rd day, 2 on day 7, 14, 21, 30...</span></div>
-    <div class="adrow"><div class="adtease-row" aria-label="Mystery cards">${mystery}</div><div class="adrars">${stagger}</div></div>
-  </section>`;
-}
-function wireCapsuleAd() {
-  const g = id => document.getElementById(id);
-  if (g("adOpen")) g("adOpen").onclick = () => { SFX.init(); SFX.tap(); openCapsule(); };
-  if (g("adStudy")) g("adStudy").onclick = () => { SFX.init(); SFX.tap(); const ni = nextRoomIndex(); if (S.playMode === "study" || ni === -1) { goTab("stages"); } else enterRoom(ROOMS[ni].id); };
-  if (g("adAlbum")) g("adAlbum").onclick = () => { SFX.init(); SFX.tap(); openAlbum(); };
-}

@@ -11,6 +11,8 @@
  *   SHEET_ID     ID of the Google Sheet that holds the Users tab   (required)
  *   CLIENT_ID    Google OAuth Web client ID used by the game       (required)
  *   USERS_SHEET  optional, name of the users tab (default: 使用者 Users)
+ *   TEACHER_EMAILS optional, comma-separated. If set, ONLY these emails see the teacher statistics.
+ *                If empty, every staff account (Role contains 教職員 / staff / teacher) can see them.
  *
  * Users tab columns: Email · Role · Chinese Name · English Name · Class · Class No.
  * (the same tab the S1 Science game uses, so one list serves both games)
@@ -45,6 +47,9 @@ function doPost(e) {
       case 'save': saveProgress(user, body.state, body.summary || {}); return out({ ok: true });
       case 'record': return out({ ok: true, saved: appendRecords(user, body.records || []) });
       case 'board': return out(board(user, body.scope === 'all' ? 'all' : 'class'));
+      case 'stats':
+        if (!user.teacher) return out({ ok: false, error: 'forbidden' });
+        return out(stats());
       default: return out({ ok: false, error: 'unknown_action' });
     }
   } catch (err) {
@@ -95,13 +100,14 @@ function findUser(email) {
   var sh = book().getSheetByName(PROPS.getProperty('USERS_SHEET') || USERS_DEFAULT);
   if (!sh) throw 'Users sheet not found';
   var v = sh.getDataRange().getValues();
+  var teachers = (PROPS.getProperty('TEACHER_EMAILS') || '').toLowerCase().split(/[,\s]+/).filter(String);
   for (var i = 1; i < v.length; i++) {
     if (String(v[i][0]).trim().toLowerCase() !== email) continue;
     var role = String(v[i][1] || '');
     var u = {
       email: email, role: role, zh: String(v[i][2] || ''), en: String(v[i][3] || ''),
       cls: String(v[i][4] || ''), no: v[i][5] === '' || v[i][5] == null ? '' : String(v[i][5]),
-      teacher: isStaffRole(role)
+      teacher: teachers.length ? teachers.indexOf(email) >= 0 : isStaffRole(role)
     };
     cache.put('bu_' + email, JSON.stringify(u), 300);
     return u;
@@ -199,4 +205,36 @@ function board(user, scope) {
     return { top: top, me: me };
   }
   return { ok: true, scope: scope, cats: { xp: cat('xp'), streak: cat('st'), col: cat('col') } };
+}
+
+/** Teacher statistics (staff only): the class list, the last 365 days of records and each student's progress summary. */
+function stats() {
+  var ss = book();
+  var uv = ss.getSheetByName(PROPS.getProperty('USERS_SHEET') || USERS_DEFAULT).getDataRange().getValues();
+  var students = [];
+  for (var i = 1; i < uv.length; i++) {
+    if (!uv[i][0] || isStaffRole(String(uv[i][1] || ''))) continue;
+    students.push({ email: String(uv[i][0]).trim().toLowerCase(), zh: String(uv[i][2] || ''), en: String(uv[i][3] || ''),
+      cls: String(uv[i][4] || ''), no: uv[i][5] === '' || uv[i][5] == null ? '' : String(uv[i][5]) });
+  }
+  var rev = {}; for (var k in MODES) rev[MODES[k]] = k;
+  var since = Date.now() - 365 * 864e5, records = [], rs = ss.getSheetByName(REC);
+  if (rs && rs.getLastRow() > 1) {
+    rs.getRange(2, 1, rs.getLastRow() - 1, REC_HEAD.length).getValues().forEach(function (r) {
+      var t = r[0] instanceof Date ? r[0] : new Date(r[0]);
+      if (isNaN(t) || t.getTime() < since) return;
+      records.push({ t: t.toISOString(), email: String(r[2]).toLowerCase(), mode: rev[r[8]] || String(r[8]), topic: String(r[9]), stage: String(r[10]),
+        ans: Number(r[11]) || 0, cor: Number(r[12]) || 0, stars: Number(r[14]) || 0, secs: Number(r[15]) || 0,
+        status: r[16] === STATUS.quit ? 'quit' : 'done', wrong: String(r[20] || '') });
+    });
+  }
+  var progress = {}, ps = ss.getSheetByName(PROG);
+  if (ps && ps.getLastRow() > 1) {
+    ps.getRange(2, 1, ps.getLastRow() - 1, PROG_HEAD.length).getValues().forEach(function (r) {
+      progress[String(r[0]).toLowerCase()] = { upd: r[1] instanceof Date ? r[1].toISOString() : '', streak: Number(r[2]) || 0, best: Number(r[3]) || 0,
+        stars: Number(r[4]) || 0, stages: Number(r[5]) || 0, coins: Number(r[6]) || 0, pet: String(r[7] || ''), pets: Number(r[8]) || 0,
+        mistakes: Number(r[9]) || 0, cleared: Number(r[10]) || 0, trophies: Number(r[11]) || 0, lastDay: String(r[12] || ''), xp: Number(r[14]) || 0, col: Number(r[15]) || 0 };
+    });
+  }
+  return { ok: true, students: students, records: records, progress: progress };
 }

@@ -141,9 +141,45 @@ Mochi sometimes wakes up sick (30% on a new day) or catches something after a st
 
 Four shelves (Daily habits, Adventure, Brain power, Just for fun) as **trading cards**: a title bar with a rarity symbol (● bronze, ◆ silver, ★ gold, ✦ legendary), a lab-scene art window, the goal, then a date stamp or progress bar and the +30 🌰 reward. Card finishes: matte bronze, silver, embossed gold with a light sweep, and a rainbow legendary. Locked cards reveal step by step: under 25% a dark silhouette behind frosted glass with a padlock, 25–60% colours bleed through, 60–90% thin glass, 90%+ fully visible with a pulsing "Almost there!". The map shows the 4 closest to unlocking. Each trophy gives 🌰 30 and a 🎁 capsule.
 
+## 🎰 Daily Lucky Capsule (Home)
+
+The big banner at the top of 🏠 Home is a gachapon machine (it replaces the old daily snack chest).
+- **One free draw per study day**, unlocked by today's first finished activity, so every draw is also a streak day.
+- **The draw:** the crank turns, capsules mix, one drops and bounces, then it can **upgrade** colour (pink → blue → purple → gold → rainbow) before bursting into a prize card. Legendary and Mythic pulls get a banner, a shake and extra confetti.
+- **Luck rises with the streak** at 20 / 40 / 60 / 80 / 100 days (shown on the banner as an odds bar):
+
+  | Streak | Common | Rare | Epic | Legendary | Mythic |
+  |---|---|---|---|---|---|
+  | 0–19 days | 60% | 28% | 9% | 2.5% | 0.5% |
+  | 20–39 | 52% | 28% | 13% | 5% | 2% |
+  | 40–59 | 44% | 28% | 17% | 8% | 3% |
+  | 60–79 | 36% | 28% | 21% | 11% | 4% |
+  | 80–99 | 28% | 28% | 25% | 13% | 6% |
+  | 100+ | 20% | 28% | 28% | 16% | 8% |
+
+  Epic or better is guaranteed within 10 draws.
+- **Prizes:** chestnuts, food for your pal (saved in a pantry; feeding from the pantry is free), Streak Freezes, outfits you don't own yet, biology card capsules, and **3 capsule-only Study Pals**: Mito the mitochondrion and Chloe the chloroplast (legendary) and Helix the DNA pal (mythic, the rarest prize).
+
+## 🏆 Home leaderboard
+
+A class leaderboard card on Home shows the top 5 for 🌟 effort, 🔥 streak or 🐾 collection, plus your own rank and how far it is to the next place. Guests see a sign-in teaser.
+
+## 📊 Teacher statistics (teacher accounts only)
+
+Teacher accounts (staff role in the Users tab, or listed in `TEACHER_EMAILS`) get an extra **📊 Stats** tab and a menu tile:
+- Filters: class and period (7 / 30 / 90 days / all).
+- Summary: students active, activities finished, questions answered, accuracy, average streak.
+- Charts: accuracy by topic (with the weakest topic called out), activities per day, how students practise, accuracy by class.
+- Most-missed questions (with the question text), a sortable student table (cards on phones), students not active, and a CSV download.
+- Needs the latest `server/Code.gs` deployed (it adds the `stats` action). Data is fetched from your private sheet and never stored on the device.
+
+## Landing page
+
+After signing in (or choosing guest), everyone lands on 🏠 Home. New players also go to Home after the welcome screen.
+
 ## 🃏 Biology Capsule Lab (40 cards)
 
-A big banner at the top of the 🏠 Home tab advertises the capsule machine (animated gashapon, capsule count, streak reward bar, mystery cards and rarity counters).
+Card capsules are opened from the Lucky Capsule banner on Home, the 🎁 button in the top bar or the Rewards tab.
 
 - **40 collectible trading cards**, each a real biology term, structure or concept with a short, precise description (e.g. *Mitochondrion*, *Haemoglobin*, *Krebs cycle*, *PCR*, *CRISPR-Cas9*, *Chinese pangolin*, *Endosymbiosis*).
 - **5 rarities:** Common 16 (matte bronze) · Rare 12 (silver holo, sweeping shine) · Epic 7 (embossed gold glow) · Legendary 3 (animated rainbow holo) · Mythic 2 (cosmic foil with a turning rainbow ring and twinkling stars). Locked cards are dark mystery foil; Legendary and Mythic stay fully hidden.

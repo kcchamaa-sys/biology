@@ -44,6 +44,8 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 
 ## Cross-project log (newest first)
 
+- 2026-10-03 (biology): **Daily Lucky Capsule** (`src/lucky.js`) ported from s1science: one draw per study day, the s1 streak luck table (20-day steps to 100), epic+ pity in 10, capsule colour-upgrade animation, prizes = chestnuts, pantry food (free feeding), Streak Freeze, unowned outfits, card capsules, and 3 capsule-only pals (`cap: true` in PALS; excluded from auto-unlock and adoption). **Home leaderboard card** (`homeBoardHtml` in `src/auth.js`, reuses the `board` action). **Teacher stats** (`src/teacher.js` + `stats` action and `TEACHER_EMAILS` in `server/Code.gs`): KPI tiles, single-series bar charts, most-missed questions mapped back to question text, sortable table that becomes cards on phones, CSV export. Sign-in now always lands on Home.
+
 - 2026-10-03 (s1science): **Living Island 3.0, Phase 1** (`server/Coop.gs` world section + Island block in `index.html`). Reusable patterns:
   - **Deterministic class-wide weather:** a hash of the date + season weights, walked forward from an anchor with memo so that mercy rules (no back-to-back severe nights, max 2 in 7) stay a pure function.
   - **Lazy night tick inside the daily roll**, using one uniform formula: capacity ÷ load → OK / strained / crisis.

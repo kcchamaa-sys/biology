@@ -13,7 +13,8 @@ function renderNav(active) {
   if (active === false || !S) { nav.hidden = true; document.body.classList.remove("has-nav"); return; }
   nav.hidden = false; document.body.classList.add("has-nav");
   const badge = { play: mistakeKeys().length, rewards: S.coll.pending, home: S.ill ? "🤒" : 0 };
-  nav.innerHTML = `<div class="nav-in">${NAV_TABS.map(([id, ic, label]) => `<button data-nav="${id}" ${active === id ? 'aria-current="page"' : ""}><span class="ni" aria-hidden="true">${ic}</span>${label}${badge[id] ? `<span class="nbadge">${badge[id]}</span>` : ""}</button>`).join("")}</div>`;
+  const tabs = isTeacher() ? NAV_TABS.concat([["stats", "📊", "Stats"]]) : NAV_TABS;
+  nav.innerHTML = `<div class="nav-in">${tabs.map(([id, ic, label]) => `<button data-nav="${id}" ${active === id ? 'aria-current="page"' : ""}><span class="ni" aria-hidden="true">${ic}</span>${label}${badge[id] ? `<span class="nbadge">${badge[id]}</span>` : ""}</button>`).join("")}</div>`;
   nav.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); homeTab = b.dataset.nav; renderMap(); window.scrollTo({ top: 0 }); });
 }
 const goTab = t => { homeTab = t; renderMap(); window.scrollTo({ top: 0 }); };
@@ -61,13 +62,13 @@ function greeting0() {
 function renderMap() {
   stopRush(); MUSIC.setMode("map"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; recomputeMastery(); save(); renderTools();
   palTick();
-  if (!NAV_TABS.some(t => t[0] === homeTab) && !PAL_TABS.includes(homeTab)) homeTab = "home";
+  if (!NAV_TABS.some(t => t[0] === homeTab) && !PAL_TABS.includes(homeTab) && !(homeTab === "stats" && isTeacher())) homeTab = "home";
   if (homeTab === "lab") return renderSims();
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni];
   if (mapPart === null) mapPart = nr ? TOPICS[nr.t].p : 0;
-  $app.innerHTML = { home: homeHtml, stages: stagesHtml, play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml }[homeTab]();
+  $app.innerHTML = { home: homeHtml, stages: stagesHtml, play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml, stats: statsHtml }[homeTab]();
   renderNav(homeTab);
-  ({ home: wireHome, stages: wireStages, play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards })[homeTab]();
+  ({ home: wireHome, stages: wireStages, play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards, stats: wireStats })[homeTab]();
   $app.querySelectorAll(".subnav [data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });
 }
 
@@ -77,7 +78,7 @@ function homeHtml() {
   const mult = streakMult();
   return `${capsuleAdHtml()}<div class="homegrid">
     <section class="card roomwrap">${roomCard(greeting(), S.completed_rooms.length ? "happy" : "normal")}
-      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" id="chest" ${chestReady ? "" : "disabled"}>${chestReady ? "🎁 Daily chest" : "🎁 Back tomorrow"}</button></div>
+      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" data-go="pals">🍱 Feed & care</button></div>
       ${healthTipHtml()}</section>
     <div class="homeside">
       ${riskCardHtml()}
@@ -91,21 +92,16 @@ function homeHtml() {
         <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study it" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">🗺️ All stages</button></div>
       </section>
       ${missionCardHtml()}
+      ${homeBoardHtml()}
       ${featuredHtml()}
       ${streakCardHtml()}
       ${chatCardHtml()}
     </div></div>`;
 }
 function wireHome() {
-  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured(); wireCapsuleAd();
+  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured(); wireCapsuleAd(); wireHomeBoard();
   const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
-  const c = document.getElementById("chest");
-  if (S.last_chest_date !== today()) c.onclick = () => {
-    SFX.init(); SFX.fanfare(); confetti(70);
-    const snack = pick(SNACKS); S.inventory.push(snack);
-    let extra = ""; if (Math.random() < .2 && S.streak_shields < FREEZE_MAX) { S.streak_shields++; extra = " …and a ❄️ Streak Freeze!"; }
-    S.last_chest_date = today(); S.stats.chests += 1; S.coll.pending += 1; streakNote = `🎁 Kurumi opened the chest: ${snack}${extra} …plus a mystery capsule!`; save(true); renderMap(); checkTrophies(); openCapsule();
-  };
+
 }
 let lastPat = 0;
 function wireCommon() {

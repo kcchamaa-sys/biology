@@ -77,7 +77,7 @@ function freshState() {
     coins: 0, owned: [], equip: { hat: null, hair: null, face: null, outfit: null, ribbon: null, hand: null, frame: null }, power: { torch: 1, crystal: 1, guard: 1 },
     rush: { best: 0, lastDay: null }, player_id: newId(), lb_last: 0, mistakes: {}, mistakes_cleared: 0, playMode: "escape", pets: {}, activePet: null, ill: null, lastIllDay: null, lastIll: null, coll: { owned: {}, pending: 0, pity: 0 }, dict: { missed: {}, best: 0 },
     last_study_day: null, study_days: [], frozen_days: [], freeze_month: null, freeze_used: null, mission: null, upd: 0,
-    pals: { mochi: newPal() }, activePal: "mochi"
+    pals: { mochi: newPal() }, activePal: "mochi", lucky: { day: null, pity: 0, draws: 0, last: null }, pantry: {}
   };
 }
 function normalise(obj) {
@@ -97,6 +97,7 @@ function normalise(obj) {
   if (!ROOMS.some(r => r.id === s.current_room)) s.current_room = ROOMS[0].id;
   // Saves from before the study streak: count the last visit as a study day and hand out the 3 starting Streak Freezes
   if (obj && !("last_study_day" in obj)) { s.last_study_day = s.last_login_date; s.study_days = s.last_login_date ? [s.last_login_date] : []; s.streak_shields = Math.max(s.streak_shields || 0, 3); }
+  s.lucky = Object.assign({ day: null, pity: 0, draws: 0, last: null }, s.lucky); s.pantry = Object.assign({}, s.pantry);
   s.pals = Object.assign({ mochi: newPal() }, s.pals); if (!s.pals[s.activePal]) s.activePal = "mochi";
   s.study_days = [...(s.study_days || [])]; s.frozen_days = [...(s.frozen_days || [])];
   return s;
@@ -292,7 +293,7 @@ const bossesBeaten = () => ROOMS.filter(r => r.boss && S.completed_rooms.include
 const TROPHY_CATS = [["habit", "🔥 Daily habits"], ["adventure", "🗺️ Adventure"], ["brain", "🧠 Brain power"], ["fun", "🎀 Fun & style"]];
 const TROPHIES = [
   { id: "week", cat: "habit", name: "Week Warrior", rar: "bronze", who: "chiikawa", desc: "Play 7 days in a row", prog: () => [S.longest_streak, 7] },
-  { id: "chest", cat: "habit", name: "Snack Stash", rar: "bronze", who: "kurimanju", desc: "Open the daily snack chest 10 times", prog: () => [S.stats.chests, 10] },
+  { id: "chest", cat: "habit", name: "Snack Stash", rar: "bronze", who: "kurimanju", desc: "Draw the daily Lucky Capsule 10 times", prog: () => [S.stats.chests, 10] },
   { id: "steady", cat: "habit", name: "Steady Explorer", rar: "silver", who: "hachiware", desc: "Play on 20 different days", prog: () => [S.stats.days, 20] },
   { id: "night", cat: "habit", name: "Night Owl", rar: "bronze", who: "momonga", desc: "Escape a stage after 9 pm", prog: () => [S.stats.night, 1] },
   { id: "flame", cat: "habit", name: "Eternal Flame", rar: "legend", who: "usagi", desc: "Reach a 30-day streak", prog: () => [S.longest_streak, 30] },
@@ -674,12 +675,13 @@ function openMenu() {
   const acc = signedIn() ? userName().split(" ")[0] : "Guest";
   const tiles = [["mTro", "🏆", "Trophies", `${Object.keys(S.trophies).length} / ${TROPHIES.length}`], ["mAcc", signedIn() ? "🎓" : "👤", "Account", acc + (AUTH.stale ? " · sign in again" : "")],
     ["mJou", "📓", "Journal", "Textbook notes"], ["mSave", "🔑", "Save code", "Move to another device"], ["mLb", "🏆", "Leaderboard", signedIn() ? "Your class" : "Signed-in only"],
-    ["mMus", "🎵", "Music", MUSIC.on ? "On" : "Off"], ["mSnd", SFX.on ? "🔊" : "🔇", "Sound effects", SFX.on ? "On" : "Off"], ["mHome", "🏠", "Home", "Back to Mochi's room"]];
+    ...(isTeacher() ? [["mStats", "📊", "Class statistics", "Teachers only"]] : []), ["mMus", "🎵", "Music", MUSIC.on ? "On" : "Off"], ["mSnd", SFX.on ? "🔊" : "🔇", "Sound effects", SFX.on ? "On" : "Off"], ["mHome", "🏠", "Home", "Back to Mochi's room"]];
   const box = openModal(`<span class="kicker">☰ Menu</span><h2>${esc(S.player_name)}'s settings</h2>
     <div class="menugrid">${tiles.map(([id, ic, t, sub]) => `<button class="mtile" id="${id}"><span class="mi">${ic}</span><b>${t}</b><span class="small muted">${esc(sub)}</span></button>`).join("")}</div>`);
   const on = (id, f) => { box.querySelector("#" + id).onclick = () => { SFX.tap(); f(); }; };
   on("mTro", () => { closeModal(); openCabinet(); }); on("mAcc", () => { closeModal(); openAccount(); }); on("mJou", () => { closeModal(); openJournal(); });
   on("mSave", () => { closeModal(); openSaveModal(); }); on("mLb", () => { closeModal(); openLeaderboard(); }); on("mHome", () => { closeModal(); homeTab = "home"; renderMap(); });
+  if (isTeacher()) on("mStats", () => { closeModal(); goTab("stats"); });
   on("mMus", () => { MUSIC.on = !MUSIC.on; try { localStorage.setItem(MUSIC_KEY, MUSIC.on ? "on" : "off"); } catch (e) {} MUSIC.on ? MUSIC.start() : MUSIC.stop(); openMenu(); });
   on("mSnd", () => { SFX.on = !SFX.on; try { localStorage.setItem(SOUND_KEY, SFX.on ? "on" : "off"); } catch (e) {} if (SFX.on) SFX.init(); openMenu(); });
 }
@@ -857,7 +859,7 @@ function renderWelcome() {
     SFX.init(); SFX.item();
     S = freshState(); const v = document.getElementById("nm").value.trim(); if (v) S.player_name = v;
     const ti = Number(document.getElementById("tp").value) || 0;
-    checkIn(); save(true); enterRoom(topicRooms(ti)[0].id);
+    S.current_room = topicRooms(ti)[0].id; checkIn(); save(true); homeTab = "home"; renderMap(); window.scrollTo({ top: 0 });
   };
   document.getElementById("go").onclick = go;
   document.getElementById("nm").addEventListener("keydown", e => { if (e.key === "Enter") go(); });
@@ -1683,6 +1685,6 @@ window.addEventListener("pagehide", () => { if (S) save(); });
   if (linked) { S ? renderMap() : renderWelcome(); showCodeFromLink(linked); return; }
   // Class sign-in screen first, unless this device chose guest mode (or sign-in is off and there is saved progress)
   const pref = authPref();
-  if (pref === "guest" || (!pref && S && !cloudOn())) { AUTH.mode = "guest"; if (S) { checkIn(); renderMap(); showResume(); } else renderWelcome(); }
+  if (pref === "guest" || (!pref && S && !cloudOn())) { AUTH.mode = "guest"; if (S) enterGame(); else renderWelcome(); }
   else renderLogin();
 })();

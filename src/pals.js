@@ -37,6 +37,9 @@ const PALS = [
   P_("petal", "Petal", "fawn", "#E9B98E", "#FFF3E6", "legend", 0, ["topics", 10, "Clear 10 whole topics"], ["coins", .1], "salad", "A legendary blossom fawn who grows a little every day.", "Deer antlers are bone that falls off and regrows every year, one of the fastest-growing tissues in any animal."),
   P_("riccio", "Riccio", "pangolin", "#C98B6B", "#FBEFE6", "legend", 0, ["streak", 30, "Reach a 30-day streak"], ["xp", .1], "egg", "A legendary Hong Kong pangolin who rolls into a ball when exams get scary.", "The Chinese pangolin lives wild in Hong Kong and is critically endangered. Its scales are made of keratin."),
   P_("hikari", "Hikari", "firefly", "#FFF3B0", "#FFFBE0", "legend", 0, ["correct", 1500, "Answer 1,500 questions right"], ["xp", .1], "banana", "A legendary firefly whose tail glows brighter with every right answer.", "Fireflies glow by bioluminescence: an enzyme (luciferase) uses ATP to make light with almost no heat."),
+  P_("mito", "Mito", "mito", "#FFB066", "#FFE6C7", "legend", 0, null, ["coins", .1], "rice", "A legendary mitochondrion pal who powers every study session. Found only in the Lucky Capsule.", "Mitochondria release energy from glucose by aerobic respiration, making most of the cell's ATP.", { cap: true }),
+  P_("chloe", "Chloe", "chloro", "#A6E07A", "#E6F8D4", "legend", 0, null, ["xp", .1], "salad", "A legendary chloroplast pal who sunbathes between lessons. Found only in the Lucky Capsule.", "Chloroplasts trap light energy with chlorophyll and use it to make glucose from CO\u2082 and water.", { cap: true }),
+  P_("helix", "Helix", "helix", "#CDB8FF", "#F2ECFF", "myth", 0, null, ["coins", .12], "fish", "A mythic DNA pal whose antenna is a real double helix. The rarest prize in the Lucky Capsule.", "DNA is a double helix of two antiparallel strands joined by complementary base pairs (A\u2013T, C\u2013G).", { cap: true }),
   P_("finn", "Finn", "shark", "#8FBCE6", "#FFFFFF", "myth", 1500, null, ["coins", .08], "fish", "A mythic baby shark who never stops swimming, just like a streak.", "A shark's skeleton is cartilage, not bone, and many sharks must keep swimming to push water over their gills."),
   P_("tardi", "Tardi", "tardigrade", "#D8CBB5", "#F5EEDF", "myth", 2500, null, ["energy", 1], "rice", "A mythic water bear who survives absolutely anything.", "Tardigrades can dry out almost completely and survive boiling, freezing, radiation and even outer space."),
   P_("luna", "Luna", "owl", "#8A86C9", "#F3EEFF", "myth", 3500, null, ["notebook", .3], "fish", "A mythic moon owl who reads every textbook at night.", "Owls can turn their heads about 270°, and their ears sit at different heights to pinpoint sounds.")
@@ -57,7 +60,7 @@ const palVal = k => !S ? 0 : ({ streak: S.longest_streak, days: S.stats.days, st
   sims: Object.keys(S.sims || {}).length, three: Object.values(S.room_stars || {}).filter(v => v >= 3).length, dict: S.stats.dictPerfect, rush: S.rush.best, spell: S.stats.spellRight,
   missions: S.stats.missions || 0, topics: typeof topicsCleared === "function" ? topicsCleared() : 0 })[k] || 0;
 const condMet = P => !P.cond || palVal(P.cond[0]) >= P.cond[1];
-const condPct = P => !P.cond ? (P.price ? Math.min(1, S.coins / P.price) : 1) : Math.min(1, palVal(P.cond[0]) / P.cond[1]);
+const condPct = P => P.cap ? 0 : !P.cond ? (P.price ? Math.min(1, S.coins / P.price) : 1) : Math.min(1, palVal(P.cond[0]) / P.cond[1]);
 
 /* ----- Art: every pal shares Mochi's squishy body; species features are layered on (ported from the S1 Science pals) ----- */
 const PST = `stroke="${CO}" stroke-width="3.5" stroke-linejoin="round"`;
@@ -92,6 +95,13 @@ const PAL_ART = {
     front: (b, be) => bellyEl(be, 22) + [[72, 84, 100, 116, 128], [62, 76, 90, 110, 124, 138]].map((row, j) => row.map((x, i) => { const y = j ? 88 : (i === 0 || i === 4 ? 78 : 74); return `<path d="M${x - 9} ${y} Q${x} ${y + 15} ${x + 9} ${y}Z" fill="#8A5A3C" stroke="${CO}" stroke-width="2"/>`; }).join("")).join("") },
   firefly: { back: () => `<circle cx="150" cy="166" r="34" fill="rgba(255,240,120,.45)"/><circle cx="150" cy="166" r="20" fill="#FFF07A" ${PST}/><ellipse cx="46" cy="100" rx="22" ry="12" fill="rgba(230,245,255,.85)" ${PST} transform="rotate(-24 46 100)"/><ellipse cx="154" cy="100" rx="22" ry="12" fill="rgba(230,245,255,.85)" ${PST} transform="rotate(24 154 100)"/><path d="M88 66 Q82 42 72 38 M112 66 Q118 42 128 38" stroke="${CO}" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="72" cy="38" r="5" fill="#FFC800" ${PST}/><circle cx="128" cy="38" r="5" fill="#FFC800" ${PST}/>`,
     front: () => clipBody(`<path d="M0 0 H200 V92 Q100 72 0 92Z" fill="#4B4B4B"/>`) + bellyEl("#FFFBE0") },
+  mito: { back: b => `<circle cx="62" cy="78" r="11" fill="${b}" ${PST}/><circle cx="138" cy="78" r="11" fill="${b}" ${PST}/>`,
+    front: (b, be) => bellyEl(be, 18) + clipBody(`<path d="M20 146 Q32 134 44 146 T68 146 T92 146 T116 146 T140 146 T164 146 T188 146" stroke="#E07B1A" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M20 164 Q32 152 44 164 T68 164 T92 164 T116 164 T140 164 T164 164 T188 164" stroke="#E07B1A" stroke-width="4.5" fill="none" stroke-linecap="round"/>`) },
+  chloro: { back: b => `<circle cx="64" cy="78" r="11" fill="${b}" ${PST}/><circle cx="136" cy="78" r="11" fill="${b}" ${PST}/><path d="M100 64 C100 50 100 44 102 36" stroke="#3E8E1E" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M102 40 C88 26 74 30 72 38 C84 46 96 44 102 40Z" fill="#7CCB4E" ${PST}/><path d="M102 40 C114 24 130 28 132 36 C120 44 108 44 102 40Z" fill="#9BE15A" ${PST}/>`,
+    front: (b, be) => bellyEl(be) + [[78, 150], [100, 156], [122, 150]].map(([x, y]) => [0, 1, 2].map(i => `<ellipse cx="${x}" cy="${y - 5 + i * 5}" rx="8" ry="2.4" fill="#3E8E1E"/>`).join("")).join("") },
+  helix: { back: () => { let d1 = "", d2 = "", rungs = ""; for (let i = 0; i <= 12; i++) { const y = 64 - i * 4, x1 = 100 + 10 * Math.sin(i * .7), x2 = 100 - 10 * Math.sin(i * .7); d1 += (i ? "L" : "M") + x1.toFixed(1) + " " + y; d2 += (i ? "L" : "M") + x2.toFixed(1) + " " + y; if (i % 2) rungs += `<path d="M${x1.toFixed(1)} ${y} L${x2.toFixed(1)} ${y}" stroke="#FFD84D" stroke-width="2.5"/>`; }
+      return `${rungs}<path d="${d1}" stroke="#7C6BDB" stroke-width="4" fill="none" stroke-linecap="round"/><path d="${d2}" stroke="#FF86D0" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="100" cy="14" r="7" fill="#FFF3B0" ${PST}/><circle cx="62" cy="80" r="10" fill="#CDB8FF" ${PST}/><circle cx="138" cy="80" r="10" fill="#CDB8FF" ${PST}/>`; },
+    front: (b, be) => bellyEl(be) + `<path d="M84 142 Q92 152 100 142 Q108 132 116 142 M84 152 Q92 162 100 152 Q108 142 116 152" stroke="#B9A6F2" stroke-width="3" fill="none"/>` },
   shark: { back: b => `<path d="M166 150 Q196 128 198 104 Q186 128 170 132Z" fill="${b}" ${PST}/><path d="M166 150 Q194 160 204 178 Q184 170 164 164Z" fill="${b}" ${PST}/><path d="M82 70 Q96 14 128 30 Q112 44 118 66Z" fill="${b}" ${PST}/>`,
     front: () => `<path d="M40 148 Q100 196 160 148 Q150 176 100 178 Q50 176 40 148Z" fill="#fff" opacity=".95"/><path d="M44 112 q-5 6 0 12 M52 108 q-5 7 0 14 M156 112 q5 6 0 12 M148 108 q5 7 0 14" stroke="#5C8DC2" stroke-width="2.5" fill="none" stroke-linecap="round"/>` },
   tardigrade: { back: b => [[34, 132], [166, 132], [44, 160], [156, 160]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="12" ry="9" fill="${b}" ${PST}/><path d="M${x + (x < 100 ? -12 : 8)} ${y + 2} l4 4 M${x + (x < 100 ? -9 : 5)} ${y + 6} l3 4" stroke="${CO}" stroke-width="2" stroke-linecap="round"/>`).join(""),
@@ -200,7 +210,7 @@ function openFeed() {
   const P = activePal();
   openModal(`<span class="kicker">🍱 Feed ${esc(P.name)}</span><h2>What's for ${new Date().getHours() < 11 ? "breakfast" : new Date().getHours() < 16 ? "lunch" : "dinner"}?</h2>
     <p class="small muted" style="margin:0">❤️ ${esc(P.name)}'s favourite: <b>${esc(FOODS.find(f => f.id === P.fav).name)}</b> (double happiness). Tap 🔍 for the nutrition card. 3 treats in one day = sugar crash!</p>
-    <div class="foodgrid">${FOODS.map(f => `<div class="food"><button class="fpic" data-feed="${f.id}" aria-label="Feed ${esc(f.name)} for ${foodPrice(f)} chestnuts" ${S.coins < foodPrice(f) ? "disabled" : ""}><span class="fe">${f.e}</span><b class="small">${esc(f.name)}</b><span class="small"><i class="rdot" style="background:${FOOD_R[f.r][1]}"></i>${FOOD_R[f.r][0]}</span><span class="pill coinpill">🌰 ${foodPrice(f)}</span></button><button class="fnut" data-nut="${f.id}" aria-label="Nutrition card for ${esc(f.name)}">🔍</button></div>`).join("")}</div>`, { wide: true });
+    <div class="foodgrid">${FOODS.map(f => `<div class="food"><button class="fpic ${S.pantry[f.id] ? "free" : ""}" data-feed="${f.id}" aria-label="Feed ${esc(f.name)}${S.pantry[f.id] ? " (free from your pantry)" : ` for ${foodPrice(f)} chestnuts`}" ${!S.pantry[f.id] && S.coins < foodPrice(f) ? "disabled" : ""}><span class="fe">${f.e}</span><b class="small">${esc(f.name)}</b><span class="small"><i class="rdot" style="background:${FOOD_R[f.r][1]}"></i>${FOOD_R[f.r][0]}</span>${S.pantry[f.id] ? `<span class="pill freepill">🎁 Free ×${S.pantry[f.id]}</span>` : `<span class="pill coinpill">🌰 ${foodPrice(f)}</span>`}</button><button class="fnut" data-nut="${f.id}" aria-label="Nutrition card for ${esc(f.name)}">🔍</button></div>`).join("")}</div>`, { wide: true });
   $modal.querySelectorAll("[data-feed]").forEach(b => b.onclick = () => feed(b.dataset.feed));
   $modal.querySelectorAll("[data-nut]").forEach(b => b.onclick = () => { SFX.tap(); nutritionCard(b.dataset.nut); });
 }
@@ -222,8 +232,8 @@ function nutritionCard(id) {
   document.getElementById("nBack").onclick = () => { SFX.tap(); openFeed(); };
 }
 function feed(id) {
-  const f = FOODS.find(x => x.id === id), P = activePal(), p = palState(P.id), cost = foodPrice(f); if (S.coins < cost) return;
-  S.coins -= cost; const fav = P.fav === id;
+  const f = FOODS.find(x => x.id === id), P = activePal(), p = palState(P.id), free = (S.pantry[id] || 0) > 0, cost = free ? 0 : foodPrice(f); if (S.coins < cost) return;
+  if (free) { S.pantry[id] -= 1; if (!S.pantry[id]) delete S.pantry[id]; } else S.coins -= cost; const fav = P.fav === id;
   p.energy = Math.min(100, p.energy + f.en); p.happy = Math.min(100, p.happy + f.hp * (fav ? 2 : 1)); p.xp += Math.round(f.xp * perk("xp")); p.meals = (p.meals || 0) + 1;
   S.treats = S.treats && S.treats.day === today() ? S.treats : { day: today(), n: 0 };
   let crash = false; if (f.r === "r") { S.treats.n += 1; if (S.treats.n === 3) { crash = true; p.energy = Math.max(5, p.energy - 15); } }
@@ -260,11 +270,11 @@ function playMatch() {
 let palQueue = [];
 function checkPals() {
   if (!S) return;
-  PALS.forEach(P => { if (P.rar === "legend" && !S.pals[P.id] && condMet(P)) { S.pals[P.id] = newPal(); palQueue.push(P); } });
+  PALS.forEach(P => { if (P.rar === "legend" && !P.cap && !S.pals[P.id] && condMet(P)) { S.pals[P.id] = newPal(); palQueue.push(P); } });
   if (palQueue.length) { save(); setTimeout(showPalUnlock, 2600); }
 }
 function adoptPal(id) {
-  const P = palById(id); if (S.pals[id] || !condMet(P) || S.coins < P.price) return;
+  const P = palById(id); if (P.cap || S.pals[id] || !condMet(P) || S.coins < P.price) return;
   S.coins -= P.price; S.pals[id] = newPal(); save(true); palQueue.push(P); showPalUnlock();
 }
 function showPalUnlock() {
@@ -317,8 +327,9 @@ function palCard(P) {
   return `<div class="palcard ${P.rar} ${got ? "own" : "locked"} ${act ? "active" : ""}">
     <div class="ppic">${got ? palFig(P.id, act ? "sparkle" : "happy", { stage: st.stage }) : palMystery(P) ? `<span class="sil">${palFig(P.id, "normal")}</span><span class="plock" aria-hidden="true">🔒</span>` : `<span class="palprev">${palFig(P.id, "happy")}</span><span class="plock" aria-hidden="true">🔒</span>`}</div>
     <b>${palMystery(P) ? "???" : esc(P.name)}</b><span class="rchip2 small" style="background:${PAL_RAR[P.rar][1]};border-color:${PAL_RAR[P.rar][2]}">${PAL_RAR[P.rar][0]}</span>
-    <span class="small muted">${got ? `Lv ${palLevel(st.xp)} · ${STAGES[st.stage]}` : P.cond ? esc(P.cond[2]) : "Adopt with chestnuts"}</span>
+    <span class="small muted">${got ? `Lv ${palLevel(st.xp)} · ${STAGES[st.stage]}` : P.cap ? "🎰 Lucky Capsule only" : P.cond ? esc(P.cond[2]) : "Adopt with chestnuts"}</span>
     ${got ? (act ? `<span class="pill saved">⭐ Active</span>` : `<button class="btn plain sm" data-usepal="${P.id}">Make active</button>`)
+      : P.cap ? `<span class="pill capchip">Very rare prize</span>`
       : P.rar === "legend" ? `<div class="tprog"><i style="width:${pc}%"></i></div><span class="small">${Math.min(palVal(P.cond[0]), P.cond[1])} / ${P.cond[1]}</span>`
       : met ? `<button class="btn yellow sm" data-adopt="${P.id}" ${S.coins < P.price ? "disabled" : ""}>Adopt 🌰 ${P.price}</button>`
       : `<div class="tprog"><i style="width:${pc}%"></i></div><span class="small">${Math.min(palVal(P.cond[0]), P.cond[1])} / ${P.cond[1]}</span>`}
@@ -329,7 +340,7 @@ function openPalInfo(id) {
   openModal(`<span class="kicker">🐾 Study Pal</span><h2>${palMystery(P) ? "A mysterious pal..." : esc(P.name)}</h2><div class="petreveal ${P.rar === "myth" ? "epic" : P.rar}" style="width:150px;height:150px">${got || !palMystery(P) ? palFig(id, "happy") : `<span class="sil">${palFig(id, "normal")}</span>`}</div>
     <div class="row" style="justify-content:center">${palChips(P)}</div>${palMystery(P) ? `<p style="margin:0" class="muted">Only the most dedicated students will meet this one. Reach the goal below to reveal who it is!</p>` : `<p style="margin:0">${esc(P.desc)}</p>
     <section class="jsec"><h3>🔬 Real biology</h3><p style="margin:0">${esc(P.fact)}</p></section>`}
-    <p class="small"><b>How to get:</b> ${P.cond ? esc(P.cond[2]) + (P.price ? `, then adopt for 🌰 ${P.price}` : " (arrives by itself)") : `Adopt for 🌰 ${P.price}`} · <b>Favourite food:</b> ${esc(FOODS.find(f => f.id === P.fav).name)} · <b>Evolves at</b> Lv ${EVO[P.rar][0][0]} and Lv ${EVO[P.rar][1][0]}</p>`);
+    <p class="small"><b>How to get:</b> ${P.cap ? "Only from the daily 🎰 Lucky Capsule (very rare). A longer streak gives better odds" : P.cond ? esc(P.cond[2]) + (P.price ? `, then adopt for 🌰 ${P.price}` : " (arrives by itself)") : `Adopt for 🌰 ${P.price}`} · <b>Favourite food:</b> ${esc(FOODS.find(f => f.id === P.fav).name)} · <b>Evolves at</b> Lv ${EVO[P.rar][0][0]} and Lv ${EVO[P.rar][1][0]}</p>`);
 }
 function wirePals() {
   wireCommon();
@@ -352,11 +363,11 @@ function featuredHtml() {
     <div class="fptext"><span class="kicker" style="padding:0">🌟 Featured ${P.rar === "myth" ? "Mythic" : "Legendary"} Pal</span><h3 style="margin:0">${esc(P.name)}</h3>
       <p class="small" style="margin:0">${esc(P.desc)}</p><span class="pill perk" style="background:#fff">✨ ${esc(perkLabel(P))}</span>
       <div class="tprog"><i style="width:${pc}%"></i></div>
-      <div class="row" style="gap:6px"><button class="btn sm fparr" id="fpPrev" aria-label="Previous pal">◀</button><button class="btn ${P.rar === "myth" ? "pink" : "yellow"} sm" id="fpGo">${P.rar === "myth" ? `🌰 ${P.price} ADOPT` : esc(P.cond[2]).toUpperCase()}</button><button class="btn sm fparr" id="fpNext" aria-label="Next pal">▶</button></div></div></section>`;
+      <div class="row" style="gap:6px"><button class="btn sm fparr" id="fpPrev" aria-label="Previous pal">◀</button><button class="btn ${P.rar === "myth" ? "pink" : "yellow"} sm" id="fpGo">${P.cap ? "🎰 LUCKY CAPSULE ONLY" : P.rar === "myth" ? `🌰 ${P.price} ADOPT` : esc(P.cond[2]).toUpperCase()}</button><button class="btn sm fparr" id="fpNext" aria-label="Next pal">▶</button></div></div></section>`;
 }
 function wireFeatured() {
   const g = id => document.getElementById(id);
   if (g("fpPrev")) g("fpPrev").onclick = () => { SFX.tap(); featIdx--; renderMap(); };
   if (g("fpNext")) g("fpNext").onclick = () => { SFX.tap(); featIdx++; renderMap(); };
-  if (g("fpGo")) g("fpGo").onclick = () => { SFX.tap(); goTab("pals"); };
+  if (g("fpGo")) g("fpGo").onclick = () => { SFX.tap(); const L_ = PALS.filter(P => (P.rar === "legend" || P.rar === "myth") && !S.pals[P.id]); const P = L_[(featIdx + L_.length) % L_.length]; if (P && P.cap) { goTab("home"); } else goTab("pals"); };
 }
