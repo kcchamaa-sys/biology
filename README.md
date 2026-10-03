@@ -25,9 +25,9 @@ Every topic is open, so students can jump to the one their class is on (the map 
 ## Rooms and questions
 
 - **8 room scenes** (library, science lab, greenhouse, inside a cell, kitchen, underwater pond, secret garden, clinic), so stages feel different.
-- **Each lock needs 3 questions in a row** (15 per visit), climbing in difficulty. Students see friendly labels (🌱 Easy, 🌿 Medium, 🔥 Hard, ⭐ Expert) instead of Bloom's levels. Progress on a half-open lock is saved.
+- **Each lock needs 3 questions in a row** (15 per visit), climbing in difficulty inside the lock. **Each lock has one skill theme**: 🔤 Words → 💡 Concepts → 🔍 See it → 📈 Data → 🧪 Investigate (shown as a small label on the lock). If a stage is short of a theme, the lock borrows from the nearest one and shows a "stand-in" tag; `node tools/check_content.js --unsure` reports coverage. Students see friendly labels (🌱 Easy, 🌿 Medium, 🔥 Hard, ⭐ Expert) instead of Bloom's levels. Progress on a half-open lock is saved.
 - **1,243 core questions** (15–20 per stage) including **78 graph-reading questions** (drawn to scale: potato-strip osmosis, enzyme curves, absorption spectra, GP/RuBP, lactic acid, and more).
-- **Spelling practice**: every stage's key terms become "type the word" locks and "which spelling is correct?" checks (British and American spellings are both accepted, e.g. haemoglobin / hemoglobin). Up to 3 per visit; also a Spelling bee round in Cell Rush.
+- **Spelling practice**: every stage's key terms become "type the word" locks and "which spelling is correct?" checks (British and American spellings are both accepted, e.g. haemoglobin / hemoglobin). They appear only in the Words lock (lock 1); also a Spelling bee round in Cell Rush.
 - 📓 **Study Journal:** summary, key rules and key terms for every stage.
 
 ## 🏠 Layout, art and dress-up

@@ -36,7 +36,7 @@ function buildPools() {
       r.pool.push({ id: "s" + j, b: 1, type: "spell", gen: "spell", q: `Spell the term: “${m}”`, answer: t, hint: `It starts with “${t.slice(0, 3)}…” and has ${core.length} letters.`, explain: `${t}: ${m}.` });
       if (/^[a-z]+$/.test(t) && t.length >= 6) { const bad = misspell(t); if (bad.length === 3) r.pool.push({ id: "m" + j, b: 1, type: "mc", gen: "spellmc", fix: false, q: `Which spelling is correct? (${m})`, choices: [t, ...bad], answer: 0, hint: "Say it slowly, syllable by syllable.", explain: `The correct spelling is “${t}”.` }); }
     });
-    r.pool.forEach(p => { p.rid = r.id; });
+    r.pool.forEach(p => { p.rid = r.id; p.skill = skillOf(p).skill; });
   });
 }
 buildPools();
@@ -1055,25 +1055,34 @@ function sceneSvg(r, solvedCount) {
 
 let R = null, timerId = null, moodTimer = null;
 const masteredIn = r => r.pool.filter(p => S.mastered_puzzles.includes(`${r.id}:${p.id}`)).length;
-/* Each lock needs 3 questions in a row. Locks climb Bloom's levels; spelling questions are capped
-   at 3 per visit (one per lock), and recently seen questions are skipped when possible. */
+/* Each lock needs 3 questions in a row and has ONE skill strand (SKILLS in skills.js):
+   Words, Concepts, See it, Data, Investigate. Questions climb Bloom's levels inside a lock, spelling only
+   appears in lock 1, and recently seen questions are skipped when possible. A strand that runs short borrows
+   from its nearest strand (SKILL_NEAR) and the gap is recorded in SKILL_GAPS for the teacher. */
 const LOCK_Q = 3;
-const BANDS = [[[1, 2], [1, 2], [2, 3]], [[1, 2], [2, 3], [3, 4]], [[2, 3], [3, 4], [3, 4]], [[3, 4], [4, 5], [4, 5]], [[4, 5], [5, 6], [5, 6]]];
+const LOCK_SKILLS = SKILL_IDS;
+const LOCK_BANDS = [[1, 3], [2, 4], [3, 6]];
+const SKILL_GAPS = {};
 function pickRun(room) {
-  const seen = S.seen[room.id] || [], chosen = [];
-  let spells = 0;
-  BANDS.forEach(bands => {
-    let lockSpell = false;
-    bands.forEach(([lo, hi]) => {
-      const ok = p => !chosen.includes(p.id) && (!p.gen || (spells < 3 && !lockSpell));
-      let c = room.pool.filter(p => ok(p) && p.b >= lo && p.b <= hi);
-      if (!c.length) c = room.pool.filter(p => ok(p) && p.b >= lo - 1 && p.b <= hi + 1);
-      if (!c.length) c = room.pool.filter(ok);
-      if (!c.length) c = room.pool.filter(p => !chosen.includes(p.id));
-      const fresh = c.filter(p => !seen.includes(p.id)), q = pick(fresh.length ? fresh : c);
-      chosen.push(q.id); if (q.gen) { spells++; lockSpell = true; }
+  const seen = S.seen[room.id] || [], chosen = [], gaps = [];
+  LOCK_SKILLS.forEach((sk, li) => {
+    const lock = [];
+    const ok = p => !chosen.includes(p.id) && !lock.includes(p) && (li === 0 || !p.gen);
+    LOCK_BANDS.forEach(([lo, hi]) => {
+      let q = null;
+      for (const s of [sk, ...SKILL_NEAR[sk]]) {
+        const all = room.pool.filter(p => ok(p) && p.skill === s); if (!all.length) continue;
+        let c = all.filter(p => p.b >= lo && p.b <= hi); if (!c.length) c = all;
+        const fresh = c.filter(p => !seen.includes(p.id)); q = pick(fresh.length ? fresh : c);
+        if (s !== sk) gaps.push({ lock: li, want: sk, got: s });
+        break;
+      }
+      if (!q) { const c = room.pool.filter(p => ok(p)); q = pick(c.length ? c : room.pool.filter(p => !p.gen)); gaps.push({ lock: li, want: sk, got: q.skill }); }
+      lock.push(q); chosen.push(q.id);
     });
+    lock.sort((a, b) => a.b - b.b).forEach((q, n) => { chosen[li * LOCK_Q + n] = q.id; });
   });
+  SKILL_GAPS[room.id] = gaps;
   S.seen[room.id] = seen.concat(chosen).slice(-45);
   return chosen;
 }
@@ -1081,6 +1090,9 @@ const runQs = room => { const ids = S.room_run[room.id].qids; return [0, 1, 2, 3
 const stepOf = i => ((S.room_run[R.room.id].steps || {})[i]) || 0;
 const curQ = i => R.qs[i][Math.min(LOCK_Q - 1, stepOf(i))];
 const akey = i => `${i}_${stepOf(i)}`;
+// Themed strand label for lock i (hidden for runs saved before strands existed)
+const lockSkill = i => S.room_run[R.room.id].sk ? SKILLS[i] : null;
+const skillTag = (i, cls = "") => { const k = lockSkill(i); return k ? `<span class="sktag sk-${k.id} ${cls}" title="${esc(k.tip)}">${k.icon} ${esc(k.name)}</span>` : ""; };
 function stopTimer() { if (timerId) clearInterval(timerId); timerId = null; }
 
 function enterRoom(id) {
@@ -1090,7 +1102,9 @@ function enterRoom(id) {
   const replay = S.completed_rooms.includes(room.id);
   if (replay || !S.room_run[room.id]) S.room_run[room.id] = freshRun();
   const rr = S.room_run[room.id];
-  if (!rr.qids || rr.qids.length !== 5 * LOCK_Q) { rr.qids = pickRun(room); rr.steps = {}; }
+  // Runs saved before skill strands keep their questions while a lock is part-done; otherwise re-pick by strand.
+  const legacy = rr.qids && !rr.sk && !(S.room_progress[room.id] || []).length && !Object.keys(rr.steps || {}).length;
+  if (!rr.qids || rr.qids.length !== 5 * LOCK_Q || legacy) { rr.qids = pickRun(room); rr.steps = {}; rr.sk = 1; }
   if (!rr.steps) rr.steps = {};
   HOTSPOTS = (SCENES[room.scene] || SCENES.library).hs; DOOR = (SCENES[room.scene] || SCENES.library).door;
   if (replay) { S.room_progress[room.id] = []; S.room_timer[room.id] = ROOM_SECONDS; }
@@ -1169,7 +1183,7 @@ function renderRoom() {
         ${HOTSPOTS.map((h, i) => {
           const nm = i === 2 ? room.specialName : h.name, done = solved.includes(i);
           if (R.hiddenHs === i && !done) return "";
-          return `<button class="hs ${done ? "done" : ""}" data-hs="${i}" style="left:${h.x}%;top:${h.y}%" aria-label="${esc(nm)}${done ? " (solved)" : stepOf(i) ? ` (${stepOf(i)} of ${LOCK_Q} questions done)` : ""}">${done ? "✓" : stepOf(i) ? `<small>${stepOf(i)}/${LOCK_Q}</small>` : "?"}<span class="lbl">${esc(nm)}</span></button>`;
+          return `<button class="hs ${done ? "done" : ""}" data-hs="${i}" style="left:${h.x}%;top:${h.y}%" aria-label="${esc(nm)}${done ? " (solved)" : stepOf(i) ? ` (${stepOf(i)} of ${LOCK_Q} questions done)` : ""}">${done ? "✓" : stepOf(i) ? `<small>${stepOf(i)}/${LOCK_Q}</small>` : "?"}<span class="lbl">${esc(nm)}</span>${done ? "" : skillTag(i, "onhs")}</button>`;
         }).join("")}
         ${R.stolen !== null ? `<button class="hs wolv" data-wolf="1" style="left:${R.wolfX}%;top:${R.wolfY}%" aria-label="${"Catch the wolverine"}">🐾<span class="lbl">${"Wolverine!"}</span></button>` : ""}
         ${specHtml()}
@@ -1216,7 +1230,7 @@ function openPuzzle(i) {
   if (R.hiddenHs === i) { R.hiddenHs = null; toast("🔦 Found the hidden lock!"); }
   const typeLabel = { mc: p.gen ? "Spelling check" : p.graph ? "Graph reading" : "Multiple choice", dial: "Combination dials", spell: "Spelling lock" }[p.type];
   const box = openModal(`
-    <span class="kicker">${typeLabel} · T${room.topicNo} ${room.boss ? "Boss" : `S${room.s}`} ${diffChip(p.b)}</span>
+    <span class="kicker">${skillTag(i)}${lockSkill(i) && p.skill !== lockSkill(i).id ? ` <span class="skstand" title="This stage is short of ${esc(lockSkill(i).name)} questions">stand-in</span>` : ""} ${typeLabel} · T${room.topicNo} ${room.boss ? "Boss" : `S${room.s}`} ${diffChip(p.b)}</span>
     <h2>${esc(hsName)}</h2>
     <div class="lockprog" aria-label="Question ${step + 1} of ${LOCK_Q} for this lock">${Array.from({ length: LOCK_Q }, (_, n) => `<i class="${n < step ? "on" : n === step ? "cur" : ""}"></i>`).join("")}<span class="small"><b>Question ${step + 1} of ${LOCK_Q}</b> to open this lock</span></div>
     ${step ? say("chiikawa", pick(["Keep going! One more click and the lock wiggles... 🔐", "It's working! The lock is loosening! ✨", "Ya...! Almost there! 🥹"]), "brave")
@@ -1448,10 +1462,13 @@ function miss(box) {
     document.getElementById("slipGo").onclick = () => { SFX.tap(); openPuzzle(i); };
   }
 }
-/* Lock slip: step back one notch and swap in a fresh question of a similar level for that step. */
+/* Lock slip: step back one notch and swap in a fresh question of the same strand and a similar level for that step. */
 function slipLock(i) {
   const run = S.room_run[R.room.id], s = stepOf(i) - 1, old = R.qs[i][s], used = R.qs.flat().map(q => q.id);
-  let c = R.room.pool.filter(q => !used.includes(q.id) && !q.gen && Math.abs(q.b - old.b) <= 1);
+  const okQ = q => !used.includes(q.id) && (i === 0 || !q.gen);
+  let c = R.room.pool.filter(q => okQ(q) && q.skill === old.skill && Math.abs(q.b - old.b) <= 1);
+  if (!c.length) c = R.room.pool.filter(q => okQ(q) && q.skill === old.skill);
+  if (!c.length) c = R.room.pool.filter(q => !used.includes(q.id) && !q.gen && Math.abs(q.b - old.b) <= 1);
   if (!c.length) c = R.room.pool.filter(q => !used.includes(q.id) && !q.gen);
   if (!c.length) return false;
   const nq = pick(c);

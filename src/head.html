@@ -583,6 +583,13 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .lockprog i.on { background: var(--green); }
 .lockprog i.cur { background: var(--yellow); box-shadow: 0 0 0 3px rgba(253,255,182,.9); }
 .hs small { font-size: .78rem; font-weight: 800; }
+/* Skill strand label: one theme per lock */
+.sktag { display: inline-flex; align-items: center; gap: 3px; font-size: .68rem; font-weight: 800; letter-spacing: .03em; text-transform: none; line-height: 1.2; padding: 1px 7px; border-radius: 999px; border: 2px solid var(--ink); background: #FFF6D8; color: var(--ink); white-space: nowrap; vertical-align: middle; }
+.sktag .ic { width: 13px !important; height: 13px !important; flex: 0 0 13px !important; }
+.sk-word { background: #FFE3EC; } .sk-concept { background: #FFF1C2; } .sk-see { background: #DDF1FF; } .sk-data { background: #E2F7DF; } .sk-invest { background: #EEE3FF; }
+.hs .sktag.onhs { position: absolute; bottom: 100%; margin-bottom: 4px; left: 50%; transform: translateX(-50%); pointer-events: none; box-shadow: 0 2px 6px rgba(0,0,0,.18); }
+.skstand { font-size: .64rem; font-weight: 700; text-transform: none; letter-spacing: 0; color: var(--ink-soft); border: 1.5px dashed currentColor; border-radius: 999px; padding: 0 6px; vertical-align: middle; }
+@media (max-width: 560px) { .hs .sktag.onhs { font-size: 0; gap: 0; padding: 1px 3px; } }
 /* ---------- Spelling ---------- */
 .spell { display: grid; gap: 8px; }
 .sboxes { display: flex; flex-wrap: wrap; gap: 4px; }
