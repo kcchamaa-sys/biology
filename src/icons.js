@@ -347,20 +347,26 @@ function enhanceSelect(sel) {
   show(); sel.after(btn); sel.addEventListener("change", show);
   btn.onclick = () => {
     SFX.init(); SFX.tap();
-    const ov = document.createElement("div"); ov.className = "overlay"; ov.style.zIndex = 80;
-    let html = `<h3>${esc(title)}</h3>`, g = null;
+    const sheet = innerWidth < 700, r = btn.getBoundingClientRect();
+    const back = document.createElement("div"); back.className = "selback" + (sheet ? " dim" : "");
+    const pop = document.createElement("div"); pop.className = "selpop" + (sheet ? " sheet" : ""); pop.setAttribute("role", "listbox");
+    let html = sheet ? `<div class="selgrab"></div>` : "";
     [...sel.children].forEach(ch => {
       const opts = ch.tagName === "OPTGROUP" ? [...ch.children] : [ch];
       if (ch.tagName === "OPTGROUP") html += `<div class="selgroup">${esc(ch.label)}</div>`;
-      opts.forEach(o => { const i = [...sel.options].indexOf(o), on = i === sel.selectedIndex; html += `<button type="button" class="selopt ${on ? "on" : ""}" data-i="${i}" ${on ? 'aria-current="true"' : ""}><span>${esc(o.textContent)}</span>${on ? '<span class="tick">✓</span>' : ""}</button>`; });
+      opts.forEach(o => {
+        const i = [...sel.options].indexOf(o), on = i === sel.selectedIndex, m = /^\s*Topic (\d+):\s*(.*)$/.exec(o.textContent);
+        html += `<button type="button" class="selopt ${on ? "on" : ""}" data-i="${i}" role="option" aria-selected="${on}">${m ? `<span class="tn">${m[1]}</span><span>${esc(m[2])}</span>` : `<span>${esc(o.textContent)}</span>`}${on ? '<span class="tick">✓</span>' : ""}</button>`;
+      });
     });
-    ov.innerHTML = `<div class="selsheet" role="listbox">${html}</div>`;
-    const close = () => { ov.remove(); btn.focus({ preventScroll: true }); };
-    ov.onclick = e => { if (e.target === ov) close(); };
-    ov.querySelectorAll(".selopt").forEach(b => b.onclick = () => { sel.selectedIndex = Number(b.dataset.i); sel.dispatchEvent(new Event("change", { bubbles: true })); SFX.tap(); close(); });
-    ov.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
-    document.body.appendChild(ov);
-    const cur = ov.querySelector(".selopt.on"); (cur || ov.querySelector(".selopt")).focus({ preventScroll: true }); if (cur) cur.scrollIntoView({ block: "center" });
+    pop.innerHTML = html;
+    const close = () => { back.remove(); pop.remove(); btn.focus({ preventScroll: true }); };
+    back.onclick = close;
+    pop.querySelectorAll(".selopt").forEach(b => b.onclick = () => { sel.selectedIndex = Number(b.dataset.i); sel.dispatchEvent(new Event("change", { bubbles: true })); SFX.tap(); close(); });
+    pop.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+    document.body.append(back, pop);
+    if (!sheet) { const room = innerHeight - r.bottom - 16, up = room < 260 && r.top > room; pop.style.left = r.left + "px"; pop.style.width = Math.max(r.width, 380) + "px"; pop.style.maxHeight = Math.max(220, (up ? r.top : room) - 10) + "px"; up ? pop.style.bottom = innerHeight - r.top + 6 + "px" : pop.style.top = r.bottom + 6 + "px"; if (r.left + Math.max(r.width, 380) > innerWidth - 8) pop.style.left = Math.max(8, innerWidth - Math.max(r.width, 380) - 8) + "px"; }
+    const cur = pop.querySelector(".selopt.on"); (cur || pop.querySelector(".selopt")).focus({ preventScroll: true }); if (cur) cur.scrollIntoView({ block: "center" });
   };
 }
 const enhanceAll = root => (root.querySelectorAll ? root.querySelectorAll("select.name") : []).forEach(enhanceSelect);
