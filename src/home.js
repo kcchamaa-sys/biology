@@ -43,7 +43,13 @@ function roomCard(line, mood = "happy", eq, withPet = true) {
     <div class="rug"></div><div class="pet ${frameCls(eq)}">${figure("chiikawa", mood, eq)}</div>
     ${pet ? `<button class="rpet" data-pet="${pet.id}" aria-label="${esc(pet.nick)} the ${esc(pet.name)}">${petSvg(pet.id)}</button>` : ""}</div>`;
 }
+let greetCache = { k: "", t: "" };
 function greeting() {
+  const key = [S.ill ? 1 : 0, palMood(), streakNote, Math.floor(Date.now() / 600e3)].join("|");
+  if (greetCache.k !== key) greetCache = { k: key, t: greeting0() };
+  return greetCache.t;
+}
+function greeting0() {
   if (streakNote) return esc(streakNote);
   if (!S.ill && MOOD_LINE[palMood()] && palMood() !== "sleepy") return MOOD_LINE[palMood()];
   if (S.ill) return `Achoo... I feel sick... 🤒 (${esc(illById(S.ill.id).sym.split(",")[0])})`;

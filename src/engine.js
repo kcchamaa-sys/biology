@@ -764,7 +764,7 @@ function renderTools() {
   const el = document.getElementById("tools"); if (!el) return;
   el.innerHTML = S ? `
     <span class="hcur streak" title="Daily streak · chestnut bonus ×${streakMult().toFixed(2)}"><span class="ci">🔥</span><b>${S.current_streak}</b>${streakMult() > 1 ? `<span class="lbl"> ×${streakMult().toFixed(2).replace(/0$/, "")}</span>` : ""}</span>
-    <button class="hcur coins" id="tCoins" aria-label="Chestnuts: ${S.coins}. Open the shop"><span class="ci">🌰</span><b>${S.coins}</b><span class="plus" aria-hidden="true">+</span></button>
+    <button class="hcur coins" id="tCoins" aria-label="Chestnuts: ${S.coins}. Open the shop"><span class="ci">🌰</span><b>${S.coins}</b><span class="addb" aria-hidden="true">+</span></button>
     ${S.coll.pending ? `<button class="hcur cap capbtn" id="tCap" aria-label="Open ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""}"><span class="ci">🎁</span><b>${S.coll.pending}</b></button>` : ""}
     <button class="menubtn ${typeof AUTH !== "undefined" && AUTH.stale ? "warn" : ""}" id="tMenu" aria-label="Menu"><span></span><span></span><span></span></button>` : "";
   const g = id => document.getElementById(id);

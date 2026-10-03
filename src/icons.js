@@ -337,5 +337,31 @@ function iconizeTree(root) {
   const list = []; while (w.nextNode()) list.push(w.currentNode); list.forEach(iconizeText);
   root.querySelectorAll && root.querySelectorAll("[placeholder]").forEach(el => { const p = el.getAttribute("placeholder"); if (EMO_RE.test(p)) el.setAttribute("placeholder", p.replace(EMO_RE, "").trim()); EMO_RE.lastIndex = 0; });
 }
-const iconObserver = new MutationObserver(ms => { ms.forEach(m => { if (m.type === "characterData") iconizeTree(m.target); else m.addedNodes.forEach(iconizeTree); }); });
-function startIcons() { iconizeTree(document.body); iconObserver.observe(document.body, { childList: true, subtree: true, characterData: true }); }
+const iconObserver = new MutationObserver(ms => { ms.forEach(m => { if (m.type === "characterData") iconizeTree(m.target); else m.addedNodes.forEach(n => { iconizeTree(n); if (n.nodeType === 1) { if (n.matches && n.matches("select.name")) enhanceSelect(n); else enhanceAll(n); } }); }); });
+/* ----- Styled picker: every select.name gets a soft button + a rounded option sheet ----- */
+function enhanceSelect(sel) {
+  if (sel.dataset.enh) return; sel.dataset.enh = "1"; sel.classList.add("sel-hidden");
+  const lab = sel.closest("label"), title = lab ? (lab.querySelector("b") || lab).textContent.trim() : "Choose";
+  const btn = document.createElement("button"); btn.type = "button"; btn.className = "selbtn";
+  const show = () => { const o = sel.options[sel.selectedIndex]; btn.innerHTML = `<span>${esc(o ? o.textContent : "")}</span><i class="chev"></i>`; };
+  show(); sel.after(btn); sel.addEventListener("change", show);
+  btn.onclick = () => {
+    SFX.init(); SFX.tap();
+    const ov = document.createElement("div"); ov.className = "overlay"; ov.style.zIndex = 80;
+    let html = `<h3>${esc(title)}</h3>`, g = null;
+    [...sel.children].forEach(ch => {
+      const opts = ch.tagName === "OPTGROUP" ? [...ch.children] : [ch];
+      if (ch.tagName === "OPTGROUP") html += `<div class="selgroup">${esc(ch.label)}</div>`;
+      opts.forEach(o => { const i = [...sel.options].indexOf(o), on = i === sel.selectedIndex; html += `<button type="button" class="selopt ${on ? "on" : ""}" data-i="${i}" ${on ? 'aria-current="true"' : ""}><span>${esc(o.textContent)}</span>${on ? '<span class="tick">✓</span>' : ""}</button>`; });
+    });
+    ov.innerHTML = `<div class="selsheet" role="listbox">${html}</div>`;
+    const close = () => { ov.remove(); btn.focus({ preventScroll: true }); };
+    ov.onclick = e => { if (e.target === ov) close(); };
+    ov.querySelectorAll(".selopt").forEach(b => b.onclick = () => { sel.selectedIndex = Number(b.dataset.i); sel.dispatchEvent(new Event("change", { bubbles: true })); SFX.tap(); close(); });
+    ov.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+    document.body.appendChild(ov);
+    const cur = ov.querySelector(".selopt.on"); (cur || ov.querySelector(".selopt")).focus({ preventScroll: true }); if (cur) cur.scrollIntoView({ block: "center" });
+  };
+}
+const enhanceAll = root => (root.querySelectorAll ? root.querySelectorAll("select.name") : []).forEach(enhanceSelect);
+function startIcons() { iconizeTree(document.body); enhanceAll(document); iconObserver.observe(document.body, { childList: true, subtree: true, characterData: true }); }
