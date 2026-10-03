@@ -44,6 +44,11 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 
 ## Cross-project log (newest first)
 
+- 2026-10-03 (s1science): **Island 2.0 art direction** (`coop2.js` + `coop2.css` in the s1 build), a reusable "dark ink cinematic" kit for any scene.
+  - Shared SVG `<defs>` injected once per screen: hatch / cross-hatch patterns, glow filters, an animated `feTurbulence`+`feDisplacementMap` "ink smoke" filter, and a grey+animated-noise "corroded" filter.
+  - Building art as `CO_ART[key](level)` functions (3 stages each).
+  - FX that diff the last-seen state in `localStorage`: a level-up overlay with charge-up → 2 one-frame impact frames (white/black silhouettes) → shockwave, repair shockwave, fog creep, and Web-Animations "material pop" chips flying into the inventory. All of it respects `prefers-reduced-motion`.
+
 - 2026-10-03 (s1science): **Co-op squads, "Mochi Science Island"** (`server/Coop.gs` + `coop.js` in the s1 build), reusable for any subject with class sign-in.
   - Squads of 2–4 (any class) join with a 6-letter code. Squad state is one JSON row per squad in a `Coop Squads` sheet, rolled forward lazily day by day on each request (no time triggers needed).
   - Correct answers in records become per-unit materials, with a soft daily cap (full rate to 30, slower to 45, overflow becomes coins).
