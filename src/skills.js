@@ -19,22 +19,89 @@ const isGraphSvg = s => /^g[A-Z]/.test(s) || /Graph$/.test(s);
 const INVEST_RE = /\b(plan(s|ned|ning)?|fair test\w*|variables?|repeat(s|ed|ing)?|replicates?|conclu(sion|sions|de|ded|des)|evaluat\w*|control (group|experiment|set-?up|tube)|investigat\w*)\b/i;
 const INVEST_WEAK_RE = /\b(experiment\w*|hypothes\w*|reliab\w*|valid\w*|predict\w*|measure\w*)\b/i;
 const DATA_WORDS_RE = /\b(table|results?|data|readings?|per ?cent|rate of)\b|\d+\s?%/i;
-// Hand-set skills for questions the heuristic got wrong, keyed like saved progress (`room:qN`), so ids never change.
-const SKILL_SET = {
-  // experiment method / controls / reliability -> Investigate
-  "t3s2:q12": "invest", "t5s3:q18": "invest", "t6s3:q10": "invest", "t6s6:q1": "invest", "t6s6:q5": "invest", "t6s6:q17": "invest",
-  "t6s6:q19": "invest", "t7s3:q3": "invest", "t7s3:q6": "invest", "t7s3:q18": "invest", "t7s3:q19": "invest", "t12s2:q6": "invest",
-  "t12s2:q9": "invest", "t12s2:q17": "invest", "t15s3:q2": "invest", "t16s3:q13": "invest", "t16s3:q18": "invest",
-  // numbers given in the stem -> Data
-  "t17s2:q12": "data", "t19s3:q19": "data",
-  // "table" with no numbers is really a comparison -> Concepts
-  "t4s3:q13": "concept", "t16s3:q14": "concept", "t17s1:q7": "concept"
+/* Hand-reviewed skill of every bank question, by what the student has to DO (read question by question, not by regex).
+   One letter per question, in bank order (index j = question id "qj"): c concept · s see · d data · i invest.
+   concept: recall, explain, apply, or judge a claim ("X says… evaluate"); needs no picture and no numbers.
+   see: name/identify parts on a drawing; covering the picture makes it unanswerable.
+   data: read, describe or interpret numbers, a graph or a table (also a graph described in words); a graph that
+     is only decoration counts as concept.
+   invest: method: variables, controls, fair test, reliability, set-up/apparatus, procedure, lab scenarios, or
+     whether a conclusion is supported.
+   New questions are only ever appended: add a letter at the end of the stage's string. Untagged questions fall back
+   to the heuristic below and are listed by `node tools/check_content.js --unsure`. */
+const SKILL_TAGS = {
+  t1s1: "cccccccccccciicdddcccc",
+  t1s2: "ccccccccccsciicdcdcicic",
+  t1s3: "ccccccccccccciidddcidi",
+  t2s1: "ccciccciciciciiiddccci",
+  t2s2: "cccccccssccccccdcccccc",
+  t2s3: "cccccccscccccccddcccc",
+  t3s1: "ccccsccccccciicdddccc",
+  t3s2: "cccccicscdcciicddiccccc",
+  t3s3: "ccccccccccdciicdddcccc",
+  t4s1: "ccccsccssccdcicdddcccd",
+  t4s2: "cccccccccccccccddccccc",
+  t4s3: "ccccccccccccccidcccc",
+  t5s1: "ccccccsccccccciddcccc",
+  t5s2: "cccccdcdddiicicddcccd",
+  t5s3: "cccccccccccccicddcii",
+  t6s1: "cccccccscccccciccccc",
+  t6s2: "cccccicsccccccidddccc",
+  t6s3: "cccccciccciccciddccc",
+  t6s4: "cccccccccccccciddcccc",
+  t6s5: "ccccciccddiicciddddc",
+  t6s6: "ciiiiiiiiiiiiiiddiii",
+  t7s1: "cccccccscccccccdddccccc",
+  t7s2: "ccccccccisiciicdddcccc",
+  t7s3: "cciiiiiciciicicddiii",
+  t9s1: "cccccccccdcccicccccc",
+  t9s2: "ccccccccccccccccccccc",
+  t9s3: "cccccccccccciicddcccc",
+  t10s1: "cccccccccccccccccc",
+  t10s2: "ccccccccccccccccccccc",
+  t10s3: "ccccccccccccccccccccc",
+  t11s1: "ccccccccccccccccccccc",
+  t11s2: "cccccccccccccccdcccc",
+  t11s3: "cccccccccccccciccccc",
+  t12s1: "cccccccccccciccccc",
+  t12s2: "cccccciciiccdicdciicc",
+  t12s3: "ccccccccccccciccccc",
+  t8s1: "ccccccccccccccccdccc",
+  t8s2: "cccccccscccccicddiccccc",
+  t8s3: "cccccccscccccccddccccc",
+  t13s1: "ccccccccccccccccccc",
+  t13s2: "ccccccccdccccicddcccc",
+  t13s3: "cccccicccccciicccc",
+  t14s1: "ccccccccccccicccdcccc",
+  t14s2: "ccccccccccccccicccc",
+  t14s3: "ccccccccccccccccccc",
+  t15s1: "cccccccccccccicccccc",
+  t15s2: "ccccccccccccccccccccc",
+  t15s3: "cciicccccccicidddiccc",
+  t16s1: "cccccccccccccicccccccc",
+  t16s2: "ccccccccccccciccccccc",
+  t16s3: "ccccccciccccciccccic",
+  t16s4: "cccccccccccccccccccc",
+  t17s1: "ccccccccccccdccdcccccc",
+  t17s2: "ccccccccccccdicdcc",
+  t18s1: "ccccccccdccccicdcccc",
+  t18s2: "cccccccccccccccdcccccc",
+  t18s3: "iciicdcciccicicidic",
+  t19s1: "ccccccccccccccidccccc",
+  t19s2: "cccccccccccdccddcccccc",
+  t19s3: "ccccccccccccccccccci"
 };
-// Returns { skill, unsure } where unsure is a short reason when the heuristic could reasonably go another way.
+const TAG_SKILL = { c: "concept", s: "see", d: "data", i: "invest" };
+// Returns { skill, unsure }: an explicit `skill` field wins, then SKILL_TAGS, then the heuristic (always marked unsure).
 function skillOf(p) {
   if (p.skill && SKILL_IDS.includes(p.skill)) return { skill: p.skill, unsure: null };
-  if (SKILL_SET[`${p.rid}:${p.id}`]) return { skill: SKILL_SET[`${p.rid}:${p.id}`], unsure: null };
   if (p.gen === "spell" || p.gen === "spellmc" || p.type === "spell") return { skill: "word", unsure: null };
+  const tag = /^q\d+$/.test(p.id || "") && (SKILL_TAGS[p.rid] || "")[+p.id.slice(1)];
+  if (TAG_SKILL[tag]) return { skill: TAG_SKILL[tag], unsure: null };
+  const h = skillGuess(p); return { skill: h.skill, unsure: `not hand-reviewed yet${h.unsure ? `; ${h.unsure}` : ""}` };
+}
+// Keyword heuristic, used only for questions not yet in SKILL_TAGS.
+function skillGuess(p) {
   const q = p.q || "", inv = INVEST_RE.test(q);
   if ((p.svg && isGraphSvg(p.svg)) || p.graph) return { skill: "data", unsure: inv ? "graph + investigation wording" : null };
   if (/\btable\b/i.test(q)) return { skill: "data", unsure: /\d/.test(q) ? null : "mentions a table but has no numbers" };
