@@ -44,6 +44,11 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 ## Cross-project log (newest first)
 
 - 2026-10-03 (biology): **Biology Capsule Lab** (`src/cards.js`): 40 educational trading cards in 5 rarities modelled on the s1science trophy-card style (title bar + rarity symbol, art window, foil/holo per rarity, 3D tilt), rarity odds with pity counters, streak-driven capsules (+1 every 3rd day, +2 on milestones) and streak luck, plus a large animated Home advert. Migration map converts old collectible ids. Card art is drawn with the icon helpers exposed as `ICN.__h` (wrap in an IIFE: names like `L`, `R`, `H` clash with globals). Locked pals now preview in colour except legendary/mythic. Default pal eyes are plain dark eyes with two highlights.
+- 2026-10-03 (s1science): **Lucky Capsule** daily gacha (`capsule.js` in the s1 build) replaces the free daily gift.
+  - One draw per study day; rarity odds step up every 20 streak days (to 100); epic+ pity within 10 draws.
+  - Crank / drop / rarity-upgrade / burst animation built from CSS + inline SVG only.
+  - Prizes: coins, food, Streak Freeze, unowned decor, and capsule-only apparatus decor plus 3 apparatus pals (Bunsen, Cylie, mythic electronic balance Gram).
+  - Save code v14: item slots grew from 7 to 8 bits because the item count passed 127 (watch for this when porting).
 
 - 2026-10-02 (s1science): **Fog battle 2.0** for the Nobel Quest boss (`nqbattle.js` + `nqextra.js` in the s1 build), reusable for any quiz boss.
   - Correct answers earn Knowledge Points, spent on Quick Strike / Mend / Heavy Blast.
