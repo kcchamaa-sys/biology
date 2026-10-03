@@ -30,6 +30,7 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 | Pet art, dress-up slots, rarity tiers, medicine/health, streak freeze | `s1science/index.html` |
 | Bilingual EN/繁中 switching, Bloom-tagged banks, save code, random incidents | `s3science/index.html` |
 | Room scenes, locks, simulations (Lab), study mode, graph questions, split source + build | `biology/src/`, `biology/tools/` |
+| Co-op squads (shared island, squad streak, Fog penalty) | `s1science/server/Coop.gs` + Island tab in `s1science/index.html` |
 | Class login, teacher dashboard, Excel export | `s1science/server/` (biology `server/` + `src/auth.js` = a lighter port: login, guest mode, records, class board, no dashboard) |
 | Leaderboard setup | `biology/server/` (signed-in class board), `s3science/leaderboard/` (anonymous nicknames) |
 | Starting a new subject | `s1science/docs/NEXT_GAME_PROMPT.md`, `s3science/NEW_SUBJECT_PROMPT.md` |
@@ -42,6 +43,13 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 4. Edit biology via `src/` then run `python3 tools/build.py`; never hand-edit its `index.html`.
 
 ## Cross-project log (newest first)
+
+- 2026-10-03 (s1science): **Co-op squads, "Mochi Science Island"** (`server/Coop.gs` + `coop.js` in the s1 build), reusable for any subject with class sign-in.
+  - Squads of 2–4 (any class) join with a 6-letter code. Squad state is one JSON row per squad in a `Coop Squads` sheet, rolled forward lazily day by day on each request (no time triggers needed).
+  - Correct answers in records become per-unit materials, with a soft daily cap (full rate to 30, slower to 45, overflow becomes coins).
+  - Squad streak: buildings progress only on days every member studied. Missed days use a weekly Squad Freeze, then add Fog, which disables perks and steals at 9+. There is a weekly raid on total correct answers, plus a teacher holiday pause (`COOP_PAUSE`).
+  - Daily split puzzle (one part per member, a teammate can rescue a wrong part), repair quizzes, 6 unit buildings × 3 levels + 3 wonders. The final wonder unlocks a co-op-only pal + trophy card.
+  - Server tested with a Node fake Apps Script runtime (`gas_harness.js` in the session scratchpad; pattern: vm context with in-memory Sheets/Properties/Cache and a shiftable Date).
 
 - 2026-10-03 (biology): **Biology Capsule Lab** (`src/cards.js`): 40 educational trading cards in 5 rarities modelled on the s1science trophy-card style (title bar + rarity symbol, art window, foil/holo per rarity, 3D tilt), rarity odds with pity counters, streak-driven capsules (+1 every 3rd day, +2 on milestones) and streak luck, plus a large animated Home advert. Migration map converts old collectible ids. Card art is drawn with the icon helpers exposed as `ICN.__h` (wrap in an IIFE: names like `L`, `R`, `H` clash with globals). Locked pals now preview in colour except legendary/mythic. Default pal eyes are plain dark eyes with two highlights.
 - 2026-10-03 (s1science): **Lucky Capsule** daily gacha (`capsule.js` in the s1 build) replaces the free daily gift.
