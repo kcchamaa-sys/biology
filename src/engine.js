@@ -982,25 +982,60 @@ function startRevision(ti) {
 }
 /* ----- Hard-question formats (src/q_h*.js, HKDSE-style): a stimulus under the question (numbered statements and/or a
    data table), a format chip, and "trap" notes that name the misconception behind each wrong option. ----- */
-const FMT = { R: "🔢 Roman numerals", A: "⚖️ Two statements", T: "📊 Data table", M: "📝 Mark it like an examiner", C: "↔️ Compare", N: "🌍 New context", E: "🔎 Spot the flaw", L: "🔗 Logic chain" };
-const hasStim = p => !!(p.stmts || p.table);
+const FMT = { R: "🧩 Which are true?", A: "⚖️ True… and why?", T: "📊 Table detective", C: "↔️ Spot the difference", N: "🌍 Real-world puzzle", E: "🔎 Spot the flaw", L: "🔗 Chain reaction",
+  K: "🕵️ Case file", V: "🔬 Virtual lab", G: "📈 Pick the graph", D: "📈 Graph detective", S: "🗂️ Sort it", P: "👆 Tap it" };
+const hasStim = p => !!(p.stmts || p.table || p.case || p.media || p.gch);
 const fmtChip = p => p.fmt && FMT[p.fmt] ? `<span class="fmtchip">${FMT[p.fmt]}</span>` : "";
 function qStim(p) {
   let h = "";
+  if (p.case) h += `<div class="casefile">${p.case.map(([ic, t, x]) => `<div class="ccard"><b><span aria-hidden="true">${ic}</span> ${esc(t)}</b><span>${esc(x)}</span></div>`).join("")}</div>`;
+  if (p.media) h += `<div class="diagram-box qmedia">${p.media}</div>${p.alt ? `<details class="mediaalt"><summary>Can't watch it? Read what happens</summary><p>${esc(p.alt)}</p></details>` : ""}`;
   if (p.table) h += `<div class="qtable-wrap"><table class="qtable">${p.table.map((row, r) => `<tr>${row.map(c => r === 0 ? `<th scope="col">${esc(c)}</th>` : `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table></div>`;
   if (p.stmts) h += `<ol class="qstmts">${p.stmts.map((x, i) => `<li><b>${esc((p.slabels || ["I", "II", "III", "IV"])[i])}</b><span>${esc(x)}</span></li>`).join("")}</ol>`;
   return h;
 }
 const trapHtml = (p, i) => p.why && p.why[i] ? `<div class="trap">🪤 <b>Why that one's a trap:</b> ${esc(p.why[i])}</div>` : "";
 const trapsHtml = p => p.why && p.choices ? `<details class="traps"><summary>🪤 Why the other options are traps</summary><ul>${p.choices.map((c, i) => i === p.answer || !p.why[i] ? "" : `<li><b>${esc(c)}</b><br>${esc(p.why[i])}</li>`).join("")}</ul></details>` : "";
+const choiceBtn = (p, i, n) => `<button class="choice${p.gch ? " gch" : ""}" data-i="${i}"><b>${"ABCD"[n]}</b>${p.gch ? miniGraph(p.gch[i], ...(p.gax || [])) : ""}<span>${esc(p.choices[i])}</span></button>`;
+/* 🗂️ Sort it: tap a group for every card, then check. 👆 Tap it: tap the right part of a picture or graph. */
+function sortHtml(p) {
+  const order = shuffle(p.items.map((_, j) => j));
+  return `<div class="sortq">${order.map(j => `<div class="sitem" data-j="${j}"><span class="stxt">${esc(p.items[j][0])}</span><div class="sbins" role="group" aria-label="Choose a group">${p.bins.map((b, k) => `<button type="button" class="sbin" data-k="${k}" aria-pressed="false">${esc(b)}</button>`).join("")}</div></div>`).join("")}
+    <div class="row" style="justify-content:center"><button class="btn sortok">Check 🗂️</button></div></div>`;
+}
+function wireSort(root, p, onCheck) {
+  const pick = {};
+  root.querySelectorAll(".sitem").forEach(row => row.querySelectorAll(".sbin").forEach(b => b.onclick = () => {
+    SFX.click(); pick[row.dataset.j] = Number(b.dataset.k); row.classList.remove("bad");
+    row.querySelectorAll(".sbin").forEach(x => x.setAttribute("aria-pressed", String(x === b))); }));
+  root.querySelector(".sortok").onclick = () => {
+    if (Object.keys(pick).length < p.items.length) { toast("Put every card in a group first 🗂️"); return; }
+    onCheck(p.items.map((it, j) => pick[j] !== it[1] ? j : -1).filter(j => j >= 0));
+  };
+}
+const revealSort = (root, p) => root.querySelectorAll(".sitem").forEach(row => { const k = p.items[Number(row.dataset.j)][1];
+  row.querySelectorAll(".sbin").forEach(x => { x.disabled = true; x.classList.toggle("right", Number(x.dataset.k) === k); }); });
+const tapHtml = p => `<div class="tapq"><p class="small muted" style="margin:0 0 6px">👆 Tap your answer on the picture.</p><div class="diagram-box">${p.tapSvg}</div></div>`;
+function wireTap(root, p, onTap) {
+  root.querySelectorAll(".tapt").forEach(t => { const go = () => { if (root.querySelector(".tapq.done") || t.classList.contains("tbad")) return; onTap(t, p.answer.includes(Number(t.dataset.t))); };
+    t.addEventListener("click", go); t.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } }); });
+}
+const revealTap = (root, p) => { root.querySelectorAll(".tapt").forEach(t => { if (p.answer.includes(Number(t.dataset.t))) t.classList.add("tgood"); }); const q = root.querySelector(".tapq"); if (q) q.classList.add("done"); };
 // A self-contained answer widget (multiple choice, dials or spelling) used outside escape rooms
 function miniQuiz(el, p, done) {
   let over = false;
   const finish = ok => { if (over) return; over = true; el.querySelectorAll("button,input").forEach(x => (x.disabled = true)); done(ok); };
   if (p.type === "mc") {
     const idx = p.choices.map((_, i) => i), order = p.keep ? idx : p.fix ? idx.sort((a, b) => p.choices[a].localeCompare(p.choices[b])) : shuffle(idx);
-    el.innerHTML = `<div class="choices">${order.map((i, n) => `<button class="choice" data-i="${i}"><b>${"ABCD"[n]}</b><span>${esc(p.choices[i])}</span></button>`).join("")}</div>`;
+    el.innerHTML = `<div class="choices">${order.map((i, n) => choiceBtn(p, i, n)).join("")}</div>`;
     el.querySelectorAll(".choice").forEach(b => b.onclick = () => { const ok = Number(b.dataset.i) === p.answer; b.classList.add(ok ? "right" : "wrong"); if (!ok) { el.querySelector(`[data-i="${p.answer}"]`).classList.add("right"); el.insertAdjacentHTML("beforeend", trapHtml(p, Number(b.dataset.i))); } finish(ok); });
+  } else if (p.type === "sort") {
+    el.innerHTML = sortHtml(p);
+    wireSort(el, p, bad => { el.querySelectorAll(".sitem").forEach(r => r.classList.toggle("bad", bad.includes(Number(r.dataset.j)))); revealSort(el, p);
+      if (bad.length) el.insertAdjacentHTML("beforeend", `<div class="trap">🗂️ ${bad.length} card${bad.length > 1 ? "s were" : " was"} in the wrong group. The right group is now highlighted.</div>`); finish(!bad.length); });
+  } else if (p.type === "tap") {
+    el.innerHTML = tapHtml(p);
+    wireTap(el, p, (t, ok) => { t.classList.add(ok ? "tgood" : "tbad"); revealTap(el, p); finish(ok); });
   } else if (p.type === "dial") {
     const pos = p.dials.map(o => Math.floor(Math.random() * o.length));
     el.innerHTML = `<div class="dials${p.chain ? " chain" : ""}">${p.dials.map((o, d) => `<div class="dial">${p.labels ? `<span class="dlabel">${esc(p.labels[d])}</span>` : ""}<button class="arr" data-d="${d}" data-dir="-1" aria-label="Previous option">▲</button><div class="face" id="mf${d}">${esc(o[pos[d]])}</div><button class="arr" data-d="${d}" data-dir="1" aria-label="Next option">▼</button></div>`).join("")}</div><div class="row" style="justify-content:center"><button class="btn" id="mdOk">Check 🔓</button></div>`;
@@ -1319,6 +1354,13 @@ function usePower(k, p, i) {
       if (n >= tgt.length) { toast("The word is complete. Try the lock!"); return; }
       let out = "", c = 0; for (const ch of w) { if (c >= n + 1) break; out += ch; if (/[a-z]/i.test(ch)) c++; }
       inp.value = out; inp.dispatchEvent(new Event("input")); inp.focus();
+    } else if (p.type === "tap") {
+      const opts = [...box.querySelectorAll(".tapt")].filter(t => !t.classList.contains("tbad") && !p.answer.includes(Number(t.dataset.t)));
+      if (!opts.length) { toast("Nothing left to remove!"); return; } pick(opts).classList.add("tbad");
+    } else if (p.type === "sort") {
+      const rows = [...box.querySelectorAll(".sitem")].filter(r => { const b = r.querySelector('.sbin[aria-pressed="true"]'); return !b || Number(b.dataset.k) !== p.items[Number(r.dataset.j)][1]; });
+      if (!rows.length) { toast("Every card is already right. Check it!"); return; }
+      const r = pick(rows); r.querySelector(`.sbin[data-k="${p.items[Number(r.dataset.j)][1]}"]`).click(); toast("🔦 One card placed for you");
     } else {
       const wrong = p.dials.map((_, d) => d).filter(d => R.dialPos[d] !== p.answer[d]);
       if (!wrong.length) { toast("All dials are already right. Try the lock!"); return; }
@@ -1370,7 +1412,9 @@ function penaltyFlash(text) {
 function answerUi(p) {
   // Label-style choices (A, B, Cell C...) show in sorted order; everything else is shuffled
   if (p.type === "mc") { const idx = p.choices.map((_, i) => i), order = p.keep ? idx : p.fix ? idx.sort((a, b) => p.choices[a].localeCompare(p.choices[b])) : shuffle(idx);
-    return `<div class="choices">${order.map((i, n) => `<button class="choice" data-i="${i}"><b>${"ABCD"[n]}</b><span>${esc(p.choices[i])}</span></button>`).join("")}</div>`; }
+    return `<div class="choices">${order.map((i, n) => choiceBtn(p, i, n)).join("")}</div>`; }
+  if (p.type === "sort") return sortHtml(p);
+  if (p.type === "tap") return tapHtml(p);
   if (p.type === "keypad") return `<div class="keypad"><div class="kdisplay" aria-live="polite"><span id="kd">_</span>${p.unit ? `<span class="u">${esc(p.unit)}</span>` : ""}</div>
     <div class="keys">${["7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "⌫"].map(k => `<button class="key ${k === "⌫" ? "del" : ""}" data-k="${k}" aria-label="${k === "⌫" ? "Delete" : k === "." ? "Decimal point" : k}">${k}</button>`).join("")}</div>
     <button class="btn" id="kok" style="width:min(208px,100%)">Unlock 🔓</button></div>`;
@@ -1396,6 +1440,15 @@ function wireAnswer(p, box) {
     };
     document.getElementById("spOk").onclick = go;
     inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); go(); } });
+    return;
+  }
+  if (p.type === "sort") {
+    wireSort(box, p, bad => { if (!bad.length) { box.querySelectorAll(".sbin,.sortok").forEach(x => (x.disabled = true)); solve(); return; }
+      miss(box); const pf = document.getElementById("pfb"); if (pf) pf.insertAdjacentHTML("beforeend", `<div class="trap">🗂️ ${bad.length} card${bad.length > 1 ? "s are" : " is"} in the wrong group. Rethink ${bad.length > 1 ? "them" : "it"}!</div>`); });
+    return;
+  }
+  if (p.type === "tap") {
+    wireTap(box, p, (t, ok) => { if (ok) { t.classList.add("tgood"); const q = box.querySelector(".tapq"); if (q) q.classList.add("done"); solve(); } else { t.classList.add("tbad"); miss(box); } });
     return;
   }
   if (p.type === "mc") {

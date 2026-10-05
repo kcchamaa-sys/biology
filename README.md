@@ -26,7 +26,7 @@ Every topic is open, so students can jump to the one their class is on (the map 
 
 - **8 room scenes** (library, science lab, greenhouse, inside a cell, kitchen, underwater pond, secret garden, clinic), so stages feel different.
 - **Each lock needs 3 questions in a row** (15 per visit), climbing in difficulty inside the lock. **Each lock has one skill theme**: 🔤 Words → 💡 Concepts → 🔍 See it → 📈 Data → 🧪 Investigate (shown as a small label on the lock). If a stage has fewer than 3 questions of a theme, that lock borrows from the nearest theme and shows no label. Lock 1 never tests the same term twice. Every question's skill was hand-reviewed and lives in `SKILL_TAGS` in `src/skills.js` (append a letter when you add a question); `node tools/check_content.js --unsure` reports coverage. Students see friendly labels (🌱 Easy, 🌿 Medium, 🔥 Hard, ⭐ Expert) instead of Bloom's levels. Progress on a half-open lock is saved.
-- **1,964 core questions** (27–33 per stage) including **78 graph-reading questions** (drawn to scale: potato-strip osmosis, enzyme curves, absorption spectra, GP/RuBP, lactic acid, and more).
+- **2,084 core questions** (31–37 per stage) including **78 graph-reading questions** (drawn to scale: potato-strip osmosis, enzyme curves, absorption spectra, GP/RuBP, lactic acid, and more).
 - **Spelling practice**: every stage's key terms become "type the word" locks and "which spelling is correct?" checks (British and American spellings are both accepted, e.g. haemoglobin / hemoglobin). They appear only in the Words lock (lock 1); also a Spelling bee round in Cell Rush.
 - 📓 **Study Journal:** summary, key rules and key terms for every stage.
 
@@ -46,9 +46,23 @@ Every topic is open, so students can jump to the one their class is on (the map 
   - The game **mixes the exercise** (12 questions): a weighted blend of 💡 Concepts, 📈 Data, 🧪 Investigate and 🔍 See it (about 5 : 2 : 2 : 2), plus at most 2 spellings at Easy. Questions not yet mastered and not seen recently come first, so each new exercise brings different questions. The finish screen offers 🎲 New mix and a step up to the next level.
   - With a section chosen, a "full section run" link plays the old all-level series that completes the section.
   - Only that full section run finishes a section (stars, item, badge). Level exercises give mastery, chestnuts and streak days.
-- 🔥 **Hard-level formats** (HKDSE Paper 1A/1B style, 240 questions in `src/q_h1–4.js`, 4 per stage): 🔢 Roman numerals (I, II, III combinations), ⚖️ two statements (is the 2nd true, and does it explain the 1st?), 📊 data tables, 📝 "mark it like an examiner" (pick the answer that links factor → consequence), ↔️ compare (paired with "whereas"), 🌍 new contexts, 🔎 spot the flaw, and 🔗 logic chains (dials that put cause → effect steps in order, with one trap step).
-  - Every wrong option names the misconception or data trap it targets. Picking it shows "🪤 Why that one's a trap", and the feedback has a fold listing every trap.
-  - They appear in Study (🔥 Hard), escape locks, the Mistake Notebook and Bookmarks, but not in Cell Rush or the surprise question (statements and tables need room).
+- 🔥 **Hard level: higher-order formats** (`src/q_h1–4.js`, built with `KH()`). Labels are playful and never mention exams: 🧩 Which are true? · ⚖️ True… and why? · 📊 Table detective · ↔️ Spot the difference · 🌍 Real-world puzzle · 🔎 Spot the flaw · 🔗 Chain reaction (dials that put cause → effect in order).
+  - Every wrong option names the misconception or data trap it targets: "🪤 Why that one's a trap" on a wrong pick, plus a fold listing all of them.
+- 🎬 **Media questions** (`src/q_m1–4.js` + 29 in `q_h*`, about 150 in all; the engine is `src/media.js`):
+  - 🕵️ **Case files:** evidence cards, sometimes with a table or graph (e.g. a collapsed footballer's blood test, a cheese maker's three days, a measles outbreak).
+  - 🔬 **Virtual labs:** observe and measure in drawn scenes, some animated:
+    - pondweed / liver / yeast tubes bubbling against a 10-s clock;
+    - a respirometer or potometer bead in time-lapse;
+    - a 6-s heart trace;
+    - root-tip mitosis fields, onion cells in sucrose, an eyepiece graticule;
+    - agar plates with clear zones, a quadrat, a chromatogram with a ruler;
+    - family trees and DNA-profiling gels.
+    - Animated scenes have a "Can't watch it? Read what happens" text version.
+  - 📈 **Pick the graph:** the four choices are mini graphs, some with a dashed "before" line, e.g. "twice the enzyme, same substrate".
+  - 📈 **Graph detective:** questions on a real plotted graph.
+  - 🗂️ **Sort it:** put 4–7 cards into 2–5 groups.
+  - 👆 **Tap it:** tap the right cell, spot, person, gel lane, bar or point on a graph.
+  - They work in Study, escape locks (the torch power-up places a card or removes a wrong target), the Mistake Notebook and Bookmarks.
 - 👥 **Friends** (signed-in students, up to 5) on Home, in the left column under the pal room. Students share a 6-character friend code, then see each friend's pal, streak, stages and effort points ("✓ studied today" / "last studied 3 days ago") and send one preset cheer a day ("🔥 Keep your flame going!"). Cheers they receive pop up on Home. No free-text messages. Needs the updated `server/Code.gs`.
 - 🔖 **Bookmarks:** a 🔖 Save button on every question (escape locks, Study mode, Mistake Notebook). 🎮 Practice → 🔖 Bookmarks lists saved questions by topic and runs redo rounds of up to 10, least-practised first. Up to 200 bookmarks.
 - 💬 **Chat card** on the map: your Study Pal shares biology fun facts (many with Hong Kong examples) and personal encouragement (streak, mistakes to fix, next stage). It changes every 20 s; the same facts appear as 💡 *Did you know?* in the Journal.

@@ -1,6 +1,6 @@
 
 /* ============================================================
-   🔥 Hard-level formats (HKDSE Paper 1A/1B inspired). Loaded after every other bank, so ids only ever append.
+   🔥 Hard-level formats (exam-board question styles, kept low-key for students: no exam names in the game). Loaded after every other bank, so ids only ever append.
    Every wrong option names the misconception or reading trap it targets (`why`), shown when a student picks it
    and in "🪤 Why the other options are traps" after answering.
    KH(stage, [entry, ...]) where entry is one of:
@@ -12,7 +12,8 @@
      ["L", skill, bloom, question, [step1, step2, step3], trapStep, hint, explain]
          Logic chain: three dials put the cause → effect steps in order; one trap step is mixed in.
      [fmt, skill, bloom, question, [correct, wrong1, wrong2, wrong3], [trap1, trap2, trap3], hint, explain, table?]
-         fmt T data table · M mark it like an examiner · C compare · N new context · E spot the flaw.
+         fmt T table detective · C spot the difference · N real-world puzzle · E spot the flaw.
+     Media questions are objects instead: see khMedia() below (fmt K case file · V virtual lab · G pick the graph · D graph detective · S sort it · P tap it).
          table = [[header...], [row...], ...] shown under the question.
    skill letters as in SKILL_TAGS: c concept · s see · d data · i invest.
    ============================================================ */
@@ -25,7 +26,26 @@ const AR_WHY = [
   ["The 2nd statement is false, so it cannot explain anything.", "The 2nd statement is false.", null, "It's the other way round: the 1st is true and the 2nd is false."],
   ["The 1st statement is false.", "The 1st statement is false.", "It's the other way round: the 1st is false and the 2nd is true.", null]
 ];
+const ANIM_SCENES = ["bubbles", "bead", "ecg"];
+// Object entries (media questions): { f, k, b, q, hint, explain, tip?, case?, table?, chart?, scene?, then ONE of:
+//   choices + why (+ gch: 4 mini graphs, gax: [x words, y words])  ·  bins + items: [[text, bin]]  ·  tap: { chart | scene, want } }
+function khMedia(e) {
+  const p = { fmt: e.f, skill: KH_SKILL[e.k], b: e.b, q: e.q, hint: e.hint, explain: e.explain };
+  if (e.tip) p.tip = e.tip; if (e.case) p.case = e.case; if (e.table) p.table = e.table;
+  if (e.chart) { p.media = plot(e.chart); p.graph = true; }
+  if (e.scene) { const r = SCENE[e.scene.kind](e.scene); p.media = r.svg; if (ANIM_SCENES.includes(e.scene.kind)) p.alt = r.alt; }
+  if (e.items) return Object.assign(p, { type: "sort", bins: e.bins, items: e.items, answer: e.items.map(x => x[1]) });
+  if (e.tap) {
+    if (e.tap.chart) return Object.assign(p, { type: "tap", tapSvg: tapPlot(e.tap.chart), answer: [].concat(e.tap.want), graph: true });
+    const r = SCENE[e.tap.scene.kind](Object.assign({ tap: true }, e.tap.scene)), want = [].concat(e.tap.want);
+    return Object.assign(p, { type: "tap", tapSvg: r.svg, answer: r.kinds.map((k, i) => want.includes(k) ? i : -1).filter(i => i >= 0) });
+  }
+  Object.assign(p, { choices: e.choices, answer: 0, why: [null].concat(e.why) });
+  if (e.gch) { p.gch = e.gch; p.gax = e.gax || ["", ""]; }
+  return p;
+}
 const KH = (id, list) => KB(id, list.map(e => {
+  if (!Array.isArray(e)) return khMedia(e);
   const [f, k, b] = e, base = { fmt: f, skill: KH_SKILL[k], b };
   if (f === "R") {
     const [, , , q, stmts, answer, notes, hint, explain] = e, choices = ROMAN_TXT, sets = ROMAN_SET;

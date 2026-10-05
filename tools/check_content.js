@@ -1,6 +1,6 @@
 // Content sanity checks: node tools/check_content.js
 const fs = require("fs"), vm = require("vm");
-const src = ["chars.js", "diagrams.js", "graphs.js", "stages.js", "stages2.js", "scenes.js", ...[1,2,3,4,5,6,7,8,9,11,13,15,17].map(i => `q_t${i}.js`), "q_graphs.js", "q_graphs2.js", "q_kb1.js", "q_kb2.js", ...["q_x1.js", "q_x2.js", "q_x3.js", "q_x4.js", "q_h0.js", "q_h1.js", "q_h2.js", "q_h3.js", "q_h4.js"].filter(f => fs.existsSync(`src/${f}`)), "skills.js", "rush.js"].map(f => fs.readFileSync(`src/${f}`, "utf8")).join("\n").replace("<script>", "");
+const src = ["chars.js", "diagrams.js", "graphs.js", "media.js", "stages.js", "stages2.js", "scenes.js", ...[1,2,3,4,5,6,7,8,9,11,13,15,17].map(i => `q_t${i}.js`), "q_graphs.js", "q_graphs2.js", "q_kb1.js", "q_kb2.js", ...["q_x1.js", "q_x2.js", "q_x3.js", "q_x4.js", "q_h0.js", "q_h1.js", "q_h2.js", "q_h3.js", "q_h4.js", "q_m1.js", "q_m2.js", "q_m3.js", "q_m4.js"].filter(f => fs.existsSync(`src/${f}`)), "skills.js", "rush.js"].map(f => fs.readFileSync(`src/${f}`, "utf8")).join("\n").replace("<script>", "");
 const ctx = { outfitSvg: () => "", console, subseq: (a) => a, specialSvg: () => "", SFX: {} };
 vm.createContext(ctx); vm.runInContext(src + "\nthis.ROOMS=ROOMS;this.SCENES=SCENES;this.QB=QB;this.DIAGRAMS=DIAGRAMS;this.TOPICS=TOPICS;this.skillOf=skillOf;this.SKILL_IDS=SKILL_IDS;this.SKILL_TAGS=SKILL_TAGS;", ctx);
 const { ROOMS, QB, DIAGRAMS, skillOf, SKILL_IDS, SKILL_TAGS } = ctx; let bad = 0, total = 0;
@@ -24,7 +24,7 @@ ROOMS.forEach(r => {
     if (!(o.b >= 1 && o.b <= 6)) err(`${id}: bloom ${o.b}`);
     if (!o.q || !o.hint || !o.explain) err(`${id}: missing q/hint/explain`);
     if (o.svg && !DIAGRAMS[o.svg]) err(`${id}: unknown svg ${o.svg}`);
-    if (/\b(the|this|a) (diagram|graph|bar chart|histogram|trace)\b(?! type)/i.test(o.q) && !/sketch|draw|design/i.test(o.q) && !o.svg) err(`${id}: mentions diagram/graph but has no svg`);
+    if (/\b(the|this|a) (diagram|graph|bar chart|histogram|trace)\b(?! type)/i.test(o.q) && !/sketch|draw|design/i.test(o.q) && !o.svg && !o.media && !o.tapSvg && !o.gch) err(`${id}: mentions diagram/graph but has no svg`);
     if (o.type === "mc") {
       if (!Array.isArray(o.choices) || o.choices.length !== 4) err(`${id}: needs 4 choices`);
       else if (!(o.answer >= 0 && o.answer < 4)) err(`${id}: bad answer`);
@@ -36,7 +36,14 @@ ROOMS.forEach(r => {
       if (o.chain && (new Set(o.dials[0]).size !== o.dials[0].length)) err(`${id}: duplicate chain steps`);
       if (o.dials.length !== o.answer.length || (o.labels && o.labels.length !== o.dials.length)) err(`${id}: dial length mismatch`);
       o.answer.forEach((a, d) => { if (!(a >= 0 && a < o.dials[d].length)) err(`${id}: dial answer out of range`); });
+    } else if (o.type === "sort") {
+      if (!o.bins || o.bins.length < 2 || !o.items || o.items.length < 3 || o.items.some(([t, k]) => !t || !(k >= 0 && k < o.bins.length))) err(`${id}: bad sort items`);
+      if (o.bins && o.bins.some((b, k) => !o.items.some(it => it[1] === k))) err(`${id}: a sort bin has no items`);
+    } else if (o.type === "tap") {
+      if (!o.tapSvg || !Array.isArray(o.answer) || !o.answer.length) err(`${id}: tap question has no correct target`);
+      else if ((o.tapSvg.match(/data-t="/g) || []).length < 3) err(`${id}: tap question needs at least 3 targets`);
     } else err(`${id}: unknown type ${o.type}`);
+      if (o.gch && (o.gch.length !== 4)) err(`${id}: graph choices need 4 graphs`);
   });
   [[1, 2], [2, 3], [3, 4], [4, 5], [5, 6]].forEach(([lo, hi]) => { const n = qs.filter(q => { const b = Array.isArray(q) ? q[0] : q.b; return b >= lo && b <= hi; }).length; if (n < 2) err(`${r.id}: only ${n} questions for Bloom ${lo}-${hi}`); });
   const tagN = (SKILL_TAGS[r.id] || "").length;

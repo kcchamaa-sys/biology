@@ -88,7 +88,7 @@ function startBookmarkRun(ti) {
       RV.done++; const b = bmStore()[k]; if (b) { b.n++; if (ok) b.ok++; }
       if (ok) { RV.right++; SFX.right(); } else { SFX.wrong(); noteMistake(r.id, p.id); }
       save();
-      document.getElementById("bmFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("chiikawa", "Wahoo! Got it!", "happy") : say("chiikawa", "Not yet... let's read why. 🥺", "cry")}<p>${esc(p.explain)}</p>${trapsHtml(p)}${p.tip ? `<p class="tip"><b>📝 Exam tip:</b> ${esc(p.tip)}</p>` : ""}
+      document.getElementById("bmFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("chiikawa", "Wahoo! Got it!", "happy") : say("chiikawa", "Not yet... let's read why. 🥺", "cry")}<p>${esc(p.explain)}</p>${trapsHtml(p)}${p.tip ? `<p class="tip"><b>📝 Top tip:</b> ${esc(p.tip)}</p>` : ""}
         <div class="row"><button class="btn big" id="bmNext">${RV.at + 1 < RV.keys.length ? "Next →" : "Finish"}</button></div></div>`;
       document.getElementById("bmNext").onclick = () => { SFX.tap(); RV.at++; next(); };
       document.getElementById("bmNext").focus({ preventScroll: true });
