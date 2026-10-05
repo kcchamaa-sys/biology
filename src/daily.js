@@ -39,20 +39,16 @@ function streakCheck() {
 function markStudied() {
   const t = today(); if (S.last_study_day === t) return false;
   const gap = S.last_study_day ? dayNum(t) - dayNum(S.last_study_day) : 99;
+  const prev = gap === 1 ? S.current_streak : 0;
   S.current_streak = gap === 1 && S.current_streak > 0 ? S.current_streak + 1 : 1;
   S.last_study_day = t; S.longest_streak = Math.max(S.longest_streak || 0, S.current_streak);
   S.study_days = S.study_days.filter(d => dayNum(t) - dayNum(d) < 14).concat(t);
-  const ms = STREAK_MILESTONES.includes(S.current_streak), sc = streakCapsuleFor(S.current_streak);
-  if (sc) { S.coll.pending += sc; setTimeout(() => toast(`🎁 Streak reward: +${sc} capsule${sc > 1 ? "s" : ""} for day ${S.current_streak}!`), 3400); }
-  setTimeout(() => streakPop(S.current_streak, ms), 900);
-  if (S.lucky && S.lucky.day !== t) setTimeout(() => toast("🎰 Your daily Lucky Capsule is unlocked! Draw it on 🏠 Home."), 5200);
+  const n = S.current_streak, sc = streakCapsuleFor(n), after = [];
+  if (sc) { S.coll.pending += sc; after.push(() => toast(`🎁 Streak reward: +${sc} capsule${sc > 1 ? "s" : ""} for day ${n}!`)); }
+  if (S.lucky && S.lucky.day !== t) after.push(() => setTimeout(() => toast("🎰 Your daily Lucky Capsule is unlocked! Draw it on 🏠 Home."), sc ? 2600 : 0));
+  // The full-screen streak ceremony plays once, after the result screen has appeared.
+  setTimeout(() => streakCeremony(n, prev, after), 900);
   return true;
-}
-function streakPop(n, big) {
-  SFX.fanfare(); if (big) confetti(200);
-  const d = document.createElement("div"); d.className = "spop" + (big ? " big" : ""); d.setAttribute("role", "status");
-  d.innerHTML = `<span class="sflame" aria-hidden="true">🔥</span><b>${n}</b><span>${big ? `${n}-day milestone!` : n === 1 ? "Streak started!" : "day streak!"}</span>`;
-  document.body.appendChild(d); setTimeout(() => d.remove(), big ? 3200 : 2300);
 }
 function buyFreeze() {
   if (S.coins < FREEZE_PRICE || S.streak_shields >= FREEZE_MAX) return;
@@ -80,11 +76,12 @@ function riskCardHtml() {
   const mins = Math.max(0, Math.round((end - now) / 60000)), h = Math.floor(mins / 60), m = mins % 60;
   const urgent = S.current_streak > 0 && (h < 3 || S.streak_shields === 0);
   const just = S.freeze_used && S.freeze_used.day === today();
+  // One compact line under the Next step card (the Next step card already has the Enter button).
   const line = S.current_streak > 0
-    ? `We haven't studied today yet! ⏳ <b>${h} h ${m} min</b> left to keep our <b>${S.current_streak}-day</b> streak. ${S.streak_shields ? `❄️ ${S.streak_shields} freeze${S.streak_shields > 1 ? "s" : ""} left.` : "<b>No freezes left!</b>"}${just ? " (A freeze was just used for the days we missed.)" : ""}`
-    : "Let's start a new streak today! Finish <b>one</b> small activity. 🌱";
-  return `<section class="card riskcard ${urgent ? "urgent" : ""}"><div class="say"><div class="av">${avatar("chiikawa", urgent ? "shock" : "normal")}</div><div class="bubble">${line}</div></div>
-    <div class="row"><button class="btn" id="rkGo">${isStudy() ? "📖 Quick study" : "▶ Next stage"}</button><button class="btn yellow" id="rkRush">⚡ 60-second Rush</button></div></section>`;
+    ? `<b>⏳ ${h} h ${m} min</b> to keep your <b>${S.current_streak}-day</b> streak · ${S.streak_shields ? `❄️ ×${S.streak_shields}` : "<b>no freezes!</b>"}${just ? " · a freeze was just used" : ""}`
+    : "🌱 Finish <b>one</b> activity to start a streak";
+  return `<section class="card riskcard ${urgent ? "urgent" : ""}"><div class="rkrow"><div class="av" aria-hidden="true">${avatar("chiikawa", urgent ? "shock" : "normal")}</div><div class="rkline">${line}</div>
+    <button class="btn yellow small" id="rkRush" aria-label="60-second Rush">⚡ Rush</button></div></section>`;
 }
 function wireDailyCards() {
   const fi = document.getElementById("frzInfo"); if (fi) fi.onclick = () => { SFX.tap(); openFreezeInfo(); };

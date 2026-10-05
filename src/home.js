@@ -19,6 +19,20 @@ function renderNav(active) {
 }
 const goTab = t => { homeTab = t; renderMap(); window.scrollTo({ top: 0 }); };
 
+/* Fold bars: a secondary section collapses to one tappable bar (icon · short title · one "peek" number · chevron),
+   so each screen leads with its one next step. Open/closed is remembered per student (browser storage). */
+const FOLD_KEY = "bsp_folds";
+function foldState() { try { return JSON.parse(localStorage.getItem(FOLD_KEY) || "{}") || {}; } catch (e) { return {}; } }
+function foldHtml(id, { icon, title, peek = "", open = false, cls = "" }, body) {
+  const st = foldState(), isOpen = Object.prototype.hasOwnProperty.call(st, id) ? !!st[id] : open;
+  return `<details class="fold ${cls}" data-fold="${id}" ${isOpen ? "open" : ""}><summary><span class="fold-ic" aria-hidden="true">${icon}</span><span class="fold-t">${title}</span>${peek ? `<span class="fold-peek">${peek}</span>` : ""}<span class="fold-chev" aria-hidden="true"></span></summary><div class="fold-body">${body}</div></details>`;
+}
+function wireFolds(root) {
+  (root || document).querySelectorAll("details.fold[data-fold]").forEach(d => d.addEventListener("toggle", () => {
+    const st = foldState(); st[d.dataset.fold] = d.open; try { localStorage.setItem(FOLD_KEY, JSON.stringify(st)); } catch (e) {}
+  }));
+}
+
 /* Escape mode (timer, penalties, spooky incidents) or Study mode (calm, no timer, no penalties) */
 const isStudy = () => S.playMode === "study";
 function modeSwitch() {
@@ -70,32 +84,33 @@ function renderMap() {
   renderNav(homeTab);
   ({ home: wireHome, stages: wireStages, play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards, stats: wireStats })[homeTab]();
   $app.querySelectorAll(".subnav [data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });
+  wireFolds($app);
 }
 
 /* ----- 🏠 Home ----- */
 function homeHtml() {
-  const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni], chestReady = S.last_chest_date !== today(), T = nr && TOPICS[nr.t];
-  const mult = streakMult();
-  return `${capsuleAdHtml()}<div class="homegrid">
+  const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni], T = nr && TOPICS[nr.t], m = dailyMission();
+  // 1) the daily capsule ad, 2) the ONE next step, 3) the pal room, 4) everything else folded into bars
+  return `${capsuleAdHtml()}
+    ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>${esc(palName())} is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Mochi gets better.</div></div></div>
+      <button class="btn big" id="goClinic">🩺 Open the medicine cabinet</button></section>` : ""}
+    <section class="card nextcard">
+      <span class="kicker">✨ Next step</span>
+      ${nr ? `<h2>${T.icon} ${esc(nr.name)}</h2><p class="small muted" style="margin:0">Topic ${T.no} · ${nr.boss ? "⚔️ Boss stage" : `Stage ${nr.s}`} · ${esc(nr.focus)}</p>`
+           : `<h2>🎉 Every stage escaped!</h2><p class="small muted" style="margin:0">Replay any stage in 🗺️ Stages to win 3 stars.</p>`}
+      ${modeSwitch()}
+      <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study it" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">🗺️ All stages</button></div>
+    </section>
+    ${riskCardHtml()}
+    <div class="homegrid">
     <section class="card roomwrap">${roomCard(greeting(), S.completed_rooms.length ? "happy" : "normal")}
-      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" data-go="pals">🍱 Feed & care</button></div>
-      ${healthTipHtml()}</section>
-    <div class="homeside">
-      ${riskCardHtml()}
-      ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>${esc(palName())} is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Mochi gets better.</div></div></div>
-        <button class="btn big" id="goClinic">🩺 Open the medicine cabinet</button></section>` : ""}
-      <section class="card nextcard">
-        <span class="kicker">✨ One small thing today</span>
-        ${nr ? `<h2>${T.icon} ${esc(nr.name)}</h2><p class="small muted" style="margin:0">Topic ${T.no}: ${esc(T.name)} · ${nr.boss ? "⚔️ Boss stage" : `Stage ${nr.s}`} · ${esc(nr.focus)}</p>`
-             : `<h2>🎉 Every stage escaped!</h2><p class="small muted" style="margin:0">Replay any stage in 🗺️ Stages to win 3 stars.</p>`}
-        ${modeSwitch()}
-        <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study it" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">🗺️ All stages</button></div>
-      </section>
-      ${missionCardHtml()}
-      ${homeBoardHtml()}
-      ${featuredHtml()}
-      ${streakCardHtml()}
-      ${chatCardHtml()}
+      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" data-go="pals">🍱 Feed & care</button></div></section>
+    <div class="homeside folds">
+      ${foldHtml("h-streak", { icon: "🔥", title: "My streak", peek: `${S.current_streak} 🔥 · ${"❄️".repeat(S.streak_shields) || "0 ❄️"}` }, streakCardHtml())}
+      ${foldHtml("h-mission", { icon: "🎯", title: "Daily mission", peek: m.done ? "✓ Done" : m.n ? `${m.prog || 0}/${m.n}` : "" }, missionCardHtml())}
+      ${foldHtml("h-board", { icon: "🏆", title: "Class leaderboard", peek: `${dedication()} pts` }, homeBoardHtml())}
+      ${foldHtml("h-feat", { icon: "⭐", title: "Featured pal" }, featuredHtml())}
+      ${foldHtml("h-tips", { icon: "💡", title: "Tips & fun facts" }, healthTipHtml() + chatCardHtml())}
     </div></div>`;
 }
 function wireHome() {
@@ -146,11 +161,10 @@ function playHtml() {
         <button class="mode" id="mLb"><h3>🏆 Class leaderboard</h3><span class="muted small">${signedIn() ? "Effort, streak and collection in your class." : "For signed-in classmates. Guests play privately."}</span><span class="small">Your effort points: <b>${dedication()}</b></span></button>
       </div>
     </section>
-    <details class="card">
-      <summary><h2 style="display:inline">📈 Biology mastery</h2> <span class="small muted">(tap to open)</span></summary>
+    ${foldHtml("pr-mastery", { icon: "📈", title: "Biology mastery", peek: `${Math.round(TOPICS.reduce((a, T) => a + S.bio_mastery[T.id], 0) / TOPICS.length)}%` }, `
       <p class="small muted">Mastery goes up when you answer a question right on the first try without a hint. Replay cleared stages to master them all!</p>
       <div class="mastery">${TOPICS.map(T => { const v = S.bio_mastery[T.id]; return `<div><div class="row" style="justify-content:space-between"><b class="small">${TOPIC_LABELS[T.id]}</b><b class="small">${v}%</b></div><div class="tprog"><i style="width:${v}%"></i></div></div>`; }).join("")}</div>
-    </details>`;
+    `)}`;
 }
 function wirePlay() {
   document.getElementById("mRush").onclick = () => { SFX.init(); SFX.tap(); rushIntro(); };

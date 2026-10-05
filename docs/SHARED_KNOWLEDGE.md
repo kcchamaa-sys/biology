@@ -44,6 +44,16 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 
 ## Cross-project log (newest first)
 
+- 2026-10-05 (biology): **Streak-up ceremony** (`src/streakfx.js`, called from `markStudied`): a full-screen, tap-to-skip overlay that follows the game-motion-fx recipe.
+  - Beats: charge-up embers → a CSS **odometer** (one digit strip per column, staggered `translateY`, so 99 → 100 rolls) → boom (ring + burst).
+  - Milestones add 2 impact frames, rays, a title slam and confetti. Reward toasts are queued until the overlay closes.
+  - An original kawaii SVG flame evolves at 7/30/100 days. Reduced motion shows the final card only.
+  - Lesson: a state class named `.week` picked up the Home `.week span` styles, so prefix FX state classes (`sfx-`).
+
+  **Fold bars** (`foldHtml` / `wireFolds` in `src/home.js`): `<details class="fold">` with icon · title · one peek number · chevron. Open state is stored per student in `localStorage` (`bsp_folds`).
+  - Home now leads with one next step, and secondary cards fold. Pals fold by rarity (the first incomplete group is open), and the Lab quick check and mastery chart fold too.
+  - Home went from 3632 to 1947 px at 360 px wide. Reusable in s1/s3 for any long dashboard.
+
 - 2026-10-03 (biology): **Skill strands, one theme per lock** (`src/skills.js` + `pickRun` in `src/engine.js`). Every question has a `skill`: `word | concept | see | data | invest`. An explicit field wins; otherwise `skillOf()` tags it with a heuristic (spelling → word; graph svg or table → data; other svg → see; plan/fair test/variable/repeat/conclusion/evaluate → invest; else concept) and reports an `unsure` reason. The 5 locks are Words → Concepts → See it → Data → Investigate, 3 questions each, climbing Bloom inside the lock. Spelling appears only in lock 1. A short strand borrows from `SKILL_NEAR`, records the gap in `SKILL_GAPS` and shows a "stand-in" tag. A lock shows its label only when the stage has ≥3 real questions of that skill. Pass 1 fills every lock from its own strand before pass 2 borrows, so one lock never starves another. Lock 1 never repeats a term (spell `sN` and spellmc `mN` share N). Every bank question is now **hand-reviewed** by what the student has to DO, and stored as `SKILL_TAGS` (one letter per question per stage, in bank order: c/s/d/i). The bank's data and order never change, and the regex is only a fallback for new, untagged questions (`check_content --unsure` lists them). Lesson: keyword tagging mislabels "X says… evaluate" items as investigation and lab scenarios as concepts; tag by the task, using a "cover the picture/data" test. `tools/check_content.js` prints per-stage skill counts, warns below 4 see/data/invest, ranks the 10 biggest gaps, and lists unsure tags with `--unsure`. Question ids stay append-only (progress keys are `room:qN`). Reusable in s1/s3 as a coverage audit for any Bloom-tagged bank.
 
 - 2026-10-03 (s1science → all): **Design skills** saved in `.claude/skills/` (this hub and s1science), loaded automatically by Claude Code in those repos:

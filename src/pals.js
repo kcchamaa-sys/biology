@@ -317,8 +317,18 @@ function palsHtml() {
     <section class="card palcoll"><div class="collhead"><h2 style="margin:0">Collect every Study Pal!</h2><span class="pill">${own} / ${PALS.length}</span></div>
       <div class="tprog rainbow"><i style="width:${Math.round(100 * own / PALS.length)}%"></i></div>
       <div class="palstrip" aria-hidden="true">${list.map(P => `<span class="${S.pals[P.id] || !palMystery(P) ? "" : "sil"}">${palFig(P.id, "happy")}</span>`).join("")}</div>
-      <div class="palgrid">${list.map(P => palCard(P)).join("")}</div>
-      <p class="small muted" style="margin:0">Only your <b>active</b> pal's perk works. Common, rare and epic pals: reach the goal, then adopt with 🌰. Legendary pals come by themselves after a very hard goal. Mythic pals can only be adopted with 🌰.</p></section></div>`;
+      ${palRarityFolds()}
+      ${foldHtml("p-how", { icon: "❓", title: "How do I get pals?" }, `<p class="small" style="margin:0">Only your <b>active</b> pal's perk works. Common, rare and epic pals: reach the goal, then adopt with 🌰. Legendary pals come by themselves after a very hard goal. Mythic pals can only be adopted with 🌰.</p>`)}</section></div>`;
+}
+// The collection grid, one fold bar per rarity (easiest first); the first group with pals left to get starts open.
+const PAL_RAR_NAME = { common: "Common", rare: "Rare", epic: "Epic", legend: "Legendary", myth: "Mythic" };
+function palRarityFolds() {
+  const order = ["common", "rare", "epic", "legend", "myth"];
+  const firstOpen = order.find(r => PALS.some(P => P.rar === r && !S.pals[P.id]));
+  return order.map(r => { const g = PALS.filter(P => P.rar === r); if (!g.length) return "";
+    const own = g.filter(P => S.pals[P.id]).length;
+    return foldHtml("p-" + r, { icon: `<i class="fold-rd rd-${r}"></i>`, title: PAL_RAR_NAME[r], peek: `${own}/${g.length}`, open: r === firstOpen, cls: "fold-flat" }, `<div class="palgrid">${g.map(P => palCard(P)).join("")}</div>`);
+  }).join("");
 }
 const palMystery = P => !S.pals[P.id] && (P.rar === "legend" || P.rar === "myth");
 function palCard(P) {

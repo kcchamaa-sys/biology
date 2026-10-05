@@ -30,6 +30,7 @@ function renderSims(tab) {
     <div id="simBody"></div>`;
   $app.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { SFX.tap(); renderSims(b.dataset.sim); });
   ({ lung: lungSim, pupil: pupilSim, lens: lensSim, ear: earSim, membrane: membraneSim })[simTab](document.getElementById("simBody"));
+  wireFolds($app);
   window.scrollTo({ top: 0 });
 }
 /* One animation loop per open simulation; it stops itself when the page changes */
@@ -54,9 +55,9 @@ const SIM_Q = {
 };
 function simQuiz(id) {
   S.simq = S.simq || {};
-  return `<section class="card"><h3>🧠 Quick check</h3>${SIM_Q[id].map(([q, ch, why], i) => {
+  return `<section class="card simqcard">${foldHtml("lab-q", { icon: "🧠", title: "Quick check", peek: `${SIM_Q[id].filter((_, i) => S.simq[id + i]).length}/${SIM_Q[id].length} ✓`, cls: "fold-flat" }, `${SIM_Q[id].map(([q, ch, why], i) => {
     const order = shuffle(ch.map((_, k) => k)), done = S.simq[id + i];
-    return `<div class="simq" data-q="${i}"><p><b>${i + 1}. ${esc(q)}</b></p><div class="choices">${order.map((k, n) => `<button class="choice" data-sq="${id}|${i}|${k}"><b>${"ABCD"[n]}</b><span>${esc(ch[k])}</span></button>`).join("")}</div><div class="small sqfb" id="sqfb${i}">${done ? "✅ Already answered correctly." : ""}</div></div>`; }).join("")}</section>`;
+    return `<div class="simq" data-q="${i}"><p><b>${i + 1}. ${esc(q)}</b></p><div class="choices">${order.map((k, n) => `<button class="choice" data-sq="${id}|${i}|${k}"><b>${"ABCD"[n]}</b><span>${esc(ch[k])}</span></button>`).join("")}</div><div class="small sqfb" id="sqfb${i}">${done ? "✅ Already answered correctly." : ""}</div></div>`; }).join("")}`)}</section>`;
 }
 function wireSimQuiz(root) {
   root.querySelectorAll("[data-sq]").forEach(b => b.onclick = () => {

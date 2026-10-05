@@ -659,6 +659,7 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .frzbig { font-size: 2.4rem; text-align: center; letter-spacing: 4px; }
 .week span.frz { background: #CFE9FF; color: #3C78B8; }
 .riskcard { background: linear-gradient(135deg, #FFF6DA, #FFE9F0); }
+.riskcard { padding: 10px 12px; } .rkrow { display: flex; align-items: center; gap: 10px; } .rkrow .av { flex: none; width: 46px; } .rkline { flex: 1; min-width: 0; font-size: .9rem; line-height: 1.35; } .rkrow .btn { flex: none; }
 .riskcard.urgent { background: linear-gradient(135deg, #FFE1E1, #FFD0D8); animation: riskpulse 1.6s ease-in-out infinite; }
 @keyframes riskpulse { 50% { box-shadow: var(--shadow), 0 0 0 6px rgba(255,107,107,.25); } }
 .missioncard { background: linear-gradient(135deg, #EAF6FF, #F4EEFF); gap: 8px; }
@@ -666,10 +667,100 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .missioncard .tprog i { background: linear-gradient(180deg, #CDE0FF, var(--blue) 55%, #7FA9EE); }
 .healthtip { display: flex; gap: 8px; align-items: flex-start; background: #EFFAF2; border: 2px dashed #9ED7AF; border-radius: 14px; padding: 8px 12px; font-size: .86rem; line-height: 1.4; }
 .healthtip > span:first-child { font-size: 1.2rem; }
-.spop { position: fixed; left: 50%; top: 22%; transform: translateX(-50%); z-index: 90; display: grid; justify-items: center; background: #fff; border: var(--line); border-radius: 24px; box-shadow: var(--shadow); padding: 14px 26px; animation: spop 2.3s ease-out forwards; pointer-events: none; text-align: center; }
-.spop b { font-size: 2.6rem; line-height: 1; } .spop .sflame { font-size: 2.4rem; animation: capbob 1s ease-in-out infinite; }
-.spop.big { background: linear-gradient(160deg, #FFF3B0, #FFD6E0); animation-duration: 3.2s; } .spop.big b { font-size: 3.4rem; }
-@keyframes spop { 0% { transform: translate(-50%, 30px) scale(.6); opacity: 0; } 12% { transform: translate(-50%, 0) scale(1.08); opacity: 1; } 20% { transform: translate(-50%, 0) scale(1); } 85% { opacity: 1; } 100% { transform: translate(-50%, -20px); opacity: 0; } }
+/* Fold bars (foldHtml in src/home.js): secondary sections collapse to icon · title · peek number · chevron */
+.fold { background: #fff; border: var(--line); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; min-width: 0; }
+.fold > summary { list-style: none; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 14px; cursor: pointer; font-weight: 900; -webkit-tap-highlight-color: transparent; }
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary:focus-visible { outline: 3px solid var(--blue); outline-offset: -3px; border-radius: 18px; }
+.fold-ic { flex: none; width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: #FFF3D6; font-size: 1.1rem; }
+.fold-t { flex: 1; min-width: 0; font-size: 1rem; line-height: 1.2; }
+.fold-peek { flex: none; font-size: .82rem; font-weight: 800; background: #F4EEE8; color: var(--ink); border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.fold-chev { flex: none; width: 10px; height: 10px; margin: 0 4px 4px 2px; border-right: 3px solid currentColor; border-bottom: 3px solid currentColor; opacity: .55; transform: rotate(45deg); transition: transform .2s; }
+.fold[open] > summary .fold-chev { transform: rotate(-135deg); margin-bottom: -4px; }
+.fold[open] > summary { border-bottom: 2px dashed #EEE3D8; }
+.fold-body { padding: 10px 12px 12px; min-width: 0; animation: foldin .25s ease-out; }
+@keyframes foldin { from { opacity: 0; transform: translateY(-6px); } }
+.fold-body > .card { margin: 0; box-shadow: none; border: 0; }
+.homeside.folds { gap: 10px; }
+.fold-in { background: rgba(255,255,255,.16); border: 2px solid rgba(255,255,255,.45); box-shadow: none; color: inherit; margin-top: 10px; }
+.fold-in > summary { min-height: 46px; } .fold-in[open] > summary { border-bottom-color: rgba(255,255,255,.35); }
+.fold-in .fold-ic { background: rgba(255,255,255,.28); } .fold-in .fold-peek { background: rgba(255,255,255,.3); color: inherit; }
+.fold-in .fold-body { padding: 6px 4px 8px; }
+.fold-flat { border: 2px solid #EFE6DC; box-shadow: none; border-radius: 16px; margin-top: 8px; }
+.fold-flat > summary { min-height: 46px; }
+.simqcard { padding: 10px; } .simqcard > .fold-flat { margin-top: 0; border: 0; }
+.fold-rd { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--ink); display: block; }
+.rd-common { background: #D9D0C6; } .rd-rare { background: #7CC0FF; } .rd-epic { background: #B98AFF; } .rd-legend { background: #FFC15E; } .rd-myth { background: linear-gradient(135deg, #FF7AD9, #7B4DFF); }
+@media (prefers-reduced-motion: reduce) { .fold-body { animation: none; } .fold-chev { transition: none; } }
+/* 🔥 Streak-up ceremony (src/streakfx.js) */
+.sfx-ov { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; cursor: pointer; overflow: hidden; transition: opacity .35s; -webkit-tap-highlight-color: transparent; }
+.sfx-ov.out { opacity: 0; }
+.sfx-dim { position: absolute; inset: 0; z-index: 0; background: radial-gradient(circle at 50% 42%, rgba(70,40,90,.93), rgba(20,12,34,.97)); opacity: 0; transition: opacity .35s; }
+.sfx-ov.in .sfx-dim, .sfx-ov.final .sfx-dim { opacity: 1; }
+.sfx-rays { position: absolute; z-index: 1; width: 160vmax; height: 160vmax; left: 50%; top: 40%; margin: -80vmax 0 0 -80vmax; opacity: 0; transition: opacity .6s;
+  background: repeating-conic-gradient(from 0deg, rgba(255,230,140,.14) 0 7deg, transparent 7deg 20deg); -webkit-mask: radial-gradient(circle, #000 8%, transparent 55%); mask: radial-gradient(circle, #000 8%, transparent 55%); animation: sfxspin 18s linear infinite; }
+.sfx-ov.boom .sfx-rays, .sfx-ov.final .sfx-rays { opacity: 1; }
+@keyframes sfxspin { to { transform: rotate(360deg); } }
+.sfx-flash { position: absolute; inset: 0; z-index: 2; opacity: 0; pointer-events: none; }
+.sfx-ov.imp1 .sfx-flash { opacity: 1; background: #fff; } .sfx-ov.imp2 .sfx-flash { opacity: 1; background: #000; }
+.sfx-ov.imp1 .sfx-stage > :not(.sfx-flame), .sfx-ov.imp2 .sfx-stage > :not(.sfx-flame) { visibility: hidden; }
+.sfx-ov.imp1 .sfx-flame { filter: brightness(0); z-index: 3; } .sfx-ov.imp2 .sfx-flame { filter: brightness(0) invert(1); z-index: 3; }
+.sfx-ov.imp1 .sfx-stage, .sfx-ov.imp2 .sfx-stage { z-index: 3; }
+.sfx-stage { position: relative; z-index: 3; width: min(340px, calc(100vw - 32px)); display: grid; justify-items: center; gap: 4px; color: #FFF8EC; text-align: center; padding-bottom: 6px; }
+.sfx-flame { position: relative; width: 150px; height: 160px; transform: scale(.72); filter: brightness(.8) saturate(.8); transition: transform .3s, filter .3s; }
+.sfx-ov.in:not(.boom):not(.final) .sfx-flame { animation: sfxcharge .12s linear infinite alternate; }
+@keyframes sfxcharge { from { translate: -2px 0; } to { translate: 2px 1px; } }
+.sfx-ov.boom .sfx-flame, .sfx-ov.final .sfx-flame { transform: scale(1); filter: drop-shadow(0 0 22px rgba(255,190,80,.75)); animation: sfxpop .7s cubic-bezier(.2,1.6,.4,1); }
+.sfx-ov.final .sfx-flame { animation: none; }
+@keyframes sfxpop { 0% { transform: scale(.72); } 45% { transform: scale(1.3); } 100% { transform: scale(1); } }
+.sfx-old, .sfx-new { position: absolute; inset: 0; } .sfx-old { display: none; }
+.sfx-ov.evolve .sfx-old { display: block; } .sfx-ov.evolve .sfx-new { opacity: 0; transform: scale(.4); transition: opacity .25s, transform .5s cubic-bezier(.2,1.6,.4,1); }
+.sfx-ov.evolve.boom .sfx-old, .sfx-ov.evolve.final .sfx-old { opacity: 0; transform: scale(1.6); transition: opacity .3s, transform .4s; }
+.sfx-ov.evolve.boom .sfx-new, .sfx-ov.evolve.final .sfx-new { opacity: 1; transform: none; }
+.flamesvg { width: 100%; height: 100%; overflow: visible; }
+.flamesvg .fl-tongues { transform-origin: 50% 95%; transform-box: fill-box; animation: flflick 1.1s ease-in-out infinite; }
+.flamesvg .fl-mid { transform-origin: 50% 100%; transform-box: fill-box; animation: flflick 0.8s ease-in-out infinite reverse; }
+@keyframes flflick { 0%, 100% { transform: scale(1, 1) skewX(0); } 35% { transform: scale(.97, 1.05) skewX(-2deg); } 70% { transform: scale(1.02, .98) skewX(2deg); } }
+.fl-myth { filter: drop-shadow(0 0 10px #FF8BE5) drop-shadow(0 0 22px #9B7BFF); }
+.fl-blue { filter: drop-shadow(0 0 10px #7FD8FF); }
+.sfx-embers, .sfx-burst, .sfx-ring { position: absolute; left: 50%; top: 80px; width: 0; height: 0; pointer-events: none; }
+.sfx-embers i { position: absolute; width: 10px; height: 10px; margin: -5px; border-radius: 50%; background: radial-gradient(#FFF6C8, #FFB13B 60%, transparent 70%); opacity: 0; }
+.sfx-ov.in:not(.boom):not(.final) .sfx-embers i { animation: sfxember .9s ease-in var(--d) forwards; }
+@keyframes sfxember { 0% { transform: rotate(var(--a)) translateX(170px) scale(1.2); opacity: 0; } 25% { opacity: 1; } 100% { transform: rotate(var(--a)) translateX(0) scale(.3); opacity: 0; } }
+.sfx-ring { width: 20px; height: 20px; margin: -10px; border-radius: 50%; border: 3px solid #FFE08A; box-shadow: 0 0 16px #FFC94D, inset 0 0 10px #FFC94D; opacity: 0; }
+.sfx-ov.boom:not(.final) .sfx-ring { animation: sfxring .9s ease-out forwards; } .sfx-ov.boom:not(.final) .sfx-ring.r2 { animation-delay: .18s; }
+@keyframes sfxring { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(16); opacity: 0; } }
+.sfx-burst i { position: absolute; width: 5px; height: 24px; margin: -12px -2.5px; border-radius: 4px; background: linear-gradient(#FFF6C8, #FF9F1C); opacity: 0; }
+.sfx-ov.boom:not(.final) .sfx-burst i { animation: sfxburst .75s cubic-bezier(.1,.7,.3,1) forwards; }
+@keyframes sfxburst { 0% { transform: rotate(var(--a)) translateY(-30px) scaleY(.4); opacity: 1; } 100% { transform: rotate(var(--a)) translateY(-160px) scaleY(1); opacity: 0; } }
+.sfx-num { font-size: 4.6rem; font-weight: 900; line-height: 1; letter-spacing: .02em; color: #fff; text-shadow: 0 4px 0 #5B3A29, 0 0 18px rgba(255,200,90,.6); display: flex; margin-top: -6px; }
+.odo-col { display: inline-block; height: 1em; overflow: hidden; }
+.odo-strip { display: flex; flex-direction: column; transition: transform .55s cubic-bezier(.2,1.35,.45,1) calc(var(--i) * 250ms); }
+.odo-strip i { font-style: normal; display: block; height: 1em; line-height: 1em; }
+.sfx-ov.roll .odo-strip, .sfx-ov.final .odo-strip { transform: translateY(calc(var(--n) * -1em)); }
+.sfx-unit { font-weight: 800; font-size: 1rem; letter-spacing: .12em; text-transform: uppercase; color: #FFD98A; }
+.sfx-title { font-size: 1.7rem; font-weight: 900; line-height: 1.1; opacity: 0; margin-top: 2px;
+  background: linear-gradient(90deg, #FFE27A, #FF9FD0, #9FE3FF); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 2px 0 #5B3A29); }
+.sfx-ov:not(.big) .sfx-title { font-size: 1.25rem; }
+.sfx-ov.boom .sfx-title, .sfx-ov.final .sfx-title { opacity: 1; animation: sfxslam .45s cubic-bezier(.2,1.5,.4,1); }
+.sfx-ov.final .sfx-title { animation: none; }
+@keyframes sfxslam { 0% { transform: scale(1.8) skewX(-12deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.sfx-evo { font-weight: 800; font-size: .9rem; color: #FFF; background: rgba(255,255,255,.14); border: 2px solid rgba(255,255,255,.4); border-radius: 999px; padding: 2px 12px; opacity: 0; }
+.sfx-ov.boom .sfx-evo, .sfx-ov.final .sfx-evo { opacity: 1; transition: opacity .4s .3s; }
+.sfx-week { display: flex; gap: 6px; margin-top: 8px; }
+.sfx-dot { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: .85rem; font-weight: 900; color: #5B3A29; background: rgba(255,255,255,.16); border: 2px solid rgba(255,255,255,.35); transform: scale(0); }
+.sfx-dot.on { background: linear-gradient(160deg, #FFE08A, #FFA62B); border-color: #5B3A29; }
+.sfx-dot.today { width: 38px; height: 38px; margin-top: -3px; box-shadow: 0 0 0 4px rgba(255,200,90,.35), 0 0 18px #FFB13B; }
+.sfx-ov.sfx-wk .sfx-dot, .sfx-ov.final .sfx-dot { transform: scale(1); transition: transform .35s cubic-bezier(.2,1.6,.4,1) calc(var(--k) * 90ms); }
+.sfx-next, .sfx-tap { opacity: 0; transition: opacity .4s; } .sfx-next { color: #F3E6FF; margin-top: 4px; }
+.sfx-tap { font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.7); margin-top: 6px; }
+.sfx-ov.final .sfx-next, .sfx-ov.final .sfx-tap { opacity: 1; } .sfx-ov.final .sfx-tap { animation: sfxblink 1.6s ease-in-out infinite; }
+@keyframes sfxblink { 50% { opacity: .35; } }
+.sfx-pal { position: absolute; left: -6px; top: 92px; width: 78px; opacity: 0; transform: translateY(20px); transition: opacity .3s, transform .5s cubic-bezier(.2,1.6,.4,1); }
+.sfx-pal svg { width: 100%; height: auto; }
+.sfx-ov.boom .sfx-pal, .sfx-ov.final .sfx-pal { opacity: 1; transform: none; animation: capbob 1s ease-in-out infinite; }
+.sfx-ov.calm *, .sfx-ov.calm { animation: none !important; transition: none !important; }
+@media (max-height: 560px) { .sfx-flame { width: 110px; height: 118px; } .sfx-embers, .sfx-burst, .sfx-ring { top: 60px; } .sfx-num { font-size: 3.6rem; } .sfx-pal { top: 60px; } }
 .whyq { background: var(--cream-2); border: 2px dashed #E5DCC9; border-radius: 14px; padding: 10px 12px; }
 .whycard .choices { grid-template-columns: 1fr; }
 .zzz text { animation: zz 2.4s ease-in-out infinite; } .zzz text:nth-child(2) { animation-delay: .4s; } .zzz text:nth-child(3) { animation-delay: .8s; }
@@ -761,7 +852,7 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .petreveal .aura { position: absolute; inset: 6% 10%; border-radius: 50%; z-index: -1; animation: spin 5s linear infinite; }
 .petreveal.legend .aura { background: conic-gradient(rgba(255,210,60,.0), rgba(255,210,60,.7), rgba(255,210,60,0), rgba(255,240,170,.7), rgba(255,210,60,0)); filter: blur(10px); }
 .petreveal.epic .aura { background: conic-gradient(#FFB7C5, #FDFFB6, #B9F3C9, #A0C4FF, #C9A0FF, #FFB7C5); filter: blur(14px); opacity: .7; }
-@media (prefers-reduced-motion: reduce) { .riskcard.urgent, .lgsky span, .lgsky .orb, .island, .island .ifig, .spop, .almost, .petreveal .aura, .acctbtn.warn { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .riskcard.urgent, .lgsky span, .lgsky .orb, .island, .island .ifig, .almost, .petreveal .aura, .acctbtn.warn { animation: none !important; } }
 
 /* ================= 🎨 Icons (replace emoji) ================= */
 .icw { display: inline-flex; vertical-align: -0.2em; line-height: 1; }
@@ -5788,8 +5879,18 @@ function palsHtml() {
     <section class="card palcoll"><div class="collhead"><h2 style="margin:0">Collect every Study Pal!</h2><span class="pill">${own} / ${PALS.length}</span></div>
       <div class="tprog rainbow"><i style="width:${Math.round(100 * own / PALS.length)}%"></i></div>
       <div class="palstrip" aria-hidden="true">${list.map(P => `<span class="${S.pals[P.id] || !palMystery(P) ? "" : "sil"}">${palFig(P.id, "happy")}</span>`).join("")}</div>
-      <div class="palgrid">${list.map(P => palCard(P)).join("")}</div>
-      <p class="small muted" style="margin:0">Only your <b>active</b> pal's perk works. Common, rare and epic pals: reach the goal, then adopt with 🌰. Legendary pals come by themselves after a very hard goal. Mythic pals can only be adopted with 🌰.</p></section></div>`;
+      ${palRarityFolds()}
+      ${foldHtml("p-how", { icon: "❓", title: "How do I get pals?" }, `<p class="small" style="margin:0">Only your <b>active</b> pal's perk works. Common, rare and epic pals: reach the goal, then adopt with 🌰. Legendary pals come by themselves after a very hard goal. Mythic pals can only be adopted with 🌰.</p>`)}</section></div>`;
+}
+// The collection grid, one fold bar per rarity (easiest first); the first group with pals left to get starts open.
+const PAL_RAR_NAME = { common: "Common", rare: "Rare", epic: "Epic", legend: "Legendary", myth: "Mythic" };
+function palRarityFolds() {
+  const order = ["common", "rare", "epic", "legend", "myth"];
+  const firstOpen = order.find(r => PALS.some(P => P.rar === r && !S.pals[P.id]));
+  return order.map(r => { const g = PALS.filter(P => P.rar === r); if (!g.length) return "";
+    const own = g.filter(P => S.pals[P.id]).length;
+    return foldHtml("p-" + r, { icon: `<i class="fold-rd rd-${r}"></i>`, title: PAL_RAR_NAME[r], peek: `${own}/${g.length}`, open: r === firstOpen, cls: "fold-flat" }, `<div class="palgrid">${g.map(P => palCard(P)).join("")}</div>`);
+  }).join("");
 }
 const palMystery = P => !S.pals[P.id] && (P.rar === "legend" || P.rar === "myth");
 function palCard(P) {
@@ -5874,6 +5975,7 @@ function renderSims(tab) {
     <div id="simBody"></div>`;
   $app.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { SFX.tap(); renderSims(b.dataset.sim); });
   ({ lung: lungSim, pupil: pupilSim, lens: lensSim, ear: earSim, membrane: membraneSim })[simTab](document.getElementById("simBody"));
+  wireFolds($app);
   window.scrollTo({ top: 0 });
 }
 /* One animation loop per open simulation; it stops itself when the page changes */
@@ -5898,9 +6000,9 @@ const SIM_Q = {
 };
 function simQuiz(id) {
   S.simq = S.simq || {};
-  return `<section class="card"><h3>🧠 Quick check</h3>${SIM_Q[id].map(([q, ch, why], i) => {
+  return `<section class="card simqcard">${foldHtml("lab-q", { icon: "🧠", title: "Quick check", peek: `${SIM_Q[id].filter((_, i) => S.simq[id + i]).length}/${SIM_Q[id].length} ✓`, cls: "fold-flat" }, `${SIM_Q[id].map(([q, ch, why], i) => {
     const order = shuffle(ch.map((_, k) => k)), done = S.simq[id + i];
-    return `<div class="simq" data-q="${i}"><p><b>${i + 1}. ${esc(q)}</b></p><div class="choices">${order.map((k, n) => `<button class="choice" data-sq="${id}|${i}|${k}"><b>${"ABCD"[n]}</b><span>${esc(ch[k])}</span></button>`).join("")}</div><div class="small sqfb" id="sqfb${i}">${done ? "✅ Already answered correctly." : ""}</div></div>`; }).join("")}</section>`;
+    return `<div class="simq" data-q="${i}"><p><b>${i + 1}. ${esc(q)}</b></p><div class="choices">${order.map((k, n) => `<button class="choice" data-sq="${id}|${i}|${k}"><b>${"ABCD"[n]}</b><span>${esc(ch[k])}</span></button>`).join("")}</div><div class="small sqfb" id="sqfb${i}">${done ? "✅ Already answered correctly." : ""}</div></div>`; }).join("")}`)}</section>`;
 }
 function wireSimQuiz(root) {
   root.querySelectorAll("[data-sq]").forEach(b => b.onclick = () => {
@@ -6667,6 +6769,20 @@ function renderNav(active) {
 }
 const goTab = t => { homeTab = t; renderMap(); window.scrollTo({ top: 0 }); };
 
+/* Fold bars: a secondary section collapses to one tappable bar (icon · short title · one "peek" number · chevron),
+   so each screen leads with its one next step. Open/closed is remembered per student (browser storage). */
+const FOLD_KEY = "bsp_folds";
+function foldState() { try { return JSON.parse(localStorage.getItem(FOLD_KEY) || "{}") || {}; } catch (e) { return {}; } }
+function foldHtml(id, { icon, title, peek = "", open = false, cls = "" }, body) {
+  const st = foldState(), isOpen = Object.prototype.hasOwnProperty.call(st, id) ? !!st[id] : open;
+  return `<details class="fold ${cls}" data-fold="${id}" ${isOpen ? "open" : ""}><summary><span class="fold-ic" aria-hidden="true">${icon}</span><span class="fold-t">${title}</span>${peek ? `<span class="fold-peek">${peek}</span>` : ""}<span class="fold-chev" aria-hidden="true"></span></summary><div class="fold-body">${body}</div></details>`;
+}
+function wireFolds(root) {
+  (root || document).querySelectorAll("details.fold[data-fold]").forEach(d => d.addEventListener("toggle", () => {
+    const st = foldState(); st[d.dataset.fold] = d.open; try { localStorage.setItem(FOLD_KEY, JSON.stringify(st)); } catch (e) {}
+  }));
+}
+
 /* Escape mode (timer, penalties, spooky incidents) or Study mode (calm, no timer, no penalties) */
 const isStudy = () => S.playMode === "study";
 function modeSwitch() {
@@ -6718,32 +6834,33 @@ function renderMap() {
   renderNav(homeTab);
   ({ home: wireHome, stages: wireStages, play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards, stats: wireStats })[homeTab]();
   $app.querySelectorAll(".subnav [data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });
+  wireFolds($app);
 }
 
 /* ----- 🏠 Home ----- */
 function homeHtml() {
-  const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni], chestReady = S.last_chest_date !== today(), T = nr && TOPICS[nr.t];
-  const mult = streakMult();
-  return `${capsuleAdHtml()}<div class="homegrid">
+  const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni], T = nr && TOPICS[nr.t], m = dailyMission();
+  // 1) the daily capsule ad, 2) the ONE next step, 3) the pal room, 4) everything else folded into bars
+  return `${capsuleAdHtml()}
+    ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>${esc(palName())} is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Mochi gets better.</div></div></div>
+      <button class="btn big" id="goClinic">🩺 Open the medicine cabinet</button></section>` : ""}
+    <section class="card nextcard">
+      <span class="kicker">✨ Next step</span>
+      ${nr ? `<h2>${T.icon} ${esc(nr.name)}</h2><p class="small muted" style="margin:0">Topic ${T.no} · ${nr.boss ? "⚔️ Boss stage" : `Stage ${nr.s}`} · ${esc(nr.focus)}</p>`
+           : `<h2>🎉 Every stage escaped!</h2><p class="small muted" style="margin:0">Replay any stage in 🗺️ Stages to win 3 stars.</p>`}
+      ${modeSwitch()}
+      <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study it" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">🗺️ All stages</button></div>
+    </section>
+    ${riskCardHtml()}
+    <div class="homegrid">
     <section class="card roomwrap">${roomCard(greeting(), S.completed_rooms.length ? "happy" : "normal")}
-      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" data-go="pals">🍱 Feed & care</button></div>
-      ${healthTipHtml()}</section>
-    <div class="homeside">
-      ${riskCardHtml()}
-      ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>${esc(palName())} is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Mochi gets better.</div></div></div>
-        <button class="btn big" id="goClinic">🩺 Open the medicine cabinet</button></section>` : ""}
-      <section class="card nextcard">
-        <span class="kicker">✨ One small thing today</span>
-        ${nr ? `<h2>${T.icon} ${esc(nr.name)}</h2><p class="small muted" style="margin:0">Topic ${T.no}: ${esc(T.name)} · ${nr.boss ? "⚔️ Boss stage" : `Stage ${nr.s}`} · ${esc(nr.focus)}</p>`
-             : `<h2>🎉 Every stage escaped!</h2><p class="small muted" style="margin:0">Replay any stage in 🗺️ Stages to win 3 stars.</p>`}
-        ${modeSwitch()}
-        <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study it" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">🗺️ All stages</button></div>
-      </section>
-      ${missionCardHtml()}
-      ${homeBoardHtml()}
-      ${featuredHtml()}
-      ${streakCardHtml()}
-      ${chatCardHtml()}
+      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" data-go="pals">🍱 Feed & care</button></div></section>
+    <div class="homeside folds">
+      ${foldHtml("h-streak", { icon: "🔥", title: "My streak", peek: `${S.current_streak} 🔥 · ${"❄️".repeat(S.streak_shields) || "0 ❄️"}` }, streakCardHtml())}
+      ${foldHtml("h-mission", { icon: "🎯", title: "Daily mission", peek: m.done ? "✓ Done" : m.n ? `${m.prog || 0}/${m.n}` : "" }, missionCardHtml())}
+      ${foldHtml("h-board", { icon: "🏆", title: "Class leaderboard", peek: `${dedication()} pts` }, homeBoardHtml())}
+      ${foldHtml("h-feat", { icon: "⭐", title: "Featured pal" }, featuredHtml())}
+      ${foldHtml("h-tips", { icon: "💡", title: "Tips & fun facts" }, healthTipHtml() + chatCardHtml())}
     </div></div>`;
 }
 function wireHome() {
@@ -6794,11 +6911,10 @@ function playHtml() {
         <button class="mode" id="mLb"><h3>🏆 Class leaderboard</h3><span class="muted small">${signedIn() ? "Effort, streak and collection in your class." : "For signed-in classmates. Guests play privately."}</span><span class="small">Your effort points: <b>${dedication()}</b></span></button>
       </div>
     </section>
-    <details class="card">
-      <summary><h2 style="display:inline">📈 Biology mastery</h2> <span class="small muted">(tap to open)</span></summary>
+    ${foldHtml("pr-mastery", { icon: "📈", title: "Biology mastery", peek: `${Math.round(TOPICS.reduce((a, T) => a + S.bio_mastery[T.id], 0) / TOPICS.length)}%` }, `
       <p class="small muted">Mastery goes up when you answer a question right on the first try without a hint. Replay cleared stages to master them all!</p>
       <div class="mastery">${TOPICS.map(T => { const v = S.bio_mastery[T.id]; return `<div><div class="row" style="justify-content:space-between"><b class="small">${TOPIC_LABELS[T.id]}</b><b class="small">${v}%</b></div><div class="tprog"><i style="width:${v}%"></i></div></div>`; }).join("")}</div>
-    </details>`;
+    `)}`;
 }
 function wirePlay() {
   document.getElementById("mRush").onclick = () => { SFX.init(); SFX.tap(); rushIntro(); };
@@ -6954,20 +7070,16 @@ function streakCheck() {
 function markStudied() {
   const t = today(); if (S.last_study_day === t) return false;
   const gap = S.last_study_day ? dayNum(t) - dayNum(S.last_study_day) : 99;
+  const prev = gap === 1 ? S.current_streak : 0;
   S.current_streak = gap === 1 && S.current_streak > 0 ? S.current_streak + 1 : 1;
   S.last_study_day = t; S.longest_streak = Math.max(S.longest_streak || 0, S.current_streak);
   S.study_days = S.study_days.filter(d => dayNum(t) - dayNum(d) < 14).concat(t);
-  const ms = STREAK_MILESTONES.includes(S.current_streak), sc = streakCapsuleFor(S.current_streak);
-  if (sc) { S.coll.pending += sc; setTimeout(() => toast(`🎁 Streak reward: +${sc} capsule${sc > 1 ? "s" : ""} for day ${S.current_streak}!`), 3400); }
-  setTimeout(() => streakPop(S.current_streak, ms), 900);
-  if (S.lucky && S.lucky.day !== t) setTimeout(() => toast("🎰 Your daily Lucky Capsule is unlocked! Draw it on 🏠 Home."), 5200);
+  const n = S.current_streak, sc = streakCapsuleFor(n), after = [];
+  if (sc) { S.coll.pending += sc; after.push(() => toast(`🎁 Streak reward: +${sc} capsule${sc > 1 ? "s" : ""} for day ${n}!`)); }
+  if (S.lucky && S.lucky.day !== t) after.push(() => setTimeout(() => toast("🎰 Your daily Lucky Capsule is unlocked! Draw it on 🏠 Home."), sc ? 2600 : 0));
+  // The full-screen streak ceremony plays once, after the result screen has appeared.
+  setTimeout(() => streakCeremony(n, prev, after), 900);
   return true;
-}
-function streakPop(n, big) {
-  SFX.fanfare(); if (big) confetti(200);
-  const d = document.createElement("div"); d.className = "spop" + (big ? " big" : ""); d.setAttribute("role", "status");
-  d.innerHTML = `<span class="sflame" aria-hidden="true">🔥</span><b>${n}</b><span>${big ? `${n}-day milestone!` : n === 1 ? "Streak started!" : "day streak!"}</span>`;
-  document.body.appendChild(d); setTimeout(() => d.remove(), big ? 3200 : 2300);
 }
 function buyFreeze() {
   if (S.coins < FREEZE_PRICE || S.streak_shields >= FREEZE_MAX) return;
@@ -6995,11 +7107,12 @@ function riskCardHtml() {
   const mins = Math.max(0, Math.round((end - now) / 60000)), h = Math.floor(mins / 60), m = mins % 60;
   const urgent = S.current_streak > 0 && (h < 3 || S.streak_shields === 0);
   const just = S.freeze_used && S.freeze_used.day === today();
+  // One compact line under the Next step card (the Next step card already has the Enter button).
   const line = S.current_streak > 0
-    ? `We haven't studied today yet! ⏳ <b>${h} h ${m} min</b> left to keep our <b>${S.current_streak}-day</b> streak. ${S.streak_shields ? `❄️ ${S.streak_shields} freeze${S.streak_shields > 1 ? "s" : ""} left.` : "<b>No freezes left!</b>"}${just ? " (A freeze was just used for the days we missed.)" : ""}`
-    : "Let's start a new streak today! Finish <b>one</b> small activity. 🌱";
-  return `<section class="card riskcard ${urgent ? "urgent" : ""}"><div class="say"><div class="av">${avatar("chiikawa", urgent ? "shock" : "normal")}</div><div class="bubble">${line}</div></div>
-    <div class="row"><button class="btn" id="rkGo">${isStudy() ? "📖 Quick study" : "▶ Next stage"}</button><button class="btn yellow" id="rkRush">⚡ 60-second Rush</button></div></section>`;
+    ? `<b>⏳ ${h} h ${m} min</b> to keep your <b>${S.current_streak}-day</b> streak · ${S.streak_shields ? `❄️ ×${S.streak_shields}` : "<b>no freezes!</b>"}${just ? " · a freeze was just used" : ""}`
+    : "🌱 Finish <b>one</b> activity to start a streak";
+  return `<section class="card riskcard ${urgent ? "urgent" : ""}"><div class="rkrow"><div class="av" aria-hidden="true">${avatar("chiikawa", urgent ? "shock" : "normal")}</div><div class="rkline">${line}</div>
+    <button class="btn yellow small" id="rkRush" aria-label="60-second Rush">⚡ Rush</button></div></section>`;
 }
 function wireDailyCards() {
   const fi = document.getElementById("frzInfo"); if (fi) fi.onclick = () => { SFX.tap(); openFreezeInfo(); };
@@ -7151,6 +7264,91 @@ function wellbeingTick() {
   }
 }
 setInterval(wellbeingTick, 60e3);
+
+/* ============================================================
+   5i. 🔥 Streak-up ceremony: plays once, the moment the streak grows (markStudied).
+   Beats: charge-up (embers fly into the flame) → odometer rolls the old number to the new one (99 → 100)
+   → boom (shockwave + ember burst; milestones add 2 impact frames, light rays, a title slam and confetti)
+   → this week's dots light up → tap anywhere to continue. The flame "evolves" at 7, 30 and 100 days.
+   Reduced motion: no flashes or movement, the final card is shown and the text stays.
+   ============================================================ */
+const STREAK_TITLES = { 3: "Spark lit!", 7: "One whole week!", 14: "Two weeks strong!", 21: "Habit unlocked!", 30: "One month!", 50: "Half a hundred!", 75: "Unstoppable!", 100: "100 DAYS!", 150: "Streak legend!", 200: "Mythic streak!", 365: "One full year!" };
+const FLAME_TIERS = [
+  { min: 100, id: "myth", name: "Mythic flame", c: ["#7B4DFF", "#FF6FD8", "#FFF3FF"] },
+  { min: 30, id: "blue", name: "Blue flame", c: ["#2F6BFF", "#6FD3FF", "#EFFFFF"] },
+  { min: 7, id: "gold", name: "Golden flame", c: ["#FF9F1C", "#FFD93D", "#FFFBE0"] },
+  { min: 0, id: "orange", name: "Little flame", c: ["#FF5A36", "#FFA62B", "#FFF1C9"] }
+];
+const flameTier = n => FLAME_TIERS.find(t => n >= t.min);
+// Original kawaii flame: three layered tongues, a bright core and a little face. Gradient ids get a random suffix.
+function flameSvg(n, mood = "happy") {
+  const t = flameTier(n), u = Math.random().toString(36).slice(2, 7);
+  const face = mood === "sleep" ? `<path d="M41 70q4 3 8 0M55 70q4 3 8 0" stroke="#5B3A29" stroke-width="3" fill="none" stroke-linecap="round"/>`
+    : `<ellipse cx="44" cy="69" rx="3.6" ry="4.6" fill="#5B3A29"/><ellipse cx="60" cy="69" rx="3.6" ry="4.6" fill="#5B3A29"/><circle cx="45.2" cy="67.4" r="1.3" fill="#fff"/><circle cx="61.2" cy="67.4" r="1.3" fill="#fff"/>
+       <path d="M47 77q5 5 10 0" stroke="#5B3A29" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="37" cy="76" rx="4" ry="2.4" fill="#FF7A9C" opacity=".55"/><ellipse cx="67" cy="76" rx="4" ry="2.4" fill="#FF7A9C" opacity=".55"/>`;
+  return `<svg class="flamesvg fl-${t.id}" viewBox="0 0 104 112" aria-hidden="true"><defs>
+      <linearGradient id="fo${u}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="${t.c[0]}"/><stop offset="1" stop-color="${t.c[1]}"/></linearGradient>
+      <radialGradient id="fc${u}" cx=".5" cy=".7" r=".6"><stop offset="0" stop-color="${t.c[2]}"/><stop offset=".7" stop-color="${t.c[1]}"/><stop offset="1" stop-color="${t.c[1]}" stop-opacity="0"/></radialGradient></defs>
+    <g class="fl-tongues">
+      <path class="fl-out" d="M52 6C60 24 86 34 86 66c0 24-16 40-34 40S18 90 18 66c0-14 8-22 14-30 2 10 6 14 10 15C38 34 44 18 52 6z" fill="url(#fo${u})" stroke="#5B3A29" stroke-width="4" stroke-linejoin="round"/>
+      <path class="fl-mid" d="M66 34c8 10 12 20 10 32-2 14-12 22-24 22s-22-8-23-20c4 4 8 5 11 4-3-10 2-20 8-26 1 8 4 12 8 13 2-10 6-18 10-25z" fill="${t.c[1]}" opacity=".9"/>
+      <ellipse class="fl-core" cx="52" cy="76" rx="22" ry="20" fill="url(#fc${u})"/></g>${face}</svg>`;
+}
+const dayStr = n => new Date(n * 86400000).toISOString().slice(0, 10);
+function streakCeremony(n, prev, after = []) {
+  const big = STREAK_MILESTONES.includes(n) || !!STREAK_TITLES[n], from = Math.max(0, prev == null ? n - 1 : prev);
+  const evolve = n > 1 && flameTier(from).id !== flameTier(n).id, calm = reduced();
+  const a = String(n), b = String(from).padStart(a.length, " ");
+  const odo = [...a].map((ch, i) => {
+    const o = b[i]; let strip;
+    if (o === ch) strip = [ch]; else if (o === " ") strip = ["", ch];
+    else { strip = [o]; let d = +o; while (String(d) !== ch && strip.length < 11) { d = (d + 1) % 10; strip.push(String(d)); } }
+    return `<span class="odo-col" style="--n:${strip.length - 1};--i:${a.length - 1 - i}"><span class="odo-strip">${strip.map(s => `<i>${s || "&nbsp;"}</i>`).join("")}</span></span>`;
+  }).join("");
+  const t = dayNum(today()), studied = S.study_days || [];
+  const week = Array.from({ length: 7 }, (_, k) => { const ds = dayStr(t - 6 + k), on = k === 6 || studied.includes(ds);
+    return `<span class="sfx-dot ${on ? "on" : ""} ${k === 6 ? "today" : ""}" style="--k:${k}" title="${ds}">${k === 6 ? "🔥" : on ? "✓" : ""}</span>`; }).join("");
+  const nextM = STREAK_MILESTONES.find(m => m > n), title = STREAK_TITLES[n] || (n === 1 ? "Streak started!" : "Streak up!");
+  document.querySelectorAll(".sfx-ov").forEach(o => o.remove());
+  const ov = document.createElement("div");
+  ov.className = `sfx-ov ${big ? "big" : ""} ${evolve ? "evolve" : ""} ${calm ? "final calm" : ""}`;
+  ov.setAttribute("role", "dialog"); ov.setAttribute("aria-label", `${n}-day streak. ${title}`);
+  ov.innerHTML = `<div class="sfx-dim"></div>${big ? `<div class="sfx-rays"></div>` : ""}
+    <div class="sfx-stage">
+      <div class="sfx-embers" aria-hidden="true">${Array.from({ length: 14 }, (_, k) => `<i style="--a:${k * 360 / 14}deg;--d:${(k % 5) * 60}ms"></i>`).join("")}</div>
+      <div class="sfx-ring" aria-hidden="true"></div><div class="sfx-ring r2" aria-hidden="true"></div>
+      <div class="sfx-burst" aria-hidden="true">${Array.from({ length: 16 }, (_, k) => `<i style="--a:${k * 360 / 16 + 11}deg"></i>`).join("")}</div>
+      <div class="sfx-flame"><div class="sfx-old">${flameSvg(from || 1)}</div><div class="sfx-new">${flameSvg(n)}</div></div>
+      <div class="sfx-num" aria-hidden="true">${odo}</div>
+      <div class="sfx-unit">day streak</div>
+      <div class="sfx-title">${esc(title)}</div>
+      ${evolve ? `<div class="sfx-evo">✨ ${flameTier(n).name} unlocked!</div>` : ""}
+      <div class="sfx-week" aria-label="This week">${week}</div>
+      <div class="sfx-next small">${nextM ? `Next goal: <b>${nextM} days</b> · ${nextM - n} to go` : "You're a streak legend!"} · Rewards ×${streakMult().toFixed(2).replace(/0$/, "")}</div>
+      <div class="sfx-pal" aria-hidden="true">${figure("chiikawa", "happy", {})}</div>
+      <div class="sfx-tap">Tap to continue</div>
+    </div><div class="sfx-flash" aria-hidden="true"></div>`;
+  document.body.appendChild(ov);
+  const timers = [], at = (ms, f) => timers.push(setTimeout(f, ms));
+  let done = false;
+  const finish = () => { if (done) return; done = true; timers.forEach(clearTimeout); ov.classList.add("out"); setTimeout(() => { ov.remove(); after.forEach(f => f()); }, 380); };
+  const toFinal = () => { timers.forEach(clearTimeout); timers.length = 0; ov.classList.add("final"); at(big ? 5200 : 3200, finish); };
+  let armed = false; setTimeout(() => { armed = true; }, 450);
+  ov.addEventListener("click", () => { if (!armed) return; ov.classList.contains("final") ? finish() : toFinal(); });
+  if (calm) { SFX.fanfare(); at(4200, finish); return ov; }
+  requestAnimationFrame(() => ov.classList.add("in"));
+  at(950, () => { ov.classList.add("roll"); [...a].forEach((_, i) => at(i * 250, () => SFX.tick())); });
+  const boomAt = 1500 + (a.length - 1) * 250;
+  if (big) {   // two single impact frames, once (photosensitivity-safe)
+    at(boomAt - 90, () => ov.classList.add("imp1"));
+    at(boomAt - 48, () => { ov.classList.remove("imp1"); ov.classList.add("imp2"); });
+  }
+  at(boomAt, () => { ov.classList.remove("imp2"); ov.classList.add("boom"); SFX.fanfare(); if (big) { confetti(220); SFX.yaha(); } });
+  at(boomAt + 700, () => ov.classList.add("sfx-wk"));
+  at(boomAt + 700 + 7 * 90, () => { ov.classList.add("final"); SFX.item(); });
+  at(boomAt + (big ? 5200 : 3400), finish);
+  return ov;
+}
 
 /* ============================================================
    5i. 🔐 Class sign-in with Google, or 🎒 guest mode (no Google account needed).
@@ -7888,11 +8086,11 @@ function capsuleAdHtml() {
         ${btn}
         ${drawn && last ? `<span class="adlast">Today: <b>${esc(last.title)}</b> (${LUCK_NAMES[last.tier]})</span>` : ""}
       </div></div>
-    <div class="adstreak"><div class="adsrow"><b>🍀 Streak luck · level ${lv}</b><span class="small">${lv < 5 ? `Day ${nextLv * 20}: Epic ${LUCK_TABLE[nextLv][2]}%, Legendary ${LUCK_TABLE[nextLv][3]}%` : "Maximum luck!"}</span></div>
+    ${foldHtml("h-luck", { icon: "🍀", title: "Streak luck & prizes", peek: `Level ${lv}`, cls: "fold-in" }, `<div class="adstreak"><div class="adsrow"><b>🍀 Streak luck · level ${lv}</b><span class="small">${lv < 5 ? `Day ${nextLv * 20}: Epic ${LUCK_TABLE[nextLv][2]}%, Legendary ${LUCK_TABLE[nextLv][3]}%` : "Maximum luck!"}</span></div>
       <div class="oddsbar" aria-label="Today's odds">${LUCK_TIERS.map((t, i) => `<i class="t-${t}" style="flex:${o[i]}"></i>`).join("")}</div>
       <div class="oddsleg">${LUCK_TIERS.map((t, i) => `<span><i class="t-${t}"></i>${LUCK_NAMES[t]} ${o[i]}%</span>`).join("")}</div>
       ${lv < 5 ? `<div class="tprog thick"><i style="width:${Math.round(100 * (cur - lv * 20) / 20)}%"></i></div><span class="small muted">🔥 ${cur}-day streak · ${nextLv * 20 - cur} more day${nextLv * 20 - cur === 1 ? "" : "s"} to luck level ${nextLv}</span>` : ""}</div>
-    <div class="adprizes" aria-label="Possible prizes"><span class="pz">🌰<small>Chestnuts</small></span><span class="pz">🍱<small>Food</small></span><span class="pz">❄️<small>Freeze</small></span><span class="pz">👗<small>Outfits</small></span><span class="pz">🃏<small>Cards</small></span>${PALS.filter(P => P.cap).map(P => `<span class="pz pal ${S.pals[P.id] ? "own" : ""} r-${P.rar}"><span class="${S.pals[P.id] ? "" : "sil"}">${palFig(P.id, "happy")}</span><small>${S.pals[P.id] ? esc(P.name) : P.rar === "myth" ? "Mythic pal" : "Rare pal"}</small></span>`).join("")}</div>
+    <div class="adprizes" aria-label="Possible prizes"><span class="pz">🌰<small>Chestnuts</small></span><span class="pz">🍱<small>Food</small></span><span class="pz">❄️<small>Freeze</small></span><span class="pz">👗<small>Outfits</small></span><span class="pz">🃏<small>Cards</small></span>${PALS.filter(P => P.cap).map(P => `<span class="pz pal ${S.pals[P.id] ? "own" : ""} r-${P.rar}"><span class="${S.pals[P.id] ? "" : "sil"}">${palFig(P.id, "happy")}</span><small>${S.pals[P.id] ? esc(P.name) : P.rar === "myth" ? "Mythic pal" : "Rare pal"}</small></span>`).join("")}</div>`)}
     <div class="adcards"><span>🃏 <b>Biology cards</b> ${collOwned()}/${CARD_N}${S.coll.pending ? ` · <b>${S.coll.pending}</b> capsule${S.coll.pending > 1 ? "s" : ""} to open` : ""}</span>
       <span class="row" style="gap:6px">${S.coll.pending ? `<button class="adalbum" id="adOpen">🎁 Open (${S.coll.pending})</button>` : ""}<button class="adalbum" id="adAlbum">📚 Collection</button></span></div>
   </section>`;
