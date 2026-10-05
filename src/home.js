@@ -80,9 +80,9 @@ function renderMap() {
   if (homeTab === "lab") return renderSims();
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni];
   if (mapPart === null) mapPart = nr ? TOPICS[nr.t].p : 0;
-  $app.innerHTML = { home: homeHtml, stages: stagesHtml, play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml, stats: statsHtml }[homeTab]();
+  $app.innerHTML = { home: homeHtml, stages: () => isStudy() ? studyPlannerHtml() : stagesHtml(), play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml, stats: statsHtml }[homeTab]();
   renderNav(homeTab);
-  ({ home: wireHome, stages: wireStages, play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards, stats: wireStats })[homeTab]();
+  ({ home: wireHome, stages: () => isStudy() ? wireStudyPlanner() : wireStages(), play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards, stats: wireStats })[homeTab]();
   $app.querySelectorAll(".subnav [data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });
   wireFolds($app);
 }
@@ -99,7 +99,7 @@ function homeHtml() {
       ${nr ? (isStudy() ? `<h2>${T.icon} ${esc(stageName(nr))}</h2><p class="small muted" style="margin:0">📖 Topic ${T.no}: ${esc(T.name)}</p>` : `<h2>${T.icon} ${esc(nr.name)}</h2><p class="small muted" style="margin:0">Topic ${T.no} · ${nr.boss ? "⚔️ Boss stage" : `Stage ${nr.s}`} · ${esc(nr.focus)}</p>`)
            : `<h2>🎉 Every stage escaped!</h2><p class="small muted" style="margin:0">Replay any stage in 🗺️ Stages to win 3 stars.</p>`}
       ${modeSwitch()}
-      <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study it" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">🗺️ All stages</button></div>
+      <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study this section" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">${isStudy() ? "🧭 Choose topic, skill & level" : "🗺️ All stages"}</button></div>
     </section>
     ${riskCardHtml()}
     <div class="homegrid">

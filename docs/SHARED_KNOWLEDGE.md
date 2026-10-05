@@ -44,6 +44,12 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 
 ## Cross-project log (newest first)
 
+- 2026-10-06 (biology): **Study planner** (`src/study.js`): Study mode no longer reuses the escape-room picker, whose lock 1 always held 3 spellings.
+  - Students choose scope (section or whole topic), skill strand, Bloom band (Easy 1–2 / Medium 3–4 / Hard 5–6) and length. Each chip shows its live count and is disabled at 0.
+  - The series puts unmastered, unseen questions first, sorted by Bloom; spelling is capped at 2 in Mixed and deduped per term.
+  - Study mode unlocks everything (`isUnlocked`). Only a full Mixed, all-levels section series counts as finishing a section.
+  - Reusable for any skill-tagged bank. High achievers asked for exactly this.
+
 - 2026-10-05 (biology): **Friends + Bookmarks.**
   - **Friends** (`src/friends.js`, plus `friends`/`friendAdd`/`friendRemove`/`cheer` actions in `server/Code.gs`):
     - Codes are 6 characters, derived from SHA-256(salt + email), so there is no code table. Only students on the class list can be added (staff excluded).

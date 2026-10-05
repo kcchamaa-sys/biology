@@ -251,7 +251,8 @@ const say = (who, text, mood = "normal", cls = "") => {
 };
 const roomIndex = id => ROOMS.findIndex(r => r.id === id);
 // Every topic is open; inside a topic, stages unlock one after another
-const isUnlocked = i => ROOMS[i].s === 1 || S.completed_rooms.includes(ROOMS[i - 1].id);
+// Escape mode unlocks stages in order; Study mode opens everything
+const isUnlocked = i => S.playMode === "study" || ROOMS[i].s === 1 || S.completed_rooms.includes(ROOMS[i - 1].id);
 // Recommended next stage: carry on in the current topic first, then the first unfinished topic
 function nextRoomIndex() {
   const cur = ROOMS[roomIndex(S.current_room)];
