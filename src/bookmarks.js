@@ -78,8 +78,8 @@ function startBookmarkRun(ti) {
     const k = RV.keys[RV.at], { r, p } = mistakeQ(k);
     $app.innerHTML = `<section class="rushhead"><div class="status"><div class="av">${avatar("chiikawa", "brave")}</div><div><div class="rtopic" style="color:var(--yellow)">🔖 Bookmarks${ti == null ? "" : ` · ${esc(TOPICS[ti].name)}`}</div><div class="rt">Question ${RV.at + 1} of ${RV.keys.length}</div></div></div>
         <span class="combo">✓ ${RV.right}</span></section>
-      <section class="card"><span class="kicker">${TOPICS[r.t].icon} ${esc(stageLabelM(r))} · ${esc(r.focus)} ${diffChip(p.b)} ${bmBtn(r.id, p.id)}</span>
-        <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
+      <section class="card"><span class="kicker">${TOPICS[r.t].icon} ${esc(stageLabelM(r))} · ${esc(r.focus)} ${diffChip(p.b)} ${fmtChip(p)} ${bmBtn(r.id, p.id)}</span>
+        <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}${qStim(p)}
         <div id="bmAns"></div><div class="row"><button class="btn blue" id="bmHint">💡 Hint</button><button class="btn plain" id="bmJ">📓 Notes</button><button class="btn plain" id="bmQuit">✕ Stop</button></div><div id="bmFb"></div></section>`;
     document.getElementById("bmHint").onclick = () => { SFX.hint(); document.getElementById("bmFb").innerHTML = say("chiikawa", `💡 ${esc(p.hint)}`, "normal", "hint"); };
     document.getElementById("bmJ").onclick = () => { SFX.tap(); openJournal(r.id, termsIn(r, p)); };
@@ -88,7 +88,7 @@ function startBookmarkRun(ti) {
       RV.done++; const b = bmStore()[k]; if (b) { b.n++; if (ok) b.ok++; }
       if (ok) { RV.right++; SFX.right(); } else { SFX.wrong(); noteMistake(r.id, p.id); }
       save();
-      document.getElementById("bmFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("chiikawa", "Wahoo! Got it!", "happy") : say("chiikawa", "Not yet... let's read why. 🥺", "cry")}<p>${esc(p.explain)}</p>${p.tip ? `<p class="tip"><b>📝 Exam tip:</b> ${esc(p.tip)}</p>` : ""}
+      document.getElementById("bmFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("chiikawa", "Wahoo! Got it!", "happy") : say("chiikawa", "Not yet... let's read why. 🥺", "cry")}<p>${esc(p.explain)}</p>${trapsHtml(p)}${p.tip ? `<p class="tip"><b>📝 Exam tip:</b> ${esc(p.tip)}</p>` : ""}
         <div class="row"><button class="btn big" id="bmNext">${RV.at + 1 < RV.keys.length ? "Next →" : "Finish"}</button></div></div>`;
       document.getElementById("bmNext").onclick = () => { SFX.tap(); RV.at++; next(); };
       document.getElementById("bmNext").focus({ preventScroll: true });

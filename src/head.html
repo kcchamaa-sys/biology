@@ -747,6 +747,20 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .spchip.on { background: var(--ink); border-color: var(--ink); color: #fff; } .spchip:disabled { opacity: .4; cursor: not-allowed; }
 .spn { font-size: .72rem; font-weight: 900; background: rgba(0,0,0,.07); border-radius: 999px; padding: 1px 7px; } .spchip.on .spn { background: rgba(255,255,255,.25); }
 .spgo { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: #F4FAFF; border-radius: 16px; padding: 8px 12px; position: sticky; bottom: 80px; box-shadow: 0 6px 18px rgba(107,74,107,.15); }
+.qstmts { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 6px; }
+.qstmts li { display: grid; grid-template-columns: 2.6em minmax(0, 1fr); gap: 8px; align-items: start; background: #F7F3FF; border: 2px solid #E4DAF5; border-radius: 12px; padding: 8px 10px; line-height: 1.4; }
+.qstmts li b { font-family: Georgia, serif; text-align: center; }
+.qtable-wrap { overflow-x: auto; margin: 0 0 10px; -webkit-overflow-scrolling: touch; }
+.qtable { border-collapse: collapse; min-width: 100%; font-size: .9rem; background: #fff; }
+.qtable th, .qtable td { border: 2px solid #E4DAF5; padding: 6px 8px; text-align: center; }
+.qtable th { background: #F4EEFF; font-weight: 900; } .qtable td:first-child { font-weight: 800; text-align: left; }
+.fmtchip { display: inline-block; font-size: .72rem; font-weight: 900; background: #EDE6F7; color: var(--ink); border-radius: 999px; padding: 2px 8px; vertical-align: middle; }
+.trap { margin-top: 8px; background: #FFF1E6; border: 2px dashed #F2A36B; border-radius: 12px; padding: 8px 10px; font-size: .92rem; line-height: 1.4; }
+.traps { margin: 8px 0; background: #FFF8F1; border: 2px solid #F6D8BE; border-radius: 12px; padding: 6px 10px; }
+.traps summary { cursor: pointer; font-weight: 800; } .traps ul { margin: 6px 0 2px; padding-left: 18px; display: grid; gap: 6px; } .traps li { line-height: 1.4; }
+.dials.chain { flex-direction: column; align-items: stretch; }
+.dials.chain .dial { grid-template-columns: 48px minmax(0, 1fr) 48px; align-items: center; } .dials.chain .dial .dlabel { grid-column: 1 / -1; justify-self: start; }
+.dials.chain .dial .face { min-width: 0; font-size: .92rem; font-weight: 700; line-height: 1.35; padding: 10px; } .dials.chain .dial .arr { width: 48px; }
 .splvls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .splvl { display: grid; justify-items: center; align-content: start; gap: 3px; text-align: center; font: inherit; color: var(--ink); background: #fff; border: 2px solid #EADFD5; border-radius: 16px; padding: 10px 6px; cursor: pointer; min-height: 120px; }
 .splvl .spli { font-size: 1.8rem; line-height: 1.1; } .splvl b { font-size: 1.05rem; } .splvl .small { line-height: 1.25; color: var(--ink-soft); }

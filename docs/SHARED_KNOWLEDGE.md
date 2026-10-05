@@ -44,6 +44,7 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 
 ## Cross-project log (newest first)
 
+- 2026-10-08 (biology): **DSE-style Hard formats with trap feedback.** `KH()` in `src/q_h0.js` turns compact entries into Roman-numeral combos, two-statement items, data-table questions, "mark it like an examiner", compare, new-context, spot-the-flaw and logic-chain (dial) questions. Each wrong option carries a `why` note naming its misconception. The renderers are `qStim()` (statements and tables), `trapHtml()`/`trapsHtml()` and `fmtChip()` in `src/engine.js`; `keep: true` keeps the authored option order. A reusable pattern for any exam-board MCQ style; s1science/s3science could port it with their own option sets. 240 questions, 4 per stage.
 - 2026-10-07 (biology): **Level-only exercises + a bigger bank.**
   - The Study planner now asks only for topic (or section) and level (Easy / Medium / Hard). `mixBySkill()` in `src/study.js` builds a 12-question exercise by smooth weighted round-robin over skills (`MIX_W`, concept 5 : data 2 : invest 2 : see 2 : word 1), unseen and unmastered first, so repeat visits get new questions. Reusable for any "pick a level, we mix it" practice mode.
   - 481 new questions in `src/q_x1–4.js`, 8 per stage across Easy/Medium/Hard and Concept/Data/Investigate. `KX(stage, [[skill, bloom, q, choices, hint, explain, tip?]])` sets each question's skill directly, so no SKILL_TAGS letters are needed. Loaded after all older banks so saved ids never move. Hard questions 267 → 446; Data 97 → 277; Investigate 122 → 242.

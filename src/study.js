@@ -114,8 +114,8 @@ function runStudy(sel) {
         <div style="display:grid;justify-items:end;gap:6px"><span class="combo">${Math.min(done + 1, n)} / ${n}</span><span class="small" style="color:#EDE6F7">✅ ${ST.firsts} first try</span></div></section>
       <div class="studybar" aria-hidden="true"><i style="width:${Math.round(100 * done / n)}%"></i></div>
       <section class="card">
-        <span class="kicker">${retry ? "🔁 Second chance · " : ""}Question ${done + 1} ${diffChip(p.b)} ${bmBtn(qr.id, p.id)}</span>
-        <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
+        <span class="kicker">${retry ? "🔁 Second chance · " : ""}Question ${done + 1} ${diffChip(p.b)} ${fmtChip(p)} ${bmBtn(qr.id, p.id)}</span>
+        <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}${qStim(p)}
         <div id="stAns"></div>
         <div class="row simbtns"><button class="btn blue" id="stHint">💡 Hint</button><button class="btn plain" id="stJ">📓 Notes</button><button class="btn plain" id="stQuit">✕ Stop</button></div>
         <div id="stFb"></div></section>`;
@@ -139,7 +139,7 @@ function runStudy(sel) {
       }
       recomputeMastery(); save();
       const [w, m, t] = ok ? (quick ? ["chiikawa", "normal", "⚡ Whoa, that was fast! Right, but did you read it all? Fast guesses don't count for mastery. 👀"] : first ? pick(REACT.right) : ["chiikawa", "happy", "Phew... got it! 🥹"]) : ["chiikawa", "cry", retry ? "Uu... still tricky. Let's read it together. 📖" : "Not quite! Let's read why. It will come back once at the end. 🌱"];
-      document.getElementById("stFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${say(w, t, m)}<p>${esc(p.explain)}</p>${p.tip ? `<p class="tip"><b>📝 Top tip:</b> ${esc(p.tip)}</p>` : ""}
+      document.getElementById("stFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${say(w, t, m)}<p>${esc(p.explain)}</p>${trapsHtml(p)}${p.tip ? `<p class="tip"><b>📝 Top tip:</b> ${esc(p.tip)}</p>` : ""}
         <div class="row"><button class="btn big" id="stNext">${ST.at + 1 < ST.queue.length ? "Next →" : "Finish 🎉"}</button></div></div>`;
       const nb = document.getElementById("stNext"); nb.onclick = () => { SFX.tap(); ST.at++; next(); window.scrollTo({ top: 0 }); }; nb.focus({ preventScroll: true });
       setTimeout(checkTrophies, 800);
@@ -150,7 +150,7 @@ function runStudy(sel) {
 }
 // 🤔 "Why?" check: pick the right explanation for 2 questions answered right first try. Right = +5 🌰; wrong = notebook.
 function whyCheck(ST) {
-  const pool = ST.pool.filter(p => p.type === "mc" && !p.gen && p.explain && p.explain.length > 30), key = p => `${p.rid}:${p.id}`;
+  const pool = ST.pool.filter(p => p.type === "mc" && !p.gen && !hasStim(p) && p.explain && p.explain.length > 30), key = p => `${p.rid}:${p.id}`;
   const qs = shuffle(pool.filter(p => ST.firstIds.includes(key(p)))).slice(0, 2);
   ST.why = { right: 0, n: qs.length };
   if (qs.length === 0 || pool.length < 3) return finishStudy(ST);

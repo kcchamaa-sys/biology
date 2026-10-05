@@ -1,6 +1,6 @@
 // Content sanity checks: node tools/check_content.js
 const fs = require("fs"), vm = require("vm");
-const src = ["chars.js", "diagrams.js", "graphs.js", "stages.js", "stages2.js", "scenes.js", ...[1,2,3,4,5,6,7,8,9,11,13,15,17].map(i => `q_t${i}.js`), "q_graphs.js", "q_graphs2.js", "q_kb1.js", "q_kb2.js", ...["q_x1.js", "q_x2.js", "q_x3.js", "q_x4.js"].filter(f => fs.existsSync(`src/${f}`)), "skills.js", "rush.js"].map(f => fs.readFileSync(`src/${f}`, "utf8")).join("\n").replace("<script>", "");
+const src = ["chars.js", "diagrams.js", "graphs.js", "stages.js", "stages2.js", "scenes.js", ...[1,2,3,4,5,6,7,8,9,11,13,15,17].map(i => `q_t${i}.js`), "q_graphs.js", "q_graphs2.js", "q_kb1.js", "q_kb2.js", ...["q_x1.js", "q_x2.js", "q_x3.js", "q_x4.js", "q_h0.js", "q_h1.js", "q_h2.js", "q_h3.js", "q_h4.js"].filter(f => fs.existsSync(`src/${f}`)), "skills.js", "rush.js"].map(f => fs.readFileSync(`src/${f}`, "utf8")).join("\n").replace("<script>", "");
 const ctx = { outfitSvg: () => "", console, subseq: (a) => a, specialSvg: () => "", SFX: {} };
 vm.createContext(ctx); vm.runInContext(src + "\nthis.ROOMS=ROOMS;this.SCENES=SCENES;this.QB=QB;this.DIAGRAMS=DIAGRAMS;this.TOPICS=TOPICS;this.skillOf=skillOf;this.SKILL_IDS=SKILL_IDS;this.SKILL_TAGS=SKILL_TAGS;", ctx);
 const { ROOMS, QB, DIAGRAMS, skillOf, SKILL_IDS, SKILL_TAGS } = ctx; let bad = 0, total = 0;
@@ -29,7 +29,11 @@ ROOMS.forEach(r => {
       if (!Array.isArray(o.choices) || o.choices.length !== 4) err(`${id}: needs 4 choices`);
       else if (!(o.answer >= 0 && o.answer < 4)) err(`${id}: bad answer`);
       else if (new Set(o.choices).size !== 4) err(`${id}: duplicate choices`);
+      if (o.why && (o.why.length !== 4 || o.why[o.answer] || o.why.some((w, i) => i !== o.answer && !w))) err(`${id}: why needs a trap note for each wrong option only`);
+      if (o.stmts && (o.stmts.length < 2 || o.stmts.some(x => !x))) err(`${id}: bad statements`);
+      if (o.table && (o.table.length < 2 || o.table.some(row => row.length !== o.table[0].length))) err(`${id}: table rows differ in length`);
     } else if (o.type === "dial") {
+      if (o.chain && (new Set(o.dials[0]).size !== o.dials[0].length)) err(`${id}: duplicate chain steps`);
       if (o.dials.length !== o.answer.length || (o.labels && o.labels.length !== o.dials.length)) err(`${id}: dial length mismatch`);
       o.answer.forEach((a, d) => { if (!(a >= 0 && a < o.dials[d].length)) err(`${id}: dial answer out of range`); });
     } else err(`${id}: unknown type ${o.type}`);

@@ -535,7 +535,7 @@ const RUSH_SECONDS = 60;
 // Rush banks live in the content section (TF_BANK, PAIR_BANK, ODD_BANK, CLOZE_BANK, ORDER_BANK, TEST_BANK)
 function subseq(arr, n) { const idx = shuffle(arr.map((_, i) => i)).slice(0, n).sort((a, b) => a - b); return idx.map(i => arr[i]); }
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-const MC_POOL = () => ROOMS.flatMap(r => r.pool.filter(p => p.type === "mc" && !p.svg && !p.gen));
+const MC_POOL = () => ROOMS.flatMap(r => r.pool.filter(p => p.type === "mc" && !p.svg && !p.gen && !p.keep && !hasStim(p)));
 
 const RUSH_MAKERS = [
   { w: 2, label: "Multiple choice", make() { const p = pick(MC_POOL()); const order = shuffle(p.choices.map((_, i) => i));
@@ -958,8 +958,8 @@ function startRevision(ti) {
     const k = RV.keys[RV.at], { r, p } = mistakeQ(k), m = S.mistakes[k] || { n: 0, ok: 0 };
     $app.innerHTML = `<section class="rushhead"><div class="status"><div class="av">${avatar("chiikawa", "brave")}</div><div><div class="rtopic" style="color:var(--yellow)">📕 Mistake Notebook${ti == null ? "" : ` · ${esc(TOPICS[ti].name)}`}</div><div class="big">Question ${RV.at + 1} of ${RV.keys.length}</div></div></div>
         <span class="combo">✓ ${m.ok}/2 to clear</span></section>
-      <section class="card"><span class="kicker">${TOPICS[r.t].icon} ${esc(stageLabel(r))} · ${esc(r.focus)} ${diffChip(p.b)} ${bmBtn(r.id, p.id)}</span>
-        <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
+      <section class="card"><span class="kicker">${TOPICS[r.t].icon} ${esc(stageLabel(r))} · ${esc(r.focus)} ${diffChip(p.b)} ${fmtChip(p)} ${bmBtn(r.id, p.id)}</span>
+        <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}${qStim(p)}
         <div id="rvAns"></div><div class="row"><button class="btn blue" id="rvHint">💡 Hint</button><button class="btn plain" id="rvJ">📓 Notes</button><button class="btn plain" id="rvQuit">✕ Stop</button></div><div id="rvFb"></div></section>`;
     document.getElementById("rvHint").onclick = () => { SFX.hint(); document.getElementById("rvFb").innerHTML = say("chiikawa", `💡 ${esc(p.hint)}`, "normal", "hint"); RV.hinted = true; };
     document.getElementById("rvJ").onclick = () => { SFX.tap(); openJournal(r.id, termsIn(r, p)); };
@@ -971,7 +971,7 @@ function startRevision(ti) {
       if (ok) { RV.right++; SFX.right(); if (noteRight(r.id, p.id, !RV.hinted)) RV.cleared++; else if (RV.hinted) toast("Right! (Used a hint, so it stays in the notebook for now.)"); }
       else { SFX.wrong(); noteMistake(r.id, p.id); }
       save();
-      fb.innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("chiikawa", "Wahoo! Got it!", "happy") : say("chiikawa", "Uu... not yet. Let's read why. 🥺", "cry")}<p>${esc(p.explain)}</p>${p.tip ? `<p class="tip"><b>📝 Top tip:</b> ${esc(p.tip)}</p>` : ""}
+      fb.innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("chiikawa", "Wahoo! Got it!", "happy") : say("chiikawa", "Uu... not yet. Let's read why. 🥺", "cry")}<p>${esc(p.explain)}</p>${trapsHtml(p)}${p.tip ? `<p class="tip"><b>📝 Top tip:</b> ${esc(p.tip)}</p>` : ""}
         <div class="row"><button class="btn big" id="rvNext">${RV.at + 1 < RV.keys.length ? "Next →" : "Finish"}</button></div></div>`;
       document.getElementById("rvNext").onclick = () => { SFX.tap(); RV.at++; next(); };
       document.getElementById("rvNext").focus({ preventScroll: true });
@@ -980,17 +980,30 @@ function startRevision(ti) {
   };
   MUSIC.setMode("calm"); next();
 }
+/* ----- Hard-question formats (src/q_h*.js, HKDSE-style): a stimulus under the question (numbered statements and/or a
+   data table), a format chip, and "trap" notes that name the misconception behind each wrong option. ----- */
+const FMT = { R: "🔢 Roman numerals", A: "⚖️ Two statements", T: "📊 Data table", M: "📝 Mark it like an examiner", C: "↔️ Compare", N: "🌍 New context", E: "🔎 Spot the flaw", L: "🔗 Logic chain" };
+const hasStim = p => !!(p.stmts || p.table);
+const fmtChip = p => p.fmt && FMT[p.fmt] ? `<span class="fmtchip">${FMT[p.fmt]}</span>` : "";
+function qStim(p) {
+  let h = "";
+  if (p.table) h += `<div class="qtable-wrap"><table class="qtable">${p.table.map((row, r) => `<tr>${row.map(c => r === 0 ? `<th scope="col">${esc(c)}</th>` : `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table></div>`;
+  if (p.stmts) h += `<ol class="qstmts">${p.stmts.map((x, i) => `<li><b>${esc((p.slabels || ["I", "II", "III", "IV"])[i])}</b><span>${esc(x)}</span></li>`).join("")}</ol>`;
+  return h;
+}
+const trapHtml = (p, i) => p.why && p.why[i] ? `<div class="trap">🪤 <b>Why that one's a trap:</b> ${esc(p.why[i])}</div>` : "";
+const trapsHtml = p => p.why && p.choices ? `<details class="traps"><summary>🪤 Why the other options are traps</summary><ul>${p.choices.map((c, i) => i === p.answer || !p.why[i] ? "" : `<li><b>${esc(c)}</b><br>${esc(p.why[i])}</li>`).join("")}</ul></details>` : "";
 // A self-contained answer widget (multiple choice, dials or spelling) used outside escape rooms
 function miniQuiz(el, p, done) {
   let over = false;
   const finish = ok => { if (over) return; over = true; el.querySelectorAll("button,input").forEach(x => (x.disabled = true)); done(ok); };
   if (p.type === "mc") {
-    const idx = p.choices.map((_, i) => i), order = p.fix ? idx.sort((a, b) => p.choices[a].localeCompare(p.choices[b])) : shuffle(idx);
+    const idx = p.choices.map((_, i) => i), order = p.keep ? idx : p.fix ? idx.sort((a, b) => p.choices[a].localeCompare(p.choices[b])) : shuffle(idx);
     el.innerHTML = `<div class="choices">${order.map((i, n) => `<button class="choice" data-i="${i}"><b>${"ABCD"[n]}</b><span>${esc(p.choices[i])}</span></button>`).join("")}</div>`;
-    el.querySelectorAll(".choice").forEach(b => b.onclick = () => { const ok = Number(b.dataset.i) === p.answer; b.classList.add(ok ? "right" : "wrong"); if (!ok) el.querySelector(`[data-i="${p.answer}"]`).classList.add("right"); finish(ok); });
+    el.querySelectorAll(".choice").forEach(b => b.onclick = () => { const ok = Number(b.dataset.i) === p.answer; b.classList.add(ok ? "right" : "wrong"); if (!ok) { el.querySelector(`[data-i="${p.answer}"]`).classList.add("right"); el.insertAdjacentHTML("beforeend", trapHtml(p, Number(b.dataset.i))); } finish(ok); });
   } else if (p.type === "dial") {
     const pos = p.dials.map(o => Math.floor(Math.random() * o.length));
-    el.innerHTML = `<div class="dials">${p.dials.map((o, d) => `<div class="dial">${p.labels ? `<span class="dlabel">${esc(p.labels[d])}</span>` : ""}<button class="arr" data-d="${d}" data-dir="-1" aria-label="Previous option">▲</button><div class="face" id="mf${d}">${esc(o[pos[d]])}</div><button class="arr" data-d="${d}" data-dir="1" aria-label="Next option">▼</button></div>`).join("")}</div><div class="row" style="justify-content:center"><button class="btn" id="mdOk">Check 🔓</button></div>`;
+    el.innerHTML = `<div class="dials${p.chain ? " chain" : ""}">${p.dials.map((o, d) => `<div class="dial">${p.labels ? `<span class="dlabel">${esc(p.labels[d])}</span>` : ""}<button class="arr" data-d="${d}" data-dir="-1" aria-label="Previous option">▲</button><div class="face" id="mf${d}">${esc(o[pos[d]])}</div><button class="arr" data-d="${d}" data-dir="1" aria-label="Next option">▼</button></div>`).join("")}</div><div class="row" style="justify-content:center"><button class="btn" id="mdOk">Check 🔓</button></div>`;
     el.querySelectorAll(".arr").forEach(b => b.onclick = () => { const d = Number(b.dataset.d), n = p.dials[d].length; pos[d] = (pos[d] + Number(b.dataset.dir) + n) % n; SFX.click(); document.getElementById("mf" + d).textContent = p.dials[d][pos[d]]; });
     document.getElementById("mdOk").onclick = () => { const ok = pos.every((v, d) => v === p.answer[d]); if (!ok) p.dials.forEach((o, d) => { document.getElementById("mf" + d).textContent = o[p.answer[d]]; }); finish(ok); };
   } else {
@@ -1247,7 +1260,7 @@ function openPuzzle(i) {
   SFX.click();
   R.cur = i; R.att[k] = R.att[k] || 0; R.openedAt = Date.now();
   if (R.hiddenHs === i) { R.hiddenHs = null; toast("🔦 Found the hidden lock!"); }
-  const typeLabel = { mc: p.gen ? "Spelling check" : p.graph ? "Graph reading" : "Multiple choice", dial: "Combination dials", spell: "Spelling lock" }[p.type];
+  const typeLabel = p.fmt ? FMT[p.fmt] : { mc: p.gen ? "Spelling check" : p.graph ? "Graph reading" : "Multiple choice", dial: "Combination dials", spell: "Spelling lock" }[p.type];
   const box = openModal(`
     <span class="kicker">${skillTag(i)}${lockSkill(i) && p.skill !== lockSkill(i).id ? ` <span class="skstand" title="This stage is short of ${esc(lockSkill(i).name)} questions">stand-in</span>` : ""} ${typeLabel} · T${room.topicNo} ${room.boss ? "Boss" : `S${room.s}`} ${diffChip(p.b)} ${bmBtn(room.id, p.id)}</span>
     <h2>${esc(hsName)}</h2>
@@ -1256,7 +1269,7 @@ function openPuzzle(i) {
       : room.boss && p.b >= 5 ? say("murk", "A hard one. Think like a scientist: read every choice before you strike. ⚔️", "brave")
       : p.b >= 5 ? say("chiikawa", `${esc(line)} ...Eh?! This one looks HARD! 😱`, "shock") : say("chiikawa", esc(line), p.b >= 3 ? "brave" : "normal")}
     <p class="q">${esc(p.q)}</p>
-    ${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
+    ${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}${qStim(p)}
     <div id="jamBox"></div>
     <div id="ans">${answerUi(p)}</div>
     <div class="row"><button class="btn blue" id="hint">💡 Hint from ${esc(palName())}</button><button class="btn plain" id="pj">📓 Journal</button></div>
@@ -1356,7 +1369,7 @@ function penaltyFlash(text) {
 }
 function answerUi(p) {
   // Label-style choices (A, B, Cell C...) show in sorted order; everything else is shuffled
-  if (p.type === "mc") { const idx = p.choices.map((_, i) => i), order = p.fix ? idx.sort((a, b) => p.choices[a].localeCompare(p.choices[b])) : shuffle(idx);
+  if (p.type === "mc") { const idx = p.choices.map((_, i) => i), order = p.keep ? idx : p.fix ? idx.sort((a, b) => p.choices[a].localeCompare(p.choices[b])) : shuffle(idx);
     return `<div class="choices">${order.map((i, n) => `<button class="choice" data-i="${i}"><b>${"ABCD"[n]}</b><span>${esc(p.choices[i])}</span></button>`).join("")}</div>`; }
   if (p.type === "keypad") return `<div class="keypad"><div class="kdisplay" aria-live="polite"><span id="kd">_</span>${p.unit ? `<span class="u">${esc(p.unit)}</span>` : ""}</div>
     <div class="keys">${["7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "⌫"].map(k => `<button class="key ${k === "⌫" ? "del" : ""}" data-k="${k}" aria-label="${k === "⌫" ? "Delete" : k === "." ? "Decimal point" : k}">${k}</button>`).join("")}</div>
@@ -1368,7 +1381,7 @@ function answerUi(p) {
   const start = p.dials.map(o => Math.floor(Math.random() * o.length));
   if (start.every((v, d) => v === p.answer[d])) start[0] = (start[0] + 1) % p.dials[0].length;
   R.dialStart = start;
-  return `<div class="dials">${p.dials.map((opts, d) => `<div class="dial">${p.labels ? `<span class="dlabel">${esc(p.labels[d])}</span>` : ""}<button class="arr" data-d="${d}" data-dir="-1" aria-label="Previous option">▲</button>
+  return `<div class="dials${p.chain ? " chain" : ""}">${p.dials.map((opts, d) => `<div class="dial">${p.labels ? `<span class="dlabel">${esc(p.labels[d])}</span>` : ""}<button class="arr" data-d="${d}" data-dir="-1" aria-label="Previous option">▲</button>
     <div class="face" id="face${d}" aria-live="polite">${esc(opts[start[d]])}</div><button class="arr" data-d="${d}" data-dir="1" aria-label="${"Next option"}">▼</button></div>`).join("")}</div>
     <div class="row" style="justify-content:center"><button class="btn" id="dok">${"Try the lock 🔓"}</button></div>`;
 }
@@ -1388,7 +1401,7 @@ function wireAnswer(p, box) {
   if (p.type === "mc") {
     box.querySelectorAll(".choice").forEach(b => b.onclick = () => {
       if (Number(b.dataset.i) === p.answer) { b.classList.add("right"); box.querySelectorAll(".choice").forEach(x => (x.disabled = true)); solve(); }
-      else { b.classList.add("wrong"); b.disabled = true; miss(box); }
+      else { b.classList.add("wrong"); b.disabled = true; miss(box); const pf = document.getElementById("pfb"); if (pf) pf.insertAdjacentHTML("beforeend", trapHtml(p, Number(b.dataset.i))); }
     });
   } else if (p.type === "keypad") {
     let v = "", done = false;
@@ -1519,7 +1532,7 @@ function solve() {
   const lp = document.querySelector(".lockprog"); if (lp) lp.querySelectorAll("i")[step].className = "on";
   document.getElementById("pfb").innerHTML = `<div class="fb ok">
     ${say(cw, `${esc(ct)} <b>${firstTry ? `First try! Mastery up 📈 +${qc} 🌰` : "Correct! ✔️ (first-try answers earn 🌰)"}</b>`, cm)}
-    <p>${esc(p.explain)}</p>
+    <p>${esc(p.explain)}</p>${trapsHtml(p)}
     ${p.tip ? `<p class="tip"><b>📝 Top tip:</b> ${esc(p.tip)}</p>` : ""}
     ${kt.length ? `<div class="terms">${kt.map(([t, m]) => `<span class="term"><b>${esc(t)}</b><span class="def">${esc(m)}</span></span>`).join("")}</div>` : ""}
     ${last ? `<div class="found">${ICONS[HOTSPOTS[i].item]}<span>Lock open! You found: <b>${esc(itemName(i))}</b>. Code digit #${i + 1} = <b>${room.code[i]}</b></span></div>
@@ -1676,8 +1689,8 @@ function tryIncident(me) {
 }
 // A quick question from this room's pool that isn't in the current run
 function sideQuestion(maxB) {
-  const pool = R.room.pool.filter(p => p.type === "mc" && !p.svg && p.b <= maxB && !S.room_run[R.room.id].qids.includes(p.id));
-  return pick(pool.length ? pool : R.room.pool.filter(p => p.type === "mc" && !p.svg));
+  const pool = R.room.pool.filter(p => p.type === "mc" && !p.svg && !p.keep && !hasStim(p) && p.b <= maxB && !S.room_run[R.room.id].qids.includes(p.id));
+  return pick(pool.length ? pool : R.room.pool.filter(p => p.type === "mc" && !p.svg && !p.keep && !hasStim(p)));
 }
 function sideQuiz({ kicker, title, art, p, onRight, onWrong }) {
   const order = shuffle(p.choices.map((_, i) => i));
