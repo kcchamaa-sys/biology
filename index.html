@@ -708,6 +708,30 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .stdots { display: flex; justify-content: center; gap: 6px; margin: 10px 0; } .stdots i { width: 9px; height: 9px; border-radius: 50%; background: #E6DCD2; } .stdots i.on { background: var(--ink); width: 22px; border-radius: 6px; }
 .tchap { font-size: .74rem; font-weight: 800; color: #A6781A; }
 .realmline { margin: 8px 0 0; font-size: .85rem; color: var(--ink-soft); line-height: 1.4; }
+/* 🔖 Bookmarks (src/bookmarks.js) */
+.bmbtn { display: inline-flex; align-items: center; gap: 3px; vertical-align: middle; font: inherit; font-size: .72rem; font-weight: 900; letter-spacing: 0; text-transform: none; color: var(--ink-soft); background: #fff; border: 2px solid #E3D7CC; border-radius: 999px; padding: 2px 9px 2px 6px; min-height: 30px; cursor: pointer; }
+.bmbtn .ic { filter: grayscale(1) opacity(.6); } .bmbtn.on { background: #FFF1C2; border-color: #E0A92A; color: #8A5A00; } .bmbtn.on .ic { filter: none; }
+.bm-hero { background: linear-gradient(135deg, #8E6BD8, #E07BB1); }
+.mode.bm-mode { background: linear-gradient(135deg, #FFF7DC, #FDEBFF); }
+/* 👥 Friends (src/friends.js) */
+.homeleft { display: grid; gap: 16px; min-width: 0; align-content: start; }
+.friendscard { display: grid; gap: 10px; background: linear-gradient(160deg, #F2FBFF, #FFF6FB); }
+.frhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.frlist { display: grid; gap: 8px; }
+.frrow { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; align-items: center; gap: 10px; background: #fff; border-radius: 16px; padding: 8px 10px; box-shadow: 0 2px 8px rgba(107,74,107,.08); }
+.frav { width: 52px; height: 52px; border-radius: 50%; background: #F4EEFF; display: grid; place-items: center; overflow: hidden; } .frav svg { width: 120%; height: auto; margin-top: 8px; }
+.frname { min-width: 0; line-height: 1.35; } .frname b { font-size: 1rem; } .frcls { font-size: .7rem; font-weight: 800; background: #F4EEE8; border-radius: 999px; padding: 1px 7px; }
+.frst { font-size: .76rem; font-weight: 800; color: var(--ink-soft); } .frst.on { color: #2E8B57; } .frst.away { color: #C0392B; }
+.frstats { display: flex; flex-wrap: wrap; gap: 8px; font-size: .78rem; font-weight: 800; margin-top: 2px; }
+.fract { display: grid; justify-items: end; gap: 4px; } .frcheer { min-height: 38px; padding: 4px 12px; font-size: .85rem; }
+.frx { border: 0; background: none; color: #B9A9A0; font-size: .85rem; cursor: pointer; padding: 2px 6px; min-height: 28px; }
+.frpick { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; }
+.frmsg { font: inherit; font-size: .82rem; font-weight: 800; border: 2px solid #E0A92A; background: #FFF6D6; border-radius: 999px; padding: 6px 10px; cursor: pointer; color: var(--ink); min-height: 38px; }
+.frcheers { display: grid; gap: 6px; } .frgot { background: #fff; border-radius: 12px; padding: 6px 10px; font-size: .86rem; } .frgot.new { background: #FFF1C2; box-shadow: 0 0 0 2px #E0A92A; }
+.frempty { display: flex; gap: 10px; align-items: center; background: #fff; border-radius: 14px; padding: 10px; } .frempty > span:first-child { font-size: 1.8rem; }
+.frmine { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; } .frcode { font-size: 1.3rem; letter-spacing: .14em; background: #fff; border: 2px dashed var(--ink); border-radius: 12px; padding: 2px 10px; font-family: ui-monospace, Menlo, monospace; }
+.fradd { display: flex; gap: 8px; } .fradd input { flex: 1; min-width: 0; text-transform: uppercase; letter-spacing: .12em; }
+.frghost { display: grid; gap: 8px; opacity: .55; } .frghost .frrow { grid-template-columns: 52px 1fr; } .frghost .frname i { display: block; height: 10px; border-radius: 6px; background: #E6DCD2; margin: 4px 0; width: 70%; } .frghost .frname i + i { width: 45%; }
 /* Fold bars (foldHtml in src/home.js): secondary sections collapse to icon · title · peek number · chevron */
 .fold { background: #fff; border: var(--line); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; min-width: 0; }
 .fold > summary { list-style: none; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 14px; cursor: pointer; font-weight: 900; -webkit-tap-highlight-color: transparent; }
@@ -6987,7 +7011,7 @@ function startStudy(id) {
         <div style="display:grid;justify-items:end;gap:6px"><span class="combo">${Math.min(done + 1, n)} / ${n}</span><span class="small" style="color:#EDE6F7">✅ ${ST.firsts} first try</span></div></section>
       <div class="studybar" aria-hidden="true"><i style="width:${Math.round(100 * done / n)}%"></i></div>
       <section class="card">
-        <span class="kicker">${retry ? "🔁 Second chance · " : ""}Question ${done + 1} ${diffChip(p.b)}</span>
+        <span class="kicker">${retry ? "🔁 Second chance · " : ""}Question ${done + 1} ${diffChip(p.b)} ${bmBtn(room.id, p.id)}</span>
         <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
         <div id="stAns"></div>
         <div class="row simbtns"><button class="btn blue" id="stHint">💡 Hint</button><button class="btn plain" id="stJ">📓 Notes</button><button class="btn plain" id="stQuit">✕ Stop</button></div>
@@ -7088,6 +7112,105 @@ function finishStudy(ST) {
   document.getElementById("sdAgain").onclick = () => { SFX.tap(); startStudy(room.id); };
   document.getElementById("sdHome").onclick = () => { SFX.tap(); homeTab = "home"; renderMap(); };
   window.scrollTo({ top: 0 }); setTimeout(checkTrophies, 1500);
+}
+
+/* ============================================================
+   5j. 🔖 Bookmarks: students save any question (🔖 on every question card: escape locks, Study mode,
+   Mistake Notebook and bookmark runs) and redo them later from 🎮 Practice → 🔖 Bookmarks.
+   S.bookmarks = { "roomId:questionId": { t: savedAt, n: tries, ok: right } } (same key style as the Mistake Notebook).
+   ============================================================ */
+const BM_MAX = 200;
+const bmStore = () => (S.bookmarks = S.bookmarks || {});
+const isBookmarked = k => !!bmStore()[k];
+const bookmarkKeys = ti => Object.keys(bmStore()).filter(k => { const m = mistakeQ(k); return m && (ti == null || m.r.t === ti); });
+// The toggle button for one question (any screen). A single document-level listener handles every click.
+const bmBtn = (rid, qid) => { const k = `${rid}:${qid}`, on = isBookmarked(k);
+  return `<button type="button" class="bmbtn ${on ? "on" : ""}" data-bm="${k}" aria-pressed="${on}" aria-label="${on ? "Remove bookmark" : "Bookmark this question"}" title="${on ? "Bookmarked: tap to remove" : "Bookmark to redo later"}">🔖<span>${on ? "Saved" : "Save"}</span></button>`; };
+function toggleBookmark(k) {
+  const bm = bmStore();
+  if (bm[k]) { delete bm[k]; toast("🔖 Bookmark removed"); }
+  else {
+    if (Object.keys(bm).length >= BM_MAX) { toast(`🔖 You can keep up to ${BM_MAX} bookmarks. Remove some first.`); return false; }
+    bm[k] = { t: Date.now(), n: 0, ok: 0 }; SFX.item(); toast("🔖 Saved! Redo it any time in 🎮 Practice → Bookmarks.");
+  }
+  save(); return true;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest && e.target.closest("[data-bm]"); if (!b || !S) return;
+  e.preventDefault(); e.stopPropagation();
+  if (!toggleBookmark(b.dataset.bm)) return;
+  const on = isBookmarked(b.dataset.bm);
+  b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on)); b.setAttribute("aria-label", on ? "Remove bookmark" : "Bookmark this question");
+  const sp = b.querySelector("span"); if (sp) sp.textContent = on ? "Saved" : "Save";
+});
+
+/* ----- 🎮 Practice → 🔖 Bookmarks ----- */
+function renderBookmarks() {
+  renderNav("play");
+  stopRush(); MUSIC.setMode("calm"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; renderTools();
+  const all = bookmarkKeys(), rows = all.map(k => ({ k, ...mistakeQ(k), b: bmStore()[k] })).sort((a, b) => a.r.t - b.r.t || b.b.t - a.b.t);
+  $app.innerHTML = `
+    <section class="hero bm-hero">${starsBg()}
+      <span class="kicker" style="color:#fff">${HERO_KICKER} · Practice</span>
+      <h1>🔖 Bookmarks</h1>
+      <p class="sub">${all.length ? `${all.length} saved question${all.length === 1 ? "" : "s"}` : "No bookmarks yet"}</p>
+    </section>
+    <section class="card">
+      ${say("chiikawa", all.length ? "Your own question collection! Redo them as often as you like. Got one totally sorted? Tap <b>🔖 Saved</b> to remove it." : "Tap <b>🔖 Save</b> on any question (in a stage, Study mode or the Mistake Notebook) and it appears here, ready to redo. 📌", "happy")}
+      <div class="row">${all.length ? `<button class="btn big" id="bmAll">▶ Redo ${Math.min(10, all.length)} bookmark${all.length === 1 ? "" : "s"}</button>` : ""}<button class="btn plain" id="bmBack">← Practice</button></div>
+    </section>
+    ${all.length ? `<section class="card"><h2>By topic</h2><div class="nbtopics">${TOPICS.map((T, ti) => { const n = bookmarkKeys(ti).length; if (!n) return "";
+        return `<div class="nbrow"><span class="ticon" aria-hidden="true">${T.icon}</span><span style="min-width:0"><b>Topic ${T.no}: ${esc(T.name)}</b></span>
+        <span class="pill">🔖 ${n}</span><button class="btn blue" data-bmt="${ti}">Redo</button></div>`; }).join("")}</div></section>
+      <section class="card"><h2>Saved questions</h2><div class="nblist">${rows.slice(0, 80).map(x => `<div class="nbitem bmitem">
+        <span class="small muted">${TOPICS[x.r.t].icon} ${esc(stageLabelM(x.r))} · ${esc(stageName(x.r))}</span>
+        <span>${esc(shortQ(x.p.q))}</span>
+        <span class="row" style="justify-content:space-between;gap:6px"><span class="small">${x.b.n ? `✓ ${x.b.ok}/${x.b.n} right when redone` : "Not redone yet"}</span>${bmBtn(x.r.id, x.p.id)}</span></div>`).join("")}</div>
+        ${rows.length > 80 ? `<p class="small muted">…and ${rows.length - 80} more.</p>` : ""}</section>` : ""}`;
+  const a = document.getElementById("bmAll"); if (a) a.onclick = () => { SFX.init(); SFX.tap(); startBookmarkRun(null); };
+  document.getElementById("bmBack").onclick = () => { SFX.tap(); goTab("play"); };
+  $app.querySelectorAll("[data-bmt]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); startBookmarkRun(Number(b.dataset.bmt)); });
+  window.scrollTo({ top: 0 });
+}
+// Redo up to 10 bookmarks: the ones redone least (and least often right) come first
+function startBookmarkRun(ti) {
+  const bm = bmStore(), keys = shuffle(bookmarkKeys(ti)).sort((a, b) => (bm[a].n - bm[b].n) || (bm[a].ok / (bm[a].n || 1)) - (bm[b].ok / (bm[b].n || 1))).slice(0, 10);
+  if (!keys.length) return renderBookmarks();
+  const RV = { keys, at: 0, right: 0, done: 0, start: new Date().toISOString(), hinted: false };
+  const next = () => {
+    if (RV.at >= RV.keys.length) {
+      const coins = Math.round(RV.right * perk("notebook")); gainCoins(coins); SFX.fanfare(); if (RV.right) confetti(80);
+      activityDone({ mode: "bookmark", topic: ti == null ? "all" : String(TOPICS[ti].no), stage: "Bookmarks", ans: RV.done, cor: RV.right, done: RV.done > 0, start: RV.start });
+      $app.innerHTML = `<section class="card"><span class="kicker">🔖 Bookmark run done</span><h2>${RV.done && RV.right === RV.done ? "All right! 🎉" : "Run complete! 🌱"}</h2>
+        <div class="cast" style="margin:0"><div class="fig" style="width:84px">${figure("chiikawa", RV.right ? "sparkle" : "normal")}</div></div>
+        <p style="text-align:center"><b>${RV.right}/${RV.done}</b> right · <span class="pill coinpill">+${coins} 🌰</span></p>
+        ${say("chiikawa", RV.right === RV.done && RV.done ? "Those are looking solid now! Remove any you've mastered so your list stays sharp. ✨" : "Keep them bookmarked and come back tomorrow. Spaced practice makes it stick! 🌱", "happy")}
+        <div class="row"><button class="btn big" id="bmBackL">🔖 Back to bookmarks</button><button class="btn plain" id="bmHome">🏠 Home</button></div></section>`;
+      document.getElementById("bmBackL").onclick = () => { SFX.tap(); renderBookmarks(); };
+      document.getElementById("bmHome").onclick = () => { SFX.tap(); goTab("home"); };
+      window.scrollTo({ top: 0 }); return;
+    }
+    const k = RV.keys[RV.at], { r, p } = mistakeQ(k);
+    $app.innerHTML = `<section class="rushhead"><div class="status"><div class="av">${avatar("chiikawa", "brave")}</div><div><div class="rtopic" style="color:var(--yellow)">🔖 Bookmarks${ti == null ? "" : ` · ${esc(TOPICS[ti].name)}`}</div><div class="rt">Question ${RV.at + 1} of ${RV.keys.length}</div></div></div>
+        <span class="combo">✓ ${RV.right}</span></section>
+      <section class="card"><span class="kicker">${TOPICS[r.t].icon} ${esc(stageLabelM(r))} · ${esc(r.focus)} ${diffChip(p.b)} ${bmBtn(r.id, p.id)}</span>
+        <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
+        <div id="bmAns"></div><div class="row"><button class="btn blue" id="bmHint">💡 Hint</button><button class="btn plain" id="bmJ">📓 Notes</button><button class="btn plain" id="bmQuit">✕ Stop</button></div><div id="bmFb"></div></section>`;
+    document.getElementById("bmHint").onclick = () => { SFX.hint(); document.getElementById("bmFb").innerHTML = say("chiikawa", `💡 ${esc(p.hint)}`, "normal", "hint"); };
+    document.getElementById("bmJ").onclick = () => { SFX.tap(); openJournal(r.id, termsIn(r, p)); };
+    document.getElementById("bmQuit").onclick = () => { SFX.tap(); RV.at = RV.keys.length; next(); };
+    miniQuiz(document.getElementById("bmAns"), p, ok => {
+      RV.done++; const b = bmStore()[k]; if (b) { b.n++; if (ok) b.ok++; }
+      if (ok) { RV.right++; SFX.right(); } else { SFX.wrong(); noteMistake(r.id, p.id); }
+      save();
+      document.getElementById("bmFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("chiikawa", "Wahoo! Got it!", "happy") : say("chiikawa", "Not yet... let's read why. 🥺", "cry")}<p>${esc(p.explain)}</p>${p.tip ? `<p class="tip"><b>📝 Exam tip:</b> ${esc(p.tip)}</p>` : ""}
+        <div class="row"><button class="btn big" id="bmNext">${RV.at + 1 < RV.keys.length ? "Next →" : "Finish"}</button></div></div>`;
+      document.getElementById("bmNext").onclick = () => { SFX.tap(); RV.at++; next(); };
+      document.getElementById("bmNext").focus({ preventScroll: true });
+    });
+    window.scrollTo({ top: 0 });
+  };
+  MUSIC.setMode("calm"); next();
 }
 
 /* ============================================================
@@ -7310,8 +7433,10 @@ function homeHtml() {
     </section>
     ${riskCardHtml()}
     <div class="homegrid">
+    <div class="homeleft">
     <section class="card roomwrap">${roomCard(greeting(), S.completed_rooms.length ? "happy" : "normal")}
       <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" data-go="pals">🍱 Feed & care</button></div></section>
+    ${friendsHtml()}</div>
     <div class="homeside folds">
       ${foldHtml("h-streak", { icon: "🔥", title: "My streak", peek: `${S.current_streak} 🔥 · ${"❄️".repeat(S.streak_shields) || "0 ❄️"}` }, streakCardHtml())}
       ${foldHtml("h-mission", { icon: "🎯", title: "Daily mission", peek: m.done ? "✓ Done" : m.n ? `${m.prog || 0}/${m.n}` : "" }, missionCardHtml())}
@@ -7321,6 +7446,7 @@ function homeHtml() {
     </div></div>`;
 }
 function wireHome() {
+  wireFriends();
   const sg = document.getElementById("storyGo"); if (sg) sg.onclick = () => { SFX.tap(); openStory(); };
   wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured(); wireCapsuleAd(); wireHomeBoard();
   const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
@@ -7366,8 +7492,8 @@ function playHtml() {
       <div class="modes">
         <button class="mode rush" id="mRush"><h3>⚡ Cell Rush</h3><span class="muted small">60 seconds of quick mixed questions. Earn 🌰 chestnuts.</span><span class="small">Best: <b>${S.rush.best}</b> pts ${S.rush.lastDay !== today() ? "· <b>×2 today!</b>" : ""}</span></button>
         <button class="mode note" id="mNote"><h3>📕 Mistake Notebook</h3><span class="muted small">Fix the questions you got wrong. Right twice = cleared.</span><span class="small"><b>${mistakeKeys().length}</b> to fix · ${S.mistakes_cleared || 0} cleared</span></button>
+        <button class="mode bm-mode" id="mBm"><h3>🔖 Bookmarks</h3><span class="muted small">Redo the questions you saved with 🔖, by topic.</span><span class="small"><b>${bookmarkKeys().length}</b> saved</span></button>
         <button class="mode dict-mode" id="mDict"><h3>🎧 Word Dictation</h3><span class="muted small">Hear key terms in a British accent and spell them.</span><span class="small">${nw ? `<b>${nw}</b> missed words to practise` : `Best round: <b>${S.dict.best}</b>/${DICT_N}`}</span></button>
-        <button class="mode" id="mLb"><h3>🏆 Class leaderboard</h3><span class="muted small">${signedIn() ? "Effort, streak and collection in your class." : "For signed-in classmates. Guests play privately."}</span><span class="small">Your effort points: <b>${dedication()}</b></span></button>
       </div>
     </section>
     ${foldHtml("pr-mastery", { icon: "📈", title: "Biology mastery", peek: `${Math.round(TOPICS.reduce((a, T) => a + S.bio_mastery[T.id], 0) / TOPICS.length)}%` }, `
@@ -7377,8 +7503,8 @@ function playHtml() {
 }
 function wirePlay() {
   document.getElementById("mRush").onclick = () => { SFX.init(); SFX.tap(); rushIntro(); };
+  document.getElementById("mBm").onclick = () => { SFX.init(); SFX.tap(); renderBookmarks(); };
   document.getElementById("mNote").onclick = () => { SFX.init(); SFX.tap(); renderNotebook(); };
-  document.getElementById("mLb").onclick = () => { SFX.init(); SFX.tap(); openLeaderboard(); };
   document.getElementById("mDict").onclick = () => { SFX.init(); SFX.tap(); DT = null; renderDictation(); };
 }
 
@@ -7936,7 +8062,7 @@ function cloudPayload() {
   const ap = S.activePet && petById(S.activePet);
   return { state: st, summary: { streak: S.current_streak, best: S.longest_streak, stars: ROOMS.reduce((a, r) => a + roomStars(r), 0), stages: S.completed_rooms.length,
     coins: S.coins, pet: ap ? ap.name : "", pets: PETS.filter(p => S.pets[p.id]).length, mistakes: mistakeKeys().length, cleared: S.mistakes_cleared || 0,
-    trophies: Object.keys(S.trophies || {}).length, lastDay: S.last_study_day || "", xp: dedication(), col: collectionCount() } };
+    trophies: Object.keys(S.trophies || {}).length, lastDay: S.last_study_day || "", xp: dedication(), col: collectionCount(), pal: activePalId() } };
 }
 function cloudSave() { if (!signedIn() || !S) return; if (!tokenOk()) { markStale(); return; } api("save", cloudPayload()).then(j => { if (j.ok) { AUTH.lastSync = Date.now(); } }); }
 window.addEventListener("pagehide", () => {
@@ -8065,6 +8191,76 @@ function fillHomeBoard() {
   const key = "class";
   if (lbData[key] && Date.now() - lbData[key].t < 90000) return show(lbData[key].d);
   api("board", { scope: "class" }).then(d => { if (d && d.ok) lbData[key] = { t: Date.now(), d }; show(d); });
+}
+
+/* ============================================================
+   5k. 👥 Friends (signed-in students only, up to 5): like Duolingo. Share your 6-character friend code,
+   follow up to 5 classmates, see their streak and progress, and send one preset cheer per friend per day.
+   Lives on 🏠 Home in the left column under the pal room (the empty space on wide screens).
+   Server actions: friends · friendAdd · friendRemove · cheer (server/Code.gs). No free-text messages.
+   ============================================================ */
+const FR = { d: null, t: 0, busy: false, pick: null, celebrated: false };
+const FR_ERR = { friend_unknown: "No student has that code. Check the 6 letters and numbers.", friend_self: "That's your own code! 😄", friend_already: "You already follow this friend.", friend_full: "You already have 5 friends. Remove one to add another.", cheer_once: "You already cheered this friend today. Try again tomorrow! 🌱", unknown_action: "Friends need the latest class server. Ask your teacher to update it." };
+const frErr = e => FR_ERR[e] || errText(e);
+function friendsHtml() {
+  if (!signedIn()) return `<section class="card friendscard locked"><div class="frhead"><h3 style="margin:0">👥 Friends</h3><span class="pill">🔒 Sign-in</span></div>
+      <div class="frghost" aria-hidden="true">${[0, 1, 2].map(() => `<div class="frrow"><span class="frav"></span><span class="frname"><i></i><i></i></span></div>`).join("")}</div>
+      <p class="small muted" style="margin:0">${cloudOn() ? "Sign in with your school Google account to add up to <b>5 friends</b>, see their streaks and cheer each other on!" : "Friends need class sign-in, which isn't switched on in this copy."}</p>
+      ${cloudOn() ? `<div class="row"><button class="btn blue" id="frSign">🎓 Sign in to add friends</button></div>` : ""}</section>`;
+  return `<section class="card friendscard" id="frCard"><div class="frhead"><h3 style="margin:0">👥 Friends</h3><span class="pill" id="frCount">…</span></div><div id="frBody"><p class="small muted" style="margin:0">Loading your friends… 🌱</p></div></section>`;
+}
+function wireFriends() {
+  const sb = document.getElementById("frSign"); if (sb) sb.onclick = () => { SFX.tap(); save(); authPref(""); renderLogin(); };
+  if (!signedIn() || !document.getElementById("frBody")) return;
+  if (FR.d && Date.now() - FR.t < 60000) return fillFriends(FR.d);
+  if (!tokenOk()) { fillFriends({ ok: false, error: "expired" }); return; }
+  api("friends", {}).then(d => { if (d && d.ok && Array.isArray(d.friends)) { FR.d = d; FR.t = Date.now(); } fillFriends(d); });
+}
+const agoDays = day => { if (!day) return null; return Math.max(0, dayNum(today()) - dayNum(String(day).slice(0, 10))); };
+function friendRow(f, d) {
+  const P = PALS.find(x => x.id === f.pal) || PALS.find(x => x.id === "mochi"), ago = agoDays(f.last), sent = d.sent && d.sent[f.code];
+  const status = f.today ? `<span class="frst on">✓ studied today</span>` : ago == null ? `<span class="frst">Not started yet</span>` : `<span class="frst ${ago > 2 ? "away" : ""}">Last studied ${ago === 1 ? "yesterday" : `${ago} days ago`}</span>`;
+  return `<div class="frrow" data-frc="${esc(f.code)}">
+    <span class="frav" aria-hidden="true">${palFig(P.id, f.today ? "happy" : "normal")}</span>
+    <span class="frname"><b>${esc(f.n)}</b>${f.c ? ` <span class="frcls">${esc(f.c)}</span>` : ""}<br>${status}
+      <span class="frstats"><span title="Streak">🔥 ${f.st}</span><span title="Stages escaped">🚪 ${f.s}</span><span title="Effort points">🌟 ${f.xp}</span></span></span>
+    <span class="fract"><button class="btn ${sent ? "plain" : "yellow"} frcheer" data-cheer="${esc(f.code)}" ${sent ? "disabled" : ""} aria-label="${sent ? `Cheered ${esc(f.n)} today` : `Cheer ${esc(f.n)}`}">${sent ? "✓ Cheered" : "👏 Cheer"}</button>
+      <button class="frx" data-frx="${esc(f.code)}" aria-label="Remove ${esc(f.n)}" title="Remove friend">✕</button></span>
+    ${FR.pick === f.code ? `<div class="frpick" role="group" aria-label="Choose a cheer">${(d.msgs || []).map((m, i) => `<button class="frmsg" data-msg="${i}" data-to="${esc(f.code)}">${esc(m)}</button>`).join("")}</div>` : ""}
+  </div>`;
+}
+function fillFriends(d) {
+  const body = document.getElementById("frBody"), cnt = document.getElementById("frCount"); if (!body) return;
+  if (d && d.ok && !Array.isArray(d.friends)) d = { ok: false, error: "unknown_action" };   // an older class server
+  if (!d || !d.ok) { body.innerHTML = `<p class="small muted" style="margin:0">${esc(frErr(d ? d.error : "network"))}</p>`; if (cnt) cnt.textContent = "–"; return; }
+  if (cnt) cnt.textContent = `${d.friends.length} / ${d.max}`;
+  const fresh = (d.cheers || []).filter(c => !c.seen);
+  if (fresh.length && !FR.celebrated) { FR.celebrated = true; setTimeout(() => { toast(`💌 ${fresh[0].n} cheered you: ${fresh[0].m}`); if (!reduced()) confetti(60); SFX.item(); }, 700); }
+  const ago = t => { const h = Math.round((Date.now() - new Date(t)) / 36e5); return h < 1 ? "just now" : h < 24 ? `${h} h ago` : `${Math.round(h / 24)} d ago`; };
+  body.innerHTML = `
+    ${(d.cheers || []).length ? `<div class="frcheers">${d.cheers.slice(0, 3).map(c => `<div class="frgot ${c.seen ? "" : "new"}"><b>💌 ${esc(c.n)}</b> ${esc(c.m)} <span class="small muted">${ago(c.t)}</span></div>`).join("")}</div>` : ""}
+    ${d.friends.length ? `<div class="frlist">${d.friends.map(f => friendRow(f, d)).join("")}</div>`
+      : `<div class="frempty"><span aria-hidden="true">👋</span><span class="small">No friends yet. Swap codes with a classmate and add each other: studying together keeps both your flames burning!</span></div>`}
+    <div class="frmine"><span class="small muted">My friend code</span><b class="frcode" id="frMy">${esc(d.code)}</b><button class="btn plain small" id="frCopy">📋 Copy</button></div>
+    ${d.friends.length < d.max ? `<div class="fradd"><input id="frIn" class="name" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Friend's code" aria-label="Friend's 6-character code"><button class="btn blue" id="frAdd">➕ Add</button></div>`
+      : `<p class="small muted" style="margin:0">You have 5 friends, the maximum.</p>`}
+    <p class="small muted" style="margin:0">🔒 Friends see your first name, class, streak, stages and effort points. Only share your code with classmates you know.</p>`;
+  const busy = on => { FR.busy = on; body.querySelectorAll("button,input").forEach(x => { if (on) x.disabled = true; }); };
+  const reload = nd => { if (nd && nd.ok && Array.isArray(nd.friends)) { FR.d = nd; FR.t = Date.now(); fillFriends(nd); } else { fillFriends(FR.d || nd); toast(`⚠️ ${frErr(nd ? nd.error : "network")}`); } };
+  const cp = document.getElementById("frCopy"); if (cp) cp.onclick = () => { SFX.tap(); try { navigator.clipboard.writeText(d.code).then(() => toast("📋 Code copied! Send it to a classmate.")); } catch (e) { toast(`Your code: ${d.code}`); } };
+  const add = document.getElementById("frAdd"), inp = document.getElementById("frIn");
+  if (add) { const go = () => { const code = (inp.value || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); if (code.length !== 6) { toast("Friend codes have 6 letters and numbers."); return; } if (!tokenOk()) { markStale(); return; }
+      SFX.tap(); busy(true); api("friendAdd", { code }).then(nd => { if (nd && nd.ok) { SFX.item(); toast("👥 Friend added!"); } reload(nd); }); };
+    add.onclick = go; inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); go(); } }); }
+  body.querySelectorAll("[data-cheer]").forEach(b => b.onclick = () => { SFX.tap(); FR.pick = FR.pick === b.dataset.cheer ? null : b.dataset.cheer; fillFriends(FR.d); });
+  body.querySelectorAll("[data-msg]").forEach(b => b.onclick = () => { if (!tokenOk()) { markStale(); return; } SFX.tap(); FR.pick = null; busy(true);
+    api("cheer", { code: b.dataset.to, msg: Number(b.dataset.msg) }).then(nd => { if (nd && nd.ok) { SFX.right(); toast("👏 Cheer sent!"); } reload(nd); }); });
+  body.querySelectorAll("[data-frx]").forEach(b => b.onclick = () => {
+    const f = d.friends.find(x => x.code === b.dataset.frx); if (!f) return;
+    const box = openModal(`<span class="kicker">👥 Friends</span><h2>Remove ${esc(f.n)}?</h2><p>You can add them again later with their code.</p><div class="row"><button class="btn" id="frYes">Remove</button><button class="btn plain" id="frNo">Keep</button></div>`);
+    box.querySelector("#frNo").onclick = () => { SFX.tap(); closeModal(); };
+    box.querySelector("#frYes").onclick = () => { SFX.tap(); closeModal(); if (!tokenOk()) { markStale(); return; } busy(true); api("friendRemove", { code: f.code }).then(reload); };
+  });
 }
 
 /* ============================================================
@@ -9633,7 +9829,7 @@ function startRevision(ti) {
     const k = RV.keys[RV.at], { r, p } = mistakeQ(k), m = S.mistakes[k] || { n: 0, ok: 0 };
     $app.innerHTML = `<section class="rushhead"><div class="status"><div class="av">${avatar("chiikawa", "brave")}</div><div><div class="rtopic" style="color:var(--yellow)">📕 Mistake Notebook${ti == null ? "" : ` · ${esc(TOPICS[ti].name)}`}</div><div class="big">Question ${RV.at + 1} of ${RV.keys.length}</div></div></div>
         <span class="combo">✓ ${m.ok}/2 to clear</span></section>
-      <section class="card"><span class="kicker">${TOPICS[r.t].icon} ${esc(stageLabel(r))} · ${esc(r.focus)} ${diffChip(p.b)}</span>
+      <section class="card"><span class="kicker">${TOPICS[r.t].icon} ${esc(stageLabel(r))} · ${esc(r.focus)} ${diffChip(p.b)} ${bmBtn(r.id, p.id)}</span>
         <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
         <div id="rvAns"></div><div class="row"><button class="btn blue" id="rvHint">💡 Hint</button><button class="btn plain" id="rvJ">📓 Notes</button><button class="btn plain" id="rvQuit">✕ Stop</button></div><div id="rvFb"></div></section>`;
     document.getElementById("rvHint").onclick = () => { SFX.hint(); document.getElementById("rvFb").innerHTML = say("chiikawa", `💡 ${esc(p.hint)}`, "normal", "hint"); RV.hinted = true; };
@@ -9924,7 +10120,7 @@ function openPuzzle(i) {
   if (R.hiddenHs === i) { R.hiddenHs = null; toast("🔦 Found the hidden lock!"); }
   const typeLabel = { mc: p.gen ? "Spelling check" : p.graph ? "Graph reading" : "Multiple choice", dial: "Combination dials", spell: "Spelling lock" }[p.type];
   const box = openModal(`
-    <span class="kicker">${skillTag(i)}${lockSkill(i) && p.skill !== lockSkill(i).id ? ` <span class="skstand" title="This stage is short of ${esc(lockSkill(i).name)} questions">stand-in</span>` : ""} ${typeLabel} · T${room.topicNo} ${room.boss ? "Boss" : `S${room.s}`} ${diffChip(p.b)}</span>
+    <span class="kicker">${skillTag(i)}${lockSkill(i) && p.skill !== lockSkill(i).id ? ` <span class="skstand" title="This stage is short of ${esc(lockSkill(i).name)} questions">stand-in</span>` : ""} ${typeLabel} · T${room.topicNo} ${room.boss ? "Boss" : `S${room.s}`} ${diffChip(p.b)} ${bmBtn(room.id, p.id)}</span>
     <h2>${esc(hsName)}</h2>
     <div class="lockprog" aria-label="Question ${step + 1} of ${LOCK_Q} for this lock">${Array.from({ length: LOCK_Q }, (_, n) => `<i class="${n < step ? "on" : n === step ? "cur" : ""}"></i>`).join("")}<span class="small"><b>Question ${step + 1} of ${LOCK_Q}</b> to open this lock</span></div>
     ${step ? say("chiikawa", pick(["Keep going! One more click and the lock wiggles... 🔐", "It's working! The lock is loosening! ✨", "Ya...! Almost there! 🥹"]), "brave")
