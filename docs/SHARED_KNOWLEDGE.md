@@ -44,6 +44,11 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 
 ## Cross-project log (newest first)
 
+- 2026-10-05 (biology): **Two practical-style simulations** (`src/sims2.js`); the Lab tabs are now ordered by topic.
+  - **Osmosis with dialysis tubing:** a live capillary level, a pore zoom (water passes, sucrose blocked, in/out counters), a level–time graph with ghost runs, and a **fair-test table** that separates variables changing the *rate* (surface area, temperature) from those changing the *final level* (volume of sucrose solution), both (concentration), or neither (beaker volume). The model is h(t) = H(1 − e^(−rt)).
+  - **Phototropism coleoptile investigations** (Darwin → Boysen-Jensen → Paál → Went) as a predict-then-run timeline: tap-to-predict chips marked ✅/❌, auxin shown as red dots riding along each bent coleoptile, mica stopping the flow, darkness scenes, and a cell-elongation zoom.
+  - **Reusable pattern:** "predict → run → picture conclusion cards" for any classic experiment. Draw the bent stem as a polyline of points, so dots and blocks can follow it.
+
 - 2026-10-05 (biology): **Streak-up ceremony** (`src/streakfx.js`, called from `markStudied`): a full-screen, tap-to-skip overlay that follows the game-motion-fx recipe.
   - Beats: charge-up embers → a CSS **odometer** (one digit strip per column, staggered `translateY`, so 99 → 100 rolls) → boom (ring + burst).
   - Milestones add 2 impact frames, rays, a title slam and confetti. Reward toasts are queued until the overlay closes.

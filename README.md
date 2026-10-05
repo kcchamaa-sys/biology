@@ -46,13 +46,23 @@ Every topic is open, so students can jump to the one their class is on (the map 
 
 ## 🔬 Simulation Lab (🔬 Lab tab in the bottom bar)
 
-Five interactive models, each with a 2-question quick check (+3 🌰 the first time):
+Seven interactive models, each with a 2-question quick check (+3 🌰 the first time). The Lab tabs follow the **topic order of the question mode** (Cell membrane → Osmosis tubing → Breathing → Pupil → Focusing → Hearing → Phototropism).
 
 - **🫁 Breathing:** an animated chest (ribs, intercostal muscles, diaphragm, lungs, trachea) with auto or hand-controlled breathing and an exercise mode. A live graph plots **pressure in the lungs against time** (relative to atmospheric, with lung volume as an option), and the steps of inhalation/exhalation update as they happen.
 - **👁️ Pupil reflex:** a light slider (dark room → bright sun, plus a torch flash). The pupil changes size after a short reflex delay; circular vs radial muscles light up, the reflex arc animates, and a bar shows how much light reaches the retina.
 - **🔍 Focusing and glasses:** a ray diagram of the eye (cornea, lens, ciliary muscles, suspensory ligaments, retina) for a distant tree or a near book. The lens thickens or thins by accommodation; choose a normal, short-sighted or long-sighted eye and a concave or convex lens. The focus point, a verdict (in front of / on / behind the retina) and a blurred or clear "What Mochi sees" view update live. Calculated with real paraxial ray tracing.
 - **👂 Hearing:** a labelled ear (pinna, canal, eardrum, ossicles, oval window, cochlea, semicircular canals, auditory nerve, Eustachian tube). Pitch and loudness sliders (with presets and a real tone to hear); sound waves, eardrum and ossicles vibrate, and an uncoiled cochlea shows which hair cells respond (high pitch at the base, low at the apex) with impulses to the brain. A hearing-damage switch shows why loud music can take away high pitches.
 - **🫧 Cell membrane (fluid mosaic model):** a moving phospholipid bilayer with channel and carrier proteins, a glycoprotein and cholesterol (tap a part to learn it). Send O₂, water, glucose, ions, an active-transport ion (with ATP) or a big protein molecule and watch the route each takes; counters show outside vs inside. A temperature slider changes fluidity, and above 50 °C proteins denature and the membrane leaks.
+
+- **💧 Osmosis with dialysis tubing (Topic 3):** an experimental set-up (sucrose solution in the tubing) next to the control (distilled water in the tubing), both in beakers of distilled water. The capillary level rises live against the initial-level mark.
+  - **Zoom in:** the tubing wall shows water molecules passing through tiny pores while sucrose is blocked, with in/out counters and the net-flow arrow.
+  - **Level–time graph:** keeps the last 3 runs as ghost lines, so "steep = rate" and "levels off = final level" can be compared.
+  - **Five picture cards** explain the idea: different water potentials → pores → net water in → rises then slows → control.
+  - **Fair-test table:** change one variable (concentration, tubing length, volume of sucrose solution, volume of distilled water, temperature) and see whether it changes the **rate**, the **final level**, or neither.
+- **🌱 Phototropism (Topic 16):** the five classic coleoptile investigations on a timeline (Darwin 1880, Boysen-Jensen 1913 ×2, Paál 1919, Went 1926).
+  - **Predict first:** students tap each set-up (A–D) to predict "bends left / grows straight / bends right / no growth".
+  - **Run:** the light shines from the left (or the scene goes dark), the coleoptiles grow and bend over "2 days", and **red dots show auxin** flowing down (and getting stopped by mica). Predictions are marked ✅/❌.
+  - **Explain:** the conclusions appear as icon cards, plus a zoom picture of light-side vs shaded-side cells elongating.
 
 ## 🎵 Music
 

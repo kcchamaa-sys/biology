@@ -4,14 +4,19 @@
    1. Breathing: lung ventilation with a live lung-pressure graph
    2. Pupil reflex: bright vs dark light
    3. Accommodation: lens thickness, ray diagram, short/long sight and glasses
+   4. Hearing · 5. Cell membrane · 6–7 (sims2.js): osmosis with dialysis tubing, phototropism (coleoptiles)
+   The Lab tabs follow the topic order of the question mode.
    ============================================================ */
-let simTab = "lung", SIM = null;
+let simTab = "membrane", SIM = null;
+// In the same order as the topics in the question mode (Topic 2 → 19)
 const SIMS = [
+  ["membrane", "🫧", "Cell membrane", "Topics 2–3 · Cells and movement across membranes"],
+  ["dialysis", "💧", "Osmosis tubing", "Topic 3 · Movement of substances across membranes"],
   ["lung", "🫁", "Breathing", "Topic 13 · Gas exchange in humans"],
   ["pupil", "👁️", "Pupil reflex", "Topic 16 · Coordination and response"],
   ["lens", "🔍", "Focusing & glasses", "Topic 16 · Coordination and response"],
   ["ear", "👂", "Hearing", "Topic 16 · Coordination and response"],
-  ["membrane", "🫧", "Cell membrane", "Topics 2–3 · Cells and movement across membranes"]
+  ["tropism", "🌱", "Phototropism", "Topic 16 · Coordination and response (plants)"]
 ];
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const segBtns = (name, opts, cur) => `<div class="simseg" role="radiogroup">${opts.map(([v, l]) => `<button role="radio" aria-checked="${v === cur}" data-${name}="${v}">${l}</button>`).join("")}</div>`;
@@ -29,7 +34,7 @@ function renderSims(tab) {
     </section>
     <div id="simBody"></div>`;
   $app.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { SFX.tap(); renderSims(b.dataset.sim); });
-  ({ lung: lungSim, pupil: pupilSim, lens: lensSim, ear: earSim, membrane: membraneSim })[simTab](document.getElementById("simBody"));
+  ({ lung: lungSim, pupil: pupilSim, lens: lensSim, ear: earSim, membrane: membraneSim, dialysis: dialysisSim, tropism: tropismSim })[simTab](document.getElementById("simBody"));
   wireFolds($app);
   window.scrollTo({ top: 0 });
 }

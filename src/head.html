@@ -667,6 +667,24 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .missioncard .tprog i { background: linear-gradient(180deg, #CDE0FF, var(--blue) 55%, #7FA9EE); }
 .healthtip { display: flex; gap: 8px; align-items: flex-start; background: #EFFAF2; border: 2px dashed #9ED7AF; border-radius: 14px; padding: 8px 12px; font-size: .86rem; line-height: 1.4; }
 .healthtip > span:first-child { font-size: 1.2rem; }
+/* Lab: osmosis tubing + phototropism (src/sims2.js) */
+.diaopts { display: grid; gap: 8px; margin-top: 8px; } .diaopts > div { display: grid; gap: 4px; min-width: 0; }
+.diatable td, .diatable th { padding: 6px 8px; } .tscroll { overflow-x: auto; }
+.dup { color: #2E8B57; font-weight: 900; } .ddown { color: #C0392B; font-weight: 900; } .dsame { color: #7A6A66; font-weight: 800; }
+.dsteps { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 10px; margin-top: 8px; }
+.dstep { position: relative; display: grid; gap: 4px; align-content: start; background: #F4FAFF; border-radius: 16px; padding: 10px; border: 2px solid #DCE9F7; }
+.dstep svg { width: 100%; height: auto; max-height: 92px; } .dstep b { font-size: .92rem; }
+.dnum { position: absolute; top: 8px; left: 8px; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #fff; font-weight: 900; font-size: .8rem; display: grid; place-items: center; }
+.tropline { display: flex; align-items: center; gap: 4px; overflow-x: auto; padding-bottom: 4px; }
+.tropline button { flex: none; display: grid; justify-items: center; gap: 0; border: 2px solid #E6DCD2; background: #fff; border-radius: 14px; padding: 6px 10px; min-height: 48px; font: inherit; cursor: pointer; color: var(--ink); }
+.tropline button span { font-size: .72rem; font-weight: 800; } .tropline button[aria-selected="true"] { background: #E6F8EC; border-color: #3FA06B; box-shadow: 0 0 0 2px #3FA06B; }
+.tarrow { flex: none; color: #B9A9A0; font-weight: 900; }
+.trpred { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin: 8px 0; }
+.trchip { display: grid; gap: 2px; text-align: left; border: 2px dashed #CDBFB2; background: #FFFDF8; border-radius: 14px; padding: 8px 10px; font: inherit; cursor: pointer; color: var(--ink); min-height: 44px; min-width: 0; }
+.trchip .trl { font-size: 1rem; } .trchip .trn { font-size: .78rem; color: var(--ink-soft); line-height: 1.25; } .trchip .trp { font-size: .82rem; }
+.trchip.right { border: 2px solid #3FA06B; background: #E6F8EC; } .trchip.wrong { border: 2px solid #E9573F; background: #FFF0EC; }
+.trconc { display: grid; gap: 8px; margin-top: 6px; } .trconc > div { display: flex; gap: 10px; align-items: flex-start; background: #F4FAFF; border-radius: 14px; padding: 8px 10px; line-height: 1.4; } .trconc > div > span:first-child { font-size: 1.4rem; }
+.trwhy { width: 100%; max-width: 360px; height: auto; display: block; margin: 0 auto; }
 /* Fold bars (foldHtml in src/home.js): secondary sections collapse to icon · title · peek number · chevron */
 .fold { background: #fff; border: var(--line); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; min-width: 0; }
 .fold > summary { list-style: none; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 14px; cursor: pointer; font-weight: 900; -webkit-tap-highlight-color: transparent; }
