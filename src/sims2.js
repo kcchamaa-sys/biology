@@ -45,8 +45,8 @@ function dialysisSim(root) {
       <div class="row simbtns"><button class="btn" id="dRun">▶ Start (30 min)</button><button class="btn plain" id="dFast">⏩ Fast</button><button class="btn plain" id="dReset">↺ Reset</button></div>
       <div class="diaopts">${Object.entries(DIA_OPTS).map(([k, [lab, opts]]) => `<div><b class="small">${lab}</b>${segBtns("dv-" + k, opts.map(([v, l]) => [String(v), l]), String(st.v[k]))}</div>`).join("")}</div>
     </section>
-    <section class="card"><h3 style="margin:0">🔎 Zoom in on the tubing wall</h3><div id="diaZoom" class="simsvg"></div><div id="diaCross" class="small"></div>
-      <h3 style="margin:10px 0 0">📈 Liquid level vs time</h3><div id="diaGraph" class="simsvg"></div></section></div>
+    <section class="card"><h3 style="margin:0">🔎 Zoom in on the tubing wall</h3><div id="diaZoom" class="simsvg nozoom"></div><div id="diaCross" class="small"></div>
+      <h3 style="margin:10px 0 0">📈 Liquid level vs time</h3><div id="diaGraph" class="simsvg nozoom"></div></section></div>
     <section class="card"><h3 style="margin:0">🧠 Why does the level rise?</h3>${diaStepsHtml()}</section>
     <section class="card"><h3 style="margin:0">🧪 Fair-test table</h3><p class="small muted" style="margin:4px 0">Change <b>one</b> thing, press Start, and compare with the standard set-up (20%, 15 cm, 25 °C). Which changes affect the <b>rate</b>? Which affect the <b>final level</b>?</p><div id="diaTable"></div></section>
     ${simQuiz("dialysis")}`;
@@ -281,7 +281,7 @@ function tropSceneSvg(st) {
   });
   s += `<text x="${W - 10}" y="${base - 156}" text-anchor="end" font-size="12" font-weight="800" fill="${I.light ? "#9A8A86" : "#9C94BC"}">start height</text>`;
   if (st.run || p >= 1) s += `<text x="${W / 2}" y="26" text-anchor="middle" font-size="16" font-weight="900" fill="${I.light ? CO : "#E6E1F5"}">⏱ ${p >= 1 ? "after 2 days" : `day ${(p * 2).toFixed(1)}`}</text>`;
-  return `<svg viewBox="0 0 ${W} 340" role="img" aria-label="${esc(I.who)}'s coleoptile experiment">${s}</svg>`;
+  return `<svg class="${I.light ? "" : "dark"}" viewBox="0 0 ${W} 340" role="img" aria-label="${esc(I.who)}'s coleoptile experiment">${s}</svg>`;
 }
 // Static zoom: the bending zone, light side vs shaded side cells
 function tropWhySvg() {

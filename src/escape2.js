@@ -72,7 +72,7 @@ function openMachine() {
   if (sp.found.length < 3) {
     SFX.wrong();
     openModal(`<span class="kicker">⚙️ Bio-Machine</span><h2>Missing specimens</h2>${machineSvg(0, false)}
-      ${say("hachiware", `The machine needs <b>3 specimens</b> to run. You have <b>${sp.found.length}</b>. Sweep your torch over the dark room and look for something <b>shimmering</b>. 🔦`, "normal", "hint")}
+      ${say("chiikawa", `The machine needs <b>3 specimens</b> to run. You have <b>${sp.found.length}</b>. Sweep your torch over the dark room and look for something <b>shimmering</b>. 🔦`, "normal", "hint")}
       <div class="row"><button class="btn primary" id="mBack">🔦 Keep searching</button></div>`);
     document.getElementById("mBack").onclick = () => { SFX.tap(); closeModal(); };
     return;
@@ -100,7 +100,7 @@ function openMachine() {
       } else {
         SFX.wrong(); b.classList.add("spark"); setTimeout(() => b.classList.remove("spark"), 500);
         if (!R.study) { S.room_timer[room.id] -= 10; updateTimerEl(); }
-        const mf = document.getElementById("mfb"); if (mf) mf.innerHTML = say("hachiware", `Bzzt! ⚡ That's not what <b>${esc(terms[sel][0])}</b> does.${R.study ? "" : " (−10 s)"} Check 📓 the notes if you're unsure.`, "normal", "hint");
+        const mf = document.getElementById("mfb"); if (mf) mf.innerHTML = say("chiikawa", `Bzzt! ⚡ That's not what <b>${esc(terms[sel][0])}</b> does.${R.study ? "" : " (−10 s)"} Check 📓 the notes if you're unsure.`, "normal", "hint");
       }
     });
   };
@@ -109,7 +109,7 @@ function openMachine() {
 function powerUp() {
   SFX.fanfare(); confetti(120); yaha("Power on!");
   openModal(`<span class="kicker">⚙️ Bio-Machine</span><h2>⚡ Power on!</h2><div class="machinewrap powered">${machineSvg(1, true)}</div>
-    ${say("usagi", "WAHOO!!! The machine is humming and the door lamp turned GREEN! 🐰⚡", "happy")}
+    ${say("chiikawa", "WAHOO!!! The machine is humming and the door lamp turned GREEN!⚡", "happy")}
     <div class="terms">${specRun().terms.map(i => R.room.terms[i]).map(([t, m]) => `<span class="term"><b>${esc(t)}</b><span class="def">${esc(m)}</span></span>`).join("")}</div>
     <div class="row"><button class="btn primary" id="pwOk">${(S.room_progress[R.room.id] || []).length === 5 ? "🚪 To the exit door" : "🔓 Back to the locks"}</button></div>`);
   document.getElementById("pwOk").onclick = () => { SFX.tap(); closeModal(); renderRoom(); };

@@ -51,7 +51,7 @@ function statsHtml() {
   if (!isTeacher()) return `<section class="card"><h2>📊 Statistics</h2><p>This page is for teacher accounts only.</p></section>`;
   if (!TS.data) {
     loadStats();
-    return `<section class="card"><h2>📊 Class statistics</h2>${TS.err === "update" ? say("hachiware", "The class server needs the latest <b>server/Code.gs</b> to show statistics. In Apps Script: paste the new code, then <b>Deploy → Manage deployments → ✏️ → New version</b>. The web address stays the same.", "normal", "hint")
+    return `<section class="card"><h2>📊 Class statistics</h2>${TS.err === "update" ? say("chiikawa", "The class server needs the latest <b>server/Code.gs</b> to show statistics. In Apps Script: paste the new code, then <b>Deploy → Manage deployments → ✏️ → New version</b>. The web address stays the same.", "normal", "hint")
       : TS.err ? `<p class="bad">${esc(TS.err)}</p><button class="btn" id="stRetry">Try again</button>` : `<p class="muted">Loading class data… ⏳</p>`}</section>`;
   }
   const C = computeStats(), per = { 7: "7 days", 30: "30 days", 90: "90 days", all: "All time" }[TS.period];

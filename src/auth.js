@@ -82,7 +82,7 @@ function onCredential(resp) {
 function prefillName() { const n = document.getElementById("nm"); if (n && signedIn()) n.value = (AUTH.user.en || "").split(/\s+/)[0] || ""; }
 function offerGuestImport(guest) {
   openModal(`<span class="kicker">🎒 Guest progress found</span><h2>Move it into your account?</h2>
-    ${say("hachiware", `This device has guest progress: <b>${guest.completed_rooms.length}</b> stage${guest.completed_rooms.length === 1 ? "" : "s"} and <b>${guest.coins}</b> 🌰. Only move it if it's <b>yours</b>.`, "normal", "hint")}
+    ${say("chiikawa", `This device has guest progress: <b>${guest.completed_rooms.length}</b> stage${guest.completed_rooms.length === 1 ? "" : "s"} and <b>${guest.coins}</b> 🌰. Only move it if it's <b>yours</b>.`, "normal", "hint")}
     <div class="row"><button class="btn big" id="giYes">Yes, it's mine</button><button class="btn plain" id="giNo">No, start fresh</button></div>`, { closable: false });
   document.getElementById("giYes").onclick = () => { SFX.tap(); closeModal(); S = normalise(JSON.parse(JSON.stringify(guest))); S.player_id = newId(); save(true); enterGame(); };
   document.getElementById("giNo").onclick = () => { SFX.tap(); closeModal(); S = null; renderWelcome(); prefillName(); };
@@ -146,7 +146,7 @@ function renderLogin() {
     <div class="lgsky" aria-hidden="true">${LG_FLOAT.map((e, i) => `<span style="left:${(i * 37 + 7) % 92}%;top:${(i * 53 + 11) % 80}%;animation-delay:${-i * 1.7}s;font-size:${1.1 + (i % 3) * .45}rem">${e}</span>`).join("")}<i class="orb o1"></i><i class="orb o2"></i></div>
     <div class="lgtitle"><span class="kicker">${HERO_KICKER}</span><h1>Biology Study Pals</h1><p class="sub">From tiny cells to whole ecosystems, one small stage a day.</p></div>
     <div class="island" aria-hidden="true"><svg class="isl" viewBox="0 0 300 70"><ellipse cx="150" cy="22" rx="146" ry="20" fill="#9ED89A" stroke="${CO}" stroke-width="3"/><path d="M8 24 Q150 120 292 24" fill="#C79A72" stroke="${CO}" stroke-width="3"/><path d="M60 40 q10 8 20 0 M130 52 q10 8 20 0 M200 42 q10 8 20 0" stroke="#A97C57" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="150" cy="18" rx="120" ry="10" fill="#B6E6AE"/></svg>
-      <div class="ifig f1">${figure("hachiware", "happy")}</div><div class="ifig f2">${figure("chiikawa", "sparkle")}</div><div class="ifig f3">${figure("usagi", "happy")}</div></div>
+      <div class="ifig f1">${codexSvg()}</div><div class="ifig f2">${figure("chiikawa", "sparkle")}</div></div>
     <section class="card lgcard">
       ${on ? `<h2 style="margin:0">${back ? "Welcome back! 👋" : "Join your class"}</h2>
         <p class="small muted" style="margin:0">Sign in with your <b>school Google account</b> to sync progress across devices, appear on the class leaderboard and share your results with your teacher.</p>
@@ -180,7 +180,7 @@ function openAccount() {
     const lb = document.getElementById("acLb"); if (lb) lb.onclick = () => { SFX.tap(); openLeaderboard(); };
   } else {
     openModal(`<span class="kicker">👤 Account</span><h2>🎒 Guest mode</h2>
-      ${say("hachiware", "Your progress is saved <b>on this device only</b>. Use 🔑 Save code to move it to another device." + (cloudOn() ? " Sign in with your school Google account to sync, join the class leaderboard and send your results to your teacher." : ""), "normal", "hint")}
+      ${say("chiikawa", "Your progress is saved <b>on this device only</b>. Use 🔑 Save code to move it to another device." + (cloudOn() ? " Sign in with your school Google account to sync, join the class leaderboard and send your results to your teacher." : ""), "normal", "hint")}
       <div class="row">${cloudOn() ? `<button class="btn big" id="acIn">🎓 Sign in to my class</button>` : ""}<button class="btn plain" id="acCode">🔑 Save code</button><button class="btn plain" id="acOut">🌤️ Back to the start screen</button></div>`);
     const ai = document.getElementById("acIn"); if (ai) ai.onclick = () => { SFX.tap(); closeModal(); save(); authPref(""); renderLogin(); };
     document.getElementById("acCode").onclick = () => { SFX.tap(); closeModal(); openSaveModal(); };
@@ -196,7 +196,7 @@ function openLeaderboard() {
   const how = `<p class="small muted" style="margin:0">Effort points = 10 per day played + 1 per question right + 10 per stage cleared + 5 per Cell Rush round + 25 per trophy. Coming back every day matters most!</p>`;
   if (!signedIn()) {
     openModal(`<span class="kicker">🏆 Class leaderboard</span><h2>For signed-in classmates</h2>${mine}${how}
-      ${say("hachiware", cloudOn() ? "Guests play privately, so there's no board here. Sign in with your school Google account (👤 at the top) to see how your class is doing!" : "Class sign-in isn't switched on in this copy, so your effort points stay on this device. Keep going! 💪", "normal", "hint")}`, { wide: true });
+      ${say("chiikawa", cloudOn() ? "Guests play privately, so there's no board here. Sign in with your school Google account (👤 at the top) to see how your class is doing!" : "Class sign-in isn't switched on in this copy, so your effort points stay on this device. Keep going! 💪", "normal", "hint")}`, { wide: true });
     return;
   }
   const box = openModal(`<span class="kicker">🏆 Class leaderboard</span><h2>Who's working hardest?</h2>
@@ -209,13 +209,13 @@ function openLeaderboard() {
     const body = document.getElementById("lbBody"); if (!body) return;
     if (!d || !d.ok) { body.innerHTML = say("chiikawa", esc(errText(d ? d.error : "network")), "cry"); return; }
     const c = d.cats[lbCat], [, ic, , unit] = LB_CATS.find(x => x[0] === lbCat), top = c.top;
-    if (!top.length) { body.innerHTML = say("usagi", "Nobody on the board yet. Be the FIRST! 🐰", "happy"); return; }
+    if (!top.length) { body.innerHTML = say("chiikawa", "Nobody on the board yet. Be the FIRST!", "happy"); return; }
     const pod = [1, 0, 2].filter(i => top[i]).map(i => `<div class="pod p${i + 1} ${top[i].me ? "me" : ""}"><span class="crown" aria-hidden="true">${["👑", "🥈", "🥉"][i]}</span><b>${esc(top[i].n)}</b><span class="small">${esc(top[i].c)}</span><span class="pv">${ic} ${top[i].v}</span><div class="step">${i + 1}</div></div>`).join("");
     const rest = top.slice(3).map((r, i) => `<tr class="${r.me ? "me" : ""}"><td class="rk">${i + 4}</td><td>${esc(r.n)} <span class="small muted">${esc(r.c)}</span></td><td><b>${r.v}</b> ${unit}</td></tr>`).join("");
     const me = c.me, ahead = me && me.rank > 1 ? top[me.rank - 2] : null;
     body.innerHTML = `<div class="podium">${pod}</div>${rest ? `<div class="lb-wrap"><table class="lb"><tbody>${rest}</tbody></table></div>` : ""}
       ${me ? `<div class="mybar">You: <b>#${me.rank}</b> · ${ic} ${me.v} ${unit}${ahead ? ` · only <b>${ahead.v - me.v + 1}</b> more to pass #${me.rank - 1}!` : " · You're at the top! 🎉"}</div>` : `<div class="mybar">Finish an activity to join the board! 🌱</div>`}
-      ${top.slice(0, 3).some(r => r.me) ? say("momonga", "You're in the top 3! Thank you for working so hard. 💜", "sparkle") : ""}`;
+      ${top.slice(0, 3).some(r => r.me) ? say("chiikawa", "You're in the top 3! Thank you for working so hard. 💜", "sparkle") : ""}`;
   };
   const key = lbScope;
   if (lbData[key] && Date.now() - lbData[key].t < 60000) return show(lbData[key].d);

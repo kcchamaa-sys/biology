@@ -95,7 +95,7 @@ function openFreezeInfo() {
     <ul class="small"><li>Your streak grows on days you <b>finish an activity</b> (a stage, a study series, a Rush, a dictation or notebook round).</li>
       <li>Miss a day? A freeze <b>switches on by itself</b> and keeps your streak. 2 missed days use 2.</li>
       <li>You get <b>1 free freeze every month</b> (up to ${FREEZE_MAX}). Extra ones cost 🌰 ${FREEZE_PRICE}, so they stay precious.</li></ul>
-    ${say("hachiware", "Freezes are for busy days and sick days, not lazy days. 😉 Even one 5-minute Rush counts!", "normal", "hint")}
+    ${say("chiikawa", "Freezes are for busy days and sick days, not lazy days. 😉 Even one 5-minute Rush counts!", "normal", "hint")}
     <div class="row"><button class="btn yellow" id="frzBuy" ${S.coins < FREEZE_PRICE || S.streak_shields >= FREEZE_MAX ? "disabled" : ""}>Buy 1 for 🌰 ${FREEZE_PRICE}</button><button class="btn plain" id="frzOk">OK</button></div>`);
   document.getElementById("frzBuy").onclick = () => { closeModal(); buyFreeze(); };
   document.getElementById("frzOk").onclick = () => { SFX.tap(); closeModal(); };
@@ -103,7 +103,7 @@ function openFreezeInfo() {
 
 /* ----- 📅 Daily mission: one a day, aimed at what each student avoids or finds hardest ----- */
 const MISSION_STORY = {
-  weak: [["🕵️ Detective {P}", "A mystery in Topic {T}! Clear one stage there to crack the case."], ["🏥 Ward round", "Dr Koma needs help with Topic {T}. Clear one stage there."], ["🔦 Power cut!", "The lab lights went out over Topic {T}. Clear one stage to switch them back on."]],
+  weak: [["🕵️ Detective {P}", "A mystery in Topic {T}! Clear one stage there to crack the case."], ["🏥 Ward round", "The pal clinic needs help with Topic {T}. Clear one stage there."], ["🔦 Power cut!", "The lab lights went out over Topic {T}. Clear one stage to switch them back on."]],
   fix: [["📕 Mistake hunt", "Three old mistakes are hiding in the Notebook. Answer 3 notebook questions right."], ["🧹 Lab clean-up", "Tidy the Mistake Notebook: answer 3 of its questions right."]],
   dict: [["📻 Radio host {P}", "{P} is reading the biology news on air. Spell 5 dictation words right."], ["✉️ Letter to a scientist", "Write a neat letter: spell 5 dictation words right."]],
   rush: [["⚡ Speed lab", "The centrifuge is spinning! Score 80+ points in one Cell Rush."], ["🏃 Relay race", "Hand on the baton: score 80+ points in one Cell Rush."]],
@@ -227,7 +227,7 @@ function wellbeingTick() {
   if (!breakShown && Date.now() - sessionStart > 40 * 60e3) {
     breakShown = true;
     openModal(`<span class="kicker">🧘 Brain break</span><h2>40 minutes of great work!</h2>
-      ${say("hachiware", "Stand up, stretch, drink some water and look out of the window for 20 seconds. Your eyes and brain will thank you! 💚", "happy", "hint")}
+      ${say("chiikawa", "Stand up, stretch, drink some water and look out of the window for 20 seconds. Your eyes and brain will thank you! 💚", "happy", "hint")}
       <div class="row"><button class="btn big" id="brkOk">OK, quick break!</button></div>`);
     document.getElementById("brkOk").onclick = () => { SFX.tap(); closeModal(); };
   }

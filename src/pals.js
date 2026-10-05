@@ -226,7 +226,7 @@ function nutritionCard(id) {
       <tr><td>Fat</td><td><b>${fa} g</b></td><td>${bar(fa, 25, "#CE82FF")}</td></tr>
       <tr><td>Dietary fibre</td><td><b>${fi} g</b></td><td>${bar(fi, 8, "#58CC02")}</td></tr></tbody></table>
     <p class="small muted" style="margin:0">Approximate values for one typical serving.</p>
-    ${say("hachiware", esc(f.note), "normal", "hint")}
+    ${say("chiikawa", esc(f.note), "normal", "hint")}
     <div class="row"><button class="btn big" id="nFeed" ${S.coins < foodPrice(f) ? "disabled" : ""}>Feed for 🌰 ${foodPrice(f)}</button><button class="btn plain" id="nBack">← All food</button></div>`);
   document.getElementById("nFeed").onclick = () => feed(id);
   document.getElementById("nBack").onclick = () => { SFX.tap(); openFeed(); };
@@ -239,7 +239,7 @@ function feed(id) {
   let crash = false; if (f.r === "r") { S.treats.n += 1; if (S.treats.n === 3) { crash = true; p.energy = Math.max(5, p.energy - 15); } }
   S.stats.meals = (S.stats.meals || 0) + 1; save(true); SFX.item(); closeModal(); renderMap();
   if (crash) openModal(`<span class="kicker">🍬 Sugar crash!</span><h2>${esc(P.name)} feels wobbly...</h2>${say("chiikawa", "Too many sweet treats today... 😵 First my blood glucose shot up, then insulin brought it down fast, and now I feel tired!", "cry")}
-      ${say("hachiware", "Tip: choose 🟢 everyday foods. Starchy foods release glucose slowly, so energy stays steady.", "normal", "hint")}<div class="row"><button class="btn" id="crOk">OK</button></div>`), document.getElementById("crOk").onclick = () => { SFX.tap(); closeModal(); };
+      ${say("chiikawa", "Tip: choose 🟢 everyday foods. Starchy foods release glucose slowly, so energy stays steady.", "normal", "hint")}<div class="row"><button class="btn" id="crOk">OK</button></div>`), document.getElementById("crOk").onclick = () => { SFX.tap(); closeModal(); };
   else toast(`${f.e} ${P.name} ate the ${f.name.toLowerCase()}!${fav ? " ❤️ Favourite!" : ""} Energy ${Math.round(p.energy)}`);
 }
 

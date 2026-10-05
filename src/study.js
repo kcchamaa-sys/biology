@@ -20,8 +20,8 @@ function startStudy(id) {
     const { p, retry } = ST.queue[ST.at], done = ST.at, n = ST.queue.length;
     $app.innerHTML = `
       <section class="rushhead studyhead"><div class="status"><div class="av ${frameCls()}">${avatar("chiikawa", "normal")}</div>
-        <div style="min-width:0"><div class="rtopic" style="color:var(--yellow)">📖 Study · ${T.icon} Topic ${T.no}</div><div class="rt">${esc(room.name)}</div>
-        <div class="small" style="color:#EDE6F7">${room.boss ? "⚔️ Boss stage" : `Stage ${room.s}`} · ${esc(room.focus)}</div></div></div>
+        <div style="min-width:0"><div class="rtopic" style="color:var(--yellow)">📖 Study · ${T.icon} Topic ${T.no}</div><div class="rt">${esc(stageName(room))}</div>
+        <div class="small" style="color:#EDE6F7">${esc(T.name)} · Section ${secNo(room)}</div></div></div>
         <div style="display:grid;justify-items:end;gap:6px"><span class="combo">${Math.min(done + 1, n)} / ${n}</span><span class="small" style="color:#EDE6F7">✅ ${ST.firsts} first try</span></div></section>
       <div class="studybar" aria-hidden="true"><i style="width:${Math.round(100 * done / n)}%"></i></div>
       <section class="card">
@@ -31,7 +31,7 @@ function startStudy(id) {
         <div class="row simbtns"><button class="btn blue" id="stHint">💡 Hint</button><button class="btn plain" id="stJ">📓 Notes</button><button class="btn plain" id="stQuit">✕ Stop</button></div>
         <div id="stFb"></div></section>`;
     let hinted = false;
-    document.getElementById("stHint").onclick = () => { SFX.hint(); hinted = true; document.getElementById("stFb").innerHTML = say("hachiware", `💡 ${esc(p.hint)}`, "normal", "hint"); };
+    document.getElementById("stHint").onclick = () => { SFX.hint(); hinted = true; document.getElementById("stFb").innerHTML = say("chiikawa", `💡 ${esc(p.hint)}`, "normal", "hint"); };
     document.getElementById("stJ").onclick = () => { SFX.tap(); openJournal(room.id, termsIn(room, p)); };
     document.getElementById("stQuit").onclick = () => { SFX.tap(); if (ST.at) activityDone({ mode: "study", room, done: false, ans: ST.at, cor: ST.firsts, secs: Math.round((Date.now() - ST.t0) / 1000), start: ST.start, wrong: ST.wrongIds.join(" ") }); homeTab = "home"; renderMap(); };
     const shownAt = Date.now();
@@ -49,7 +49,7 @@ function startStudy(id) {
         if (!retry) { ST.queue.push({ p, retry: true }); ST.retried++; }
       }
       recomputeMastery(); save();
-      const [w, m, t] = ok ? (quick ? ["hachiware", "normal", "⚡ Whoa, that was fast! Right, but did you read it all? Fast guesses don't count for mastery. 👀"] : first ? pick(REACT.right) : ["chiikawa", "happy", "Phew... got it! 🥹"]) : ["chiikawa", "cry", retry ? "Uu... still tricky. Let's read it together. 📖" : "Not quite! Let's read why. It will come back once at the end. 🌱"];
+      const [w, m, t] = ok ? (quick ? ["chiikawa", "normal", "⚡ Whoa, that was fast! Right, but did you read it all? Fast guesses don't count for mastery. 👀"] : first ? pick(REACT.right) : ["chiikawa", "happy", "Phew... got it! 🥹"]) : ["chiikawa", "cry", retry ? "Uu... still tricky. Let's read it together. 📖" : "Not quite! Let's read why. It will come back once at the end. 🌱"];
       document.getElementById("stFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${say(w, t, m)}<p>${esc(p.explain)}</p>${p.tip ? `<p class="tip"><b>📝 Top tip:</b> ${esc(p.tip)}</p>` : ""}
         <div class="row"><button class="btn big" id="stNext">${ST.at + 1 < ST.queue.length ? "Next →" : "Finish 🎉"}</button></div></div>`;
       const nb = document.getElementById("stNext"); nb.onclick = () => { SFX.tap(); ST.at++; next(); window.scrollTo({ top: 0 }); }; nb.focus({ preventScroll: true });
@@ -72,7 +72,7 @@ function whyCheck(ST) {
     const opts = shuffle([p, ...others]);
     $app.innerHTML = `<section class="card whycard">
       <span class="kicker">🤔 Why? check · ${i + 1} of ${qs.length}</span>
-      ${say("hachiware", "You got this one right. Now show you know <b>why</b>! Pick the explanation that matches.", "normal", "hint")}
+      ${say("chiikawa", "You got this one right. Now show you know <b>why</b>! Pick the explanation that matches.", "normal", "hint")}
       <div class="whyq"><p class="q" style="margin:0">${esc(p.q)}</p><p style="margin:6px 0 0"><b>Answer:</b> ${esc(p.choices[p.answer])}</p></div>
       <div class="choices">${opts.map((x, n) => `<button class="choice" data-w="${x.id}"><b>${"ABC"[n]}</b><span>${esc(x.explain)}</span></button>`).join("")}</div>
       <div id="whyFb"></div></section>`;
@@ -81,7 +81,7 @@ function whyCheck(ST) {
       $app.querySelectorAll("[data-w]").forEach(x => { x.disabled = true; if (x.dataset.w === p.id) x.classList.add("right"); });
       if (ok) { ST.why.right++; gainCoins(5, "", b); SFX.right(); } else { b.classList.add("wrong"); SFX.wrong(); noteMistake(room.id, p.id); }
       save();
-      document.getElementById("whyFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("usagi", "Yes! You really understand it! +5 🌰 🐰", "happy") : say("chiikawa", "Uu... the answer was right but the reason was tricky. It's in your 📕 Mistake Notebook now, so we can practise it. 🌱", "cry")}
+      document.getElementById("whyFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("chiikawa", "Yes! You really understand it! +5 🌰", "happy") : say("chiikawa", "Uu... the answer was right but the reason was tricky. It's in your 📕 Mistake Notebook now, so we can practise it. 🌱", "cry")}
         <div class="row"><button class="btn big" id="whyNext">${i + 1 < qs.length ? "Next →" : "See results 🎉"}</button></div></div>`;
       const nb = document.getElementById("whyNext"); nb.onclick = () => { SFX.tap(); i++; step(); window.scrollTo({ top: 0 }); }; nb.focus({ preventScroll: true });
     });
@@ -110,14 +110,14 @@ function finishStudy(ST) {
   renderNav(false);
   $app.innerHTML = `<section class="card">
     <span class="kicker">📖 Study complete · ${esc(stageLabel(room))}</span>
-    <h2>🎉 You studied ${esc(room.name)}!</h2>
-    <div class="cast" style="margin:0">${["usagi", "chiikawa", "hachiware"].map(w => `<div class="fig" style="width:90px">${figure(w, w === "chiikawa" ? "sparkle" : "happy")}</div>`).join("")}</div>
+    <h2>🎉 You studied ${esc(stageName(room))}!</h2>
+    <div class="cast" style="margin:0">${["chiikawa"].map(w => `<div class="fig" style="width:90px">${figure(w, w === "chiikawa" ? "sparkle" : "happy")}</div>`).join("")}</div>
     <div class="row" style="justify-content:center;font-size:1.8rem" aria-label="${stars} / 3 ★">${starStr(stars)}</div>
     <p style="text-align:center"><b>${ST.firsts}/${ST.total}</b> right first try${ST.retried ? ` · 🔁 ${ST.retried} second chance${ST.retried > 1 ? "s" : ""}` : ""}${ST.why && ST.why.n ? ` · 🤔 Why? <b>${ST.why.right}/${ST.why.n}</b>${ST.why.right ? ` (+${5 * ST.why.right} 🌰)` : ""}` : ""}</p>
     ${guessy ? `<div class="rules">⚡ <b>Guess alert:</b> ${ST.guesses} answers came faster than anyone can read the question, so this series is capped at 1★. Slow down and read; the stars will come! 🌱</div>` : ""}
     <p style="text-align:center"><span class="pill coinpill">+${earned} 🌰${revise ? " · 📚 daily revision bonus" : ""}${multTag()}</span>${caps ? ` <span class="pill rpill">🎁 +${caps} capsule${caps > 1 ? "s" : ""}</span>` : ""}</p>
-    ${topicDone ? say("momonga", `TOPIC ${T.no} CLEARED! You earned <b>${esc(T.badge)}</b>! 💜🥹`, "sparkle") : first ? say("momonga", `You earned <b>${esc(room.item)}</b>! 💜`, "happy") : say("kurimanju", "Revision complete. Practice makes the brain strong. 🍵", "happy")}
-    ${gotSick ? say("chiikawa", "Achoo...! I don't feel so good... 🤒 Can we visit Dr Koma on the Home screen?", "sick") : ""}
+    ${topicDone ? say("chiikawa", `TOPIC ${T.no} CLEARED! You earned <b>${esc(T.badge)}</b>! 💜🥹`, "sparkle") : first ? say("chiikawa", `You earned <b>${esc(room.item)}</b>! 💜`, "happy") : say("chiikawa", "Revision complete. Practice makes the brain strong. 🍵", "happy")}
+    ${gotSick ? say("chiikawa", "Achoo...! I don't feel so good... 🤒 Can we visit the clinic on the Home screen?", "sick") : ""}
     <section class="card cream jsec"><h3>📖 Textbook recap: ${esc(room.focus)}</h3><ul>${room.notes.map(x => `<li>${x}</li>`).join("")}</ul></section>
     <div class="row">${caps ? `<button class="btn pink" id="sdCap">🎁 Open capsule</button>` : ""}${nxt ? `<button class="btn big" id="sdNext">▶ Next stage</button>` : ""}<button class="btn plain" id="sdAgain">🔁 Study again</button><button class="btn plain" id="sdHome">🏠 Home</button></div>
   </section>`;

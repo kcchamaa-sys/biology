@@ -42,28 +42,7 @@ const capClip = (d, fill) => { const id = "cc" + (++clipN); return `<clipPath id
 const CHAR = {
   chiikawa: { name: "Mochi", color: "#ffffff",
     back: () => `<circle cx="60" cy="75" r="17" fill="#fff" ${CS}/><circle cx="140" cy="75" r="17" fill="#fff" ${CS}/><circle cx="60" cy="77" r="8.5" fill="#FFC2D4"/><circle cx="140" cy="77" r="8.5" fill="#FFC2D4"/><circle cx="57" cy="73" r="3" fill="#fff" opacity=".7"/><circle cx="137" cy="73" r="3" fill="#fff" opacity=".7"/>`,
-    face: m => blush(true) + eyes(m) + mouth(m) },
-  hachiware: { name: "Ramune", color: "#ffffff", ear: "#9EB9E6",
-    back: () => `<path d="M48 104 L56 48 L94 70Z" fill="#9EB9E6" ${CS}/><path d="M152 104 L144 48 L106 70Z" fill="#9EB9E6" ${CS}/><path d="M58 88 L61 62 L80 74Z M142 88 L139 62 L120 74Z" fill="#F7C6D4"/>`,
-    front: () => capClip("M0 0 H200 V100 H132 L100 70 L68 100 H0Z", "#9EB9E6"),
-    face: m => blush(true) + eyes(m) + mouth(m) },
-  usagi: { name: "Pyon", color: "#FDF3A8",
-    back: () => `<ellipse cx="78" cy="40" rx="14" ry="36" fill="#FDF3A8" ${CS} transform="rotate(-8 78 40)"/><ellipse cx="122" cy="40" rx="14" ry="36" fill="#FDF3A8" ${CS} transform="rotate(8 122 40)"/><ellipse cx="78" cy="42" rx="6" ry="24" fill="#FFB9C8" transform="rotate(-8 78 42)"/><ellipse cx="122" cy="42" rx="6" ry="24" fill="#FFB9C8" transform="rotate(8 122 42)"/>`,
-    face: m => blush(true) + eyes(m) + mouth(m, m !== "brave" && m !== "cry") },
-  momonga: { name: "Budo", color: "#ffffff",
-    back: () => `<path d="M150 168 C204 170 210 104 176 88 C188 118 178 146 150 150Z" fill="#C9C3F0" ${CS}/><path d="M176 96 C190 116 188 140 176 152" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7"/><circle cx="58" cy="80" r="15" fill="#C9C3F0" ${CS}/><circle cx="142" cy="80" r="15" fill="#C9C3F0" ${CS}/>`,
-    front: () => capClip("M0 0 H200 V98 Q100 74 0 98Z", "#C9C3F0"),
-    face: m => blush(false) + eyes(m, { big: true }) + mouth(m) },
-  kurimanju: { name: "Kurumi", color: "#F2D7AE",
-    front: () => capClip("M0 0 H200 V100 Q100 82 0 100Z", "#A8703F") + `<path d="M74 78 Q90 70 104 72" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".45"/>`,
-    face: m => blush(false) + eyes(m === "normal" ? "line" : m) + mouth(m) },
-  shisa: { name: "Koma", color: "#FFF1C9",
-    back: () => [[38, 104], [34, 134], [44, 160], [162, 104], [166, 134], [156, 160], [56, 76], [144, 76], [80, 60], [120, 60]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="17" fill="#F2A36B" ${CS}/>`).join("") + `<circle cx="66" cy="72" r="10" fill="#FFF1C9" ${CS}/><circle cx="134" cy="72" r="10" fill="#FFF1C9" ${CS}/>`,
-    face: m => `<path d="M68 98 q6 -7 13 0 M119 98 q7 -7 13 0" stroke="#E07A3F" stroke-width="3.5" fill="none" stroke-linecap="round"/>` + blush(false) + eyes(m) + mouth(m) },
-  rakko: { name: "Ryo", color: "#EAD7BC",
-    back: () => `<circle cx="60" cy="82" r="11" fill="#EAD7BC" ${CS}/><circle cx="140" cy="82" r="11" fill="#EAD7BC" ${CS}/>`,
-    face: m => `<ellipse cx="100" cy="136" rx="20" ry="13" fill="#fff" stroke="${CO}" stroke-width="2.5"/><ellipse cx="100" cy="128" rx="6.5" ry="4.5" fill="${CO}"/>` + blush(false)
-      + (m === "normal" || m === "brave" ? `<path d="M73 109 l14 14 M87 109 l-14 14" stroke="${CO}" stroke-width="3.5" stroke-linecap="round"/>` + eyes("x").replace(/^[\s\S]*?(<ellipse cx="120")/, "$1") : eyes(m)) + mouth(m, false, 142) }
+    face: m => blush(true) + eyes(m) + mouth(m) }
 };
 /* Dress-up layers for Mochi (the player). Items live in WARDROBE (engine). */
 function dressParts(eq) {
@@ -87,6 +66,7 @@ const tintOf = c => /^#[0-9a-f]{6}$/i.test(c) ? hexMix(c, "#FFFFFF", .55) : c;
 const EYE_GRAD = "";
 const bodyShine = sh => { const id = "bs" + (++clipN); return `<clipPath id="${id}"><path d="${BODY}"/></clipPath><g clip-path="url(#${id})"><path d="M30 150 Q100 196 170 150 L170 190 L30 190Z" fill="${sh}" opacity=".35"/><ellipse cx="72" cy="88" rx="24" ry="12" fill="#fff" opacity=".55" transform="rotate(-24 72 88)"/><circle cx="96" cy="76" r="3.2" fill="#fff" opacity=".8"/><path d="M158 112 Q166 134 158 156" stroke="#fff" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/></g>`; };
 function charSvg(who, m = "normal", eq, full = true) {
+  if (!CHAR[who]) who = "chiikawa";   // the old side characters were retired: anyone else speaks as your Study Pal
   const C = CHAR[who], c = C.color, d = who === "chiikawa" ? dressParts(eq) : {};
   const o = d.outfit, armC = (o && o.arm) || c;
   let s = full ? `<ellipse cx="100" cy="184" rx="58" ry="8" fill="rgba(91,75,73,.13)"/>` : "";
@@ -107,8 +87,6 @@ function charSvg(who, m = "normal", eq, full = true) {
   if (d.hat) s += d.hat.svg;
   if (d.acc && !d.acc.low) s += d.acc.svg;
   if (d.hand) s += d.hand.svg;
-  if (full && who === "rakko") s += `<path d="M170 176 L190 96" stroke="${CO}" stroke-width="9" stroke-linecap="round"/><path d="M170 176 L190 96" stroke="#D3E4FF" stroke-width="4.5" stroke-linecap="round"/><path d="M160 158 h22" stroke="${CO}" stroke-width="6" stroke-linecap="round"/>`;
-  if (full && who === "usagi" && m !== "cry") s += `<path d="M14 100 l-10 -8 M18 84 l-6 -12 M186 100 l10 -8" stroke="${CO}" stroke-width="3" stroke-linecap="round"/>`;
   if (who === "chiikawa" && !d.hat && !d.hair && m !== "sick") s += `<g transform="rotate(-18 128 76)"><path d="M128 66 l3 6.5 l7 .8 l-5.2 4.8 l1.4 7 l-6.2 -3.6 l-6.2 3.6 l1.4 -7 l-5.2 -4.8 l7 -.8Z" fill="#FF8FB8" stroke="${CO}" stroke-width="2" stroke-linejoin="round"/><circle cx="126" cy="72" r="1.6" fill="#fff"/></g>`;
   if (full && who === "chiikawa") s += `<g class="buddy"><circle cx="178" cy="44" r="9" fill="#FFF6B8" opacity=".55"/>${spark4(178, 44, 7, "#FFD84D")}<circle cx="176" cy="42" r="1.6" fill="#fff"/></g>`;
   if (m === "sparkle" || m === "happy") s += `<g class="twinkle">${spark4(26, 70, 8, "#FFB3C1")}${spark4(176, 60, 7, "#A9D4EE")}</g>`;
@@ -123,11 +101,11 @@ const FIG_VB = "-14 -6 228 202";
 function figure(who, mood = "normal", eq) {
   return `<svg viewBox="${FIG_VB}" aria-hidden="true"><g class="squish">${charSvg(who, mood, eq, true)}</g></svg>`;
 }
-/* Short emotional reactions: Mochi and friends react out loud to what happens */
+/* Short emotional reactions: your Study Pal reacts out loud to what happens */
 const REACT = {
-  right: [["usagi", "happy", "Wahoo! 🐰"], ["chiikawa", "sparkle", "Ya...! We did it! ✨"], ["hachiware", "happy", "Sugoi! You're so smart! 💙"], ["momonga", "sparkle", "Hmph... that was cute AND correct! 💜"], ["usagi", "happy", "WOO! WOOOO! 🎉"], ["chiikawa", "happy", "Waaai~! 🥹"]],
-  wrong: [["chiikawa", "cry", "Wah...! 😭 The lock didn't open..."], ["chiikawa", "shock", "Eh?! EHHH?! 😱"], ["chiikawa", "cry", "Uu... uuu... 🥺"], ["usagi", "shock", "Haa?! 🐰💦"]],
-  brave: [["chiikawa", "brave", "I-I won't give up! 💪"], ["hachiware", "happy", "It'll work out somehow! ✨"], ["chiikawa", "brave", "Let's read it again... slowly. 📖"]]
+  right: [["chiikawa", "happy", "Wahoo! ✨"], ["chiikawa", "sparkle", "Ya...! We did it! ✨"], ["chiikawa", "happy", "So smart! The lock clicked open! 💙"], ["chiikawa", "sparkle", "Another page glows again! 📜"]],
+  wrong: [["chiikawa", "cry", "Wah...! 😭 The lock didn't open..."], ["chiikawa", "shock", "Eh?! EHHH?! 😱"], ["chiikawa", "cry", "Uu... uuu... 🥺"], ["chiikawa", "shock", "The Murk muddled that one! 💦"]],
+  brave: [["chiikawa", "brave", "I-I won't give up! 💪"], ["chiikawa", "happy", "It'll work out somehow! ✨"], ["chiikawa", "brave", "Let's read it again... slowly. 📖"]]
 };
 
 /* ============================================================
@@ -206,8 +184,8 @@ const SONGS = {
     melody: [[79, 0, 79, 81, 83, 0, 79, 0], [76, 0, 79, 0, 76, 0, 74, 0], [72, 0, 76, 0, 79, 0, 76, 0], [74, 0, 78, 0, 81, 0, 0, 0],
              [83, 0, 81, 79, 81, 0, 79, 76], [79, 0, 76, 0, 74, 0, 71, 0], [72, 0, 74, 76, 79, 0, 76, 0], [74, 0, 78, 0, 79, 0, 0, 0]],
     bass: bassBar([43, 40, 36, 38, 43, 40, 36, 38], [0, null, 7, null, 0, 12, 7, null]) },
-  // Boss stages: "Ryo's Trial" (D minor, brave and driving)
-  boss: { title: "Ryo's Trial", bpm: 118, swing: 0, lead: "pluck", drums: "k.hsk.hs",
+  // Boss stages: "The Warden's Trial" (D minor, brave and driving)
+  boss: { title: "The Warden's Trial", bpm: 118, swing: 0, lead: "pluck", drums: "k.hsk.hs",
     chords: ["Dm", "Bb", "C", "A", "Dm", "Bb", "C", "A"],
     melody: [[74, 0, 74, 77, 76, 0, 74, 0], [70, 0, 74, 0, 77, 0, 74, 0], [72, 0, 76, 0, 79, 77, 76, 0], [73, 0, 76, 0, 81, 0, 0, 0],
              [81, 0, 79, 77, 76, 0, 74, 0], [77, 0, 74, 0, 70, 0, 74, 0], [76, 0, 72, 0, 79, 0, 76, 0], [73, 0, 69, 0, 74, 0, 0, 0]],

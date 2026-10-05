@@ -36,6 +36,8 @@ function renderSims(tab) {
   $app.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { SFX.tap(); renderSims(b.dataset.sim); });
   ({ lung: lungSim, pupil: pupilSim, lens: lensSim, ear: earSim, membrane: membraneSim, dialysis: dialysisSim, tropism: tropismSim })[simTab](document.getElementById("simBody"));
   wireFolds($app);
+  // Phones: wide diagrams scroll inside their card; start them centred on the interesting middle
+  setTimeout(() => $app.querySelectorAll(".simsvg:not(.nozoom)").forEach(e => { if (e.scrollWidth > e.clientWidth) e.scrollLeft = (e.scrollWidth - e.clientWidth) / 2; }), 120);
   window.scrollTo({ top: 0 });
 }
 /* One animation loop per open simulation; it stops itself when the page changes */
@@ -560,6 +562,6 @@ function membraneSvg(lip, st, PX, fl, hot) {
   });
   if (st.labels) s += `<g font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">
     <text x="${PX.channel}" y="102" text-anchor="middle">channel protein</text><text x="${PX.carrier}" y="102" text-anchor="middle">carrier protein</text>
-    <text x="${PX.glyco + 22}" y="70">glycoprotein</text><text x="628" y="150" text-anchor="end">phospholipid</text><text x="628" y="164" text-anchor="end">bilayer</text><text x="104" y="210" text-anchor="middle">cholesterol</text></g>`;
+    <text x="${PX.glyco + 22}" y="70">glycoprotein</text><text x="628" y="150" text-anchor="end">phospholipid</text><text x="628" y="164" text-anchor="end">bilayer</text><path d="M100 200 V236" stroke="${CO}" stroke-width="1.5"/><text x="100" y="248" text-anchor="middle">cholesterol</text></g>`;
   return `<svg viewBox="0 0 640 310" role="img" aria-label="Fluid mosaic model of the cell membrane">${s}</svg>`;
 }

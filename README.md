@@ -7,7 +7,7 @@ A cosy kawaii-style biology escape-room adventure for **Secondary 4–6**. It is
 
 ## 19 topics, 60 stages (escape rooms)
 
-Every topic is open, so students can jump to the one their class is on (the map has Part I–IV tabs). Inside a topic, stages unlock in order; the last stage is a ⚔️ **boss stage** guarded by Ryo.
+Every topic is open, so students can jump to the one their class is on (the map has Part I–IV tabs). Inside a topic, stages unlock in order; the last stage is a ⚔️ **boss stage** guarded by a **Murk Warden**.
 
 | Part | Topics (stages) |
 |------|-----------------|
@@ -41,7 +41,7 @@ Every topic is open, so students can jump to the one their class is on (the map 
 
 - 🔊 **British pronunciation** (normal and 🐢 slow, Web Speech API) for every key term in the Study Journal and on spelling locks.
 - 🎧 **Word Dictation** mode: 10 words a round from any topic or from *My missed words*. Two modes: listen and spell, or read the meaning and spell. 2 tries per word, letter boxes, a hint, and a "so close!" nudge for near-misses. Words missed here or in spelling locks come back until spelled right twice. A perfect round gives a 🎁 capsule.
-- 💬 **Chat card** on the map: the characters share biology fun facts (many with Hong Kong examples) and personal encouragement (streak, mistakes to fix, next stage). It changes every 20 s; the same facts appear as 💡 *Did you know?* in the Journal.
+- 💬 **Chat card** on the map: your Study Pal shares biology fun facts (many with Hong Kong examples) and personal encouragement (streak, mistakes to fix, next stage). It changes every 20 s; the same facts appear as 💡 *Did you know?* in the Journal.
 - 🔥 **Streak bonus:** chestnut rewards grow 5% per streak day, up to ×1.5. Streaks also earn capsules (see Biology Capsule Lab).
 
 ## 🔬 Simulation Lab (🔬 Lab tab in the bottom bar)
@@ -74,11 +74,15 @@ Every wrong answer (escape rooms, Cell Rush, incidents) is saved on the device. 
 
 ## Characters 🥹
 
-All characters are original: **Mochi** (the player, a little white mochi bun-bear), **Ramune** (blue-capped cat, gives hints), **Pyon** (loud yellow bunny, yells "Wahoo!"), **Budo** (lavender show-off), **Kurumi** (chestnut who brings tea), **Koma** (lion-dog shopkeeper and doctor) and **Ryo** (otter swordsman who guards every boss stage). Mochi reacts with many moods: nervous, crying, shocked, brave, sparkly-eyed and sick.
+**Story: The Codex of Life** (full bible in [`docs/LORE.md`](docs/LORE.md)).
+- **The world:** on the living world of **Vita**, the Murk (a grey fog of guessing and muddled ideas) tore the Codex of Life into 60 pages and sealed them in locked rooms across 4 Realms: the Cellspire, the Helix Vaults, the Living Wilds and the Bastion.
+- **The player:** students are apprentice **Keepers**. Every stage intro opens with its page of the story, read by 📜 **the Codex**, and every boss is a **Murk Warden** made of one common misconception.
+- **The cast:** the old side characters were retired. The student's own **Study Pal** (Mochi first) does all the talking, hints and cheering, and calls the student by name. A 6-card picture story opens from the Home banner (until read) and the ☰ menu.
+- Mochi reacts with many moods: nervous, crying, shocked, brave, sparkly-eyed and sick.
 
 ## Game systems
 
-Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, gentle anti-guessing penalties (no wait or time loss over 15 s: −10 s, reshuffle, short jams, strikes, chestnut fine, and guessing makes the lock **slip back a notch** so students answer one bonus question), random spooky-but-friendly incidents, ⚡ **Cell Rush** (60-second mixed rush with test-tube colours and organelle spotting), Koma's shop (outfits and power-ups), a study streak with ❄️ Streak Freezes, a daily mission, daily snack chest and a class leaderboard.
+Same as the physics game: 20-minute LED timer (overtime allowed), 1–3 ★, gentle anti-guessing penalties (no wait or time loss over 15 s: −10 s, reshuffle, short jams, strikes, chestnut fine, and guessing makes the lock **slip back a notch** so students answer one bonus question), random spooky-but-friendly incidents, ⚡ **Cell Rush** (60-second mixed rush with test-tube colours and organelle spotting), the shop (outfits and power-ups), a study streak with ❄️ Streak Freezes, a daily mission, daily snack chest and a class leaderboard.
 
 ## 🌰 Chestnuts (economy fix)
 
@@ -128,7 +132,7 @@ Mochi can adopt 25 rare animals from across the animal kingdom (mammals, birds, 
 
 ## 🩺 Mochi gets sick
 
-Mochi sometimes wakes up sick (30% on a new day) or catches something after a stage (12%), at most once a day. Dr Koma shows the **symptoms** and a **test result**, and students pick from a 13-item medicine cabinet (antibiotics, antivirals, antifungal cream, deworming tablets, antimalarials, rest + paracetamol, ORS, vitamin C, iron, antihistamine, cooling, glucose, vaccine).
+Mochi sometimes wakes up sick (30% on a new day) or catches something after a stage (12%), at most once a day. The pal clinic shows the **symptoms** and a **test result**, and students pick from a 13-item medicine cabinet (antibiotics, antivirals, antifungal cream, deworming tablets, antimalarials, rest + paracetamol, ORS, vitamin C, iron, antihistamine, cooling, glucose, vaccine).
 
 - 13 illnesses: viruses (cold, flu, dengue), bacteria (strep throat, Salmonella), a fungus, a parasitic worm, a protist (malaria), deficiencies (scurvy, anaemia), an allergy and homeostasis problems (heat exhaustion, low blood glucose).
 - Every wrong choice explains why it can't work (e.g. antibiotics don't work on viruses, vaccines prevent but don't cure). A cure explains the biology and gives a prevention tip.
@@ -205,7 +209,7 @@ Card capsules are opened from the Lucky Capsule banner on Home, the 🎁 button 
 
 ## 🔐 Class sign-in (Google) or guest mode
 
-- **Start screen**: Mochi, Hana and Pyon on a floating grassy island with drifting biology icons. Two choices: **Sign in with Google** (school account) or **🎒 Play as guest** (no Google account needed). The choice is remembered; 👤 in the top bar opens the account sheet (sync status, sign out, or sign in later).
+- **Start screen**: Mochi and the glowing Codex on a floating grassy island with drifting biology icons. Two choices: **Sign in with Google** (school account) or **🎒 Play as guest** (no Google account needed). The choice is remembered; 👤 in the top bar opens the account sheet (sync status, sign out, or sign in later).
 - **Signed in** (students on the class list in the teacher's Google Sheet): progress syncs to the sheet, every finished activity is recorded (mode, topic, stage, answered, correct, accuracy, stars, time, wrong question IDs), and the **🏆 class leaderboard** opens: top 20 for 🌟 effort, 🔥 current streak and 🐾 collection, for "My class" or "Everyone", with a podium and a "only N more to pass #2" bar. If a device already has guest progress, the student is asked once whether to move it into their account.
 - **Guests**: progress stays on the device (🔑 save codes still move it). No leaderboard and no class records.
 - **Setup** (about 15 minutes, once): [`server/SETUP.md`](server/SETUP.md), server code [`server/Code.gs`](server/Code.gs). It reuses the S1 Science game's Users tab and Google Client ID; put the new Apps Script `/exec` URL into `BIO_CONFIG.API_URL` at the top of `src/auth.js` and rebuild. Until then (and always in the claude.ai preview) the game runs in guest mode. Student names and emails stay in the private sheet, never in this repo.
@@ -219,4 +223,4 @@ Card capsules are opened from the Lucky Capsule banner on Home, the 🎁 button 
 
 The page is assembled from `src/` by `python3 tools/build.py`. Content lives in `src/stages.js` and `src/stages2.js` (notes, rules, terms), `src/scenes.js` (rooms), `src/q_t*.js`, `src/q_graphs.js` and `src/q_graphs2.js` (questions), `src/graphs.js` (graph data) and `src/rush.js`. Daily systems (streak, freezes, mission, health tips) are in `src/daily.js`; sign-in, cloud save and the class leaderboard in `src/auth.js`; Study Pals in `src/pals.js`; icons in `src/icons.js`. Check content with `node tools/check_content.js`.
 
-*Educational project with original kawaii-style characters (Mochi, Ramune, Pyon, Budo, Kurumi, Koma and Ryo).*
+*Educational project with original kawaii-style characters and an original story world (The Codex of Life).*

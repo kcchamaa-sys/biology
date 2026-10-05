@@ -44,6 +44,14 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 
 ## Cross-project log (newest first)
 
+- 2026-10-05 (biology): **Story world "The Codex of Life"** (`docs/LORE.md` bible + `src/lore.js`). **The Murk is now the shared villain across the family.**
+  - The setting: the living world Vita; the Codex of Life torn into 60 pages across 4 Realms (one per Part); students are Keepers; Study Pals are sparks born from understood pages.
+  - Each chapter's boss is a **Murk Warden** made of one real misconception. The Keeper's Flame is the streak.
+  - Every stage intro opens with a Codex narrator line. There is a 6-card story modal, a Home banner until it is read, realm and chapter names on Stages, and Codex/Warden SVG avatars.
+  - **The old side cast was retired:** `say()`/`charSvg()` route any unknown speaker to the active Study Pal, `{N}` = the student's name, and question stems use "A classmate says…".
+  - **Study mode** now names stages by section ("1.1 Water and inorganic ions").
+  - **Sim labels:** a CSS `paint-order: stroke` halo keeps labels readable over animation. On phones, label-dense SVGs get `min-width` inside an in-card scroller, centred on load.
+
 - 2026-10-05 (biology): **Two practical-style simulations** (`src/sims2.js`); the Lab tabs are now ordered by topic.
   - **Osmosis with dialysis tubing:** a live capillary level, a pore zoom (water passes, sucrose blocked, in/out counters), a level–time graph with ghost runs, and a **fair-test table** that separates variables changing the *rate* (surface area, temperature) from those changing the *final level* (volume of sucrose solution), both (concentration), or neither (beaker volume). The model is h(t) = H(1 − e^(−rt)).
   - **Phototropism coleoptile investigations** (Darwin → Boysen-Jensen → Paál → Went) as a predict-then-run timeline: tap-to-predict chips marked ✅/❌, auxin shown as red dots riding along each bent coleoptile, mica stopping the flow, darkness scenes, and a cell-elongation zoom.

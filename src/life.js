@@ -238,17 +238,17 @@ function maybeGetSick(chance) {
 function openClinic() {
   const ill = S.ill && illById(S.ill.id); if (!ill) return;
   const tried = S.ill.tried || [];
-  const box = openModal(`<span class="kicker">🩺 Dr Koma's clinic</span><h2>${ill.icon} ${esc(palName())} isn't feeling well</h2>
+  const box = openModal(`<span class="kicker">🩺 Pal clinic</span><h2>${ill.icon} ${esc(palName())} isn't feeling well</h2>
     <div class="petstory"><div class="petpic sick">${figure("chiikawa", "sick")}</div>
       <div class="chart"><b>Symptoms:</b> ${esc(ill.sym)}<br><b>🔬 Test result:</b> ${esc(ill.test)}</div></div>
-    ${say("shisa", "What is causing it: a virus, bacteria, a fungus, a parasite... or no pathogen at all? Pick the right treatment from the cabinet! 🦁🩺", "normal", "hint")}
+    ${say("chiikawa", "What is causing it: a virus, bacteria, a fungus, a parasite... or no pathogen at all? Pick the right treatment from the cabinet! 🦁🩺", "normal", "hint")}
     <div class="medgrid">${MEDS.map(m => `<button class="med ${tried.includes(m.id) ? "tried" : ""}" data-med="${m.id}" ${tried.includes(m.id) ? "disabled" : ""}><span class="mi">${m.icon}</span><span>${esc(m.name)}</span></button>`).join("")}</div>
     <div id="clinicFb" aria-live="polite"></div>`, { wide: true });
   box.querySelectorAll("[data-med]").forEach(b => b.onclick = () => {
     const m = medById(b.dataset.med), fb = box.querySelector("#clinicFb");
     if (ill.cure.includes(m.id)) {
       S.ill = null; S.stats.cured += 1; const bonus = 20; gainCoins(bonus); save(true); SFX.fanfare(); confetti(120); checkTrophies();
-      box.innerHTML = `<span class="kicker">🩺 Dr Koma's clinic</span><h2>🎉 ${esc(palName())} feels better!</h2>
+      box.innerHTML = `<span class="kicker">🩺 Pal clinic</span><h2>🎉 ${esc(palName())} feels better!</h2>
         <div class="petstory"><div class="petpic">${figure("chiikawa", "sparkle")}</div>
           <div><p><b>${esc(ill.name)}</b> is caused by ${esc(ill.agent)} (${TYPE_LABEL[ill.type]}).</p><p>✅ ${esc(ill.why)}</p></div></div>
         <div class="formula">🛡️ Prevention: ${esc(ill.tip)}</div>
@@ -259,7 +259,7 @@ function openClinic() {
     } else {
       S.ill.tried = (S.ill.tried || []).concat(m.id); S.stats.wrongMeds = (S.stats.wrongMeds || 0) + 1; save(); SFX.wrong();
       b.disabled = true; b.classList.add("tried");
-      fb.innerHTML = `<div class="fb no">${say("chiikawa", "Uu... it didn't help... 🥺", "sick")}${say("shisa", esc(wrongWhy(m, ill)), "normal", "hint")}</div>`;
+      fb.innerHTML = `<div class="fb no">${say("chiikawa", "Uu... it didn't help... 🥺", "sick")}${say("chiikawa", esc(wrongWhy(m, ill)), "normal", "hint")}</div>`;
     }
   });
 }

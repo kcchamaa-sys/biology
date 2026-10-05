@@ -667,6 +667,16 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .missioncard .tprog i { background: linear-gradient(180deg, #CDE0FF, var(--blue) 55%, #7FA9EE); }
 .healthtip { display: flex; gap: 8px; align-items: flex-start; background: #EFFAF2; border: 2px dashed #9ED7AF; border-radius: 14px; padding: 8px 12px; font-size: .86rem; line-height: 1.4; }
 .healthtip > span:first-child { font-size: 1.2rem; }
+/* Sim labels stay readable over moving parts: a soft halo behind every diagram label */
+.simsvg text { paint-order: stroke fill; stroke: rgba(255,255,255,.92); stroke-width: 3.5px; stroke-linejoin: round; }
+.simsvg svg.dark text { stroke: rgba(30,24,52,.9); }
+.simsvg text[fill="#fff"], .simsvg text[fill="#FFF"] { stroke: none; }
+/* Phones: wide, label-dense diagrams render bigger and scroll sideways inside their card */
+@media (max-width: 560px) {
+  .simsvg:not(.nozoom) { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 14px; }
+  .simsvg:not(.nozoom) > svg { min-width: 560px; }
+  .simsvg:not(.nozoom)::after { content: "↔ swipe the diagram to see all the labels"; display: block; position: sticky; left: 0; width: calc(100vw - 72px); font-size: .72rem; font-weight: 800; color: var(--ink-soft); text-align: center; padding-top: 2px; }
+}
 /* Lab: osmosis tubing + phototropism (src/sims2.js) */
 .diaopts { display: grid; gap: 8px; margin-top: 8px; } .diaopts > div { display: grid; gap: 4px; min-width: 0; }
 .diatable td, .diatable th { padding: 6px 8px; } .tscroll { overflow-x: auto; }
@@ -685,6 +695,19 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .trchip.right { border: 2px solid #3FA06B; background: #E6F8EC; } .trchip.wrong { border: 2px solid #E9573F; background: #FFF0EC; }
 .trconc { display: grid; gap: 8px; margin-top: 6px; } .trconc > div { display: flex; gap: 10px; align-items: flex-start; background: #F4FAFF; border-radius: 14px; padding: 8px 10px; line-height: 1.4; } .trconc > div > span:first-child { font-size: 1.4rem; }
 .trwhy { width: 100%; max-width: 360px; height: auto; display: block; margin: 0 auto; }
+/* 📜 Lore (src/lore.js): Codex narrator, Murk Wardens, the story cards and the Home banner */
+.say.lore .bubble { background: #FFF8E1; border: 2px solid #F0D58A; } .say.lore .name { color: #A6781A; }
+.say.murk .bubble { background: #EEEAF4; border: 2px solid #9C94BC; } .say.murk .name { color: #5A5470; }
+.say.lore .av svg, .say.murk .av svg { width: 100%; height: 100%; }
+.storybanner { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; font: inherit; color: var(--ink); background: linear-gradient(120deg, #FFF8E1, #F3ECFF); border: 2px solid #F0D58A; border-radius: 20px; padding: 10px 14px; margin-bottom: 14px; cursor: pointer; box-shadow: var(--shadow); }
+.storybanner > span:nth-child(2) { flex: 1; min-width: 0; display: grid; } .storybanner .sbk { width: 44px; height: 44px; flex: none; } .storybanner .sbk svg { width: 100%; height: 100%; }
+.storycard { display: grid; justify-items: center; text-align: center; gap: 6px; } .storycard h2 { margin: 6px 0 0; } .storycard p { margin: 0; line-height: 1.5; max-width: 42ch; }
+.stbig { width: 150px; height: 150px; display: grid; place-items: center; font-size: 5rem; } .stbig svg { width: 100%; height: 100%; }
+.stbig.flame { width: 120px; height: 130px; }
+.strealms { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; max-width: 340px; } .strealms span { display: grid; justify-items: center; gap: 2px; background: #F4FAFF; border-radius: 14px; padding: 10px 6px; font-size: .82rem; font-weight: 800; } .strealms b { font-size: 1.8rem; }
+.stdots { display: flex; justify-content: center; gap: 6px; margin: 10px 0; } .stdots i { width: 9px; height: 9px; border-radius: 50%; background: #E6DCD2; } .stdots i.on { background: var(--ink); width: 22px; border-radius: 6px; }
+.tchap { font-size: .74rem; font-weight: 800; color: #A6781A; }
+.realmline { margin: 8px 0 0; font-size: .85rem; color: var(--ink-soft); line-height: 1.4; }
 /* Fold bars (foldHtml in src/home.js): secondary sections collapse to icon · title · peek number · chevron */
 .fold { background: #fff; border: var(--line); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; min-width: 0; }
 .fold > summary { list-style: none; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 14px; cursor: pointer; font-weight: 900; -webkit-tap-highlight-color: transparent; }

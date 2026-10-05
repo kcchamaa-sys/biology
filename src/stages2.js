@@ -8,7 +8,7 @@ ROOMS.push(
   { id: "t9s1", t: "t9", s: 1, name: "The Pea Garden", focus: "Mendel and monohybrid inheritance", scene: "garden",
     special: "peapod", specialName: "Pea pod", specialLine: "A giant pea pod! Some peas are round, some are wrinkled... why?",
     tint: "#C8E6B0", floor: "#9CBE83", dim: .56, code: "31592", item: "🫛 Pea-pod sticker",
-    intro: [K("chiikawa", "sparkle", "Peas! Round ones and wrinkly ones! 🫛✨"), K("hachiware", "normal", "Mendel studied peas to find out how features are passed on. Let's be geneticists!"), K("usagi", "happy", "WAHOO! Pea party! 🐰")],
+    intro: [["chiikawa", "sparkle", "Peas! Round ones and wrinkly ones! 🫛✨"], ["chiikawa", "normal", "Mendel studied peas to find out how features are passed on. Let's be geneticists!"]],
     notes: [
       "A <b>gene</b> is a section of DNA that controls a characteristic. <b>Alleles</b> are different forms of the same gene, found at the same <b>locus</b> on homologous chromosomes.",
       "<b>Genotype</b> = the alleles an organism has (e.g. Tt). <b>Phenotype</b> = its observable features (e.g. tall), which depend on genotype and environment.",
@@ -22,7 +22,7 @@ ROOMS.push(
   { id: "t9s2", t: "t9", s: 2, name: "The Family Tree Hall", focus: "Pedigrees, codominance, blood groups and sex-linkage", scene: "library",
     special: "family", specialName: "Family portrait", specialLine: "A family portrait with circles and squares... it's a pedigree!",
     tint: "#E8C9A8", floor: "#C09F7D", dim: .6, code: "74205", item: "🌳 Family-tree sticker",
-    intro: [K("chiikawa", "shock", "Circles and squares everywhere?! Is this maths?! 😱"), K("hachiware", "happy", "It's a pedigree! Circles are females, squares are males. Shaded means affected."), K("momonga", "sparkle", "My family tree would be full of cute ancestors. 💜")],
+    intro: [["chiikawa", "shock", "Circles and squares everywhere?! Is this maths?! 😱"], ["chiikawa", "happy", "It's a pedigree! Circles are females, squares are males. Shaded means affected."]],
     notes: [
       "<b>Pedigree</b> symbols: ○ female, □ male, shaded = affected. Two unaffected parents with an affected child → the trait is <b>recessive</b> (both parents are carriers).",
       "<b>Codominance</b>: both alleles are fully expressed in the heterozygote.",
@@ -35,7 +35,7 @@ ROOMS.push(
   { id: "t9s3", t: "t9", s: 3, name: "The Variation Arena", focus: "Variation and genetic problem solving", scene: "clinic",
     special: "heightchart", specialName: "Height chart", specialLine: "A wall of heights: nobody is exactly the same! Why?",
     tint: "#B9C4D6", floor: "#8C98AC", dim: .74, code: "58163", item: "📏 Height-chart sticker",
-    intro: [K("rakko", "brave", "Boss stage. Everyone is different. Explain why, and solve my crosses. ⚔️"), K("chiikawa", "cry", "Punnett squares... my brain is a square now... 🥺"), K("hachiware", "happy", "Draw the gametes first, then fill the square. It'll work out~! ✨")],
+    intro: [["murk", "brave", "Boss stage. Everyone is different. Explain why, and solve my crosses. ⚔️"], ["chiikawa", "cry", "Punnett squares... my brain is a square now... 🥺"], ["chiikawa", "happy", "Draw the gametes first, then fill the square. It'll work out~! ✨"]],
     notes: [
       "<b>Discontinuous variation</b>: clear-cut groups with no in-betweens (e.g. ABO blood group, tongue rolling). Usually controlled by one or a few genes; shown in a <b>bar chart</b>.",
       "<b>Continuous variation</b>: a range of values (e.g. height, body mass). Controlled by <b>many genes</b> plus the <b>environment</b>; shows a bell-shaped (normal) <b>distribution</b> in a histogram.",
@@ -50,7 +50,7 @@ ROOMS.push(
   { id: "t10s1", t: "t10", s: 1, name: "The DNA Staircase", focus: "DNA structure, genes and chromosomes", scene: "cellworld",
     special: "dna", specialName: "DNA ladder", specialLine: "A twisty ladder spins slowly... each rung is a pair of letters!",
     tint: "#C9C3F0", floor: "#9E97CC", dim: .6, code: "60482", item: "🧬 Double-helix sticker",
-    intro: [K("chiikawa", "shock", "The staircase is TWISTING! Where does it go?! 😵"), K("hachiware", "normal", "It's DNA's double helix! A pairs with T, and C pairs with G."), K("usagi", "happy", "Climb the ladder! WOO! 🐰")],
+    intro: [["chiikawa", "shock", "The staircase is TWISTING! Where does it go?! 😵"], ["chiikawa", "normal", "It's DNA's double helix! A pairs with T, and C pairs with G."]],
     notes: [
       "DNA is a <b>double helix</b>: two strands of <b>nucleotides</b>, each nucleotide = <b>deoxyribose</b> sugar + <b>phosphate</b> + a nitrogenous <b>base</b>.",
       "Sugar and phosphate form the backbone. Bases pair by <b>complementary base pairing</b>: <b>A–T</b> and <b>C–G</b>, held by hydrogen bonds.",
@@ -64,7 +64,7 @@ ROOMS.push(
   { id: "t10s2", t: "t10", s: 2, name: "The Ribosome Factory", focus: "Protein synthesis and mutation", scene: "library",
     special: "copier", specialName: "Code copier", specialLine: "The machine copies a DNA message onto a long paper strip: mRNA!",
     tint: "#D6CFE8", floor: "#ADA4C9", dim: .62, code: "92738", item: "📜 mRNA-strip sticker",
-    intro: [K("chiikawa", "normal", "The copier is printing letters... A, U, G, C? 📜"), K("hachiware", "happy", "That's transcription! Then ribosomes read the message three letters at a time to make proteins."), K("kurimanju", "happy", "Three letters... like a haiku... 🍵")],
+    intro: [["chiikawa", "normal", "The copier is printing letters... A, U, G, C? 📜"], ["chiikawa", "happy", "That's transcription! Then ribosomes read the message three letters at a time to make proteins."]],
     notes: [
       "<b>Protein synthesis</b> has two stages: <b>transcription</b> (in the nucleus) and <b>translation</b> (at ribosomes in the cytoplasm).",
       "Transcription: part of the DNA unzips and one strand is the template for making <b>mRNA</b>. RNA has <b>ribose</b>, is single-stranded, and has <b>uracil (U)</b> instead of thymine.",
@@ -78,7 +78,7 @@ ROOMS.push(
   { id: "t10s3", t: "t10", s: 3, name: "The Gene Lab", focus: "Biotechnology and bioethics", scene: "lab",
     special: "petri", specialName: "Petri dish", specialLine: "Glowing bacteria in a dish... they've been given a new gene!",
     tint: "#A8D8C8", floor: "#7DAF9E", dim: .74, code: "15874", item: "🧫 Glowing-bacteria sticker",
-    intro: [K("rakko", "brave", "Boss stage. Cutting and pasting genes needs a steady hand... and careful ethics. ⚔️"), K("chiikawa", "shock", "The bacteria are GLOWING?! Is that safe?! 😱"), K("momonga", "happy", "Obviously they're glowing because I'm here. 💜")],
+    intro: [["murk", "brave", "Boss stage. Cutting and pasting genes needs a steady hand... and careful ethics. ⚔️"], ["chiikawa", "shock", "The bacteria are GLOWING?! Is that safe?! 😱"]],
     notes: [
       "<b>Recombinant DNA technology</b>: a gene is cut out using <b>restriction enzymes</b> (which cut at specific base sequences, leaving <b>sticky ends</b>).",
       "The same restriction enzyme cuts a <b>plasmid</b> (the <b>vector</b>); <b>DNA ligase</b> joins the gene into the plasmid.",
@@ -94,7 +94,7 @@ ROOMS.push(
   { id: "t11s1", t: "t11", s: 1, name: "The Name-Tag Museum", focus: "Classification and dichotomous keys", scene: "library",
     special: "butterfly", specialName: "Specimen case", specialLine: "A butterfly in a glass case... its name tag is missing!",
     tint: "#E3D5B8", floor: "#BBA98A", dim: .6, code: "40316", item: "🏷️ Name-tag sticker",
-    intro: [K("chiikawa", "cry", "So many creatures and no name tags... 😖"), K("hachiware", "normal", "Let's classify them! Kingdom, phylum, class... down to species."), K("usagi", "happy", "I'm Pyon usagi! WOO! 🐰")],
+    intro: [["chiikawa", "cry", "So many creatures and no name tags... 😖"], ["chiikawa", "normal", "Let's classify them! Kingdom, phylum, class... down to species."]],
     notes: [
       "<b>Biodiversity</b> is the variety of living things. <b>Classification</b> groups organisms by shared features into a <b>hierarchy</b>: Domain → Kingdom → Phylum → Class → Order → Family → Genus → Species.",
       "A <b>species</b> is a group of organisms that can interbreed to produce <b>fertile</b> offspring.",
@@ -107,7 +107,7 @@ ROOMS.push(
   { id: "t11s2", t: "t11", s: 2, name: "The Survival Island", focus: "Natural selection and evolution", scene: "garden",
     special: "globe", specialName: "Island globe", specialLine: "A little globe with islands... each island has different finches!",
     tint: "#B7D9A4", floor: "#8DB97A", dim: .6, code: "86251", item: "🏝️ Island sticker",
-    intro: [K("chiikawa", "shock", "Some moths are dark, some are pale... the birds are eating the pale ones?! 😱"), K("hachiware", "normal", "That's natural selection! The best-suited survive and pass on their alleles."), K("usagi", "happy", "Survival of the... WAHOO-est! 🐰")],
+    intro: [["chiikawa", "shock", "Some moths are dark, some are pale... the birds are eating the pale ones?! 😱"], ["chiikawa", "normal", "That's natural selection! The best-suited survive and pass on their alleles."]],
     notes: [
       "<b>Evolution</b> is the change in the inherited features of a population over many generations.",
       "<b>Natural selection</b> (Darwin): (1) individuals show <b>variation</b>; (2) more offspring are produced than can survive, so there is <b>competition</b> (struggle for existence); (3) those with favourable features <b>survive and reproduce</b>; (4) they pass on the favourable <b>alleles</b>, which become more common.",
@@ -120,7 +120,7 @@ ROOMS.push(
   { id: "t11s3", t: "t11", s: 3, name: "The Fossil Cave", focus: "Evidence for evolution and speciation", scene: "pond",
     special: "fossil", specialName: "Fossil rock", specialLine: "An ancient spiral shell is trapped in the rock... how old is it?",
     tint: "#8FA9B8", floor: "#6B8494", dim: .76, code: "27960", item: "🐚 Fossil sticker",
-    intro: [K("rakko", "brave", "Boss stage. The rocks remember everything. Read their evidence. ⚔️"), K("chiikawa", "cry", "It's dark and ancient in here... uuu... 🥺"), K("kurimanju", "happy", "Old things... like good tea leaves... 🍵")],
+    intro: [["murk", "brave", "Boss stage. The rocks remember everything. Read their evidence. ⚔️"], ["chiikawa", "cry", "It's dark and ancient in here... uuu... 🥺"]],
     notes: [
       "<b>Fossils</b> are remains or traces of organisms preserved in rock. Deeper rock layers are usually older, so the <b>fossil record</b> shows how organisms changed over time.",
       "The fossil record is incomplete: soft-bodied organisms rarely fossilise, and many fossils are destroyed or undiscovered.",
@@ -135,7 +135,7 @@ ROOMS.push(
   { id: "t12s1", t: "t12", s: 1, name: "The Root Tunnel", focus: "Mineral nutrition and water uptake", scene: "garden",
     special: "plant", specialName: "Seedling pot", specialLine: "Tiny root hairs wiggle in the soil... they're drinking!",
     tint: "#C9B28F", floor: "#9C8565", dim: .62, code: "53748", item: "🌱 Root-hair sticker",
-    intro: [K("chiikawa", "shock", "We're UNDER the ground?! It's all roots! 😱"), K("hachiware", "normal", "Roots take in water and minerals. Root hairs are the champions of absorption!"), K("usagi", "happy", "Dig dig dig! WOO! 🐰")],
+    intro: [["chiikawa", "shock", "We're UNDER the ground?! It's all roots! 😱"], ["chiikawa", "normal", "Roots take in water and minerals. Root hairs are the champions of absorption!"]],
     notes: [
       "Plants are <b>autotrophs</b>: they make organic food by photosynthesis, but need <b>mineral ions</b> from the soil.",
       "<b>Nitrate</b> → amino acids and proteins (lack: poor growth, yellow older leaves). <b>Magnesium</b> → chlorophyll (lack: yellowing between veins). Farmers add <b>fertilisers</b> (N, P, K).",
@@ -149,7 +149,7 @@ ROOMS.push(
   { id: "t12s2", t: "t12", s: 2, name: "The Transpiration Tower", focus: "Transpiration and water transport", scene: "greenhouse",
     special: "potometer", specialName: "Potometer", specialLine: "A leafy shoot in a glass tube... a tiny air bubble is moving!",
     tint: "#BFE3D0", floor: "#8DB9A2", dim: .6, code: "68092", item: "💦 Water-droplet sticker",
-    intro: [K("chiikawa", "sparkle", "The water is climbing UP the stem all by itself?! ✨"), K("hachiware", "normal", "Transpiration pulls it! Water evaporates from leaves and the whole column moves up."), K("momonga", "happy", "Water flows towards me because I'm adorable. 💜")],
+    intro: [["chiikawa", "sparkle", "The water is climbing UP the stem all by itself?! ✨"], ["chiikawa", "normal", "Transpiration pulls it! Water evaporates from leaves and the whole column moves up."]],
     notes: [
       "<b>Transpiration</b> is the loss of water vapour from the aerial parts of a plant, mainly through the <b>stomata</b>.",
       "Water evaporates from mesophyll cell surfaces into air spaces, then diffuses out through stomata.",
@@ -163,7 +163,7 @@ ROOMS.push(
   { id: "t12s3", t: "t12", s: 3, name: "The Phloem Express", focus: "Translocation and support in plants", scene: "lab",
     special: "pump", specialName: "Sugar pump", specialLine: "Sweet sap rushes through a little pipe... up AND down!",
     tint: "#E0C8A8", floor: "#B8A080", dim: .74, code: "19436", item: "🍯 Sweet-sap sticker",
-    intro: [K("rakko", "brave", "Boss stage. Water goes up; sugar goes where it's needed. Know your pipes. ⚔️"), K("chiikawa", "brave", "Xylem up... phloem both ways... I-I've got it! 💪"), K("usagi", "happy", "Sugar express! All aboard! 🐰🚂")],
+    intro: [["murk", "brave", "Boss stage. Water goes up; sugar goes where it's needed. Know your pipes. ⚔️"], ["chiikawa", "brave", "Xylem up... phloem both ways... I-I've got it! 💪"]],
     notes: [
       "<b>Translocation</b> is the transport of organic nutrients (mainly <b>sucrose</b>, also amino acids) in the <b>phloem</b>.",
       "Phloem carries food from <b>sources</b> (e.g. photosynthesising leaves) to <b>sinks</b> (e.g. roots, growing buds, fruits, storage organs), so it can move <b>up or down</b>.",
@@ -178,7 +178,7 @@ ROOMS.push(
   { id: "t13s1", t: "t13", s: 1, name: "The Airway Adventure", focus: "The breathing system and alveoli", scene: "cellworld",
     special: "lungs", specialName: "Balloon lungs", specialLine: "Two pink balloon lungs puff in and out... there's a note in the bronchus!",
     tint: "#F5C6D6", floor: "#CD98AA", dim: .6, code: "84513", item: "🫁 Tiny-lungs sticker",
-    intro: [K("chiikawa", "shock", "We got breathed in?! Down the windpipe?! 😱"), K("hachiware", "happy", "Follow the air: nose → trachea → bronchi → bronchioles → alveoli!"), K("usagi", "happy", "Wheee~! Slide down the trachea! 🐰")],
+    intro: [["chiikawa", "shock", "We got breathed in?! Down the windpipe?! 😱"], ["chiikawa", "happy", "Follow the air: nose → trachea → bronchi → bronchioles → alveoli!"]],
     notes: [
       "Air path: <b>nasal cavity</b> → pharynx → larynx → <b>trachea</b> → <b>bronchi</b> → <b>bronchioles</b> → <b>alveoli</b>.",
       "The nasal cavity warms, moistens and filters air. <b>Mucus</b> traps dust and germs; <b>cilia</b> sweep mucus up to the throat.",
@@ -191,7 +191,7 @@ ROOMS.push(
   { id: "t13s2", t: "t13", s: 2, name: "The Breathing Bellows", focus: "Ventilation: how we breathe", scene: "clinic",
     special: "belljar", specialName: "Bell-jar model", specialLine: "Pull the rubber sheet down and the balloons inflate... magic?",
     tint: "#C7D3F2", floor: "#98A6CC", dim: .62, code: "30687", item: "🎈 Balloon-lung sticker",
-    intro: [K("chiikawa", "normal", "Huff... puff... how do our lungs actually fill up? 🤔"), K("hachiware", "normal", "Muscles change the volume of the chest, and air flows in or out because of pressure."), K("kurimanju", "happy", "Deep breaths... like smelling tea... 🍵")],
+    intro: [["chiikawa", "normal", "Huff... puff... how do our lungs actually fill up? 🤔"], ["chiikawa", "normal", "Muscles change the volume of the chest, and air flows in or out because of pressure."]],
     notes: [
       "<b>Inhalation</b>: external intercostal muscles <b>contract</b> → ribcage moves <b>up and out</b>; diaphragm muscles <b>contract</b> → diaphragm <b>flattens</b>; chest volume <b>increases</b> → pressure <b>decreases</b> below atmospheric → air flows <b>in</b>.",
       "<b>Exhalation</b> (at rest): external intercostal muscles and diaphragm <b>relax</b>; ribcage moves down and in; diaphragm domes up; volume decreases → pressure increases → air flows <b>out</b>. Internal intercostal muscles help in forced exhalation.",
@@ -204,7 +204,7 @@ ROOMS.push(
   { id: "t13s3", t: "t13", s: 3, name: "The Smoky Alley", focus: "Air composition, smoking and lung health", scene: "lab",
     special: "limewater", specialName: "Breath flask", specialLine: "Breathe through the tube... the limewater goes cloudy!",
     tint: "#B8B2A6", floor: "#8C877C", dim: .76, code: "57219", item: "🚭 Clean-air sticker",
-    intro: [K("rakko", "brave", "Boss stage. Smoke is an enemy you can't cut with a sword. Know how it harms. ⚔️"), K("chiikawa", "cry", "Cough cough... the air is so smoky... 😖"), K("hachiware", "happy", "Let's clear the air with science! ✨")],
+    intro: [["murk", "brave", "Boss stage. I am made of smoke. You can't beat me unless you know how I harm. ⚔️"], ["chiikawa", "cry", "Cough cough... the air is so smoky... 😖"], ["chiikawa", "happy", "Let's clear the air with science! ✨"]],
     notes: [
       "Inhaled vs exhaled air: O₂ about <b>21% → 16%</b>; CO₂ about <b>0.04% → 4%</b>; exhaled air is also <b>warmer</b> and <b>saturated with water vapour</b>. Nitrogen stays about 78%.",
       "<b>Limewater</b> turns milky faster with exhaled air, showing it has more CO₂.",
@@ -220,7 +220,7 @@ ROOMS.push(
   { id: "t14s1", t: "t14", s: 1, name: "The Blood Bank", focus: "Blood and blood vessels", scene: "clinic",
     special: "bloodbag", specialName: "Blood bag", specialLine: "A red blood bag hangs on a stand... it's full of cells and plasma!",
     tint: "#F2C4C4", floor: "#C99A9A", dim: .6, code: "43851", item: "🩸 Blood-drop sticker",
-    intro: [K("chiikawa", "shock", "Is that... BLOOD?! 😱🩸"), K("hachiware", "normal", "Don't faint! Blood is a busy delivery system with plasma, red cells, white cells and platelets."), K("momonga", "happy", "My blood type is 'cute'. 💜")],
+    intro: [["chiikawa", "shock", "Is that... BLOOD?! 😱🩸"], ["chiikawa", "normal", "Don't faint! Blood is a busy delivery system with plasma, red cells, white cells and platelets."]],
     notes: [
       "<b>Plasma</b> (mostly water) carries dissolved glucose, amino acids, CO₂, urea, hormones and heat.",
       "<b>Red blood cells</b>: contain <b>haemoglobin</b> (carries O₂ as oxyhaemoglobin); biconcave disc (large surface area); <b>no nucleus</b> (more room for haemoglobin).",
@@ -234,7 +234,7 @@ ROOMS.push(
   { id: "t14s2", t: "t14", s: 2, name: "The Heart Pump House", focus: "The heart and double circulation", scene: "cellworld",
     special: "heart", specialName: "Beating heart", specialLine: "Ba-dum! Ba-dum! A giant heart beats... one chamber holds a riddle.",
     tint: "#F7B7C0", floor: "#CE8C96", dim: .62, code: "91672", item: "❤️ Heartbeat sticker",
-    intro: [K("chiikawa", "sparkle", "Ba-dum... ba-dum... it's like a drum! 🥁✨"), K("hachiware", "normal", "The heart is two pumps side by side: right side to the lungs, left side to the body."), K("usagi", "happy", "Ba-dum ba-dum WAHOO! 🐰")],
+    intro: [["chiikawa", "sparkle", "Ba-dum... ba-dum... it's like a drum! 🥁✨"], ["chiikawa", "normal", "The heart is two pumps side by side: right side to the lungs, left side to the body."]],
     notes: [
       "The heart has four chambers: <b>right atrium</b>, <b>right ventricle</b>, <b>left atrium</b>, <b>left ventricle</b>. Atria receive blood; ventricles pump it out.",
       "<b>Double circulation</b>: <b>pulmonary</b> circulation (heart → lungs → heart) and <b>systemic</b> circulation (heart → body → heart). Blood passes through the heart twice per round.",
@@ -248,7 +248,7 @@ ROOMS.push(
   { id: "t14s3", t: "t14", s: 3, name: "The Capillary Maze", focus: "Tissue fluid, lymph and heart health", scene: "pond",
     special: "villi", specialName: "Capillary bed", specialLine: "Tiny tubes leak a clear fluid around the cells... where does it go?",
     tint: "#A9C8E8", floor: "#7F9FC0", dim: .76, code: "26348", item: "💧 Tissue-fluid sticker",
-    intro: [K("rakko", "brave", "Boss stage. Blood never touches the cells directly. Explain how they are fed. ⚔️"), K("chiikawa", "cry", "Everything is leaking... uuu... 🥺"), K("hachiware", "happy", "It's supposed to leak! That's tissue fluid. It'll work out~! ✨")],
+    intro: [["murk", "brave", "Boss stage. Blood never touches the cells directly. Explain how they are fed. ⚔️"], ["chiikawa", "cry", "Everything is leaking... uuu... 🥺"], ["chiikawa", "happy", "It's supposed to leak! That's tissue fluid. It'll work out~! ✨"]],
     notes: [
       "At the <b>arterial end</b> of a capillary, high blood pressure forces plasma (without red cells or large proteins) out to form <b>tissue fluid</b>.",
       "Tissue fluid bathes cells: O₂ and nutrients diffuse into cells; CO₂ and wastes diffuse out.",
@@ -264,7 +264,7 @@ ROOMS.push(
   { id: "t15s1", t: "t15", s: 1, name: "The Flower Garden", focus: "Reproduction in flowering plants", scene: "greenhouse",
     special: "flower", specialName: "Giant flower", specialLine: "A giant flower sways... a bee has left a pollen-covered note!",
     tint: "#F5D0E0", floor: "#C9A6B8", dim: .56, code: "75034", item: "🌸 Petal sticker",
-    intro: [K("chiikawa", "sparkle", "Flowers everywhere! It smells so sweet! 🌸✨"), K("hachiware", "normal", "Flowers are for reproduction! Pollen goes from anther to stigma. Let's follow its journey."), K("usagi", "happy", "Bzzz! I'm a bee! WOO! 🐝🐰")],
+    intro: [["chiikawa", "sparkle", "Flowers everywhere! It smells so sweet! 🌸✨"], ["chiikawa", "normal", "Flowers are for reproduction! Pollen goes from anther to stigma. Let's follow its journey."]],
     notes: [
       "Flower parts: <b>sepals</b> (protect bud), <b>petals</b> (attract insects), <b>stamens</b> = <b>anther</b> (makes pollen) + filament; <b>carpel</b> = <b>stigma</b> (receives pollen) + style + <b>ovary</b> (contains ovules).",
       "<b>Pollination</b>: transfer of pollen from anther to stigma. <b>Insect-pollinated</b> flowers: bright petals, scent, nectar, sticky pollen, stigma inside. <b>Wind-pollinated</b>: small dull petals, feathery stigmas outside, huge amounts of light, smooth pollen.",
@@ -278,7 +278,7 @@ ROOMS.push(
   { id: "t15s2", t: "t15", s: 2, name: "The Baby Clinic", focus: "Human reproduction", scene: "clinic",
     special: "egg", specialName: "Zygote lamp", specialLine: "A glowing round lamp... it's shaped like a fertilised egg cell!",
     tint: "#FFD6DF", floor: "#D4A6B0", dim: .58, code: "48560", item: "👶 Baby-footprint sticker",
-    intro: [K("chiikawa", "shock", "B-babies come from ONE tiny cell?! 😳"), K("hachiware", "normal", "Yes! A sperm fertilises an egg to form a zygote, which grows by mitosis."), K("momonga", "sparkle", "I was the cutest zygote ever. 💜")],
+    intro: [["chiikawa", "shock", "B-babies come from ONE tiny cell?! 😳"], ["chiikawa", "normal", "Yes! A sperm fertilises an egg to form a zygote, which grows by mitosis."]],
     notes: [
       "Male: <b>testes</b> make sperm and testosterone; <b>sperm duct</b> carries sperm; <b>seminal vesicle</b> and <b>prostate gland</b> add fluid; urethra.",
       "Female: <b>ovaries</b> release eggs (ovulation); <b>oviduct</b> (site of fertilisation); <b>uterus</b> (fetus develops); <b>cervix</b>; vagina.",
@@ -292,7 +292,7 @@ ROOMS.push(
   { id: "t15s3", t: "t15", s: 3, name: "The Growth Chart Tower", focus: "Growth and development", scene: "library",
     special: "heightchart", specialName: "Growth chart", specialLine: "Pencil lines on the wall mark how tall everyone grew each year!",
     tint: "#DCE8B4", floor: "#B3C286", dim: .74, code: "12987", item: "📈 Growth-curve sticker",
-    intro: [K("rakko", "brave", "Boss stage. Growth isn't just getting taller. Measure it properly. ⚔️"), K("chiikawa", "brave", "I'll grow big and strong... one question at a time! 💪"), K("usagi", "happy", "Grow grow grow! WAHOO! 🐰")],
+    intro: [["murk", "brave", "Boss stage. Growth isn't just getting taller. Measure it properly. ⚔️"], ["chiikawa", "brave", "I'll grow big and strong... one question at a time! 💪"]],
     notes: [
       "<b>Growth</b> is a permanent increase in size or <b>dry mass</b>, due to cell division, cell enlargement and cell differentiation. <b>Development</b> is the change in form and function (e.g. specialised cells).",
       "Ways to measure growth: height/length, fresh mass, <b>dry mass</b> (most reliable: removes changes in water content, but kills the organism), cell number.",
@@ -308,7 +308,7 @@ ROOMS.push(
   { id: "t16s1", t: "t16", s: 1, name: "The Eye and Ear Studio", focus: "Stimuli, receptors, the eye and the ear", scene: "library",
     special: "eye", specialName: "Giant eyeball", specialLine: "A giant eyeball blinks at you... its pupil is getting smaller!",
     tint: "#C8D8F0", floor: "#9DAFCB", dim: .6, code: "65821", item: "👁️ Sharp-eye sticker",
-    intro: [K("chiikawa", "shock", "The eyeball is LOOKING at me! 👁️😱"), K("hachiware", "normal", "It's a model of the eye! Receptors turn stimuli like light and sound into nerve impulses."), K("usagi", "happy", "I can hear EVERYTHING with these ears! WOO! 🐰")],
+    intro: [["chiikawa", "shock", "The eyeball is LOOKING at me! 👁️😱"], ["chiikawa", "normal", "It's a model of the eye! Receptors turn stimuli like light and sound into nerve impulses."]],
     notes: [
       "A <b>stimulus</b> is a change in the environment. <b>Receptors</b> detect stimuli and produce nerve impulses; <b>effectors</b> (muscles, glands) respond.",
       "The eye: <b>cornea</b> (refracts light most) · <b>iris</b> (controls pupil size) · <b>lens</b> (fine focusing) · <b>retina</b> (rods and cones) · <b>optic nerve</b> · <b>blind spot</b> (no receptors).",
@@ -322,7 +322,7 @@ ROOMS.push(
   { id: "t16s2", t: "t16", s: 2, name: "The Nerve Network", focus: "The nervous system and reflexes", scene: "cellworld",
     special: "brain", specialName: "Brain dome", specialLine: "A wrinkly pink brain glows under a glass dome... it's thinking!",
     tint: "#E3C9EE", floor: "#B89AC3", dim: .62, code: "80375", item: "⚡ Nerve-spark sticker",
-    intro: [K("chiikawa", "shock", "OUCH! I touched something hot and my hand jumped away before I thought! 😱🔥"), K("hachiware", "normal", "That was a reflex! The impulse went through your spinal cord, not your thinking brain."), K("kurimanju", "happy", "Hot tea... also causes reflexes... *careful sip* 🍵")],
+    intro: [["chiikawa", "shock", "OUCH! I touched something hot and my hand jumped away before I thought! 😱🔥"], ["chiikawa", "normal", "That was a reflex! The impulse went through your spinal cord, not your thinking brain."]],
     notes: [
       "The <b>central nervous system</b> (CNS) = brain + spinal cord. The <b>peripheral nervous system</b> = nerves.",
       "Neurones: <b>sensory neurone</b> (receptor → CNS), <b>interneurone</b> (relay, in the CNS), <b>motor neurone</b> (CNS → effector). The <b>myelin sheath</b> speeds up impulses.",
@@ -336,7 +336,7 @@ ROOMS.push(
   { id: "t16s3", t: "t16", s: 3, name: "The Hormone Post Office", focus: "Hormones and plant responses", scene: "greenhouse",
     special: "sun", specialName: "One-sided lamp", specialLine: "A lamp shines from one side... the seedlings are all bending towards it!",
     tint: "#F7E3A1", floor: "#CDB873", dim: .6, code: "37916", item: "📮 Hormone-letter sticker",
-    intro: [K("chiikawa", "normal", "The seedlings are leaning over... are they tired? 🌱"), K("hachiware", "happy", "No! They're growing towards light. Plant hormones called auxins control it."), K("usagi", "happy", "Hormone mail delivery! WOO! 📮🐰")],
+    intro: [["chiikawa", "normal", "The seedlings are leaning over... are they tired? 🌱"], ["chiikawa", "happy", "No! They're growing towards light. Plant hormones called auxins control it."]],
     notes: [
       "<b>Hormones</b> are chemicals made by <b>endocrine glands</b>, carried in the <b>blood</b> to target organs. Effects are slower and longer-lasting than nerve impulses.",
       "Examples: <b>insulin</b> and <b>glucagon</b> (pancreas) · <b>adrenaline</b> (adrenal glands: fight or flight) · <b>growth hormone</b> (pituitary) · <b>oestrogen</b>, <b>progesterone</b>, <b>testosterone</b> (sex hormones).",
@@ -350,7 +350,7 @@ ROOMS.push(
   { id: "t16s4", t: "t16", s: 4, name: "The Dance Studio", focus: "Movement: bones, joints and muscles", scene: "kitchen",
     special: "bone", specialName: "Skeleton arm", specialLine: "A model arm bends at the elbow... the muscles take turns pulling!",
     tint: "#E8D5F0", floor: "#BFA9CC", dim: .76, code: "59240", item: "💃 Dance-move sticker",
-    intro: [K("rakko", "brave", "Boss stage. Every sword swing needs muscles working in pairs. Show me. ⚔️"), K("chiikawa", "brave", "Biceps... triceps... I'll flex my brain! 💪"), K("usagi", "happy", "DANCE! WOO! WOOOO! 🐰💃")],
+    intro: [["murk", "brave", "Boss stage. Every move you make needs muscles working in pairs. Show me. ⚔️"], ["chiikawa", "brave", "Biceps... triceps... I'll flex my brain! 💪"]],
     notes: [
       "The <b>skeleton</b> supports the body, protects organs, allows movement, and makes blood cells in bone marrow.",
       "A <b>synovial joint</b> (e.g. elbow = hinge joint; hip/shoulder = ball-and-socket joint) has <b>cartilage</b> (reduces friction, absorbs shock), <b>synovial fluid</b> (lubricates) and <b>ligaments</b> (join bone to bone).",
@@ -366,7 +366,7 @@ ROOMS.push(
   { id: "t17s1", t: "t17", s: 1, name: "The Sugar Balance Bakery", focus: "Negative feedback and blood glucose", scene: "kitchen",
     special: "scale", specialName: "Sugar scale", specialLine: "A balance scale tips when sugar is added... then slowly levels again!",
     tint: "#F3D9B0", floor: "#CBA67B", dim: .6, code: "84103", item: "⚖️ Balance sticker",
-    intro: [K("chiikawa", "sparkle", "Cakes! Sweets! Blood sugar go UP! 🍰✨"), K("hachiware", "normal", "Then insulin brings it back down! Homeostasis keeps our inside world steady."), K("usagi", "shock", "Haa?! My sugar is going up and down like a see-saw?! 🐰")],
+    intro: [["chiikawa", "sparkle", "Cakes! Sweets! Blood sugar go UP! 🍰✨"], ["chiikawa", "normal", "Then insulin brings it back down! Homeostasis keeps our inside world steady."]],
     notes: [
       "<b>Homeostasis</b> is keeping the <b>internal environment</b> (e.g. blood glucose, temperature, water, gas levels) fairly constant.",
       "<b>Negative feedback</b>: a change from the <b>set point</b> is detected by receptors → a control centre → effectors bring the level <b>back</b> towards normal.",
@@ -379,7 +379,7 @@ ROOMS.push(
   { id: "t17s2", t: "t17", s: 2, name: "The Mountain Breath Camp", focus: "Regulating blood gases (breathing rate)", scene: "garden",
     special: "lungs", specialName: "Breathing balloon", specialLine: "Up on the mountain the balloon puffs faster and faster... why?",
     tint: "#BFD8EE", floor: "#93B3CF", dim: .76, code: "20658", item: "⛰️ Mountain sticker",
-    intro: [K("rakko", "brave", "Final homeostasis boss. When you run, your breathing changes without asking you. Explain it. ⚔️"), K("chiikawa", "cry", "Huff... huff... I'm so out of breath... 🥺"), K("hachiware", "happy", "Your medulla is on it! It'll work out~! ✨")],
+    intro: [["murk", "brave", "Final homeostasis boss. When you run, your breathing changes without asking you. Explain it. ⚔️"], ["chiikawa", "cry", "Huff... huff... I'm so out of breath... 🥺"], ["chiikawa", "happy", "Your medulla is on it! It'll work out~! ✨"]],
     notes: [
       "During exercise, respiration increases → more <b>CO₂</b> in the blood → blood becomes more acidic.",
       "<b>Chemoreceptors</b> (in the medulla and in the aorta and carotid arteries) detect the rise in CO₂.",
@@ -394,7 +394,7 @@ ROOMS.push(
   { id: "t18s1", t: "t18", s: 1, name: "The Pond Community", focus: "Ecosystem organisation and interactions", scene: "pond",
     special: "pondweed", specialName: "Pond tank", specialLine: "Fish, snails and pondweed all live together in this little world!",
     tint: "#9CC7E8", floor: "#6F93B3", dim: .58, code: "46829", item: "🐟 Pond-pal sticker",
-    intro: [K("chiikawa", "happy", "So many pond friends! Hello, little snail! 🐌"), K("hachiware", "normal", "A pond is an ecosystem: living things and their surroundings all interacting."), K("momonga", "sparkle", "I'd be the star of any community. 💜")],
+    intro: [["chiikawa", "happy", "So many pond friends! Hello, little snail! 🐌"], ["chiikawa", "normal", "A pond is an ecosystem: living things and their surroundings all interacting."]],
     notes: [
       "Levels: <b>organism</b> → <b>population</b> (one species in an area) → <b>community</b> (all populations) → <b>ecosystem</b> (community + physical environment).",
       "A <b>habitat</b> is where an organism lives; its <b>niche</b> is its role (what it eats, when it's active, etc.).",
@@ -407,7 +407,7 @@ ROOMS.push(
   { id: "t18s2", t: "t18", s: 2, name: "The Food Web Forest", focus: "Energy flow and nutrient cycling", scene: "garden",
     special: "globe", specialName: "Cycle globe", specialLine: "Arrows swirl around a globe: carbon goes round and round!",
     tint: "#B9E6C3", floor: "#86BD95", dim: .6, code: "71543", item: "🕸️ Food-web sticker",
-    intro: [K("chiikawa", "shock", "Who eats who?! The arrows are everywhere! 😵"), K("hachiware", "normal", "Arrows show the direction of energy flow: from the eaten to the eater."), K("kurimanju", "happy", "Tea leaves... are producers... 🍵")],
+    intro: [["chiikawa", "shock", "Who eats who?! The arrows are everywhere! 😵"], ["chiikawa", "normal", "Arrows show the direction of energy flow: from the eaten to the eater."]],
     notes: [
       "<b>Food chain</b>: producer → primary consumer → secondary consumer → tertiary consumer. Arrows show the direction of <b>energy flow</b>. A <b>food web</b> is interlinked food chains.",
       "<b>Producers</b> (plants) make food by photosynthesis. <b>Decomposers</b> (bacteria, fungi) break down dead matter and release nutrients.",
@@ -421,7 +421,7 @@ ROOMS.push(
   { id: "t18s3", t: "t18", s: 3, name: "The Field Study Camp", focus: "Studying ecosystems and conservation", scene: "greenhouse",
     special: "quadrat", specialName: "Quadrat frame", specialLine: "A square frame lies on the grass... count the daisies inside!",
     tint: "#C8E6B0", floor: "#9CBE83", dim: .76, code: "93287", item: "🔲 Quadrat sticker",
-    intro: [K("rakko", "brave", "Boss stage. A true field scientist samples fairly. No cherry-picking. ⚔️"), K("chiikawa", "brave", "Random quadrats... I'll throw them fairly! 💪"), K("usagi", "happy", "Counting daisies! 1, 2, WAHOO! 🐰🌼")],
+    intro: [["murk", "brave", "Boss stage. A true field scientist samples fairly. No cherry-picking. ⚔️"], ["chiikawa", "brave", "Random quadrats... I'll throw them fairly! 💪"]],
     notes: [
       "<b>Quadrats</b> (square frames) are placed <b>randomly</b> to estimate plant abundance: count individuals or estimate <b>percentage cover</b>; <b>frequency</b> = % of quadrats containing the species.",
       "A <b>line transect</b> (or belt transect) samples along a line to show how species change with an abiotic factor (e.g. from shore to land, light to shade).",
@@ -437,7 +437,7 @@ ROOMS.push(
   { id: "t19s1", t: "t19", s: 1, name: "The Germ Lab", focus: "Communicable diseases", scene: "lab",
     special: "virus", specialName: "Virus model", specialLine: "A spiky ball spins in a glass case... it's a virus model!",
     tint: "#C8E8D0", floor: "#9CC0A4", dim: .6, code: "38417", item: "🦠 Germ-buster sticker",
-    intro: [K("chiikawa", "cry", "Germs everywhere?! I'm washing my paws ten times! 😭🧼"), K("hachiware", "normal", "Knowing how germs spread is the best way to stop them!"), K("usagi", "happy", "Germ patrol! WOO! 🐰🧽")],
+    intro: [["chiikawa", "cry", "Germs everywhere?! I'm washing my paws ten times! 😭🧼"], ["chiikawa", "normal", "Knowing how germs spread is the best way to stop them!"]],
     notes: [
       "<b>Health</b> is a state of complete physical, mental and social well-being, not just the absence of disease.",
       "<b>Communicable diseases</b> are caused by <b>pathogens</b> and can spread: <b>bacteria</b> (e.g. tuberculosis, cholera), <b>viruses</b> (e.g. influenza, COVID-19, AIDS, dengue fever), <b>fungi</b> (e.g. athlete's foot), <b>protists</b> (e.g. malaria).",
@@ -450,7 +450,7 @@ ROOMS.push(
   { id: "t19s2", t: "t19", s: 2, name: "The Body Fortress", focus: "Body defence and immunity", scene: "cellworld",
     special: "shield", specialName: "Antibody shield", specialLine: "A shield covered with Y-shaped badges... they're antibodies!",
     tint: "#F5D6C6", floor: "#CDAA98", dim: .62, code: "67054", item: "🛡️ Antibody sticker",
-    intro: [K("chiikawa", "brave", "The germs are attacking! Defend the fortress! 💪🛡️"), K("hachiware", "happy", "Our body has walls (skin), guards (phagocytes) and special forces (lymphocytes)!"), K("momonga", "sparkle", "My antibodies are the cutest in the fortress. 💜")],
+    intro: [["chiikawa", "brave", "The germs are attacking! Defend the fortress! 💪🛡️"], ["chiikawa", "happy", "Our body has walls (skin), guards (phagocytes) and special forces (lymphocytes)!"]],
     notes: [
       "<b>Non-specific defence</b> (first line): <b>skin</b> (barrier), <b>mucus</b> and <b>cilia</b> in airways, <b>stomach acid</b>, lysozyme in tears; <b>blood clotting</b> seals wounds.",
       "Second line: <b>phagocytes</b> engulf and digest pathogens; <b>inflammation</b> (redness, swelling, heat) brings more blood and phagocytes to the site.",
@@ -464,7 +464,7 @@ ROOMS.push(
   { id: "t19s3", t: "t19", s: 3, name: "The Healthy Life Clinic", focus: "Non-communicable diseases and healthy living", scene: "clinic",
     special: "heart", specialName: "Health heart", specialLine: "A glowing heart monitor beeps steadily... keep it healthy!",
     tint: "#D8E8F0", floor: "#ABBFCB", dim: .76, code: "14369", item: "🏅 Healthy-life sticker",
-    intro: [K("rakko", "brave", "Final boss of the whole game. The strongest warrior is a healthy one. ⚔️"), K("chiikawa", "brave", "I'll eat my veggies AND answer everything! 💪🥦"), K("hachiware", "happy", "Last stage! It'll work out~! We believe in you! ✨")],
+    intro: [["murk", "brave", "Final boss of the whole game. Only healthy habits can beat me. ⚔️"], ["chiikawa", "brave", "I'll eat my veggies AND answer everything! 💪🥦"], ["chiikawa", "happy", "Last stage! It'll work out~! We believe in you! ✨"]],
     notes: [
       "<b>Non-communicable diseases</b> are not caused by pathogens and do not spread: e.g. <b>cancer</b>, <b>cardiovascular diseases</b>, <b>diabetes</b> (type 2), chronic lung disease.",
       "<b>Cancer</b>: uncontrolled cell division forms a <b>tumour</b>; <b>malignant</b> tumours can spread (metastasis). Risk factors: smoking, UV light, some viruses, carcinogens, genes. Treatment: surgery, radiotherapy, chemotherapy.",

@@ -91,12 +91,12 @@ function renderMap() {
 function homeHtml() {
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni], T = nr && TOPICS[nr.t], m = dailyMission();
   // 1) the daily capsule ad, 2) the ONE next step, 3) the pal room, 4) everything else folded into bars
-  return `${capsuleAdHtml()}
+  return `${storyBannerHtml()}${capsuleAdHtml()}
     ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>${esc(palName())} is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Mochi gets better.</div></div></div>
       <button class="btn big" id="goClinic">🩺 Open the medicine cabinet</button></section>` : ""}
     <section class="card nextcard">
       <span class="kicker">✨ Next step</span>
-      ${nr ? `<h2>${T.icon} ${esc(nr.name)}</h2><p class="small muted" style="margin:0">Topic ${T.no} · ${nr.boss ? "⚔️ Boss stage" : `Stage ${nr.s}`} · ${esc(nr.focus)}</p>`
+      ${nr ? (isStudy() ? `<h2>${T.icon} ${esc(stageName(nr))}</h2><p class="small muted" style="margin:0">📖 Topic ${T.no}: ${esc(T.name)}</p>` : `<h2>${T.icon} ${esc(nr.name)}</h2><p class="small muted" style="margin:0">Topic ${T.no} · ${nr.boss ? "⚔️ Boss stage" : `Stage ${nr.s}`} · ${esc(nr.focus)}</p>`)
            : `<h2>🎉 Every stage escaped!</h2><p class="small muted" style="margin:0">Replay any stage in 🗺️ Stages to win 3 stars.</p>`}
       ${modeSwitch()}
       <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study it" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">🗺️ All stages</button></div>
@@ -114,6 +114,7 @@ function homeHtml() {
     </div></div>`;
 }
 function wireHome() {
+  const sg = document.getElementById("storyGo"); if (sg) sg.onclick = () => { SFX.tap(); openStory(); };
   wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured(); wireCapsuleAd(); wireHomeBoard();
   const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
 
@@ -130,18 +131,19 @@ function wireCommon() {
 function stagesHtml() {
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni], totalStars = ROOMS.reduce((a, r) => a + roomStars(r), 0);
   return `<section class="card">
-      <div class="row" style="justify-content:space-between"><h2>🗺️ Stages</h2><span class="pill">⭐ ${totalStars} / ${ROOMS.length * 3} · 🚪 ${S.completed_rooms.length} / ${ROOMS.length}</span></div>
+      <div class="row" style="justify-content:space-between"><h2>${isStudy() ? "📖 Sections" : "🗺️ Stages"}</h2><span class="pill">⭐ ${totalStars} / ${ROOMS.length * 3} · 🚪 ${S.completed_rooms.length} / ${ROOMS.length}</span></div>
       ${modeSwitch()}
       <div class="tabs" role="tablist" aria-label="Curriculum parts">${PARTS.map((P, pi) => { const n = TOPICS.filter(T => T.p === pi).length, d = TOPICS.filter((T, ti) => T.p === pi && stagesDone(ti) === topicRooms(ti).length).length;
         return `<button class="tab" role="tab" aria-selected="${pi === mapPart}" data-part="${pi}">Part ${esc(P)} <span class="small">${d}/${n}</span></button>`; }).join("")}</div>
+      ${isStudy() ? "" : `<p class="realmline"><b>${REALMS[mapPart].icon} Realm: ${esc(REALMS[mapPart].name)}</b> · ${esc(REALMS[mapPart].line)}</p>`}
       <div class="tgrid">${TOPICS.map((T, ti) => { if (T.p !== mapPart) return "";
         const rs = topicRooms(ti), d = stagesDone(ti), cur = nr && nr.t === ti, nT = rs.length;
         return `<details class="tcard ${d === nT ? "done" : ""} ${cur ? "next" : ""}" ${cur ? "open" : ""}>
-          <summary class="thead"><span class="ticon" aria-hidden="true">${T.icon}</span><span style="min-width:0;flex:1"><span class="tnum">Topic ${T.no}${d === nT ? " · 🏅 cleared" : ` · ${d}/${nT} stages`}</span><br><span class="tname">${esc(T.name)}</span></span></summary>
+          <summary class="thead"><span class="ticon" aria-hidden="true">${T.icon}</span><span style="min-width:0;flex:1"><span class="tnum">Topic ${T.no}${d === nT ? " · 🏅 cleared" : ` · ${d}/${nT} ${isStudy() ? "sections" : "stages"}`}</span><br><span class="tname">${esc(T.name)}</span>${isStudy() ? "" : `<br><span class="tchap">📜 Chapter ${T.no}: ${esc(CHAPTERS[T.id])}</span>`}</span></summary>
           <div class="tprog" aria-label="${d} of ${nT} stages escaped"><i style="width:${Math.round(100 * d / nT)}%"></i></div>
           <div class="stages">${rs.map(r => stageBtn(r, roomIndex(r.id), ni)).join("")}</div>
         </details>`; }).join("")}</div>
-      <p class="small muted">Tap a topic to open it. Inside a topic, clear the stages in order; the last one is a ⚔️ boss stage.</p>
+      <p class="small muted">${isStudy() ? "Tap a topic to open its sections. Each section is a calm series of 15 questions." : "Tap a topic to open it. Inside a topic, clear the stages in order; the last one is a ⚔️ boss stage."}</p>
     </section>`;
 }
 function wireStages() {

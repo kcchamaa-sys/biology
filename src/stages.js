@@ -1,7 +1,7 @@
 
 /* ============================================================
    4. Senior secondary Biology compulsory part (S4–S6): 19 topics, each a series of stages.
-   The last stage of every topic is a boss stage guarded by Ryo.
+   The last stage of every topic is a boss stage guarded by a Murk Warden (see src/lore.js).
    Each stage uses one of 8 room scenes: 5 locks (3 questions each) + an exit door.
    ============================================================ */
 // Topics in curriculum order (Parts I–IV of the compulsory part). "no" is the number shown to students.
@@ -34,7 +34,7 @@ const ROOMS = [
   { id: "t1s1", t: 0, s: 1, name: "The Water Well", focus: "Water and inorganic ions", scene: "pond",
     special: "jug", specialName: "Water jug", specialLine: "A jug of water sparkles... there's a label on it with a question!",
     tint: "#9CC7E8", floor: "#6F93B3", dim: .62, code: "41729", item: "💧 Dew-drop sticker",
-    intro: [["chiikawa", "shock", "Eh?! EHHH?! We're trapped at the bottom of a well?! 😱"], ["hachiware", "happy", "Don't panic! Water is the most common molecule in living things. If we learn its secrets, we can float out! 💧"], ["usagi", "happy", "Wahoo! Splash splash! 🐰"]],
+    intro: [["chiikawa", "shock", "Eh?! EHHH?! We're trapped at the bottom of a well?! 😱"], ["chiikawa", "happy", "Don't panic! Water is the most common molecule in living things. If we learn its secrets, we can float out! 💧"]],
     notes: [
       "Water makes up about 70% of a cell. It is a <b>solvent</b>: many substances dissolve in it, so chemical reactions can happen in solution.",
       "Water is a <b>transport medium</b> (e.g. blood plasma, xylem sap) and a <b>reactant</b> in photosynthesis and <b>hydrolysis</b>.",
@@ -48,7 +48,7 @@ const ROOMS = [
   { id: "t1s2", t: 0, s: 2, name: "The Sugar Pantry", focus: "Carbohydrates and lipids", scene: "kitchen",
     special: "jar", specialName: "Candy jar", specialLine: "A giant candy jar... it smells SO sweet. There's a riddle stuck on the lid!",
     tint: "#F3D9B0", floor: "#CBA67B", dim: .55, code: "86053", item: "🍬 Sugar-crystal sticker",
-    intro: [["chiikawa", "sparkle", "Waaa~! A room full of snacks?! ✨🍡"], ["hachiware", "normal", "Wait, Mochi! Every snack jar is locked with a carbohydrate or lipid puzzle."], ["usagi", "happy", "Woo! Snack time after we escape! 🐰"]],
+    intro: [["chiikawa", "sparkle", "Waaa~! A room full of snacks?! ✨🍡"], ["chiikawa", "normal", "Wait, {N}! Every snack jar is locked with a carbohydrate or lipid puzzle."]],
     notes: [
       "<b>Carbohydrates</b> contain C, H and O. <b>Monosaccharides</b> (single sugars): glucose, fructose, galactose.",
       "<b>Disaccharides</b> (two sugars joined by <b>condensation</b>): maltose = glucose + glucose · sucrose = glucose + fructose · lactose = glucose + galactose.",
@@ -63,7 +63,7 @@ const ROOMS = [
   { id: "t1s3", t: 0, s: 3, name: "The Protein Factory", focus: "Proteins, nucleic acids and food tests", scene: "lab",
     special: "gears", specialName: "Chain machine", specialLine: "A clanking machine links beads into long chains... like amino acids!",
     tint: "#B7A6D6", floor: "#8C7AAE", dim: .68, code: "30947", item: "⛓️ Peptide-chain sticker",
-    intro: [["rakko", "brave", "...So you've come this far. This is a BOSS stage. Show me what you know about proteins. ⚔️"], ["chiikawa", "cry", "Ryo-san is SO strong... uuu... 🥺"], ["hachiware", "happy", "It'll work out~! We studied hard! Let's go! ✨"]],
+    intro: [["murk", "brave", "...So you've come this far. This is a BOSS stage. Show me what you know about proteins. ⚔️"], ["chiikawa", "cry", "The Warden is SO strong... uuu... 🥺"], ["chiikawa", "happy", "It'll work out~! We studied hard! Let's go! ✨"]],
     notes: [
       "<b>Proteins</b> contain C, H, O, N (often S). They are made of <b>amino acids</b> (about 20 kinds) joined by <b>peptide bonds</b> in condensation, forming <b>polypeptides</b>.",
       "The <b>sequence</b> of amino acids decides how the chain folds into a specific <b>3-D shape</b>, and the shape decides the function.",
@@ -79,7 +79,7 @@ const ROOMS = [
   { id: "t2s1", t: 1, s: 1, name: "The Microscope Lab", focus: "Microscopes and the cell theory", scene: "lab",
     special: "microscope", specialName: "Microscope", specialLine: "Something tiny is moving on the slide... and there's a question under the lens!",
     tint: "#BFE3D0", floor: "#8DB9A2", dim: .6, code: "58216", item: "🔬 Tiny-lens sticker",
-    intro: [["chiikawa", "shock", "The room is HUGE... or did we shrink?! 😱"], ["hachiware", "normal", "We're in a microscope lab! Let's learn how scientists see cells."], ["momonga", "sparkle", "Look at me through the lens! I'm cute even when magnified! 💜"]],
+    intro: [["chiikawa", "shock", "The room is HUGE... or did we shrink?! 😱"], ["chiikawa", "normal", "We're in a microscope lab! Let's learn how scientists see cells."]],
     notes: [
       "The <b>cell theory</b>: all living things are made of one or more cells; the cell is the basic unit of life; all cells come from existing cells.",
       "<b>Light microscope</b>: uses light, lower magnification (up to about ×1500) and resolution, can view <b>living</b> cells in colour.",
@@ -93,7 +93,7 @@ const ROOMS = [
   { id: "t2s2", t: 1, s: 2, name: "Organelle City", focus: "Cell organelles, plant and animal cells", scene: "library",
     special: "cellmodel", specialName: "Cell model", specialLine: "A squishy model of a cell. One of its organelles has a riddle written on it!",
     tint: "#C8E6B0", floor: "#9CBE83", dim: .58, code: "14682", item: "🏙️ Organelle-city sticker",
-    intro: [["chiikawa", "sparkle", "Ohh! A tiny city... each building is an organelle?! ✨"], ["hachiware", "happy", "Every organelle has a job, like a city with a mayor, power stations and factories!"], ["usagi", "happy", "WOO! I'm the mitochondrion! Power! 💥"]],
+    intro: [["chiikawa", "sparkle", "Ohh! A tiny city... each building is an organelle?! ✨"], ["chiikawa", "happy", "Every organelle has a job, like a city with a mayor, power stations and factories!"]],
     notes: [
       "<b>Nucleus</b>: contains <b>chromosomes</b> (DNA); controls cell activities. Surrounded by a nuclear envelope with pores.",
       "<b>Mitochondria</b>: site of <b>aerobic respiration</b>, releasing energy (ATP). Many in active cells (muscle, sperm).",
@@ -108,7 +108,7 @@ const ROOMS = [
   { id: "t2s3", t: 1, s: 3, name: "The Membrane Gate", focus: "Cell membrane, prokaryotes and eukaryotes", scene: "cellworld",
     special: "bubble", specialName: "Bubble gate", specialLine: "A wobbly, oily bubble wall... it lets some things through but not others!",
     tint: "#F5C6D6", floor: "#CD98AA", dim: .7, code: "92370", item: "🫧 Bubble-wall sticker",
-    intro: [["rakko", "brave", "Boss stage. Only those who understand the membrane may pass through this gate. ⚔️"], ["chiikawa", "cry", "The gate is all wobbly... can we even get through? 😖"], ["momonga", "happy", "Hmph! I'll squeeze through first if you solve the puzzles! 💜"]],
+    intro: [["murk", "brave", "Boss stage. Only those who understand the membrane may pass through this gate. ⚔️"], ["chiikawa", "cry", "The gate is all wobbly... can we even get through? 😖"]],
     notes: [
       "The <b>fluid mosaic model</b>: the cell membrane is a <b>phospholipid bilayer</b> with <b>proteins</b> scattered in it. The molecules can move sideways, so it is <b>fluid</b>.",
       "Phospholipids have a <b>hydrophilic</b> (water-loving) head and <b>hydrophobic</b> (water-hating) tails. Heads face the watery outside and cytoplasm; tails face inwards.",
@@ -123,7 +123,7 @@ const ROOMS = [
   { id: "t3s1", t: 2, s: 1, name: "The Perfume Hall", focus: "Diffusion", scene: "library",
     special: "perfume", specialName: "Perfume bottle", specialLine: "Pssst! A sweet smell spreads across the whole room... how does it move?",
     tint: "#E5C7EE", floor: "#B89AC3", dim: .6, code: "27514", item: "🌸 Perfume-cloud sticker",
-    intro: [["chiikawa", "happy", "Mmm~ something smells like strawberries... 🍓"], ["hachiware", "normal", "That's diffusion! The smell particles spread from where there are many to where there are few."], ["usagi", "happy", "Sniff sniff! WAHOO! 🐰"]],
+    intro: [["chiikawa", "happy", "Mmm~ something smells like strawberries... 🍓"], ["chiikawa", "normal", "That's diffusion! The smell particles spread from where there are many to where there are few."]],
     notes: [
       "<b>Diffusion</b> is the <b>net movement</b> of particles from a region of <b>higher concentration</b> to a region of <b>lower concentration</b>, down a <b>concentration gradient</b>.",
       "Diffusion is <b>passive</b>: it does not need energy from respiration. It continues until concentrations are even (equilibrium).",
@@ -136,7 +136,7 @@ const ROOMS = [
   { id: "t3s2", t: 2, s: 2, name: "The Salty Sea Lab", focus: "Osmosis in animal and plant cells", scene: "pond",
     special: "potato", specialName: "Potato strips", specialLine: "Potato strips soaking in salty and fresh water... some went floppy!",
     tint: "#A9D6D8", floor: "#7DAFB2", dim: .64, code: "65038", item: "🥔 Potato-strip sticker",
-    intro: [["chiikawa", "cry", "The potato chips went all floppy... my snack! 😭"], ["hachiware", "normal", "Osmosis did that! Water moved out of the potato cells. Let's figure out why."], ["kurimanju", "happy", "Salt... on potato... *sips tea* 🍵"]],
+    intro: [["chiikawa", "cry", "The potato chips went all floppy... my snack! 😭"], ["chiikawa", "normal", "Osmosis did that! Water moved out of the potato cells. Let's figure out why."]],
     notes: [
       "<b>Osmosis</b> is the net movement of <b>water</b> molecules from a <b>dilute</b> solution (higher water potential) to a <b>more concentrated</b> solution (lower water potential) through a <b>differentially permeable membrane</b>.",
       "Animal cells: in a <b>dilute</b> solution, water enters and the cell may <b>burst</b> (red blood cells: <b>haemolysis</b>). In a <b>concentrated</b> solution, water leaves and the cell <b>shrinks</b> (crenation).",
@@ -150,7 +150,7 @@ const ROOMS = [
   { id: "t3s3", t: 2, s: 3, name: "The Energy Pump Station", focus: "Active transport and phagocytosis", scene: "cellworld",
     special: "pump", specialName: "Uphill pump", specialLine: "A pump pushes little balls UPHILL... it needs a battery to work!",
     tint: "#F2B6A0", floor: "#C98C77", dim: .72, code: "38461", item: "🔋 Pump-battery sticker",
-    intro: [["rakko", "brave", "Boss stage. Moving against the gradient needs energy. So does beating me. ⚔️"], ["chiikawa", "brave", "I-I have energy! I ate breakfast! 💪"], ["usagi", "happy", "Woo! Pump it UP! 🐰💥"]],
+    intro: [["murk", "brave", "Boss stage. Moving against the gradient needs energy. So does beating me. ⚔️"], ["chiikawa", "brave", "I-I have energy! I ate breakfast! 💪"]],
     notes: [
       "<b>Active transport</b> moves substances <b>against</b> a concentration gradient (low → high concentration) using <b>carrier proteins</b> in the membrane.",
       "It needs <b>energy (ATP) from respiration</b>, so it stops if respiration stops (e.g. no oxygen, cyanide, low temperature).",
@@ -166,7 +166,7 @@ const ROOMS = [
   { id: "t4s1", t: 3, s: 1, name: "The Copy Room", focus: "Cell cycle and mitosis", scene: "library",
     special: "copier", specialName: "Copy machine", specialLine: "The copier makes perfect twins of everything... just like mitosis!",
     tint: "#C7D3F2", floor: "#98A6CC", dim: .6, code: "71845", item: "📠 Twin-copy sticker",
-    intro: [["chiikawa", "shock", "Th-there are TWO Mochis?! Which one is me?! 😱"], ["hachiware", "happy", "Haha, it's a copy machine! Mitosis makes two identical cells, just like this!"], ["usagi", "happy", "Double Pyon! WAHOO WAHOO! 🐰🐰"]],
+    intro: [["chiikawa", "shock", "Th-there are TWO of me?! Which one is me?! 😱"], ["chiikawa", "happy", "Haha, it's a copy machine! Mitosis makes two identical cells, just like this!"]],
     notes: [
       "The <b>cell cycle</b> = <b>interphase</b> (the longest phase: the cell grows, makes organelles and <b>replicates its DNA</b>) + <b>mitosis</b> (nuclear division) + <b>cytokinesis</b> (cytoplasm division).",
       "After DNA replication, each chromosome has two identical <b>sister chromatids</b> joined at the <b>centromere</b>.",
@@ -181,7 +181,7 @@ const ROOMS = [
   { id: "t4s2", t: 3, s: 2, name: "The Shuffle Casino", focus: "Meiosis and variation", scene: "garden",
     special: "cards", specialName: "Card table", specialLine: "Shuffled cards everywhere... every hand is different, like gametes!",
     tint: "#E8B7C8", floor: "#BF8C9E", dim: .66, code: "20397", item: "🃏 Shuffle-card sticker",
-    intro: [["chiikawa", "shock", "The cards keep shuffling themselves?! 🃏😱"], ["hachiware", "normal", "Meiosis shuffles chromosomes too. That's why brothers and sisters look different!"], ["momonga", "sparkle", "And that's why nobody is as cute as me. Unique! 💜"]],
+    intro: [["chiikawa", "shock", "The cards keep shuffling themselves?! 🃏😱"], ["chiikawa", "normal", "Meiosis shuffles chromosomes too. That's why brothers and sisters look different!"]],
     notes: [
       "<b>Meiosis</b> makes <b>gametes</b> (sperm, eggs; pollen nuclei, ovules). It has <b>two divisions</b> (meiosis I and II) and gives <b>four haploid</b> cells.",
       "Body cells are <b>diploid</b> (2n: two sets of chromosomes; 46 in humans). Gametes are <b>haploid</b> (n: one set; 23 in humans).",
@@ -196,7 +196,7 @@ const ROOMS = [
   { id: "t4s3", t: 3, s: 3, name: "The Twin Mirror Tower", focus: "Mitosis vs meiosis and their importance", scene: "clinic",
     special: "twins", specialName: "Twin mirror", specialLine: "A mirror that shows TWO different reflections... one identical, one shuffled!",
     tint: "#9FA8DA", floor: "#737CAF", dim: .74, code: "84612", item: "🪞 Twin-mirror sticker",
-    intro: [["rakko", "brave", "Boss stage. Mitosis or meiosis? A true fighter never mixes them up. ⚔️"], ["chiikawa", "cry", "Mito... meio... they sound the same... uuu 😖"], ["hachiware", "happy", "Trick: mi-TOE-sis = TWO identical cells. Mei-OH-sis = gametes. We've got this! ✨"]],
+    intro: [["murk", "brave", "Boss stage. Mitosis or meiosis? A true fighter never mixes them up. ⚔️"], ["chiikawa", "cry", "Mito... meio... they sound the same... uuu 😖"], ["chiikawa", "happy", "Trick: mi-TOE-sis = TWO identical cells. Mei-OH-sis = gametes. We've got this! ✨"]],
     notes: [
       "<b>Mitosis</b>: 1 division · 2 daughter cells · <b>diploid</b> · <b>genetically identical</b> · no pairing of homologous chromosomes.",
       "<b>Meiosis</b>: 2 divisions · 4 daughter cells · <b>haploid</b> · <b>genetically different</b> · homologous chromosomes pair and cross over.",
@@ -212,7 +212,7 @@ const ROOMS = [
   { id: "t5s1", t: 4, s: 1, name: "The Lock-and-Key Shop", focus: "Metabolism and how enzymes work", scene: "library",
     special: "lock", specialName: "Giant padlock", specialLine: "A giant padlock with a strangely shaped keyhole... only ONE key fits!",
     tint: "#F7E3A1", floor: "#CDB873", dim: .58, code: "53180", item: "🗝️ Tiny-key sticker",
-    intro: [["chiikawa", "shock", "So many keys... which one fits?! 🗝️😵"], ["hachiware", "happy", "Enzymes work like locks and keys! Each enzyme only fits one kind of substrate."], ["usagi", "happy", "Woo! I'll try ALL of them! 🐰"]],
+    intro: [["chiikawa", "shock", "So many keys... which one fits?! 🗝️😵"], ["chiikawa", "happy", "Enzymes work like locks and keys! Each enzyme only fits one kind of substrate."]],
     notes: [
       "<b>Metabolism</b> = all chemical reactions in an organism. <b>Anabolism</b> builds large molecules (needs energy, e.g. protein synthesis). <b>Catabolism</b> breaks them down (releases energy, e.g. respiration, digestion).",
       "<b>Enzymes</b> are <b>biological catalysts</b> (mostly proteins). They <b>speed up</b> reactions by <b>lowering the activation energy</b>, and are <b>not used up</b>.",
@@ -226,7 +226,7 @@ const ROOMS = [
   { id: "t5s2", t: 4, s: 2, name: "The Hot and Sour Kitchen", focus: "Factors affecting enzyme activity", scene: "kitchen",
     special: "pot", specialName: "Bubbling pot", specialLine: "A pot boiling away... is it too hot for the enzymes inside?",
     tint: "#F4B98F", floor: "#C98E66", dim: .62, code: "96254", item: "🌡️ Thermometer sticker",
-    intro: [["chiikawa", "shock", "It's SO HOT in this kitchen! 🥵"], ["hachiware", "normal", "Enzymes feel the heat too. Too hot and their shape is ruined!"], ["kurimanju", "happy", "Perfect tea is made at the right temperature... like enzymes. 🍵"]],
+    intro: [["chiikawa", "shock", "It's SO HOT in this kitchen! 🥵"], ["chiikawa", "normal", "Enzymes feel the heat too. Too hot and their shape is ruined!"]],
     notes: [
       "<b>Temperature</b>: activity rises as temperature rises (more collisions) up to the <b>optimum temperature</b> (about 37 °C for human enzymes).",
       "Above the optimum, the enzyme is <b>denatured</b>: the active site changes shape, the substrate no longer fits, and activity falls quickly. This is <b>permanent</b>.",
@@ -241,7 +241,7 @@ const ROOMS = [
   { id: "t5s3", t: 4, s: 3, name: "The Inhibitor Vault", focus: "Enzyme inhibitors and applications", scene: "lab",
     special: "vault", specialName: "Jammed keyhole", specialLine: "Someone jammed gum in the keyhole! Is it blocking the active site?",
     tint: "#B8B2A6", floor: "#8C877C", dim: .76, code: "47309", item: "🧰 Unjammer sticker",
-    intro: [["rakko", "brave", "Boss stage. Inhibitors block the way... and so do I. ⚔️"], ["chiikawa", "cry", "The key won't go in... something is blocking it! 😭"], ["usagi", "happy", "Haa?! Then we find another way! WOO! 🐰"]],
+    intro: [["murk", "brave", "Boss stage. Inhibitors block the way... and so do I. ⚔️"], ["chiikawa", "cry", "The key won't go in... something is blocking it! 😭"]],
     notes: [
       "<b>Competitive inhibitors</b> have a shape <b>similar to the substrate</b> and <b>compete for the active site</b>. Adding <b>more substrate</b> reduces their effect.",
       "<b>Non-competitive inhibitors</b> bind to <b>another part</b> of the enzyme (not the active site) and change the active site's shape. More substrate <b>cannot</b> overcome them.",
@@ -256,7 +256,7 @@ const ROOMS = [
   { id: "t6s1", t: 5, s: 1, name: "The Leafy Greenhouse", focus: "Leaf structure and gas exchange", scene: "greenhouse",
     special: "plant", specialName: "Potted plant", specialLine: "A sleepy plant in a pot... its leaves are holding a secret!",
     tint: "#BDE5A8", floor: "#8DBA78", dim: .56, code: "18573", item: "🍃 Green-leaf sticker",
-    intro: [["chiikawa", "happy", "Waaa~ it's so green and fresh in here! 🌿"], ["hachiware", "normal", "Leaves are food factories! Their shape is perfect for catching light and gases."], ["momonga", "sparkle", "Photograph me next to the flowers! 📸💜"]],
+    intro: [["chiikawa", "happy", "Waaa~ it's so green and fresh in here! 🌿"], ["chiikawa", "normal", "Leaves are food factories! Their shape is perfect for catching light and gases."]],
     notes: [
       "Word equation: <b>carbon dioxide + water → (light, chlorophyll) → glucose + oxygen</b>.",
       "Leaf adaptations: <b>broad, flat</b> lamina (large surface area for light and CO₂) · <b>thin</b> (short diffusion distance) · <b>veins</b> (xylem brings water, phloem carries away sugars).",
@@ -270,7 +270,7 @@ const ROOMS = [
   { id: "t6s2", t: 5, s: 2, name: "The Pigment Gallery", focus: "Chloroplasts and photosynthetic pigments", scene: "library",
     special: "prism", specialName: "Rainbow prism", specialLine: "A prism splits light into a rainbow... which colours do leaves really use?",
     tint: "#D9E8B4", floor: "#AFBF86", dim: .58, code: "60318", item: "🌈 Rainbow-leaf sticker",
-    intro: [["chiikawa", "sparkle", "So many colours on the walls! It's an art gallery! 🎨✨"], ["hachiware", "normal", "These are paintings of pigments! Chlorophyll and carotenoids each catch different colours of light."], ["usagi", "happy", "Rainbow! WOO! 🌈🐰"]],
+    intro: [["chiikawa", "sparkle", "So many colours on the walls! It's an art gallery! 🎨✨"], ["chiikawa", "normal", "These are paintings of pigments! Chlorophyll and carotenoids each catch different colours of light."]],
     notes: [
       "The <b>chloroplast</b> has a double membrane (envelope), <b>grana</b> (stacks of <b>thylakoids</b>) and the fluid <b>stroma</b>. Starch grains are often stored in the stroma.",
       "<b>Photosynthetic pigments</b> sit on the thylakoid membranes: <b>chlorophyll a</b> and <b>chlorophyll b</b> (green) and <b>carotenoids</b> (yellow–orange, e.g. carotene and xanthophyll).",
@@ -285,7 +285,7 @@ const ROOMS = [
   { id: "t6s3", t: 5, s: 3, name: "The Sunlight Factory", focus: "Light-dependent reactions", scene: "garden",
     special: "sun", specialName: "Sun lamp", specialLine: "A glowing sun lamp splits water droplets into sparkles and bubbles!",
     tint: "#FCE38A", floor: "#B7D67A", dim: .52, code: "70426", item: "☀️ Sunbeam sticker",
-    intro: [["chiikawa", "sparkle", "So bright! The factory is powered by SUNSHINE! ☀️✨"], ["hachiware", "normal", "Stage one of photosynthesis: light splits water and makes ATP and NADPH."], ["usagi", "shock", "Haa?! Water can be SPLIT?! 🐰💦"]],
+    intro: [["chiikawa", "sparkle", "So bright! The factory is powered by SUNSHINE! ☀️✨"], ["chiikawa", "normal", "Stage one of photosynthesis: light splits water and makes ATP and NADPH."]],
     notes: [
       "<b>Light-dependent reactions</b> happen on the <b>thylakoid membranes (grana)</b>. Chlorophyll absorbs light energy, which excites its electrons.",
       "Light energy splits water: <b>photolysis</b>. Water → hydrogen ions + electrons + <b>oxygen</b>. The O₂ is released as a by-product (or used in respiration).",
@@ -299,7 +299,7 @@ const ROOMS = [
   { id: "t6s4", t: 5, s: 4, name: "The Sugar Conveyor", focus: "Light-independent reactions (Calvin cycle)", scene: "cellworld",
     special: "gears", specialName: "Carbon conveyor", specialLine: "Little carbon beads ride a conveyor belt that goes round and round... a cycle!",
     tint: "#B9E6C3", floor: "#86BD95", dim: .6, code: "29164", item: "🍭 Sugar-cycle sticker",
-    intro: [["chiikawa", "shock", "The belt keeps going round and round?! I'm dizzy! 😵"], ["hachiware", "happy", "That's the Calvin cycle! It fixes CO₂ into sugar using ATP and NADPH."], ["kurimanju", "happy", "Sugar... for my tea... *sip* 🍵"]],
+    intro: [["chiikawa", "shock", "The belt keeps going round and round?! I'm dizzy! 😵"], ["chiikawa", "happy", "That's the Calvin cycle! It fixes CO₂ into sugar using ATP and NADPH."]],
     notes: [
       "The <b>light-independent reactions (Calvin cycle)</b> happen in the <b>stroma</b> and are controlled by <b>enzymes</b>.",
       "<b>Carbon fixation</b>: CO₂ combines with the 5-carbon <b>RuBP</b> to form 2 molecules of 3-carbon <b>glycerate 3-phosphate (GP)</b>.",
@@ -313,7 +313,7 @@ const ROOMS = [
   { id: "t6s5", t: 5, s: 5, name: "The Limiting Factor Lab", focus: "Limiting factors of photosynthesis", scene: "lab",
     special: "pondweed", specialName: "Pondweed tank", specialLine: "Bubbles rise from pondweed under a lamp... count them carefully!",
     tint: "#9ED3B5", floor: "#71A98A", dim: .64, code: "25891", item: "🫧 Pondweed-bubble sticker",
-    intro: [["chiikawa", "brave", "Th-the limiting factor! I remember! 💪"], ["hachiware", "normal", "Only ONE factor holds the rate back at a time. Read the graphs like a detective!"], ["kurimanju", "happy", "Bubbles... like soda... *happy sigh* 🍵"]],
+    intro: [["chiikawa", "brave", "Th-the limiting factor! I remember! 💪"], ["chiikawa", "normal", "Only ONE factor holds the rate back at a time. Read the graphs like a detective!"]],
     notes: [
       "A <b>limiting factor</b> is the factor in the shortest supply that limits the rate. Main ones: <b>light intensity</b>, <b>CO₂ concentration</b> and <b>temperature</b>.",
       "On a graph, where the rate is <b>rising</b>, the factor on the x-axis is limiting. Where the curve is <b>flat</b>, another factor is limiting.",
@@ -327,7 +327,7 @@ const ROOMS = [
   { id: "t6s6", t: 5, s: 6, name: "The Glasshouse Trial", focus: "Investigating photosynthesis (experiments)", scene: "greenhouse",
     special: "limewater", specialName: "Indicator flask", specialLine: "A flask of red indicator... it changes colour when the plant breathes!",
     tint: "#A8D8B0", floor: "#78AA82", dim: .74, code: "84027", item: "🔎 Starch-detective sticker",
-    intro: [["rakko", "brave", "Boss stage. A true scientist proves every idea with a fair experiment. ⚔️"], ["chiikawa", "cry", "Boiling, alcohol, iodine... so many steps... uuu 🥺"], ["hachiware", "happy", "One step at a time! It'll work out~! ✨"]],
+    intro: [["murk", "brave", "Boss stage. A true scientist proves every idea with a fair experiment. ⚔️"], ["chiikawa", "cry", "Boiling, alcohol, iodine... so many steps... uuu 🥺"], ["chiikawa", "happy", "One step at a time! It'll work out~! ✨"]],
     notes: [
       "Starch test on a leaf: <b>boil in water</b> (kill cells, stop reactions) → <b>hot alcohol in a water bath</b> (remove chlorophyll; no naked flame) → rinse in warm water (soften) → <b>iodine</b> (blue-black = starch).",
       "<b>Destarch</b> plants first by keeping them in the dark for 48 hours, so any starch found was made during the experiment.",
@@ -343,7 +343,7 @@ const ROOMS = [
   { id: "t7s1", t: 6, s: 1, name: "The Power Plant", focus: "Aerobic respiration", scene: "cellworld",
     special: "mitolamp", specialName: "Mitochondrion lamp", specialLine: "A glowing bean-shaped lamp hums with energy... it's a mitochondrion!",
     tint: "#F8C58A", floor: "#CF9A5E", dim: .64, code: "63720", item: "⚡ Power-spark sticker",
-    intro: [["chiikawa", "cry", "I'm so tired... I have no energy... 😪"], ["hachiware", "happy", "Then let's learn how cells release energy from food! Respiration to the rescue!"], ["usagi", "happy", "WOO! POWER UP! ⚡🐰"]],
+    intro: [["chiikawa", "cry", "I'm so tired... I have no energy... 😪"], ["chiikawa", "happy", "Then let's learn how cells release energy from food! Respiration to the rescue!"]],
     notes: [
       "<b>Aerobic respiration</b>: <b>glucose + oxygen → carbon dioxide + water + energy (lots of ATP)</b>. It happens in all living cells, all the time.",
       "<b>Glycolysis</b> (in the <b>cytoplasm</b>): glucose (6C) is split into 2 <b>pyruvate</b> (3C), giving a small net gain of <b>2 ATP</b> and some NADH. No oxygen needed.",
@@ -357,7 +357,7 @@ const ROOMS = [
   { id: "t7s2", t: 6, s: 2, name: "The Bakery Basement", focus: "Anaerobic respiration", scene: "kitchen",
     special: "bread", specialName: "Rising dough", specialLine: "The dough is puffing up all by itself... what's making those bubbles?",
     tint: "#E9CFA3", floor: "#BF9F72", dim: .66, code: "10958", item: "🍞 Fluffy-bread sticker",
-    intro: [["chiikawa", "sparkle", "Bread! Fluffy fresh bread! 🍞✨"], ["hachiware", "normal", "Yeast made it rise without much oxygen: anaerobic respiration!"], ["usagi", "shock", "Haa?! My legs burn after running! Is that anaerobic too?! 🐰💦"]],
+    intro: [["chiikawa", "sparkle", "Bread! Fluffy fresh bread! 🍞✨"], ["chiikawa", "normal", "Yeast made it rise without much oxygen: anaerobic respiration!"]],
     notes: [
       "<b>Anaerobic respiration</b> happens <b>without oxygen</b>. Only <b>glycolysis</b> releases energy, so it gives much <b>less ATP</b> (2 per glucose).",
       "In <b>muscles</b> during vigorous exercise: <b>glucose → lactic acid</b> (+ a little energy). No CO₂ is produced.",
@@ -371,7 +371,7 @@ const ROOMS = [
   { id: "t7s3", t: 6, s: 3, name: "The Breath Detective Office", focus: "Comparing processes and experiments", scene: "clinic",
     special: "limewater", specialName: "Limewater flask", specialLine: "Clear limewater... breathe on it and see what happens!",
     tint: "#B9C4D6", floor: "#8C98AC", dim: .76, code: "48265", item: "🔍 Detective-glass sticker",
-    intro: [["rakko", "brave", "Boss stage. A detective reads the evidence. Photosynthesis or respiration? ⚔️"], ["chiikawa", "shock", "The limewater went cloudy?! Who did it?! 😱"], ["momonga", "happy", "Obviously it was CO₂. I solved it. Praise me. 💜"]],
+    intro: [["murk", "brave", "Boss stage. A detective reads the evidence. Photosynthesis or respiration? ⚔️"], ["chiikawa", "shock", "The limewater went cloudy?! Who did it?! 😱"]],
     notes: [
       "<b>Aerobic vs anaerobic</b>: aerobic needs O₂, makes CO₂ + water, lots of ATP, in cytoplasm + mitochondria; anaerobic needs no O₂, makes lactic acid (or ethanol + CO₂), little ATP, cytoplasm only.",
       "<b>Photosynthesis vs respiration</b>: photosynthesis takes in CO₂ and gives out O₂, stores energy in glucose, only in green cells in light (chloroplasts); respiration takes in O₂ and gives out CO₂, releases energy, in all living cells all the time (mitochondria).",
@@ -387,7 +387,7 @@ const ROOMS = [
   { id: "t8s1", t: 7, s: 1, name: "The Bento Canteen", focus: "Food requirements and a balanced diet", scene: "kitchen",
     special: "bento", specialName: "Bento box", specialLine: "A cute bento box! But is it a balanced meal? The lid has a question...",
     tint: "#FFD3B6", floor: "#D4A68A", dim: .54, code: "37146", item: "🍱 Bento-box sticker",
-    intro: [["chiikawa", "sparkle", "Bento! Onigiri! Egg rolls! 🍙✨"], ["hachiware", "normal", "A balanced diet has the right amount of every nutrient. Let's check the menu!"], ["usagi", "happy", "I want ALL the fried chicken! Woo! 🐰🍗"]],
+    intro: [["chiikawa", "sparkle", "Bento! Onigiri! Egg rolls! 🍙✨"], ["chiikawa", "normal", "A balanced diet has the right amount of every nutrient. Let's check the menu!"]],
     notes: [
       "Seven food components: <b>carbohydrates</b> (main energy source) · <b>lipids</b> (energy store, insulation) · <b>proteins</b> (growth and repair) · <b>vitamins</b> · <b>minerals</b> · <b>dietary fibre</b> · <b>water</b>.",
       "<b>Vitamin A</b>: night vision (lack → night blindness) · <b>vitamin C</b>: healthy skin and gums (lack → <b>scurvy</b>) · <b>vitamin D</b>: absorb calcium (lack → <b>rickets</b>).",
@@ -401,7 +401,7 @@ const ROOMS = [
   { id: "t8s2", t: 7, s: 2, name: "The Tummy Tunnel", focus: "Digestion along the alimentary canal", scene: "cellworld",
     special: "slide", specialName: "Tummy slide", specialLine: "A long, twisty slide... it looks exactly like a digestive tract!",
     tint: "#F7B7C0", floor: "#CE8C96", dim: .66, code: "82593", item: "🎢 Tummy-slide sticker",
-    intro: [["chiikawa", "shock", "We got SWALLOWED?! Where are we going?! 😱"], ["hachiware", "happy", "Down the alimentary canal! Let's follow the food and see how it's digested."], ["usagi", "happy", "Wheee~! Down the oesophagus! WAHOO! 🐰"]],
+    intro: [["chiikawa", "shock", "We got SWALLOWED?! Where are we going?! 😱"], ["chiikawa", "happy", "Down the alimentary canal! Let's follow the food and see how it's digested."]],
     notes: [
       "<b>Mechanical digestion</b>: teeth chew; the stomach churns; <b>bile</b> emulsifies fats into small droplets (larger surface area). <b>Chemical digestion</b>: enzymes hydrolyse large molecules.",
       "<b>Mouth</b>: <b>salivary amylase</b> digests starch → maltose (pH about 7). The tongue rolls food into a <b>bolus</b>.",
@@ -416,7 +416,7 @@ const ROOMS = [
   { id: "t8s3", t: 7, s: 3, name: "The Villi Jungle", focus: "Absorption and assimilation", scene: "garden",
     special: "villi", specialName: "Villi forest", specialLine: "Soft finger-like villi sway like a forest... they're absorbing something!",
     tint: "#E7A9B4", floor: "#BC7F8A", dim: .76, code: "59714", item: "🌱 Villi-forest sticker",
-    intro: [["rakko", "brave", "Final boss of nutrition. Absorb the knowledge... or be absorbed. ⚔️"], ["chiikawa", "cry", "The villi are tickling me... uuu... 🥺"], ["hachiware", "happy", "Last stage of the topic! It'll work out~! We can do it! ✨"]],
+    intro: [["murk", "brave", "Final boss of nutrition. Absorb the knowledge... or be absorbed. ⚔️"], ["chiikawa", "cry", "The villi are tickling me... uuu... 🥺"], ["chiikawa", "happy", "Last stage of the topic! It'll work out~! We can do it! ✨"]],
     notes: [
       "Most digested food is absorbed in the <b>small intestine</b> (ileum). Adaptations: very <b>long</b>; inner wall folded with millions of <b>villi</b>, and <b>microvilli</b> on epithelial cells → huge <b>surface area</b>.",
       "The <b>epithelium</b> of the villus is <b>one cell thick</b> (short diffusion distance) with a dense <b>capillary network</b> (keeps a steep concentration gradient) and a central <b>lacteal</b>.",

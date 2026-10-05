@@ -56,18 +56,18 @@ const FACTS = {
   t18: ["Every winter, tens of thousands of migratory birds visit Mai Po, including the endangered black-faced spoonbill.", "Red tides in Hong Kong waters are algal blooms, often linked to extra nutrients from sewage and farm waste."],
   t19: ["Dengue fever is spread by Aedes mosquitoes. Emptying stagnant water, like in flowerpot trays, stops them from breeding.", "Washing your hands with soap for 20 seconds removes many disease-causing microorganisms."]
 };
-const FACT_WHO = ["hachiware", "momonga", "kurimanju", "chiikawa", "usagi"];
+const FACT_WHO = ["chiikawa"];
 function cheerLines() {
   const ni = nextRoomIndex(), out = [];
-  if (S.current_streak > 1) out.push(["usagi", "happy", `🔥 ${S.current_streak} days in a row! Your chestnut rewards are ×${streakMult().toFixed(2).replace(/0$/, "")} right now. WAHOO!`]);
+  if (S.current_streak > 1) out.push(["chiikawa", "happy", `🔥 ${S.current_streak} days in a row! Your chestnut rewards are ×${streakMult().toFixed(2).replace(/0$/, "")} right now. WAHOO!`]);
   else out.push(["chiikawa", "happy", "Every day you come back, your 🔥 streak grows and chestnut rewards go up (up to ×1.5)! 🥹"]);
-  const nm = mistakeKeys().length; if (nm) out.push(["hachiware", "normal", `📕 ${nm} question${nm > 1 ? "s" : ""} waiting in your Mistake Notebook. Fixing just 3 today makes your brain stronger!`]);
-  const nw = Object.keys(S.dict.missed).length; if (nw) out.push(["momonga", "happy", `🎧 ${nw} tricky word${nw > 1 ? "s" : ""} to practise in Word Dictation. I could spell them easily... probably. 💜`]);
-  if (ni !== -1) out.push(["hachiware", "normal", `Next right step: <b>${esc(ROOMS[ni].name)}</b>. Just one stage. You've got this! 🌱`]);
-  if (S.ill) out.push(["shisa", "normal", `🤒 ${esc(palName())} is sick with <b>${esc(illById(S.ill.id).name)}</b>. Open the 🩺 medicine cabinet and pick the right treatment!`]);
+  const nm = mistakeKeys().length; if (nm) out.push(["chiikawa", "normal", `📕 ${nm} question${nm > 1 ? "s" : ""} waiting in your Mistake Notebook. Fixing just 3 today makes your brain stronger!`]);
+  const nw = Object.keys(S.dict.missed).length; if (nw) out.push(["chiikawa", "happy", `🎧 ${nw} tricky word${nw > 1 ? "s" : ""} to practise in Word Dictation. I could spell them easily... probably. 💜`]);
+  if (ni !== -1) out.push(["chiikawa", "normal", `Next right step: <b>${esc(ROOMS[ni].name)}</b>. Just one stage. You've got this! 🌱`]);
+  if (S.ill) out.push(["chiikawa", "normal", `🤒 ${esc(palName())} is sick with <b>${esc(illById(S.ill.id).name)}</b>. Open the 🩺 medicine cabinet and pick the right treatment!`]);
   out.push(["chiikawa", "happy", esc(pick(DAILY_LIFE))]);
   if (S.coll.pending) out.push(["chiikawa", "sparkle", `🎁 You have ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""} to open! What's inside?!`]);
-  out.push(["kurimanju", "happy", "Tired? A 5-minute Cell Rush or a Dictation round still counts. Small steps. *sip* 🍵"]);
+  out.push(["chiikawa", "happy", "Tired? A 5-minute Cell Rush or a Dictation round still counts. Small steps. *sip* 🍵"]);
   return out;
 }
 function factLine() {
@@ -121,7 +121,7 @@ function renderDictation(pre) {
       <p class="sub">Hear it, spell it, own it. ${DICT_N} words a round · 2 tries each</p>
     </section>
     <section class="card">
-      ${say("hachiware", TTS.ok ? "I'll say a biology word in a British accent. Type what you hear! Tap 🐢 to hear it slowly. British or American spelling are both fine. 🎧" : "Your browser can't play sounds for words, so let's use the meaning mode: read the meaning and spell the term! 📖", "normal", "hint")}
+      ${say("chiikawa", TTS.ok ? "I'll say a biology word in a British accent. Type what you hear! Tap 🐢 to hear it slowly. British or American spelling are both fine. 🎧" : "Your browser can't play sounds for words, so let's use the meaning mode: read the meaning and spell the term! 📖", "normal", "hint")}
       <label class="small"><b>Words from</b><br><select class="name" id="dSrc">
         ${miss.length ? `<option value="missed" ${sel === "missed" ? "selected" : ""}>🎧 My missed words (${miss.length})</option>` : ""}
         ${TOPICS.map((T, ti) => `<option value="${ti}" ${sel === String(ti) ? "selected" : ""}>${T.icon} Topic ${T.no}: ${esc(T.name)}</option>`).join("")}</select></label>
@@ -182,7 +182,7 @@ function dictWord() {
   inp.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); DT.done ? dictNext() : check(); } };
   document.getElementById("dHint").onclick = () => {
     SFX.hint(); DT.hint = true;
-    document.getElementById("dFb").innerHTML = say("hachiware", `It starts with “<b>${esc(x.w.slice(0, 3))}</b>…”${listen ? ` and means: <i>${esc(x.m)}</i>` : ""}`, "normal", "hint");
+    document.getElementById("dFb").innerHTML = say("chiikawa", `It starts with “<b>${esc(x.w.slice(0, 3))}</b>…”${listen ? ` and means: <i>${esc(x.m)}</i>` : ""}`, "normal", "hint");
   };
   document.getElementById("dQuit").onclick = () => { SFX.tap(); dictEnd(); };
   const finish = ok => {
@@ -190,7 +190,7 @@ function dictWord() {
     if (ok) { DT.right += 1; S.stats.spellRight += 1; const cleared = rightWord(x.w); if (cleared) toast("🎧 Cleared from your missed words! 🎉"); }
     else { DT.missed.push(x); addMissedWord(x.w); }
     save();
-    document.getElementById("dFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say(pick(["usagi", "chiikawa", "momonga"]), pick(["WAHOO!! Perfect spelling! 🐰", "We did it...! 🥹✨", "Correct! Almost as cute as me. 💜"]), "sparkle")
+    document.getElementById("dFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("chiikawa", pick(["WAHOO!! Perfect spelling!", "We did it...! 🥹✨", "Correct! Almost as cute as me. 💜"]), "sparkle")
       : say("chiikawa", "Uuu... that one was tricky. 😭 We'll practise it again later!", "cry")}
       <p class="dword"><b>${esc(x.w)}</b> ${sayBtns(x.w)}</p><p class="small muted" style="text-align:center">${esc(x.m)}</p>
       <div class="row" style="justify-content:center"><button class="btn big" id="dNext">${DT.i + 1 < DT.words.length ? "Next word ▶" : "See results 🎉"}</button></div></div>`;
@@ -203,7 +203,7 @@ function dictWord() {
     DT.tries += 1; SFX.wrong();
     if (DT.tries >= 2) { finish(false); return; }
     document.getElementById("dInfo").textContent = `${countLetters(x.w)} letters · try 2 of 2`;
-    document.getElementById("dFb").innerHTML = say("hachiware", soClose(inp.value, x.w) ? "🤏 <b>So close!</b> Just a letter or two off. Check each syllable and try once more!" : `Not quite. ${listen ? "Listen again (try 🐢) and" : "Read the meaning again and"} have one more go!`, "normal", "hint");
+    document.getElementById("dFb").innerHTML = say("chiikawa", soClose(inp.value, x.w) ? "🤏 <b>So close!</b> Just a letter or two off. Check each syllable and try once more!" : `Not quite. ${listen ? "Listen again (try 🐢) and" : "Read the meaning again and"} have one more go!`, "normal", "hint");
     inp.focus(); inp.select();
   };
   document.getElementById("dOk").onclick = check;
@@ -227,7 +227,7 @@ function dictEnd() {
       <p class="sub"><span class="pill coinpill">+${coins} 🌰${multTag()}</span> ${perfect ? `<span class="pill rpill">🎁 +1 capsule</span>` : ""}</p>
     </section>
     <section class="card">
-      ${perfect ? say("usagi", "WOOOO!!! Every single word! 🐰🎊", "sparkle") : DT.right >= n / 2 ? say("hachiware", "Nice work! The words you missed are saved in <b>My missed words</b>. Spell each one right twice to clear it. 🌱", "happy", "hint") : say("kurimanju", "Tricky words today. That's how brains grow. Listen to them once more below. 🍵", "happy")}
+      ${perfect ? say("chiikawa", "WOOOO!!! Every single word! 🎊", "sparkle") : DT.right >= n / 2 ? say("chiikawa", "Nice work! The words you missed are saved in <b>My missed words</b>. Spell each one right twice to clear it. 🌱", "happy", "hint") : say("chiikawa", "Tricky words today. That's how brains grow. Listen to them once more below. 🍵", "happy")}
       ${DT.missed.length ? `<h3>Words to practise</h3><table class="tterms"><tbody>${DT.missed.map(x => `<tr><td><b>${esc(x.w)}</b> ${sayBtns(x.w)}</td><td>${esc(x.m)}</td></tr>`).join("")}</tbody></table>` : ""}
       <div class="row">${perfect ? `<button class="btn pink" id="dCap">🎁 Open capsule</button>` : ""}<button class="btn big" id="dAgain">🎧 Another round</button>${DT.missed.length ? `<button class="btn yellow" id="dMissed">Practise missed words</button>` : ""}<button class="btn plain" id="dMap">🗺️ Map</button></div>
     </section>`;
