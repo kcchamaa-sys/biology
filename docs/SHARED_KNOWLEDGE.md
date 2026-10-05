@@ -44,6 +44,15 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 
 ## Cross-project log (newest first)
 
+- 2026-10-05 (biology): **Friends + Bookmarks.**
+  - **Friends** (`src/friends.js`, plus `friends`/`friendAdd`/`friendRemove`/`cheer` actions in `server/Code.gs`):
+    - Codes are 6 characters, derived from SHA-256(salt + email), so there is no code table. Only students on the class list can be added (staff excluded).
+    - Following is one-way, up to 5 friends.
+    - Cheers are preset messages only (no free text), one per friend per day. They are stored in a *Biology Cheers* tab and marked as seen when shown.
+    - Tested against a **fake Apps Script harness**: mocked SpreadsheetApp, Cache, Lock and Utilities, with SHA-256 returning signed bytes like GAS does. The same harness backed a Playwright `route()`, so the UI ran against the real server code.
+  - **Bookmarks** (`src/bookmarks.js`): `S.bookmarks` is keyed `room:qid`, like the Mistake Notebook. One document-level click listener handles every 🔖 button, including inside modals. Redo runs reuse `miniQuiz`.
+  - The Practice tab's leaderboard tile was removed (Home has it).
+
 - 2026-10-05 (biology): **Story world "The Codex of Life"** (`docs/LORE.md` bible + `src/lore.js`). **The Murk is now the shared villain across the family.**
   - The setting: the living world Vita; the Codex of Life torn into 60 pages across 4 Realms (one per Part); students are Keepers; Study Pals are sparks born from understood pages.
   - Each chapter's boss is a **Murk Warden** made of one real misconception. The Keeper's Flame is the streak.

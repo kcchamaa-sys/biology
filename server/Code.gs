@@ -5,6 +5,8 @@
  * - Saves every finished activity (escape stage, study series, Cell Rush, dictation,
  *   Mistake Notebook) and each student's game progress to the spreadsheet.
  * - Gives signed-in students the class leaderboard.
+ * - Friends: each student has a 6-character friend code and can follow up to 5 classmates (any class in the
+ *   Users list), see their study progress and send one preset cheer per friend per day. No free-text messages.
  * Guests never reach this server: their progress stays on their own device.
  *
  * Script Properties (Project Settings → Script properties):
@@ -21,14 +23,19 @@ var PROPS = PropertiesService.getScriptProperties();
 var USERS_DEFAULT = '使用者 Users';
 var REC = 'Biology Records';
 var PROG = 'Biology Progress';
+var FRIENDS = 'Biology Friends';
+var CHEERS = 'Biology Cheers';
+var FRIEND_MAX = 5;
+// Preset cheers only (no free text between students). The client shows the same list in the same order.
+var CHEER_MSGS = ['🔥 Keep your flame going!', '👏 Great work today!', '💪 You can do it!', '🌱 Study with me today?'];
 var REC_HEAD = ['Timestamp', 'Session ID', 'Email', 'Role', 'Class', 'Class No.', 'Chinese Name', 'English Name',
   'Mode', 'Topic', 'Stage', 'Answered', 'Correct', 'Accuracy %', 'Stars', 'Seconds', 'Status', 'Start', 'End',
   'Question IDs', 'Wrong IDs'];
 var PROG_HEAD = ['Email', 'Updated', 'Streak', 'Best streak', 'Stars', 'Stages cleared', 'Chestnuts', 'Active pet',
   'Pets', 'Mistakes waiting', 'Mistakes cleared', 'Trophies', 'Last study day', 'Data (do not edit)',
-  'Dedication points', 'Collection'];
+  'Dedication points', 'Collection', 'Active pal'];
 var DATA_COL = 14; // column N holds the saved game data
-var MODES = { escape: 'Escape stage', study: 'Study series', rush: 'Cell Rush', dict: 'Dictation', notebook: 'Mistake Notebook' };
+var MODES = { escape: 'Escape stage', study: 'Study series', rush: 'Cell Rush', dict: 'Dictation', notebook: 'Mistake Notebook', bookmark: 'Bookmarks' };
 var STATUS = { done: 'Finished', quit: 'Stopped early' };
 
 function doGet() {
@@ -47,6 +54,10 @@ function doPost(e) {
       case 'save': saveProgress(user, body.state, body.summary || {}); return out({ ok: true });
       case 'record': return out({ ok: true, saved: appendRecords(user, body.records || []) });
       case 'board': return out(board(user, body.scope === 'all' ? 'all' : 'class'));
+      case 'friends': return out(friendsData(user, true));
+      case 'friendAdd': return out(friendAdd(user, body.code));
+      case 'friendRemove': return out(friendRemove(user, body.code));
+      case 'cheer': return out(cheer(user, body.code, body.msg));
       case 'stats':
         if (!user.teacher) return out({ ok: false, error: 'forbidden' });
         return out(stats());
@@ -147,8 +158,9 @@ function saveProgress(u, state, s) {
   var lock = LockService.getScriptLock(); lock.waitLock(20000);
   try {
     var sh = sheet(PROG, PROG_HEAD);
+    if (sh.getRange(1, PROG_HEAD.length).getValue() !== PROG_HEAD[PROG_HEAD.length - 1]) sh.getRange(1, 1, 1, PROG_HEAD.length).setValues([PROG_HEAD]); // older sheets: add new headers
     var row = [u.email, new Date(), num(s.streak), num(s.best), num(s.stars), num(s.stages), num(s.coins), clean(s.pet, 30),
-      num(s.pets), num(s.mistakes), num(s.cleared), num(s.trophies), clean(s.lastDay, 12), state, num(s.xp), num(s.col)];
+      num(s.pets), num(s.mistakes), num(s.cleared), num(s.trophies), clean(s.lastDay, 12), state, num(s.xp), num(s.col), clean(s.pal, 20)];
     var r = findRow(sh, u.email);
     if (r < 0) r = sh.getLastRow() + 1;
     sh.getRange(r, 13).setNumberFormat('@');
@@ -169,14 +181,14 @@ function fullName(zh, en) {
   return zh || String(en || '').trim() || '?';
 }
 function boardRows() {
-  var cache = CacheService.getScriptCache(), hit = cache.get('bio_board');
+  var cache = CacheService.getScriptCache(), hit = cache.get('bio_board2');
   if (hit) return JSON.parse(hit);
   var ss = book(), rows = [];
   var uv = ss.getSheetByName(PROPS.getProperty('USERS_SHEET') || USERS_DEFAULT).getDataRange().getValues();
   var info = {};
   for (var i = 1; i < uv.length; i++) {
     if (!uv[i][0] || isStaffRole(String(uv[i][1] || ''))) continue;
-    info[String(uv[i][0]).trim().toLowerCase()] = { n: fullName(uv[i][2], uv[i][3]), c: String(uv[i][4] || '') };
+    info[String(uv[i][0]).trim().toLowerCase()] = { n: fullName(uv[i][2], uv[i][3]), en: String(uv[i][3] || '').trim(), c: String(uv[i][4] || '') };
   }
   var ps = ss.getSheetByName(PROG);
   if (ps && ps.getLastRow() > 1) {
@@ -188,11 +200,12 @@ function boardRows() {
       var em = String(r[0]).toLowerCase(), u = info[em];
       if (!u) return;
       var last = String(r[12] || '');
-      rows.push({ e: em, n: u.n, c: u.c, p: String(r[7] || ''), xp: Number(r[14]) || 0,
-        st: last >= yest ? Number(r[2]) || 0 : 0, col: Number(r[15]) || 0 });
+      rows.push({ e: em, n: u.n, en: u.en, c: u.c, p: String(r[7] || ''), xp: Number(r[14]) || 0,
+        st: last >= yest ? Number(r[2]) || 0 : 0, col: Number(r[15]) || 0, s: Number(r[5]) || 0, stars: Number(r[4]) || 0,
+        last: last, pal: String(r[16] || '') });
     });
   }
-  cache.put('bio_board', JSON.stringify(rows), 300);
+  cache.put('bio_board2', JSON.stringify(rows), 300);
   return rows;
 }
 function board(user, scope) {
@@ -237,4 +250,103 @@ function stats() {
     });
   }
   return { ok: true, students: students, records: records, progress: progress };
+}
+
+
+/** Friends (signed-in students only).
+ *  Friend codes are derived from the email, so nothing extra is stored and a code can't be guessed from a name.
+ *  Following is one-way (like Duolingo): you can follow up to 5 people; they see your cheers. */
+var CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function friendCode(email) {
+  var salt = PROPS.getProperty('FRIEND_SALT') || 'bio-study-pals';
+  var d = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, salt + '|' + email), c = '';
+  for (var i = 0; i < 6; i++) c += CODE_ABC.charAt((d[i] + 256) % 32);
+  return c;
+}
+function codeMap() {
+  var cache = CacheService.getScriptCache(), hit = cache.get('bio_codes');
+  if (hit) return JSON.parse(hit);
+  var uv = book().getSheetByName(PROPS.getProperty('USERS_SHEET') || USERS_DEFAULT).getDataRange().getValues(), m = {};
+  for (var i = 1; i < uv.length; i++) {
+    if (!uv[i][0] || isStaffRole(String(uv[i][1] || ''))) continue;
+    var em = String(uv[i][0]).trim().toLowerCase(); m[friendCode(em)] = em;
+  }
+  cache.put('bio_codes', JSON.stringify(m), 600);
+  return m;
+}
+function studentInfo() {
+  var cache = CacheService.getScriptCache(), hit = cache.get('bio_uinfo');
+  if (hit) return JSON.parse(hit);
+  var uv = book().getSheetByName(PROPS.getProperty('USERS_SHEET') || USERS_DEFAULT).getDataRange().getValues(), m = {};
+  for (var i = 1; i < uv.length; i++) {
+    if (!uv[i][0] || isStaffRole(String(uv[i][1] || ''))) continue;
+    var en = String(uv[i][3] || '').trim();
+    m[String(uv[i][0]).trim().toLowerCase()] = { first: en.split(/\s+/)[0] || fullName(uv[i][2], uv[i][3]), c: String(uv[i][4] || '') };
+  }
+  cache.put('bio_uinfo', JSON.stringify(m), 600);
+  return m;
+}
+function friendList(email) {
+  var sh = sheet(FRIENDS, ['Email', 'Friends', 'Updated']), r = findRow(sh, email);
+  if (r < 0) return { row: -1, list: [] };
+  return { row: r, list: String(sh.getRange(r, 2).getValue() || '').split(',').filter(String) };
+}
+function setFriends(email, list) {
+  var sh = sheet(FRIENDS, ['Email', 'Friends', 'Updated']), r = findRow(sh, email);
+  if (r < 0) r = sh.getLastRow() + 1;
+  sh.getRange(r, 1, 1, 3).setValues([[email, list.join(','), new Date()]]);
+}
+function cheerRows() { var sh = sheet(CHEERS, ['Timestamp', 'From', 'To', 'Message', 'Seen']); return { sh: sh, v: sh.getLastRow() > 1 ? sh.getRange(2, 1, sh.getLastRow() - 1, 5).getValues() : [] }; }
+function friendsData(user, markSeen) {
+  var tz = Session.getScriptTimeZone() || 'Asia/Hong_Kong', today = Utilities.formatDate(new Date(), tz, 'yyyy-MM-dd');
+  var mine = friendList(user.email).list, rows = boardRows(), byEmail = {}, info = studentInfo();
+  rows.forEach(function (r) { byEmail[r.e] = r; });
+  var friends = mine.map(function (em) {
+    var r = byEmail[em] || {}, u = info[em] || {};
+    return { code: friendCode(em), n: u.first || r.n || 'Classmate', c: u.c || r.c || '', st: r.st || 0, xp: r.xp || 0, s: r.s || 0,
+      stars: r.stars || 0, col: r.col || 0, last: r.last || '', today: r.last === today, pal: r.pal || '' };
+  });
+  var ch = cheerRows(), week = Date.now() - 7 * 864e5, got = [], sent = {}, nameOf = function (em) { return (info[em] && info[em].first) || 'A friend'; };
+  ch.v.forEach(function (r, i) {
+    var t = new Date(r[0]).getTime(), from = String(r[1]).toLowerCase(), to = String(r[2]).toLowerCase();
+    if (to === user.email && t > week) {
+      got.push({ n: nameOf(from), m: String(r[3]), t: new Date(r[0]).toISOString(), seen: !!r[4] });
+      if (markSeen && !r[4]) ch.sh.getRange(i + 2, 5).setValue('yes');
+    }
+    if (from === user.email && Utilities.formatDate(new Date(r[0]), tz, 'yyyy-MM-dd') === today) sent[friendCode(to)] = 1;
+  });
+  got.reverse();
+  return { ok: true, code: friendCode(user.email), max: FRIEND_MAX, friends: friends, cheers: got.slice(0, 20), sent: sent, msgs: CHEER_MSGS };
+}
+function friendAdd(user, code) {
+  code = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+  var em = codeMap()[code];
+  if (!em) return { ok: false, error: 'friend_unknown' };
+  if (em === user.email) return { ok: false, error: 'friend_self' };
+  var lock = LockService.getScriptLock(); lock.waitLock(20000);
+  try {
+    var f = friendList(user.email).list;
+    if (f.indexOf(em) >= 0) return { ok: false, error: 'friend_already' };
+    if (f.length >= FRIEND_MAX) return { ok: false, error: 'friend_full' };
+    f.push(em); setFriends(user.email, f);
+  } finally { lock.releaseLock(); }
+  return friendsData(user, false);
+}
+function friendRemove(user, code) {
+  var lock = LockService.getScriptLock(); lock.waitLock(20000);
+  try {
+    var f = friendList(user.email).list.filter(function (em) { return friendCode(em) !== code; });
+    setFriends(user.email, f);
+  } finally { lock.releaseLock(); }
+  return friendsData(user, false);
+}
+function cheer(user, code, msg) {
+  var i = Math.floor(Number(msg)); if (!(i >= 0 && i < CHEER_MSGS.length)) return { ok: false, error: 'bad_cheer' };
+  var to = null; friendList(user.email).list.forEach(function (em) { if (friendCode(em) === code) to = em; });
+  if (!to) return { ok: false, error: 'friend_unknown' };
+  var d = friendsData(user, false);
+  if (d.sent[code]) return { ok: false, error: 'cheer_once' };
+  var lock = LockService.getScriptLock(); lock.waitLock(20000);
+  try { sheet(CHEERS, ['Timestamp', 'From', 'To', 'Message', 'Seen']).appendRow([new Date(), user.email, to, CHEER_MSGS[i], '']); } finally { lock.releaseLock(); }
+  d.sent[code] = 1; return d;
 }

@@ -126,7 +126,7 @@ function cloudPayload() {
   const ap = S.activePet && petById(S.activePet);
   return { state: st, summary: { streak: S.current_streak, best: S.longest_streak, stars: ROOMS.reduce((a, r) => a + roomStars(r), 0), stages: S.completed_rooms.length,
     coins: S.coins, pet: ap ? ap.name : "", pets: PETS.filter(p => S.pets[p.id]).length, mistakes: mistakeKeys().length, cleared: S.mistakes_cleared || 0,
-    trophies: Object.keys(S.trophies || {}).length, lastDay: S.last_study_day || "", xp: dedication(), col: collectionCount() } };
+    trophies: Object.keys(S.trophies || {}).length, lastDay: S.last_study_day || "", xp: dedication(), col: collectionCount(), pal: activePalId() } };
 }
 function cloudSave() { if (!signedIn() || !S) return; if (!tokenOk()) { markStale(); return; } api("save", cloudPayload()).then(j => { if (j.ok) { AUTH.lastSync = Date.now(); } }); }
 window.addEventListener("pagehide", () => {

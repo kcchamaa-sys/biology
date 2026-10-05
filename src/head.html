@@ -708,6 +708,30 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .stdots { display: flex; justify-content: center; gap: 6px; margin: 10px 0; } .stdots i { width: 9px; height: 9px; border-radius: 50%; background: #E6DCD2; } .stdots i.on { background: var(--ink); width: 22px; border-radius: 6px; }
 .tchap { font-size: .74rem; font-weight: 800; color: #A6781A; }
 .realmline { margin: 8px 0 0; font-size: .85rem; color: var(--ink-soft); line-height: 1.4; }
+/* 🔖 Bookmarks (src/bookmarks.js) */
+.bmbtn { display: inline-flex; align-items: center; gap: 3px; vertical-align: middle; font: inherit; font-size: .72rem; font-weight: 900; letter-spacing: 0; text-transform: none; color: var(--ink-soft); background: #fff; border: 2px solid #E3D7CC; border-radius: 999px; padding: 2px 9px 2px 6px; min-height: 30px; cursor: pointer; }
+.bmbtn .ic { filter: grayscale(1) opacity(.6); } .bmbtn.on { background: #FFF1C2; border-color: #E0A92A; color: #8A5A00; } .bmbtn.on .ic { filter: none; }
+.bm-hero { background: linear-gradient(135deg, #8E6BD8, #E07BB1); }
+.mode.bm-mode { background: linear-gradient(135deg, #FFF7DC, #FDEBFF); }
+/* 👥 Friends (src/friends.js) */
+.homeleft { display: grid; gap: 16px; min-width: 0; align-content: start; }
+.friendscard { display: grid; gap: 10px; background: linear-gradient(160deg, #F2FBFF, #FFF6FB); }
+.frhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.frlist { display: grid; gap: 8px; }
+.frrow { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; align-items: center; gap: 10px; background: #fff; border-radius: 16px; padding: 8px 10px; box-shadow: 0 2px 8px rgba(107,74,107,.08); }
+.frav { width: 52px; height: 52px; border-radius: 50%; background: #F4EEFF; display: grid; place-items: center; overflow: hidden; } .frav svg { width: 120%; height: auto; margin-top: 8px; }
+.frname { min-width: 0; line-height: 1.35; } .frname b { font-size: 1rem; } .frcls { font-size: .7rem; font-weight: 800; background: #F4EEE8; border-radius: 999px; padding: 1px 7px; }
+.frst { font-size: .76rem; font-weight: 800; color: var(--ink-soft); } .frst.on { color: #2E8B57; } .frst.away { color: #C0392B; }
+.frstats { display: flex; flex-wrap: wrap; gap: 8px; font-size: .78rem; font-weight: 800; margin-top: 2px; }
+.fract { display: grid; justify-items: end; gap: 4px; } .frcheer { min-height: 38px; padding: 4px 12px; font-size: .85rem; }
+.frx { border: 0; background: none; color: #B9A9A0; font-size: .85rem; cursor: pointer; padding: 2px 6px; min-height: 28px; }
+.frpick { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; }
+.frmsg { font: inherit; font-size: .82rem; font-weight: 800; border: 2px solid #E0A92A; background: #FFF6D6; border-radius: 999px; padding: 6px 10px; cursor: pointer; color: var(--ink); min-height: 38px; }
+.frcheers { display: grid; gap: 6px; } .frgot { background: #fff; border-radius: 12px; padding: 6px 10px; font-size: .86rem; } .frgot.new { background: #FFF1C2; box-shadow: 0 0 0 2px #E0A92A; }
+.frempty { display: flex; gap: 10px; align-items: center; background: #fff; border-radius: 14px; padding: 10px; } .frempty > span:first-child { font-size: 1.8rem; }
+.frmine { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; } .frcode { font-size: 1.3rem; letter-spacing: .14em; background: #fff; border: 2px dashed var(--ink); border-radius: 12px; padding: 2px 10px; font-family: ui-monospace, Menlo, monospace; }
+.fradd { display: flex; gap: 8px; } .fradd input { flex: 1; min-width: 0; text-transform: uppercase; letter-spacing: .12em; }
+.frghost { display: grid; gap: 8px; opacity: .55; } .frghost .frrow { grid-template-columns: 52px 1fr; } .frghost .frname i { display: block; height: 10px; border-radius: 6px; background: #E6DCD2; margin: 4px 0; width: 70%; } .frghost .frname i + i { width: 45%; }
 /* Fold bars (foldHtml in src/home.js): secondary sections collapse to icon · title · peek number · chevron */
 .fold { background: #fff; border: var(--line); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; min-width: 0; }
 .fold > summary { list-style: none; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 14px; cursor: pointer; font-weight: 900; -webkit-tap-highlight-color: transparent; }

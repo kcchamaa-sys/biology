@@ -41,6 +41,8 @@ Every topic is open, so students can jump to the one their class is on (the map 
 
 - 🔊 **British pronunciation** (normal and 🐢 slow, Web Speech API) for every key term in the Study Journal and on spelling locks.
 - 🎧 **Word Dictation** mode: 10 words a round from any topic or from *My missed words*. Two modes: listen and spell, or read the meaning and spell. 2 tries per word, letter boxes, a hint, and a "so close!" nudge for near-misses. Words missed here or in spelling locks come back until spelled right twice. A perfect round gives a 🎁 capsule.
+- 👥 **Friends** (signed-in students, up to 5) on Home, in the left column under the pal room. Students share a 6-character friend code, then see each friend's pal, streak, stages and effort points ("✓ studied today" / "last studied 3 days ago") and send one preset cheer a day ("🔥 Keep your flame going!"). Cheers they receive pop up on Home. No free-text messages. Needs the updated `server/Code.gs`.
+- 🔖 **Bookmarks:** a 🔖 Save button on every question (escape locks, Study mode, Mistake Notebook). 🎮 Practice → 🔖 Bookmarks lists saved questions by topic and runs redo rounds of up to 10, least-practised first. Up to 200 bookmarks.
 - 💬 **Chat card** on the map: your Study Pal shares biology fun facts (many with Hong Kong examples) and personal encouragement (streak, mistakes to fix, next stage). It changes every 20 s; the same facts appear as 💡 *Did you know?* in the Journal.
 - 🔥 **Streak bonus:** chestnut rewards grow 5% per streak day, up to ×1.5. Streaks also earn capsules (see Biology Capsule Lab).
 

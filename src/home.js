@@ -103,8 +103,10 @@ function homeHtml() {
     </section>
     ${riskCardHtml()}
     <div class="homegrid">
+    <div class="homeleft">
     <section class="card roomwrap">${roomCard(greeting(), S.completed_rooms.length ? "happy" : "normal")}
       <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" data-go="pals">🍱 Feed & care</button></div></section>
+    ${friendsHtml()}</div>
     <div class="homeside folds">
       ${foldHtml("h-streak", { icon: "🔥", title: "My streak", peek: `${S.current_streak} 🔥 · ${"❄️".repeat(S.streak_shields) || "0 ❄️"}` }, streakCardHtml())}
       ${foldHtml("h-mission", { icon: "🎯", title: "Daily mission", peek: m.done ? "✓ Done" : m.n ? `${m.prog || 0}/${m.n}` : "" }, missionCardHtml())}
@@ -114,6 +116,7 @@ function homeHtml() {
     </div></div>`;
 }
 function wireHome() {
+  wireFriends();
   const sg = document.getElementById("storyGo"); if (sg) sg.onclick = () => { SFX.tap(); openStory(); };
   wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured(); wireCapsuleAd(); wireHomeBoard();
   const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
@@ -159,8 +162,8 @@ function playHtml() {
       <div class="modes">
         <button class="mode rush" id="mRush"><h3>⚡ Cell Rush</h3><span class="muted small">60 seconds of quick mixed questions. Earn 🌰 chestnuts.</span><span class="small">Best: <b>${S.rush.best}</b> pts ${S.rush.lastDay !== today() ? "· <b>×2 today!</b>" : ""}</span></button>
         <button class="mode note" id="mNote"><h3>📕 Mistake Notebook</h3><span class="muted small">Fix the questions you got wrong. Right twice = cleared.</span><span class="small"><b>${mistakeKeys().length}</b> to fix · ${S.mistakes_cleared || 0} cleared</span></button>
+        <button class="mode bm-mode" id="mBm"><h3>🔖 Bookmarks</h3><span class="muted small">Redo the questions you saved with 🔖, by topic.</span><span class="small"><b>${bookmarkKeys().length}</b> saved</span></button>
         <button class="mode dict-mode" id="mDict"><h3>🎧 Word Dictation</h3><span class="muted small">Hear key terms in a British accent and spell them.</span><span class="small">${nw ? `<b>${nw}</b> missed words to practise` : `Best round: <b>${S.dict.best}</b>/${DICT_N}`}</span></button>
-        <button class="mode" id="mLb"><h3>🏆 Class leaderboard</h3><span class="muted small">${signedIn() ? "Effort, streak and collection in your class." : "For signed-in classmates. Guests play privately."}</span><span class="small">Your effort points: <b>${dedication()}</b></span></button>
       </div>
     </section>
     ${foldHtml("pr-mastery", { icon: "📈", title: "Biology mastery", peek: `${Math.round(TOPICS.reduce((a, T) => a + S.bio_mastery[T.id], 0) / TOPICS.length)}%` }, `
@@ -170,8 +173,8 @@ function playHtml() {
 }
 function wirePlay() {
   document.getElementById("mRush").onclick = () => { SFX.init(); SFX.tap(); rushIntro(); };
+  document.getElementById("mBm").onclick = () => { SFX.init(); SFX.tap(); renderBookmarks(); };
   document.getElementById("mNote").onclick = () => { SFX.init(); SFX.tap(); renderNotebook(); };
-  document.getElementById("mLb").onclick = () => { SFX.init(); SFX.tap(); openLeaderboard(); };
   document.getElementById("mDict").onclick = () => { SFX.init(); SFX.tap(); DT = null; renderDictation(); };
 }
 

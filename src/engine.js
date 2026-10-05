@@ -957,7 +957,7 @@ function startRevision(ti) {
     const k = RV.keys[RV.at], { r, p } = mistakeQ(k), m = S.mistakes[k] || { n: 0, ok: 0 };
     $app.innerHTML = `<section class="rushhead"><div class="status"><div class="av">${avatar("chiikawa", "brave")}</div><div><div class="rtopic" style="color:var(--yellow)">📕 Mistake Notebook${ti == null ? "" : ` · ${esc(TOPICS[ti].name)}`}</div><div class="big">Question ${RV.at + 1} of ${RV.keys.length}</div></div></div>
         <span class="combo">✓ ${m.ok}/2 to clear</span></section>
-      <section class="card"><span class="kicker">${TOPICS[r.t].icon} ${esc(stageLabel(r))} · ${esc(r.focus)} ${diffChip(p.b)}</span>
+      <section class="card"><span class="kicker">${TOPICS[r.t].icon} ${esc(stageLabel(r))} · ${esc(r.focus)} ${diffChip(p.b)} ${bmBtn(r.id, p.id)}</span>
         <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
         <div id="rvAns"></div><div class="row"><button class="btn blue" id="rvHint">💡 Hint</button><button class="btn plain" id="rvJ">📓 Notes</button><button class="btn plain" id="rvQuit">✕ Stop</button></div><div id="rvFb"></div></section>`;
     document.getElementById("rvHint").onclick = () => { SFX.hint(); document.getElementById("rvFb").innerHTML = say("chiikawa", `💡 ${esc(p.hint)}`, "normal", "hint"); RV.hinted = true; };
@@ -1248,7 +1248,7 @@ function openPuzzle(i) {
   if (R.hiddenHs === i) { R.hiddenHs = null; toast("🔦 Found the hidden lock!"); }
   const typeLabel = { mc: p.gen ? "Spelling check" : p.graph ? "Graph reading" : "Multiple choice", dial: "Combination dials", spell: "Spelling lock" }[p.type];
   const box = openModal(`
-    <span class="kicker">${skillTag(i)}${lockSkill(i) && p.skill !== lockSkill(i).id ? ` <span class="skstand" title="This stage is short of ${esc(lockSkill(i).name)} questions">stand-in</span>` : ""} ${typeLabel} · T${room.topicNo} ${room.boss ? "Boss" : `S${room.s}`} ${diffChip(p.b)}</span>
+    <span class="kicker">${skillTag(i)}${lockSkill(i) && p.skill !== lockSkill(i).id ? ` <span class="skstand" title="This stage is short of ${esc(lockSkill(i).name)} questions">stand-in</span>` : ""} ${typeLabel} · T${room.topicNo} ${room.boss ? "Boss" : `S${room.s}`} ${diffChip(p.b)} ${bmBtn(room.id, p.id)}</span>
     <h2>${esc(hsName)}</h2>
     <div class="lockprog" aria-label="Question ${step + 1} of ${LOCK_Q} for this lock">${Array.from({ length: LOCK_Q }, (_, n) => `<i class="${n < step ? "on" : n === step ? "cur" : ""}"></i>`).join("")}<span class="small"><b>Question ${step + 1} of ${LOCK_Q}</b> to open this lock</span></div>
     ${step ? say("chiikawa", pick(["Keep going! One more click and the lock wiggles... 🔐", "It's working! The lock is loosening! ✨", "Ya...! Almost there! 🥹"]), "brave")

@@ -51,6 +51,13 @@ Class sign-in needs three things: your **Google Sheet** (name list + records), a
 - Teacher accounts get a **📊 Stats** tab (class and period filters, accuracy by topic, activity per day, most-missed questions, student table, CSV download).
 - **After updating `Code.gs`, redeploy:** Deploy → Manage deployments → ✏️ → Version: **New version** → Deploy. The /exec URL stays the same. Until then the Stats tab says the server needs updating.
 
+### 👥 Friends (added 2026-10)
+- **Who can use it:** signed-in students only. Each student gets a 6-character **friend code** (worked out from their email, so nothing extra is stored).
+- **How it works:** students can follow up to **5** friends, see their streak, stages escaped and effort points, and send **one preset cheer per friend per day**. There are 4 fixed messages and no free-text chat.
+- **New tabs:** the server creates two tabs by itself, **Biology Friends** and **Biology Cheers**, and adds an **Active pal** column to *Biology Progress*.
+- **Optional:** set the script property `FRIEND_SALT` (any text) before students start, to make codes unique to your school. Changing it later changes every code.
+- **After updating `Code.gs`, redeploy** (Deploy → Manage deployments → ✏️ → New version). Until then, the Friends card says the server needs updating.
+
 ### What gets recorded
 - **Biology Records**: one row per finished (or stopped) activity: escape stage, study series, Cell Rush round, dictation round, Mistake Notebook round. Columns include the topic, stage, questions answered, correct, accuracy, stars, time and the IDs of wrong questions.
 - **Biology Progress**: one row per student (streak, stars, stages cleared, chestnuts, pets, mistakes, trophies, last study day, dedication points) plus the saved game, so students can continue on any device.

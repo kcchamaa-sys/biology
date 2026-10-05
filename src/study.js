@@ -25,7 +25,7 @@ function startStudy(id) {
         <div style="display:grid;justify-items:end;gap:6px"><span class="combo">${Math.min(done + 1, n)} / ${n}</span><span class="small" style="color:#EDE6F7">✅ ${ST.firsts} first try</span></div></section>
       <div class="studybar" aria-hidden="true"><i style="width:${Math.round(100 * done / n)}%"></i></div>
       <section class="card">
-        <span class="kicker">${retry ? "🔁 Second chance · " : ""}Question ${done + 1} ${diffChip(p.b)}</span>
+        <span class="kicker">${retry ? "🔁 Second chance · " : ""}Question ${done + 1} ${diffChip(p.b)} ${bmBtn(room.id, p.id)}</span>
         <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
         <div id="stAns"></div>
         <div class="row simbtns"><button class="btn blue" id="stHint">💡 Hint</button><button class="btn plain" id="stJ">📓 Notes</button><button class="btn plain" id="stQuit">✕ Stop</button></div>
