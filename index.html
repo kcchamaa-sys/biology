@@ -734,6 +734,20 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .frmine { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; } .frcode { font-size: 1.3rem; letter-spacing: .14em; background: #fff; border: 2px dashed var(--ink); border-radius: 12px; padding: 2px 10px; font-family: ui-monospace, Menlo, monospace; }
 .fradd { display: flex; gap: 8px; } .fradd input { flex: 1; min-width: 0; text-transform: uppercase; letter-spacing: .12em; }
 .frghost { display: grid; gap: 8px; opacity: .55; } .frghost .frrow { grid-template-columns: 52px 1fr; } .frghost .frname i { display: block; height: 10px; border-radius: 6px; background: #E6DCD2; margin: 4px 0; width: 70%; } .frghost .frname i + i { width: 45%; }
+/* 🧭 Study planner (src/study.js) */
+.studyplan { display: grid; gap: 14px; }
+.spstep { display: grid; gap: 8px; } .sph { font-size: .82rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.sptopics { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.sptopic { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; gap: 8px; text-align: left; font: inherit; color: var(--ink); background: #fff; border: 2px solid #EADFD5; border-radius: 14px; padding: 8px 10px; cursor: pointer; min-height: 52px; }
+.sptopic .ticon { font-size: 1.4rem; } .sptopic .small { line-height: 1.25; display: inline-block; }
+.sptopic .spm { grid-column: 2; justify-self: start; font-size: .72rem; font-weight: 900; background: #F4EEE8; border-radius: 999px; padding: 2px 7px; }
+.sptopic.on { border-color: var(--ink); background: #FFF6D6; box-shadow: 0 0 0 2px var(--ink); }
+.spchips { display: flex; flex-wrap: wrap; gap: 6px; }
+.spchip { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: .88rem; font-weight: 800; color: var(--ink); background: #fff; border: 2px solid #EADFD5; border-radius: 999px; padding: 6px 12px; min-height: 40px; cursor: pointer; text-align: left; max-width: 100%; }
+.spchip.on { background: var(--ink); border-color: var(--ink); color: #fff; } .spchip:disabled { opacity: .4; cursor: not-allowed; }
+.spn { font-size: .72rem; font-weight: 900; background: rgba(0,0,0,.07); border-radius: 999px; padding: 1px 7px; } .spchip.on .spn { background: rgba(255,255,255,.25); }
+.spgo { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: #F4FAFF; border-radius: 16px; padding: 8px 12px; position: sticky; bottom: 80px; box-shadow: 0 6px 18px rgba(107,74,107,.15); }
+.spgo > span { min-width: 0; flex: 1 1 160px; line-height: 1.35; font-size: .8rem; } .spgo .btn.big { padding-block: 8px; }
 /* Fold bars (foldHtml in src/home.js): secondary sections collapse to icon · title · peek number · chevron */
 .fold { background: #fff; border: var(--line); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; min-width: 0; }
 .fold > summary { list-style: none; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 14px; cursor: pointer; font-weight: 900; -webkit-tap-highlight-color: transparent; }
@@ -6999,45 +7013,119 @@ function tropWhySvg() {
    ============================================================ */
 // Seconds needed to read a question before a right answer counts (multiple choice; +1 s with a picture)
 const READ_SECS = p => p.type !== "mc" || p.gen ? 0 : Math.min(5, 2.5 + p.q.length / 120) + (p.svg ? 1 : 0);
-function startStudy(id) {
+
+/* ----- 🧭 Study planner: every topic is open. Students pick a scope (one section or the whole topic), a skill
+   (Words / Concepts / See it / Data / Investigate or Mixed), a level (Easy / Medium / Hard or all) and a length.
+   Spelling only appears when Words is chosen, or at most 2 per Mixed series. ----- */
+const STUDY_LEVELS = { all: ["All levels", "🎚️", 1, 6], easy: ["Easy", "🌱", 1, 2], medium: ["Medium", "🌿", 3, 4], hard: ["Hard", "🔥", 5, 6] };
+const STUDY_LENS = [10, 15, 20];
+const studySel = () => { const d = { ti: 0, rid: null, skill: "mixed", lvl: "all", n: 15 }, s = Object.assign(d, S.study_sel || {});
+  if (!TOPICS[s.ti]) s.ti = 0; if (s.rid && (!ROOMS[roomIndex(s.rid)] || ROOMS[roomIndex(s.rid)].t !== s.ti)) s.rid = null; return s; };
+const studyRooms = sel => sel.rid ? [ROOMS[roomIndex(sel.rid)]] : topicRooms(sel.ti);
+// All questions in scope that match the skill and level (spelling pairs count once per term)
+function studyPool(sel, skill = sel.skill, lvl = sel.lvl) {
+  const [, , lo, hi] = STUDY_LEVELS[lvl], seenTerm = new Set();
+  return studyRooms(sel).flatMap(r => r.pool).filter(p => {
+    if (p.b < lo || p.b > hi) return false;
+    if (skill !== "mixed" && p.skill !== skill) return false;
+    if (p.gen) { const k = p.rid + termOf(p); if (seenTerm.has(k)) return false; seenTerm.add(k); }
+    return true;
+  });
+}
+// Pick the series: not-yet-mastered and not-recently-seen questions first, then climb from easy to hard
+function buildStudySet(sel) {
+  let qs = studyPool(sel);
+  if (sel.skill === "mixed") { const sp = shuffle(qs.filter(p => p.gen)).slice(0, 2); qs = qs.filter(p => !p.gen).concat(sp); }
+  const seen = new Set(studyRooms(sel).flatMap(r => (S.seen[r.id] || []).map(id => r.id + ":" + id)));
+  const score = p => (S.mastered_puzzles.includes(`${p.rid}:${p.id}`) ? 2 : 0) + (seen.has(`${p.rid}:${p.id}`) ? 1 : 0) + Math.random() * .9;
+  const chosen = qs.map(p => [score(p), p]).sort((a, b) => a[0] - b[0]).slice(0, sel.n).map(x => x[1]);
+  studyRooms(sel).forEach(r => { const ids = chosen.filter(p => p.rid === r.id).map(p => p.id); if (ids.length) S.seen[r.id] = (S.seen[r.id] || []).concat(ids).slice(-45); });
+  return chosen.sort((a, b) => a.b - b.b);
+}
+const studyLabel = sel => { const T = TOPICS[sel.ti], sk = sel.skill === "mixed" ? "Mixed skills" : SKILLS.find(k => k.id === sel.skill).name, lv = STUDY_LEVELS[sel.lvl][0];
+  return `${sel.rid ? stageName(ROOMS[roomIndex(sel.rid)]) : `Topic ${T.no}: ${T.name}`} · ${sk} · ${lv}`; };
+function studyPlannerHtml() {
+  const sel = studySel(), T = TOPICS[sel.ti], rs = topicRooms(sel.ti), part = T.p;
+  const chip = (attr, v, on, inner, n) => `<button class="spchip ${on ? "on" : ""}" ${attr}="${v}" aria-pressed="${on}" ${n === 0 ? "disabled" : ""}>${inner}${n != null ? `<span class="spn">${n}</span>` : ""}</button>`;
+  const avail = Math.min(sel.n, buildCount(sel));
+  return `<section class="card studyplan">
+      <div class="row" style="justify-content:space-between"><h2 style="margin:0">📖 Study planner</h2><span class="pill">All topics open</span></div>
+      ${modeSwitch()}
+      <div class="spstep"><b class="sph">1 · Topic</b>
+        <div class="tabs" role="tablist" aria-label="Curriculum parts">${PARTS.map((P, pi) => `<button class="tab" role="tab" aria-selected="${pi === part}" data-sppart="${pi}">Part ${esc(P.split(".")[0])}</button>`).join("")}</div>
+        <div class="sptopics">${TOPICS.map((X, ti) => X.p !== part ? "" : `<button class="sptopic ${ti === sel.ti ? "on" : ""}" data-spt="${ti}" aria-pressed="${ti === sel.ti}"><span class="ticon" aria-hidden="true">${X.icon}</span><span><b>Topic ${X.no}</b><br><span class="small">${esc(X.name)}</span></span><span class="spm">${S.bio_mastery[X.id] || 0}%</span></button>`).join("")}</div></div>
+      <div class="spstep"><b class="sph">2 · Section</b><div class="spchips">
+        ${chip("data-sps", "", !sel.rid, `📚 Whole topic`, null)}
+        ${rs.map(r => chip("data-sps", r.id, sel.rid === r.id, `${secNo(r)} ${esc(r.focus)}`, null)).join("")}</div></div>
+      <div class="spstep"><b class="sph">3 · Skill</b><div class="spchips">
+        ${chip("data-spk", "mixed", sel.skill === "mixed", "🎲 Mixed", studyPool(sel, "mixed").filter(p => !p.gen).length)}
+        ${SKILLS.map(k => chip("data-spk", k.id, sel.skill === k.id, `${k.icon} ${k.name}`, studyPool(sel, k.id).length)).join("")}</div></div>
+      <div class="spstep"><b class="sph">4 · Level</b><div class="spchips">
+        ${Object.entries(STUDY_LEVELS).map(([id, [nm, ic]]) => chip("data-spl", id, sel.lvl === id, `${ic} ${nm}`, studyPool(sel, sel.skill, id).length)).join("")}</div></div>
+      <div class="spstep"><b class="sph">5 · How many</b><div class="spchips">${STUDY_LENS.map(n => chip("data-spn", n, sel.n === n, `${n} questions`, null)).join("")}</div></div>
+      <div class="spgo"><span class="small"><b>${esc(studyLabel(sel))}</b><br>${avail >= 3 ? `${avail} question${avail === 1 ? "" : "s"}${avail < sel.n ? ` (all there are for this choice)` : ""}` : "Not enough questions for this choice: try another skill or level."}${sel.rid && sel.skill === "mixed" && sel.lvl === "all" ? " · ✅ finishes this section" : ""}</span>
+        <button class="btn big" id="spStart" ${avail >= 3 ? "" : "disabled"}>▶ Start studying</button></div>
+    </section>`;
+}
+const buildCount = sel => { const qs = studyPool(sel); return sel.skill === "mixed" ? qs.filter(p => !p.gen).length + Math.min(2, qs.filter(p => p.gen).length) : qs.length; };
+function wireStudyPlanner() {
+  const sel = studySel(), set = ch => { S.study_sel = Object.assign(sel, ch); save(); SFX.tap(); renderMap(); };
+  wireModeSwitch($app);
+  $app.querySelectorAll("[data-sppart]").forEach(b => b.onclick = () => { const ti = TOPICS.findIndex(T => T.p === Number(b.dataset.sppart)); set({ ti, rid: null }); });
+  $app.querySelectorAll("[data-spt]").forEach(b => b.onclick = () => set({ ti: Number(b.dataset.spt), rid: null }));
+  $app.querySelectorAll("[data-sps]").forEach(b => b.onclick = () => set({ rid: b.dataset.sps || null }));
+  $app.querySelectorAll("[data-spk]").forEach(b => b.onclick = () => set({ skill: b.dataset.spk }));
+  $app.querySelectorAll("[data-spl]").forEach(b => b.onclick = () => set({ lvl: b.dataset.spl }));
+  $app.querySelectorAll("[data-spn]").forEach(b => b.onclick = () => set({ n: Number(b.dataset.spn) }));
+  const go = document.getElementById("spStart"); if (go) go.onclick = () => { SFX.init(); SFX.tap(); runStudy(studySel()); };
+}
+// Old entry point (Home "Study it", stage buttons): a full mixed series of one section, which also finishes that section
+function startStudy(id, sel) {
   const room = ROOMS[roomIndex(id)];
+  runStudy(sel || { ti: room.t, rid: room.id, skill: "mixed", lvl: "all", n: 15 });
+}
+function runStudy(sel) {
+  const rooms = studyRooms(sel), room = rooms[0];
   stopRush(); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null;
   renderNav(false); renderTools(); MUSIC.setMode("calm"); closeModal();
   S.current_room = room.id; save();
-  const qs = pickRun(room).map(qid => room.pool.find(p => p.id === qid)).filter(Boolean);
-  const ST = { room, queue: qs.map(p => ({ p, retry: false })), at: 0, total: qs.length, firsts: 0, right: 0, retried: 0, guesses: 0, firstIds: [], wrongIds: [], start: new Date().toISOString(), t0: Date.now() };
-  const T = TOPICS[room.t];
+  const qs = buildStudySet(sel);
+  if (!qs.length) { toast("No questions match that choice yet."); homeTab = "stages"; return renderMap(); }
+  const full = !!sel.rid && sel.skill === "mixed" && sel.lvl === "all";
+  const ST = { sel, full, room, rooms, pool: rooms.flatMap(r => r.pool), queue: qs.map(p => ({ p, retry: false })), at: 0, total: qs.length, firsts: 0, right: 0, retried: 0, guesses: 0, firstIds: [], wrongIds: [], start: new Date().toISOString(), t0: Date.now() };
+  const T = TOPICS[room.t], head = sel.rid ? stageName(room) : `Topic ${T.no}: ${T.name}`;
+  const focus = `${sel.skill === "mixed" ? "🎲 Mixed" : (k => `${k.icon} ${k.name}`)(SKILLS.find(k => k.id === sel.skill))} · ${STUDY_LEVELS[sel.lvl][1]} ${STUDY_LEVELS[sel.lvl][0]}`;
   const next = () => {
     if (ST.at >= ST.queue.length) return whyCheck(ST);
-    const { p, retry } = ST.queue[ST.at], done = ST.at, n = ST.queue.length;
+    const { p, retry } = ST.queue[ST.at], done = ST.at, n = ST.queue.length, qr = ROOMS[roomIndex(p.rid)];
     $app.innerHTML = `
       <section class="rushhead studyhead"><div class="status"><div class="av ${frameCls()}">${avatar("chiikawa", "normal")}</div>
-        <div style="min-width:0"><div class="rtopic" style="color:var(--yellow)">📖 Study · ${T.icon} Topic ${T.no}</div><div class="rt">${esc(stageName(room))}</div>
-        <div class="small" style="color:#EDE6F7">${esc(T.name)} · Section ${secNo(room)}</div></div></div>
+        <div style="min-width:0"><div class="rtopic" style="color:var(--yellow)">📖 Study · ${T.icon} Topic ${T.no}</div><div class="rt">${esc(head)}</div>
+        <div class="small" style="color:#EDE6F7">${focus}${sel.rid ? "" : ` · from ${esc(stageName(qr))}`}</div></div></div>
         <div style="display:grid;justify-items:end;gap:6px"><span class="combo">${Math.min(done + 1, n)} / ${n}</span><span class="small" style="color:#EDE6F7">✅ ${ST.firsts} first try</span></div></section>
       <div class="studybar" aria-hidden="true"><i style="width:${Math.round(100 * done / n)}%"></i></div>
       <section class="card">
-        <span class="kicker">${retry ? "🔁 Second chance · " : ""}Question ${done + 1} ${diffChip(p.b)} ${bmBtn(room.id, p.id)}</span>
+        <span class="kicker">${retry ? "🔁 Second chance · " : ""}Question ${done + 1} ${diffChip(p.b)} ${bmBtn(qr.id, p.id)}</span>
         <p class="q">${esc(p.q)}</p>${p.svg ? `<div class="diagram-box">${DIAGRAMS[p.svg]}</div>` : ""}
         <div id="stAns"></div>
         <div class="row simbtns"><button class="btn blue" id="stHint">💡 Hint</button><button class="btn plain" id="stJ">📓 Notes</button><button class="btn plain" id="stQuit">✕ Stop</button></div>
         <div id="stFb"></div></section>`;
     let hinted = false;
     document.getElementById("stHint").onclick = () => { SFX.hint(); hinted = true; document.getElementById("stFb").innerHTML = say("chiikawa", `💡 ${esc(p.hint)}`, "normal", "hint"); };
-    document.getElementById("stJ").onclick = () => { SFX.tap(); openJournal(room.id, termsIn(room, p)); };
-    document.getElementById("stQuit").onclick = () => { SFX.tap(); if (ST.at) activityDone({ mode: "study", room, done: false, ans: ST.at, cor: ST.firsts, secs: Math.round((Date.now() - ST.t0) / 1000), start: ST.start, wrong: ST.wrongIds.join(" ") }); homeTab = "home"; renderMap(); };
+    document.getElementById("stJ").onclick = () => { SFX.tap(); openJournal(qr.id, termsIn(qr, p)); };
+    document.getElementById("stQuit").onclick = () => { SFX.tap(); if (ST.at) activityDone({ mode: "study", room, done: false, ans: ST.at, cor: ST.firsts, secs: Math.round((Date.now() - ST.t0) / 1000), start: ST.start, wrong: ST.wrongIds.join(" ") }); homeTab = "stages"; renderMap(); };
     const shownAt = Date.now();
     miniQuiz(document.getElementById("stAns"), p, ok => {
       const quick = ok && (Date.now() - shownAt) / 1000 < READ_SECS(p);
       if (quick) ST.guesses++;
-      const pid = `${room.id}:${p.id}`, first = ok && !retry && !hinted && !quick, qc = answerCoins(pid, first);
+      const pid = `${qr.id}:${p.id}`, first = ok && !retry && !hinted && !quick, qc = answerCoins(pid, first);
       if (ok) {
-        ST.right++; S.stats.correct += 1; if (first) { ST.firsts++; ST.firstIds.push(p.id); if (!S.mastered_puzzles.includes(pid)) S.mastered_puzzles.push(pid); }
+        ST.right++; S.stats.correct += 1; if (first) { ST.firsts++; ST.firstIds.push(pid); if (!S.mastered_puzzles.includes(pid)) S.mastered_puzzles.push(pid); }
         if (p.type === "spell" || p.gen) S.stats.spellRight += 1; if (p.graph && first) S.stats.graphFirst += 1;
         S.stats.run = first ? S.stats.run + 1 : 0; S.stats.bestRun = Math.max(S.stats.bestRun, S.stats.run);
-        noteRight(room.id, p.id, first); SFX.right(); if (first) confetti(18); if (qc) setTimeout(() => gainCoins(qc, "", document.querySelector("#stAns .choice.right, #stAns")), 50);
+        noteRight(qr.id, p.id, first); SFX.right(); if (first) confetti(18); if (qc) setTimeout(() => gainCoins(qc, "", document.querySelector("#stAns .choice.right, #stAns")), 50);
       } else {
-        S.stats.run = 0; noteMistake(room.id, p.id); SFX.wrong(); if (!ST.wrongIds.includes(p.id)) ST.wrongIds.push(p.id);
+        S.stats.run = 0; noteMistake(qr.id, p.id); SFX.wrong(); if (!ST.wrongIds.includes(pid)) ST.wrongIds.push(pid);
         if (!retry) { ST.queue.push({ p, retry: true }); ST.retried++; }
       }
       recomputeMastery(); save();
@@ -7053,25 +7141,25 @@ function startStudy(id) {
 }
 // 🤔 "Why?" check: pick the right explanation for 2 questions answered right first try. Right = +5 🌰; wrong = notebook.
 function whyCheck(ST) {
-  const { room } = ST, pool = room.pool.filter(p => p.type === "mc" && !p.gen && p.explain && p.explain.length > 30);
-  const qs = shuffle(pool.filter(p => ST.firstIds.includes(p.id))).slice(0, 2);
+  const pool = ST.pool.filter(p => p.type === "mc" && !p.gen && p.explain && p.explain.length > 30), key = p => `${p.rid}:${p.id}`;
+  const qs = shuffle(pool.filter(p => ST.firstIds.includes(key(p)))).slice(0, 2);
   ST.why = { right: 0, n: qs.length };
   if (qs.length === 0 || pool.length < 3) return finishStudy(ST);
   let i = 0;
   const step = () => {
     if (i >= qs.length) return finishStudy(ST);
-    const p = qs[i], others = shuffle(pool.filter(x => x.id !== p.id && x.explain !== p.explain)).slice(0, 2);
+    const p = qs[i], others = shuffle(pool.filter(x => key(x) !== key(p) && x.explain !== p.explain)).slice(0, 2);
     const opts = shuffle([p, ...others]);
     $app.innerHTML = `<section class="card whycard">
       <span class="kicker">🤔 Why? check · ${i + 1} of ${qs.length}</span>
       ${say("chiikawa", "You got this one right. Now show you know <b>why</b>! Pick the explanation that matches.", "normal", "hint")}
       <div class="whyq"><p class="q" style="margin:0">${esc(p.q)}</p><p style="margin:6px 0 0"><b>Answer:</b> ${esc(p.choices[p.answer])}</p></div>
-      <div class="choices">${opts.map((x, n) => `<button class="choice" data-w="${x.id}"><b>${"ABC"[n]}</b><span>${esc(x.explain)}</span></button>`).join("")}</div>
+      <div class="choices">${opts.map((x, n) => `<button class="choice" data-w="${key(x)}"><b>${"ABC"[n]}</b><span>${esc(x.explain)}</span></button>`).join("")}</div>
       <div id="whyFb"></div></section>`;
     $app.querySelectorAll("[data-w]").forEach(b => b.onclick = () => {
-      const ok = b.dataset.w === p.id;
-      $app.querySelectorAll("[data-w]").forEach(x => { x.disabled = true; if (x.dataset.w === p.id) x.classList.add("right"); });
-      if (ok) { ST.why.right++; gainCoins(5, "", b); SFX.right(); } else { b.classList.add("wrong"); SFX.wrong(); noteMistake(room.id, p.id); }
+      const ok = b.dataset.w === key(p);
+      $app.querySelectorAll("[data-w]").forEach(x => { x.disabled = true; if (x.dataset.w === key(p)) x.classList.add("right"); });
+      if (ok) { ST.why.right++; gainCoins(5, "", b); SFX.right(); } else { b.classList.add("wrong"); SFX.wrong(); noteMistake(p.rid, p.id); }
       save();
       document.getElementById("whyFb").innerHTML = `<div class="fb ${ok ? "ok" : "no"}">${ok ? say("chiikawa", "Yes! You really understand it! +5 🌰", "happy") : say("chiikawa", "Uu... the answer was right but the reason was tricky. It's in your 📕 Mistake Notebook now, so we can practise it. 🌱", "cry")}
         <div class="row"><button class="btn big" id="whyNext">${i + 1 < qs.length ? "Next →" : "See results 🎉"}</button></div></div>`;
@@ -7082,6 +7170,7 @@ function whyCheck(ST) {
   step();
 }
 function finishStudy(ST) {
+  if (!ST.full) return finishFocusedStudy(ST);
   const { room } = ST, T = TOPICS[room.t], first = !S.completed_rooms.includes(room.id);
   if (first) { S.completed_rooms.push(room.id); S.inventory.push(room.item); }
   const topicDone = first && stagesDone(room.t) === topicRooms(room.t).length && !S.chiikawa_badges.includes(T.badge);
@@ -7117,6 +7206,36 @@ function finishStudy(ST) {
   const sn = document.getElementById("sdNext"); if (sn) sn.onclick = () => { SFX.tap(); enterRoom(nxt.id); };
   document.getElementById("sdAgain").onclick = () => { SFX.tap(); startStudy(room.id); };
   document.getElementById("sdHome").onclick = () => { SFX.tap(); homeTab = "home"; renderMap(); };
+  window.scrollTo({ top: 0 }); setTimeout(checkTrophies, 1500);
+}
+
+// A focused series (one skill, one level, or a whole topic): mastery, coins and the streak, but it doesn't finish a section
+function finishFocusedStudy(ST) {
+  const { room, sel } = ST, T = TOPICS[room.t];
+  const guessy = ST.guesses >= 5, stars = guessy ? 1 : ST.firsts >= ST.total * .85 ? 3 : ST.firsts >= ST.total * .6 ? 2 : 1;
+  const earned = withStreak(8 + Math.round(ST.firsts / 2)); S.coins += earned;
+  const caps = Math.random() < .3 ? 1 : 0; S.coll.pending += caps;
+  S.stats.studyClears = (S.stats.studyClears || 0) + 1; if (new Date().getHours() >= 21) S.stats.night += 1;
+  recomputeMastery(); save(true); SFX.fanfare(); confetti(110);
+  activityDone({ mode: "study", room, done: true, ans: ST.total, cor: ST.firsts, stars, secs: Math.round((Date.now() - ST.t0) / 1000), start: ST.start,
+    stage: `${room.id} ${studyLabel(sel)}`.slice(0, 60), ids: ST.queue.map(x => x.p.id).join(" "), wrong: ST.wrongIds.join(" ") });
+  renderNav(false);
+  const weak = ST.wrongIds.length;
+  $app.innerHTML = `<section class="card">
+    <span class="kicker">📖 Study complete · Topic ${T.no}</span>
+    <h2>🎉 ${esc(studyLabel(sel))}</h2>
+    <div class="cast" style="margin:0"><div class="fig" style="width:90px">${figure("chiikawa", "sparkle")}</div></div>
+    <div class="row" style="justify-content:center;font-size:1.8rem" aria-label="${stars} / 3 ★">${starStr(stars)}</div>
+    <p style="text-align:center"><b>${ST.firsts}/${ST.total}</b> right first try${ST.retried ? ` · 🔁 ${ST.retried} second chance${ST.retried > 1 ? "s" : ""}` : ""}${ST.why && ST.why.n ? ` · 🤔 Why? <b>${ST.why.right}/${ST.why.n}</b>` : ""} · 📚 Topic mastery <b>${S.bio_mastery[T.id] || 0}%</b></p>
+    ${guessy ? `<div class="rules">⚡ <b>Guess alert:</b> ${ST.guesses} answers came faster than anyone can read the question, so this series is capped at 1★.</div>` : ""}
+    <p style="text-align:center"><span class="pill coinpill">+${earned} 🌰${multTag()}</span>${caps ? ` <span class="pill rpill">🎁 +1 capsule</span>` : ""}</p>
+    ${say("chiikawa", weak ? `${weak} question${weak > 1 ? "s" : ""} went into your 📕 Mistake Notebook. Fixing them is the fastest way to level up! 💪` : sel.lvl !== "hard" ? "Flawless! Ready to try the <b>🔥 Hard</b> level? ✨" : "Hard level, conquered. You're a real Keeper of the Codex! 👑", "happy")}
+    <div class="row">${caps ? `<button class="btn pink" id="sfCap">🎁 Open capsule</button>` : ""}<button class="btn big" id="sfAgain">🔁 Same again</button>${sel.lvl !== "hard" ? `<button class="btn yellow" id="sfHard">🔥 Try Hard level</button>` : ""}<button class="btn plain" id="sfPlan">🧭 Planner</button></div>
+  </section>`;
+  const sc = document.getElementById("sfCap"); if (sc) sc.onclick = () => { SFX.tap(); homeTab = "home"; renderMap(); openCapsule(); };
+  document.getElementById("sfAgain").onclick = () => { SFX.tap(); runStudy(sel); };
+  const sh = document.getElementById("sfHard"); if (sh) sh.onclick = () => { SFX.tap(); const h = Object.assign({}, sel, { lvl: "hard" }); if (buildCount(h) < 3) { toast("Not enough Hard questions for this choice. Try Mixed skills."); return; } S.study_sel = h; save(); runStudy(h); };
+  document.getElementById("sfPlan").onclick = () => { SFX.tap(); homeTab = "stages"; renderMap(); };
   window.scrollTo({ top: 0 }); setTimeout(checkTrophies, 1500);
 }
 
@@ -7416,9 +7535,9 @@ function renderMap() {
   if (homeTab === "lab") return renderSims();
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni];
   if (mapPart === null) mapPart = nr ? TOPICS[nr.t].p : 0;
-  $app.innerHTML = { home: homeHtml, stages: stagesHtml, play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml, stats: statsHtml }[homeTab]();
+  $app.innerHTML = { home: homeHtml, stages: () => isStudy() ? studyPlannerHtml() : stagesHtml(), play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml, stats: statsHtml }[homeTab]();
   renderNav(homeTab);
-  ({ home: wireHome, stages: wireStages, play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards, stats: wireStats })[homeTab]();
+  ({ home: wireHome, stages: () => isStudy() ? wireStudyPlanner() : wireStages(), play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards, stats: wireStats })[homeTab]();
   $app.querySelectorAll(".subnav [data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });
   wireFolds($app);
 }
@@ -7435,7 +7554,7 @@ function homeHtml() {
       ${nr ? (isStudy() ? `<h2>${T.icon} ${esc(stageName(nr))}</h2><p class="small muted" style="margin:0">📖 Topic ${T.no}: ${esc(T.name)}</p>` : `<h2>${T.icon} ${esc(nr.name)}</h2><p class="small muted" style="margin:0">Topic ${T.no} · ${nr.boss ? "⚔️ Boss stage" : `Stage ${nr.s}`} · ${esc(nr.focus)}</p>`)
            : `<h2>🎉 Every stage escaped!</h2><p class="small muted" style="margin:0">Replay any stage in 🗺️ Stages to win 3 stars.</p>`}
       ${modeSwitch()}
-      <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study it" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">🗺️ All stages</button></div>
+      <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study this section" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">${isStudy() ? "🧭 Choose topic, skill & level" : "🗺️ All stages"}</button></div>
     </section>
     ${riskCardHtml()}
     <div class="homegrid">
@@ -9129,7 +9248,8 @@ const say = (who, text, mood = "normal", cls = "") => {
 };
 const roomIndex = id => ROOMS.findIndex(r => r.id === id);
 // Every topic is open; inside a topic, stages unlock one after another
-const isUnlocked = i => ROOMS[i].s === 1 || S.completed_rooms.includes(ROOMS[i - 1].id);
+// Escape mode unlocks stages in order; Study mode opens everything
+const isUnlocked = i => S.playMode === "study" || ROOMS[i].s === 1 || S.completed_rooms.includes(ROOMS[i - 1].id);
 // Recommended next stage: carry on in the current topic first, then the first unfinished topic
 function nextRoomIndex() {
   const cur = ROOMS[roomIndex(S.current_room)];
