@@ -44,6 +44,9 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 
 ## Cross-project log (newest first)
 
+- 2026-10-07 (biology): **Level-only exercises + a bigger bank.**
+  - The Study planner now asks only for topic (or section) and level (Easy / Medium / Hard). `mixBySkill()` in `src/study.js` builds a 12-question exercise by smooth weighted round-robin over skills (`MIX_W`, concept 5 : data 2 : invest 2 : see 2 : word 1), unseen and unmastered first, so repeat visits get new questions. Reusable for any "pick a level, we mix it" practice mode.
+  - 481 new questions in `src/q_x1–4.js`, 8 per stage across Easy/Medium/Hard and Concept/Data/Investigate. `KX(stage, [[skill, bloom, q, choices, hint, explain, tip?]])` sets each question's skill directly, so no SKILL_TAGS letters are needed. Loaded after all older banks so saved ids never move. Hard questions 267 → 446; Data 97 → 277; Investigate 122 → 242.
 - 2026-10-06 (biology): **Study planner** (`src/study.js`): Study mode no longer reuses the escape-room picker, whose lock 1 always held 3 spellings.
   - Students choose scope (section or whole topic), skill strand, Bloom band (Easy 1–2 / Medium 3–4 / Hard 5–6) and length. Each chip shows its live count and is disabled at 0.
   - The series puts unmastered, unseen questions first, sorted by Bloom; spelling is capped at 2 in Mixed and deduped per term.

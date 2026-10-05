@@ -8,13 +8,17 @@
 // Seconds needed to read a question before a right answer counts (multiple choice; +1 s with a picture)
 const READ_SECS = p => p.type !== "mc" || p.gen ? 0 : Math.min(5, 2.5 + p.q.length / 120) + (p.svg ? 1 : 0);
 
-/* ----- 🧭 Study planner: every topic is open. Students pick a scope (one section or the whole topic), a skill
-   (Words / Concepts / See it / Data / Investigate or Mixed), a level (Easy / Medium / Hard or all) and a length.
-   Spelling only appears when Words is chosen, or at most 2 per Mixed series. ----- */
-const STUDY_LEVELS = { all: ["All levels", "🎚️", 1, 6], easy: ["Easy", "🌱", 1, 2], medium: ["Medium", "🌿", 3, 4], hard: ["Hard", "🔥", 5, 6] };
-const STUDY_LENS = [10, 15, 20];
-const studySel = () => { const d = { ti: 0, rid: null, skill: "mixed", lvl: "all", n: 15 }, s = Object.assign(d, S.study_sel || {});
-  if (!TOPICS[s.ti]) s.ti = 0; if (s.rid && (!ROOMS[roomIndex(s.rid)] || ROOMS[roomIndex(s.rid)].t !== s.ti)) s.rid = null; return s; };
+/* ----- 🧭 Study planner: every topic is open. Students choose a topic (optionally one section) and a level:
+   🌱 Easy (Bloom 1–2), 🌿 Medium (3–4) or 🔥 Hard (5–6). The game mixes the exercise for them: a weighted blend of
+   Concepts, See it, Data and Investigate questions (plus at most 2 spellings at Easy), unseen and unmastered first,
+   so each new exercise brings different questions. Level "all" is only used by the full section run. ----- */
+const STUDY_LEVELS = { all: ["All levels", "🎚️", 1, 6, ""], easy: ["Easy", "🌱", 1, 2, "Key words, facts and definitions"], medium: ["Medium", "🌿", 3, 4, "Explain, apply and read data"], hard: ["Hard", "🔥", 5, 6, "Analyse, evaluate and investigate"] };
+const STUDY_PICK = ["easy", "medium", "hard"], STUDY_N = 12;
+// Share of each skill in a mixed exercise (smooth weighted round-robin; a skill with no questions left drops out)
+const MIX_W = { concept: 5, data: 2, invest: 2, see: 2, word: 1 };
+const studySel = () => { const d = { ti: 0, rid: null, skill: "mixed", lvl: "medium", n: STUDY_N }, s = Object.assign(d, S.study_sel || {});
+  if (!TOPICS[s.ti]) s.ti = 0; if (s.rid && (!ROOMS[roomIndex(s.rid)] || ROOMS[roomIndex(s.rid)].t !== s.ti)) s.rid = null;
+  if (!STUDY_PICK.includes(s.lvl)) s.lvl = "medium"; s.skill = "mixed"; s.n = STUDY_N; return s; };
 const studyRooms = sel => sel.rid ? [ROOMS[roomIndex(sel.rid)]] : topicRooms(sel.ti);
 // All questions in scope that match the skill and level (spelling pairs count once per term)
 function studyPool(sel, skill = sel.skill, lvl = sel.lvl) {
@@ -26,51 +30,62 @@ function studyPool(sel, skill = sel.skill, lvl = sel.lvl) {
     return true;
   });
 }
+// Blend skills by MIX_W, taking each skill's best-scored (unseen, unmastered) questions first
+function mixBySkill(qs, n, score) {
+  const by = {}; qs.forEach(p => (by[p.skill] = by[p.skill] || []).push(p));
+  Object.values(by).forEach(a => a.sort((x, y) => score.get(x) - score.get(y)));
+  const out = [], credit = {};
+  while (out.length < n) {
+    const live = Object.keys(by).filter(k => by[k].length); if (!live.length) break;
+    let best = null; live.forEach(k => { credit[k] = (credit[k] || 0) + (MIX_W[k] || 1); if (!best || credit[k] > credit[best]) best = k; });
+    credit[best] -= live.reduce((a, k) => a + (MIX_W[k] || 1), 0);
+    out.push(by[best].shift());
+  }
+  return out;
+}
 // Pick the series: not-yet-mastered and not-recently-seen questions first, then climb from easy to hard
 function buildStudySet(sel) {
   let qs = studyPool(sel);
   if (sel.skill === "mixed") { const sp = shuffle(qs.filter(p => p.gen)).slice(0, 2); qs = qs.filter(p => !p.gen).concat(sp); }
   const seen = new Set(studyRooms(sel).flatMap(r => (S.seen[r.id] || []).map(id => r.id + ":" + id)));
-  const score = p => (S.mastered_puzzles.includes(`${p.rid}:${p.id}`) ? 2 : 0) + (seen.has(`${p.rid}:${p.id}`) ? 1 : 0) + Math.random() * .9;
-  const chosen = qs.map(p => [score(p), p]).sort((a, b) => a[0] - b[0]).slice(0, sel.n).map(x => x[1]);
+  const score = new Map(qs.map(p => [p, (S.mastered_puzzles.includes(`${p.rid}:${p.id}`) ? 2 : 0) + (seen.has(`${p.rid}:${p.id}`) ? 1 : 0) + Math.random() * .9]));
+  const chosen = sel.skill === "mixed" && sel.lvl !== "all" ? mixBySkill(qs, sel.n, score)
+    : qs.slice().sort((a, b) => score.get(a) - score.get(b)).slice(0, sel.n);
   studyRooms(sel).forEach(r => { const ids = chosen.filter(p => p.rid === r.id).map(p => p.id); if (ids.length) S.seen[r.id] = (S.seen[r.id] || []).concat(ids).slice(-45); });
-  return chosen.sort((a, b) => a.b - b.b);
+  return shuffle(chosen).sort((a, b) => a.b - b.b);
 }
-const studyLabel = sel => { const T = TOPICS[sel.ti], sk = sel.skill === "mixed" ? "Mixed skills" : SKILLS.find(k => k.id === sel.skill).name, lv = STUDY_LEVELS[sel.lvl][0];
-  return `${sel.rid ? stageName(ROOMS[roomIndex(sel.rid)]) : `Topic ${T.no}: ${T.name}`} · ${sk} · ${lv}`; };
+const studyLabel = sel => { const T = TOPICS[sel.ti], lv = STUDY_LEVELS[sel.lvl];
+  return `${sel.rid ? stageName(ROOMS[roomIndex(sel.rid)]) : `Topic ${T.no}: ${T.name}`} · ${lv[1]} ${lv[0]}${sel.skill === "mixed" ? "" : ` · ${SKILLS.find(k => k.id === sel.skill).name}`}`; };
+const buildCount = sel => { const qs = studyPool(sel); return sel.skill === "mixed" ? qs.filter(p => !p.gen).length + Math.min(2, qs.filter(p => p.gen).length) : qs.length; };
 function studyPlannerHtml() {
   const sel = studySel(), T = TOPICS[sel.ti], rs = topicRooms(sel.ti), part = T.p;
-  const chip = (attr, v, on, inner, n) => `<button class="spchip ${on ? "on" : ""}" ${attr}="${v}" aria-pressed="${on}" ${n === 0 ? "disabled" : ""}>${inner}${n != null ? `<span class="spn">${n}</span>` : ""}</button>`;
-  const avail = Math.min(sel.n, buildCount(sel));
+  const chip = (attr, v, on, inner) => `<button class="spchip ${on ? "on" : ""}" ${attr}="${v}" aria-pressed="${on}">${inner}</button>`;
+  const pool = studyPool(sel).filter(p => !p.gen), avail = Math.min(sel.n, buildCount(sel));
+  const mix = SKILLS.filter(k => k.id !== "word").map(k => [k, pool.filter(p => p.skill === k.id).length]).filter(([, n]) => n);
   return `<section class="card studyplan">
       <div class="row" style="justify-content:space-between"><h2 style="margin:0">📖 Study planner</h2><span class="pill">All topics open</span></div>
       ${modeSwitch()}
       <div class="spstep"><b class="sph">1 · Topic</b>
         <div class="tabs" role="tablist" aria-label="Curriculum parts">${PARTS.map((P, pi) => `<button class="tab" role="tab" aria-selected="${pi === part}" data-sppart="${pi}">Part ${esc(P.split(".")[0])}</button>`).join("")}</div>
-        <div class="sptopics">${TOPICS.map((X, ti) => X.p !== part ? "" : `<button class="sptopic ${ti === sel.ti ? "on" : ""}" data-spt="${ti}" aria-pressed="${ti === sel.ti}"><span class="ticon" aria-hidden="true">${X.icon}</span><span><b>Topic ${X.no}</b><br><span class="small">${esc(X.name)}</span></span><span class="spm">${S.bio_mastery[X.id] || 0}%</span></button>`).join("")}</div></div>
-      <div class="spstep"><b class="sph">2 · Section</b><div class="spchips">
-        ${chip("data-sps", "", !sel.rid, `📚 Whole topic`, null)}
-        ${rs.map(r => chip("data-sps", r.id, sel.rid === r.id, `${secNo(r)} ${esc(r.focus)}`, null)).join("")}</div></div>
-      <div class="spstep"><b class="sph">3 · Skill</b><div class="spchips">
-        ${chip("data-spk", "mixed", sel.skill === "mixed", "🎲 Mixed", studyPool(sel, "mixed").filter(p => !p.gen).length)}
-        ${SKILLS.map(k => chip("data-spk", k.id, sel.skill === k.id, `${k.icon} ${k.name}`, studyPool(sel, k.id).length)).join("")}</div></div>
-      <div class="spstep"><b class="sph">4 · Level</b><div class="spchips">
-        ${Object.entries(STUDY_LEVELS).map(([id, [nm, ic]]) => chip("data-spl", id, sel.lvl === id, `${ic} ${nm}`, studyPool(sel, sel.skill, id).length)).join("")}</div></div>
-      <div class="spstep"><b class="sph">5 · How many</b><div class="spchips">${STUDY_LENS.map(n => chip("data-spn", n, sel.n === n, `${n} questions`, null)).join("")}</div></div>
-      <div class="spgo"><span class="small"><b>${esc(studyLabel(sel))}</b><br>${avail >= 3 ? `${avail} question${avail === 1 ? "" : "s"}${avail < sel.n ? ` (all there are for this choice)` : ""}` : "Not enough questions for this choice: try another skill or level."}${sel.rid && sel.skill === "mixed" && sel.lvl === "all" ? " · ✅ finishes this section" : ""}</span>
-        <button class="btn big" id="spStart" ${avail >= 3 ? "" : "disabled"}>▶ Start studying</button></div>
+        <div class="sptopics">${TOPICS.map((X, ti) => X.p !== part ? "" : `<button class="sptopic ${ti === sel.ti ? "on" : ""}" data-spt="${ti}" aria-pressed="${ti === sel.ti}"><span class="ticon" aria-hidden="true">${X.icon}</span><span><b>Topic ${X.no}</b><br><span class="small">${esc(X.name)}</span></span><span class="spm">${S.bio_mastery[X.id] || 0}%</span></button>`).join("")}</div>
+        <div class="spchips" aria-label="Section">${chip("data-sps", "", !sel.rid, `📚 Whole topic`)}${rs.map(r => chip("data-sps", r.id, sel.rid === r.id, `${secNo(r)} ${esc(r.focus)}`)).join("")}</div></div>
+      <div class="spstep"><b class="sph">2 · Level</b><div class="splvls">
+        ${STUDY_PICK.map(id => { const [nm, ic, , , tip] = STUDY_LEVELS[id], n = buildCount(Object.assign({}, sel, { lvl: id })), on = sel.lvl === id;
+          return `<button class="splvl lv-${id} ${on ? "on" : ""}" data-spl="${id}" aria-pressed="${on}" ${n < 3 ? "disabled" : ""}><span class="spli" aria-hidden="true">${ic}</span><b>${nm}</b><span class="small">${tip}</span><span class="spn">${n} Q</span></button>`; }).join("")}</div></div>
+      <p class="small muted" style="margin:0">🎲 Each exercise is a fresh mix of ${STUDY_N} questions${mix.length ? `: ${mix.map(([k, n]) => `${k.icon} ${k.name} ${n}`).join(" · ")}` : ""}. New questions come first, so come back for a different set!</p>
+      ${sel.rid ? `<p class="small" style="margin:0">✅ Want to finish this section? <button class="linkbtn" id="spFull">Do the full section run</button> (all levels).</p>` : ""}
+      <div class="spgo"><span class="small"><b>${esc(studyLabel(sel))}</b><br>${avail >= 3 ? `${avail} question${avail === 1 ? "" : "s"} · mixed skills${avail < sel.n ? " (all there are at this level)" : ""}` : "Not enough questions here: try another level or the whole topic."}</span>
+        <button class="btn big" id="spStart" ${avail >= 3 ? "" : "disabled"}>▶ Start exercise</button></div>
     </section>`;
 }
-const buildCount = sel => { const qs = studyPool(sel); return sel.skill === "mixed" ? qs.filter(p => !p.gen).length + Math.min(2, qs.filter(p => p.gen).length) : qs.length; };
 function wireStudyPlanner() {
   const sel = studySel(), set = ch => { S.study_sel = Object.assign(sel, ch); save(); SFX.tap(); renderMap(); };
   wireModeSwitch($app);
   $app.querySelectorAll("[data-sppart]").forEach(b => b.onclick = () => { const ti = TOPICS.findIndex(T => T.p === Number(b.dataset.sppart)); set({ ti, rid: null }); });
   $app.querySelectorAll("[data-spt]").forEach(b => b.onclick = () => set({ ti: Number(b.dataset.spt), rid: null }));
   $app.querySelectorAll("[data-sps]").forEach(b => b.onclick = () => set({ rid: b.dataset.sps || null }));
-  $app.querySelectorAll("[data-spk]").forEach(b => b.onclick = () => set({ skill: b.dataset.spk }));
   $app.querySelectorAll("[data-spl]").forEach(b => b.onclick = () => set({ lvl: b.dataset.spl }));
-  $app.querySelectorAll("[data-spn]").forEach(b => b.onclick = () => set({ n: Number(b.dataset.spn) }));
+  const fu = document.getElementById("spFull"); if (fu) fu.onclick = () => { SFX.init(); SFX.tap(); startStudy(sel.rid); };
   const go = document.getElementById("spStart"); if (go) go.onclick = () => { SFX.init(); SFX.tap(); runStudy(studySel()); };
 }
 // Old entry point (Home "Study it", stage buttons): a full mixed series of one section, which also finishes that section
@@ -88,7 +103,7 @@ function runStudy(sel) {
   const full = !!sel.rid && sel.skill === "mixed" && sel.lvl === "all";
   const ST = { sel, full, room, rooms, pool: rooms.flatMap(r => r.pool), queue: qs.map(p => ({ p, retry: false })), at: 0, total: qs.length, firsts: 0, right: 0, retried: 0, guesses: 0, firstIds: [], wrongIds: [], start: new Date().toISOString(), t0: Date.now() };
   const T = TOPICS[room.t], head = sel.rid ? stageName(room) : `Topic ${T.no}: ${T.name}`;
-  const focus = `${sel.skill === "mixed" ? "🎲 Mixed" : (k => `${k.icon} ${k.name}`)(SKILLS.find(k => k.id === sel.skill))} · ${STUDY_LEVELS[sel.lvl][1]} ${STUDY_LEVELS[sel.lvl][0]}`;
+  const focus = `${STUDY_LEVELS[sel.lvl][1]} ${STUDY_LEVELS[sel.lvl][0]} · ${sel.skill === "mixed" ? "🎲 mixed skills" : (k => `${k.icon} ${k.name}`)(SKILLS.find(k => k.id === sel.skill))}`;
   const next = () => {
     if (ST.at >= ST.queue.length) return whyCheck(ST);
     const { p, retry } = ST.queue[ST.at], done = ST.at, n = ST.queue.length, qr = ROOMS[roomIndex(p.rid)];
@@ -214,7 +229,7 @@ function finishFocusedStudy(ST) {
   activityDone({ mode: "study", room, done: true, ans: ST.total, cor: ST.firsts, stars, secs: Math.round((Date.now() - ST.t0) / 1000), start: ST.start,
     stage: `${room.id} ${studyLabel(sel)}`.slice(0, 60), ids: ST.queue.map(x => x.p.id).join(" "), wrong: ST.wrongIds.join(" ") });
   renderNav(false);
-  const weak = ST.wrongIds.length;
+  const weak = ST.wrongIds.length, li = STUDY_PICK.indexOf(sel.lvl), upLvl = li >= 0 && li < 2 && buildCount(Object.assign({}, sel, { lvl: STUDY_PICK[li + 1] })) >= 3 ? STUDY_PICK[li + 1] : null;
   $app.innerHTML = `<section class="card">
     <span class="kicker">📖 Study complete · Topic ${T.no}</span>
     <h2>🎉 ${esc(studyLabel(sel))}</h2>
@@ -223,12 +238,12 @@ function finishFocusedStudy(ST) {
     <p style="text-align:center"><b>${ST.firsts}/${ST.total}</b> right first try${ST.retried ? ` · 🔁 ${ST.retried} second chance${ST.retried > 1 ? "s" : ""}` : ""}${ST.why && ST.why.n ? ` · 🤔 Why? <b>${ST.why.right}/${ST.why.n}</b>` : ""} · 📚 Topic mastery <b>${S.bio_mastery[T.id] || 0}%</b></p>
     ${guessy ? `<div class="rules">⚡ <b>Guess alert:</b> ${ST.guesses} answers came faster than anyone can read the question, so this series is capped at 1★.</div>` : ""}
     <p style="text-align:center"><span class="pill coinpill">+${earned} 🌰${multTag()}</span>${caps ? ` <span class="pill rpill">🎁 +1 capsule</span>` : ""}</p>
-    ${say("chiikawa", weak ? `${weak} question${weak > 1 ? "s" : ""} went into your 📕 Mistake Notebook. Fixing them is the fastest way to level up! 💪` : sel.lvl !== "hard" ? "Flawless! Ready to try the <b>🔥 Hard</b> level? ✨" : "Hard level, conquered. You're a real Keeper of the Codex! 👑", "happy")}
-    <div class="row">${caps ? `<button class="btn pink" id="sfCap">🎁 Open capsule</button>` : ""}<button class="btn big" id="sfAgain">🔁 Same again</button>${sel.lvl !== "hard" ? `<button class="btn yellow" id="sfHard">🔥 Try Hard level</button>` : ""}<button class="btn plain" id="sfPlan">🧭 Planner</button></div>
+    ${say("chiikawa", weak ? `${weak} question${weak > 1 ? "s" : ""} went into your 📕 Mistake Notebook. Fixing them is the fastest way to level up! 💪` : upLvl ? `Flawless! Ready to try the <b>${STUDY_LEVELS[upLvl][1]} ${STUDY_LEVELS[upLvl][0]}</b> level? ✨` : sel.lvl === "hard" ? "Hard level, conquered. You're a real Keeper of the Codex! 👑" : "Flawless! Try a new mix or another topic. ✨", "happy")}
+    <div class="row">${caps ? `<button class="btn pink" id="sfCap">🎁 Open capsule</button>` : ""}<button class="btn big" id="sfAgain">🎲 New mix</button>${upLvl ? `<button class="btn yellow" id="sfUp">${STUDY_LEVELS[upLvl][1]} Try ${STUDY_LEVELS[upLvl][0]}</button>` : ""}<button class="btn plain" id="sfPlan">🧭 Planner</button></div>
   </section>`;
   const sc = document.getElementById("sfCap"); if (sc) sc.onclick = () => { SFX.tap(); homeTab = "home"; renderMap(); openCapsule(); };
   document.getElementById("sfAgain").onclick = () => { SFX.tap(); runStudy(sel); };
-  const sh = document.getElementById("sfHard"); if (sh) sh.onclick = () => { SFX.tap(); const h = Object.assign({}, sel, { lvl: "hard" }); if (buildCount(h) < 3) { toast("Not enough Hard questions for this choice. Try Mixed skills."); return; } S.study_sel = h; save(); runStudy(h); };
+  const su = document.getElementById("sfUp"); if (su) su.onclick = () => { SFX.tap(); const h = Object.assign({}, sel, { lvl: upLvl }); S.study_sel = h; save(); runStudy(h); };
   document.getElementById("sfPlan").onclick = () => { SFX.tap(); homeTab = "stages"; renderMap(); };
   window.scrollTo({ top: 0 }); setTimeout(checkTrophies, 1500);
 }

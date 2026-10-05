@@ -739,7 +739,7 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .spstep { display: grid; gap: 8px; } .sph { font-size: .82rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
 .sptopics { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
 .sptopic { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; gap: 8px; text-align: left; font: inherit; color: var(--ink); background: #fff; border: 2px solid #EADFD5; border-radius: 14px; padding: 8px 10px; cursor: pointer; min-height: 52px; }
-.sptopic .ticon { font-size: 1.4rem; } .sptopic .small { line-height: 1.25; display: inline-block; }
+.sptopic .ticon { font-size: 1.4rem; } .sptopic .small { line-height: 1.25; display: inline-block; overflow-wrap: anywhere; hyphens: auto; }
 .sptopic .spm { grid-column: 2; justify-self: start; font-size: .72rem; font-weight: 900; background: #F4EEE8; border-radius: 999px; padding: 2px 7px; }
 .sptopic.on { border-color: var(--ink); background: #FFF6D6; box-shadow: 0 0 0 2px var(--ink); }
 .spchips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -747,6 +747,13 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .spchip.on { background: var(--ink); border-color: var(--ink); color: #fff; } .spchip:disabled { opacity: .4; cursor: not-allowed; }
 .spn { font-size: .72rem; font-weight: 900; background: rgba(0,0,0,.07); border-radius: 999px; padding: 1px 7px; } .spchip.on .spn { background: rgba(255,255,255,.25); }
 .spgo { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: #F4FAFF; border-radius: 16px; padding: 8px 12px; position: sticky; bottom: 80px; box-shadow: 0 6px 18px rgba(107,74,107,.15); }
+.splvls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.splvl { display: grid; justify-items: center; align-content: start; gap: 3px; text-align: center; font: inherit; color: var(--ink); background: #fff; border: 2px solid #EADFD5; border-radius: 16px; padding: 10px 6px; cursor: pointer; min-height: 120px; }
+.splvl .spli { font-size: 1.8rem; line-height: 1.1; } .splvl b { font-size: 1.05rem; } .splvl .small { line-height: 1.25; color: var(--ink-soft); }
+.splvl.lv-easy.on { background: #E9F8E4; } .splvl.lv-medium.on { background: #FFF6D6; } .splvl.lv-hard.on { background: #FFE6DE; }
+.splvl.on { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink); } .splvl:disabled { opacity: .4; cursor: not-allowed; }
+@media (max-width: 380px) { .splvl .small { display: none; } .splvl { min-height: 92px; } }
+.linkbtn { font: inherit; font-weight: 800; color: var(--ink); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
 .spgo > span { min-width: 0; flex: 1 1 160px; line-height: 1.35; font-size: .8rem; } .spgo .btn.big { padding-block: 8px; }
 /* Fold bars (foldHtml in src/home.js): secondary sections collapse to icon · title · peek number · chevron */
 .fold { background: #fff; border: var(--line); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; min-width: 0; }

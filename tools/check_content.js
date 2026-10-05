@@ -1,6 +1,6 @@
 // Content sanity checks: node tools/check_content.js
 const fs = require("fs"), vm = require("vm");
-const src = ["chars.js", "diagrams.js", "graphs.js", "stages.js", "stages2.js", "scenes.js", ...[1,2,3,4,5,6,7,8,9,11,13,15,17].map(i => `q_t${i}.js`), "q_graphs.js", "q_graphs2.js", "q_kb1.js", "q_kb2.js", "skills.js", "rush.js"].map(f => fs.readFileSync(`src/${f}`, "utf8")).join("\n").replace("<script>", "");
+const src = ["chars.js", "diagrams.js", "graphs.js", "stages.js", "stages2.js", "scenes.js", ...[1,2,3,4,5,6,7,8,9,11,13,15,17].map(i => `q_t${i}.js`), "q_graphs.js", "q_graphs2.js", "q_kb1.js", "q_kb2.js", ...["q_x1.js", "q_x2.js", "q_x3.js", "q_x4.js"].filter(f => fs.existsSync(`src/${f}`)), "skills.js", "rush.js"].map(f => fs.readFileSync(`src/${f}`, "utf8")).join("\n").replace("<script>", "");
 const ctx = { outfitSvg: () => "", console, subseq: (a) => a, specialSvg: () => "", SFX: {} };
 vm.createContext(ctx); vm.runInContext(src + "\nthis.ROOMS=ROOMS;this.SCENES=SCENES;this.QB=QB;this.DIAGRAMS=DIAGRAMS;this.TOPICS=TOPICS;this.skillOf=skillOf;this.SKILL_IDS=SKILL_IDS;this.SKILL_TAGS=SKILL_TAGS;", ctx);
 const { ROOMS, QB, DIAGRAMS, skillOf, SKILL_IDS, SKILL_TAGS } = ctx; let bad = 0, total = 0;

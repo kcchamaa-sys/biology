@@ -26,7 +26,7 @@ Every topic is open, so students can jump to the one their class is on (the map 
 
 - **8 room scenes** (library, science lab, greenhouse, inside a cell, kitchen, underwater pond, secret garden, clinic), so stages feel different.
 - **Each lock needs 3 questions in a row** (15 per visit), climbing in difficulty inside the lock. **Each lock has one skill theme**: 🔤 Words → 💡 Concepts → 🔍 See it → 📈 Data → 🧪 Investigate (shown as a small label on the lock). If a stage has fewer than 3 questions of a theme, that lock borrows from the nearest theme and shows no label. Lock 1 never tests the same term twice. Every question's skill was hand-reviewed and lives in `SKILL_TAGS` in `src/skills.js` (append a letter when you add a question); `node tools/check_content.js --unsure` reports coverage. Students see friendly labels (🌱 Easy, 🌿 Medium, 🔥 Hard, ⭐ Expert) instead of Bloom's levels. Progress on a half-open lock is saved.
-- **1,243 core questions** (15–20 per stage) including **78 graph-reading questions** (drawn to scale: potato-strip osmosis, enzyme curves, absorption spectra, GP/RuBP, lactic acid, and more).
+- **1,724 core questions** (23–29 per stage) including **78 graph-reading questions** (drawn to scale: potato-strip osmosis, enzyme curves, absorption spectra, GP/RuBP, lactic acid, and more).
 - **Spelling practice**: every stage's key terms become "type the word" locks and "which spelling is correct?" checks (British and American spellings are both accepted, e.g. haemoglobin / hemoglobin). They appear only in the Words lock (lock 1); also a Spelling bee round in Cell Rush.
 - 📓 **Study Journal:** summary, key rules and key terms for every stage.
 
@@ -42,9 +42,10 @@ Every topic is open, so students can jump to the one their class is on (the map 
 - 🔊 **British pronunciation** (normal and 🐢 slow, Web Speech API) for every key term in the Study Journal and on spelling locks.
 - 🎧 **Word Dictation** mode: 10 words a round from any topic or from *My missed words*. Two modes: listen and spell, or read the meaning and spell. 2 tries per word, letter boxes, a hint, and a "so close!" nudge for near-misses. Words missed here or in spelling locks come back until spelled right twice. A perfect round gives a 🎁 capsule.
 - 🧭 **Study planner** (📖 Study mode → Stages tab). **Every topic and section is open.**
-  - Students pick a **topic**, then **one section or the whole topic**, a **skill** (🎲 Mixed, 🔤 Words, 💡 Concepts, 🔍 See it, 📈 Data, 🧪 Investigate), a **level** (🌱 Easy = Bloom 1–2, 🌿 Medium = 3–4, 🔥 Hard = 5–6) and **10, 15 or 20 questions**. Each option shows how many questions it has; empty ones are greyed out.
-  - Questions not yet mastered and not seen recently come first, ordered easy → hard. Spelling only appears when Words is picked, or at most 2 per Mixed series.
-  - A Mixed, all-levels series of one section still finishes that section (stars, item, badge). Focused series give mastery, chestnuts and streak days, and offer "🔥 Try Hard level" at the end.
+  - Students pick a **topic** (or one section of it) and a **level**: 🌱 Easy (Bloom 1–2: key words and facts), 🌿 Medium (3–4: explain, apply, read data) or 🔥 Hard (5–6: analyse, evaluate, investigate). That's it.
+  - The game **mixes the exercise** (12 questions): a weighted blend of 💡 Concepts, 📈 Data, 🧪 Investigate and 🔍 See it (about 5 : 2 : 2 : 2), plus at most 2 spellings at Easy. Questions not yet mastered and not seen recently come first, so each new exercise brings different questions. The finish screen offers 🎲 New mix and a step up to the next level.
+  - With a section chosen, a "full section run" link plays the old all-level series that completes the section.
+  - Only that full section run finishes a section (stars, item, badge). Level exercises give mastery, chestnuts and streak days.
 - 👥 **Friends** (signed-in students, up to 5) on Home, in the left column under the pal room. Students share a 6-character friend code, then see each friend's pal, streak, stages and effort points ("✓ studied today" / "last studied 3 days ago") and send one preset cheer a day ("🔥 Keep your flame going!"). Cheers they receive pop up on Home. No free-text messages. Needs the updated `server/Code.gs`.
 - 🔖 **Bookmarks:** a 🔖 Save button on every question (escape locks, Study mode, Mistake Notebook). 🎮 Practice → 🔖 Bookmarks lists saved questions by topic and runs redo rounds of up to 10, least-practised first. Up to 200 bookmarks.
 - 💬 **Chat card** on the map: your Study Pal shares biology fun facts (many with Hong Kong examples) and personal encouragement (streak, mistakes to fix, next stage). It changes every 20 s; the same facts appear as 💡 *Did you know?* in the Journal.
@@ -227,6 +228,6 @@ Card capsules are opened from the Lucky Capsule banner on Home, the 🎁 button 
 
 ## Editing
 
-The page is assembled from `src/` by `python3 tools/build.py`. Content lives in `src/stages.js` and `src/stages2.js` (notes, rules, terms), `src/scenes.js` (rooms), `src/q_t*.js`, `src/q_graphs.js` and `src/q_graphs2.js` (questions), `src/graphs.js` (graph data) and `src/rush.js`. Daily systems (streak, freezes, mission, health tips) are in `src/daily.js`; sign-in, cloud save and the class leaderboard in `src/auth.js`; Study Pals in `src/pals.js`; icons in `src/icons.js`. Check content with `node tools/check_content.js`.
+The page is assembled from `src/` by `python3 tools/build.py`. Content lives in `src/stages.js` and `src/stages2.js` (notes, rules, terms), `src/scenes.js` (rooms), `src/q_t*.js`, `src/q_graphs.js`, `src/q_graphs2.js`, `src/q_kb*.js` and `src/q_x1–4.js` (questions; `q_x*` uses `KX()`, which sets each question's skill directly), `src/graphs.js` (graph data) and `src/rush.js`. Daily systems (streak, freezes, mission, health tips) are in `src/daily.js`; sign-in, cloud save and the class leaderboard in `src/auth.js`; Study Pals in `src/pals.js`; icons in `src/icons.js`. Check content with `node tools/check_content.js`.
 
 *Educational project with original kawaii-style characters and an original story world (The Codex of Life).*
