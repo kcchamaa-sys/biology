@@ -264,7 +264,7 @@ function tropismSim(root) {
   });
 }
 function tropSceneSvg(st) {
-  const I = TROP[st.inv], n = I.set.length, W = Math.max(430, 110 + 108 * n), xs = I.set.map((_, i) => 90 + (W - 110) / n * (i + .5)), base = 300, p = st.p, live = st.run || p >= 1;
+  const I = TROP[st.inv], n = I.set.length, W = Math.max(460, 160 + 108 * n), xs = I.set.map((_, i) => 90 + (W - 160) / n * (i + .5)), base = 300, p = st.p, live = st.run || p >= 1;
   let s = `<rect width="${W}" height="340" rx="14" fill="${I.light ? "#F4FBFF" : "#2E2B45"}"/><rect y="${base}" width="${W}" height="40" fill="${I.light ? "#E8D9C6" : "#3D3858"}"/>`;
   if (I.light) {
     s += `<g><circle cx="34" cy="110" r="20" fill="#FFE27A" stroke="#E0B44A" stroke-width="3"/>${[0, 1, 2].map(i => `<g opacity="${live ? .9 : .35}"><path d="M60 ${88 + i * 22} H${W - 20}" stroke="#FFD23F" stroke-width="3" stroke-dasharray="10 9" ${live ? `stroke-dashoffset="${(-st.t * 40) % 19}"` : ""}/></g>`).join("")}
@@ -283,9 +283,9 @@ function tropSceneSvg(st) {
     s += `<text x="${xs[i]}" y="${base + 31}" text-anchor="middle" font-size="26" font-weight="900" fill="${I.light ? CO : "#E6E1F5"}">${"ABCD"[i]}</text>`;
     s += `<line x1="${xs[i] - 26}" y1="${base - 150}" x2="${xs[i] + 26}" y2="${base - 150}" stroke="${I.light ? "#C9B8A8" : "#6E6590"}" stroke-width="1.5" stroke-dasharray="4 4"/>`;
   });
-  s += `<text x="${W - 10}" y="${base - 160}" text-anchor="end" font-size="15" font-weight="800" fill="${I.light ? "#9A8A86" : "#9C94BC"}">start height</text>`;
+  s += `<text text-anchor="end" font-size="14" font-weight="800" fill="${I.light ? "#9A8A86" : "#9C94BC"}"><tspan x="${W - 8}" y="${base - 170}">start</tspan><tspan x="${W - 8}" y="${base - 154}">height</tspan></text>`;
   if (st.run || p >= 1) s += `<text x="${W / 2}" y="26" text-anchor="middle" font-size="20" font-weight="900" fill="${I.light ? CO : "#E6E1F5"}">⏱ ${p >= 1 ? "after 2 days" : `day ${(p * 2).toFixed(1)}`}</text>`;
-  return `<svg class="${I.light ? "" : "dark"}" viewBox="0 0 ${W} 340" role="img" aria-label="${esc(I.who)}'s coleoptile experiment">${s}</svg>`;
+  return `<svg class="${I.light ? "" : "tdark"}" viewBox="0 0 ${W} 340" role="img" aria-label="${esc(I.who)}'s coleoptile experiment">${s}</svg>`;
 }
 // Static zoom: the bending zone, light side vs shaded side cells
 function tropWhySvg() {

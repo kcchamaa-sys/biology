@@ -496,7 +496,8 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .simbtns[hidden] { display: none; }
 .simbtns .btn { min-height: 44px; width: 100%; padding: 6px 10px; line-height: 1.2; text-align: center; }
 .simgrid > section.card { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
-.simgrid > section.card > * { margin-top: 0; margin-bottom: 0; }
+.simgrid > section.card > * { margin-top: 0; margin-bottom: 0; flex: 0 0 auto; }
+#trSvg svg { max-height: 460px; }
 .simpred { background: #F8F3FF; border-color: #8E5BD6; }
 .simpred .choice.picked { box-shadow: 0 0 0 3px #8E5BD6; }
 .spfb { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
@@ -697,7 +698,7 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .healthtip > span:first-child { font-size: 1.2rem; }
 /* Sim labels stay readable over moving parts: a soft halo behind every diagram label */
 .simsvg text { paint-order: stroke fill; stroke: rgba(255,255,255,.92); stroke-width: 3.5px; stroke-linejoin: round; }
-.simsvg svg.dark text { stroke: rgba(30,24,52,.9); }
+.simsvg svg.tdark text { stroke: rgba(30,24,52,.9); }
 .simsvg text[fill="#fff"], .simsvg text[fill="#FFF"] { stroke: none; }
 /* Phones: wide, label-dense diagrams render bigger and scroll sideways inside their card */
 @media (max-width: 560px) {
@@ -1390,6 +1391,13 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
   .capad.lucky .adtext h2 { font-size: 1.4rem; } .capad.lucky .adtext p { font-size: .82rem; }
   .capad.lucky .adgo { font-size: .95rem; padding: 10px 14px; min-height: 46px; width: 100%; }
 }
+/* Friends: buttons get room to breathe */
+.frmine { gap: 12px; row-gap: 10px; } .frmine .btn { min-height: 44px; padding: 6px 16px; }
+.frcode { padding: 6px 14px; }
+#frBody { display: grid; gap: 14px; }
+.fradd { gap: 14px; align-items: stretch; } .fradd input { min-height: 48px; padding: 6px 14px; } .fradd .btn { min-height: 48px; padding: 6px 20px; flex: none; }
+.frpick { gap: 8px; } .fract { gap: 8px; }
+@media (max-width: 420px) { .frmine .small.muted { flex-basis: 100%; } .fradd { flex-wrap: wrap; } .fradd input { flex: 1 1 100%; } .fradd .btn { flex: 1 1 100%; } }
 </style>
 </head>
 <body>
@@ -1407,4 +1415,3 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
 <div id="journal"></div>
 <div id="toast" class="toast" hidden></div>
 <canvas id="fx" hidden></canvas>
-
