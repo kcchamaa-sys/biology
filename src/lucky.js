@@ -1,7 +1,8 @@
 
 /* ============================================================
    5l. 🎰 Daily Lucky Capsule (replaces the daily snack chest).
-   One free draw per study day, unlocked by today's first finished activity, so every draw is also a streak day.
+   One free draw per study day, unlocked by answering LUCKY_NEED questions in finished activities that day (a good session, not just one tap).
+   Odds are tough: Epic or better is guaranteed within LUCKY_PITY draws.
    Luck rises with the streak at 20 / 40 / 60 / 80 / 100 days (same idea as the S1 Science game).
    Epic or better is guaranteed within 10 draws. The capsule can "upgrade" colour before it bursts open.
    Prizes: chestnuts, food for your pal (pantry), Streak Freezes, outfits, biology card capsules,
@@ -10,12 +11,21 @@
 const LUCK_TIERS = ["common", "rare", "epic", "legend", "myth"];
 const LUCK_NAMES = { common: "Common", rare: "Rare", epic: "Epic", legend: "Legendary", myth: "Mythic" };
 // odds (%) by streak level: 0–19, 20–39, 40–59, 60–79, 80–99, 100+ days
-const LUCK_TABLE = [[60, 28, 9, 2.5, .5], [52, 28, 13, 5, 2], [44, 28, 17, 8, 3], [36, 28, 21, 11, 4], [28, 28, 25, 13, 6], [20, 28, 28, 16, 8]];
-const LUCK_PITY = 10;
+const LUCK_TABLE = [[68, 24, 6, 1.7, .3], [62, 26, 8.5, 3, .5], [56, 27, 11, 5, 1], [50, 28, 14, 7, 1], [44, 28, 17, 9, 2], [38, 28, 20, 11, 3]];
+const LUCK_PITY = 15;
+const LUCKY_NEED = 40; // questions answered in finished activities today before the draw unlocks (teachers: change this number)
 const luckLevel = () => Math.min(5, Math.floor((S.current_streak || 0) / 20));
 const luckOdds = () => LUCK_TABLE[luckLevel()];
 const luckyDrawn = () => S.lucky.day === today();
-const luckyReady = () => studiedToday() && !luckyDrawn();
+const luckyQ = () => { const p = S.lucky && S.lucky.prog; return p && p.day === today() ? p.q : 0; };
+const luckyReady = () => luckyQ() >= LUCKY_NEED && !luckyDrawn();
+// Called when an activity finishes: adds its answered questions to today's tally and announces the unlock
+function luckyCount(n) {
+  if (!S || !S.lucky || !(n > 0)) return;
+  const t = today(), p = S.lucky.prog && S.lucky.prog.day === t ? S.lucky.prog : (S.lucky.prog = { day: t, q: 0 }), was = p.q;
+  p.q += Math.round(n);
+  if (was < LUCKY_NEED && p.q >= LUCKY_NEED && !luckyDrawn()) setTimeout(() => toast("🎰 Lucky Capsule unlocked! Draw it on 🏠 Home."), 1800);
+}
 
 function rollLuckyTier() {
   if (S.lucky.pity + 1 >= LUCK_PITY) { const o = luckOdds().slice(2), t = o.reduce((a, b) => a + b, 0); let x = Math.random() * t; for (let i = 0; i < 3; i++) if ((x -= o[i]) < 0) return LUCK_TIERS[i + 2]; return "epic"; }
@@ -61,7 +71,7 @@ function prizeArt(p) {
 
 /* ----- The draw: crank → mix → drop → colour upgrades → burst → prize card ----- */
 function openLucky() {
-  if (!luckyReady()) { if (luckyDrawn()) toast("🎰 You've drawn today's capsule. Come back tomorrow!"); else toast("🔒 Finish one activity today to unlock the Lucky Capsule."); return; }
+  if (!luckyReady()) { if (luckyDrawn()) toast("🎰 You've drawn today's capsule. Come back tomorrow!"); else toast(`🔒 Answer ${LUCKY_NEED} questions today to unlock the Lucky Capsule (${luckyQ()}/${LUCKY_NEED}).`); return; }
   const o = luckOdds();
   const box = openModal(`<span class="kicker">🎰 Daily Lucky Capsule</span><h2>Turn the crank!</h2>
     <div class="lstage"><div class="lmach" id="lmach">${machineSvg2()}</div><div class="lcap t-common" id="lcap" hidden><i class="lhalf"></i><i class="lband"></i></div><i class="lrays" id="lrays" hidden></i></div>
@@ -110,7 +120,7 @@ function capsuleAdHtml() {
   const last = S.lucky.last;
   const btn = ready ? `<button class="btn big adgo" id="luckGo">🎰 Draw today's capsule!</button>`
     : drawn ? `<button class="btn big adgo done" id="luckDone" disabled>✓ Drawn today · next in ${hrs} h</button>`
-    : `<button class="btn big adgo locked" id="luckLock">🔒 Finish 1 activity to unlock</button>`;
+    : `<button class="btn big adgo locked" id="luckLock">🔒 Answer ${LUCKY_NEED - luckyQ()} more question${LUCKY_NEED - luckyQ() === 1 ? "" : "s"} to unlock</button><div class="tprog thick" role="progressbar" aria-valuemin="0" aria-valuemax="${LUCKY_NEED}" aria-valuenow="${luckyQ()}"><i style="width:${Math.round(100 * luckyQ() / LUCKY_NEED)}%"></i></div><span class="small muted">Today: ${luckyQ()} / ${LUCKY_NEED} questions answered</span>`;
   return `<section class="capad lucky" aria-label="Daily Lucky Capsule">
     <i class="adglow" aria-hidden="true"></i><span class="adspark s1" aria-hidden="true">${spk(5, 5, 5, "y")}</span><span class="adspark s2" aria-hidden="true">${spk(5, 5, 4, "k")}</span><span class="adspark s3" aria-hidden="true">${spk(5, 5, 3, "a")}</span>
     <div class="admain">
@@ -118,7 +128,7 @@ function capsuleAdHtml() {
       <div class="adtext">
         <span class="adnew">🎰 DAILY LUCKY CAPSULE</span>
         <h2>Lucky Capsule</h2>
-        <p>One free draw every study day: chestnuts, food, outfits, Streak Freezes, biology cards... and <b>very rare Study Pals</b>!</p>
+        <p>Answer ${LUCKY_NEED} questions in a day to earn one draw: chestnuts, food, outfits, Streak Freezes, biology cards... and <b>very rare Study Pals</b>!</p>
         ${btn}
         ${drawn && last ? `<span class="adlast">Today: <b>${esc(last.title)}</b> (${LUCK_NAMES[last.tier]})</span>` : ""}
       </div></div>
@@ -134,7 +144,7 @@ function capsuleAdHtml() {
 function wireCapsuleAd() {
   const g = id => document.getElementById(id);
   if (g("luckGo")) g("luckGo").onclick = () => { SFX.init(); SFX.tap(); openLucky(); };
-  if (g("luckLock")) g("luckLock").onclick = () => { SFX.init(); SFX.tap(); toast("🔒 Finish one stage, study series, Rush or dictation round today to unlock your draw!"); const ni = nextRoomIndex(); ni === -1 ? goTab("stages") : enterRoom(ROOMS[ni].id); };
+  if (g("luckLock")) g("luckLock").onclick = () => { SFX.init(); SFX.tap(); toast(`🔒 Keep practising! Answer ${LUCKY_NEED - luckyQ()} more question${LUCKY_NEED - luckyQ() === 1 ? "" : "s"} today (stages, study series, Rush, dictation or notebook) to unlock your draw.`); const ni = nextRoomIndex(); ni === -1 ? goTab("stages") : enterRoom(ROOMS[ni].id); };
   if (g("adOpen")) g("adOpen").onclick = () => { SFX.init(); SFX.tap(); openCapsule(); };
   if (g("adAlbum")) g("adAlbum").onclick = () => { SFX.init(); SFX.tap(); openAlbum(); };
 }

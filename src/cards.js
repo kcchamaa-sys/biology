@@ -141,10 +141,10 @@ function cardTile(c, own, full = false) {
 }
 
 /* ----- Odds: five rarities; streaks add luck; pity guarantees Epic+ every 10 capsules and Legendary+ every 40 ----- */
-const PITY_E = 10, PITY_L = 40;
-const streakLuck = () => Math.min(8, .4 * (S.current_streak || 0));
+const PITY_E = 20, PITY_L = 80;
+const streakLuck = () => Math.min(4, .2 * (S.current_streak || 0));
 function oddsNow() {
-  const L_ = streakLuck(), w = { common: 58 - L_, rare: 27, epic: 10 + .6 * L_, legend: 4 + .3 * L_, myth: 1 + .1 * L_ };
+  const L_ = streakLuck(), w = { common: 74 - L_, rare: 20, epic: 5 + .3 * L_, legend: 1 + .15 * L_, myth: .2 + .05 * L_ };
   return w;
 }
 function rollRarity() {
@@ -156,8 +156,8 @@ function rollRarity() {
   return "common";
 }
 function rollCollectible() {
-  const rar = rollRarity(), pool = COLLECTIBLES.filter(c => c.rar === rar), fresh = pool.filter(c => !S.coll.owned[c.id]);
-  const c = pick(fresh.length && Math.random() < .85 ? fresh : pool), k = CARD_ORDER.indexOf(c.rar);
+  const rar = rollRarity(), pool = COLLECTIBLES.filter(c => c.rar === rar);
+  const c = pick(pool), k = CARD_ORDER.indexOf(c.rar); // any card in the rarity can come up again: duplicates are normal
   S.coll.pity = k >= 2 ? 0 : S.coll.pity + 1; S.coll.pityL = k >= 3 ? 0 : S.coll.pityL + 1;
   return c;
 }
