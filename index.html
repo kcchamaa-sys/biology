@@ -496,7 +496,8 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .simbtns[hidden] { display: none; }
 .simbtns .btn { min-height: 44px; width: 100%; padding: 6px 10px; line-height: 1.2; text-align: center; }
 .simgrid > section.card { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
-.simgrid > section.card > * { margin-top: 0; margin-bottom: 0; }
+.simgrid > section.card > * { margin-top: 0; margin-bottom: 0; flex: 0 0 auto; }
+#trSvg svg { max-height: 460px; }
 .simpred { background: #F8F3FF; border-color: #8E5BD6; }
 .simpred .choice.picked { box-shadow: 0 0 0 3px #8E5BD6; }
 .spfb { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
@@ -697,7 +698,7 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .healthtip > span:first-child { font-size: 1.2rem; }
 /* Sim labels stay readable over moving parts: a soft halo behind every diagram label */
 .simsvg text { paint-order: stroke fill; stroke: rgba(255,255,255,.92); stroke-width: 3.5px; stroke-linejoin: round; }
-.simsvg svg.dark text { stroke: rgba(30,24,52,.9); }
+.simsvg svg.tdark text { stroke: rgba(30,24,52,.9); }
 .simsvg text[fill="#fff"], .simsvg text[fill="#FFF"] { stroke: none; }
 /* Phones: wide, label-dense diagrams render bigger and scroll sideways inside their card */
 @media (max-width: 560px) {
@@ -1390,6 +1391,13 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
   .capad.lucky .adtext h2 { font-size: 1.4rem; } .capad.lucky .adtext p { font-size: .82rem; }
   .capad.lucky .adgo { font-size: .95rem; padding: 10px 14px; min-height: 46px; width: 100%; }
 }
+/* Friends: buttons get room to breathe */
+.frmine { gap: 12px; row-gap: 10px; } .frmine .btn { min-height: 44px; padding: 6px 16px; }
+.frcode { padding: 6px 14px; }
+#frBody { display: grid; gap: 14px; }
+.fradd { gap: 14px; align-items: stretch; } .fradd input { min-height: 48px; padding: 6px 14px; } .fradd .btn { min-height: 48px; padding: 6px 20px; flex: none; }
+.frpick { gap: 8px; } .fract { gap: 8px; }
+@media (max-width: 420px) { .frmine .small.muted { flex-basis: 100%; } .fradd { flex-wrap: wrap; } .fradd input { flex: 1 1 100%; } .fradd .btn { flex: 1 1 100%; } }
 </style>
 </head>
 <body>
@@ -1407,7 +1415,6 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
 <div id="journal"></div>
 <div id="toast" class="toast" hidden></div>
 <canvas id="fx" hidden></canvas>
-
 <script>
 /* ============================================================
    1. Characters: original kawaii-style SVG drawings (not official artwork)
@@ -8692,7 +8699,7 @@ function tropismSim(root) {
   });
 }
 function tropSceneSvg(st) {
-  const I = TROP[st.inv], n = I.set.length, W = Math.max(430, 110 + 108 * n), xs = I.set.map((_, i) => 90 + (W - 110) / n * (i + .5)), base = 300, p = st.p, live = st.run || p >= 1;
+  const I = TROP[st.inv], n = I.set.length, W = Math.max(460, 160 + 108 * n), xs = I.set.map((_, i) => 90 + (W - 160) / n * (i + .5)), base = 300, p = st.p, live = st.run || p >= 1;
   let s = `<rect width="${W}" height="340" rx="14" fill="${I.light ? "#F4FBFF" : "#2E2B45"}"/><rect y="${base}" width="${W}" height="40" fill="${I.light ? "#E8D9C6" : "#3D3858"}"/>`;
   if (I.light) {
     s += `<g><circle cx="34" cy="110" r="20" fill="#FFE27A" stroke="#E0B44A" stroke-width="3"/>${[0, 1, 2].map(i => `<g opacity="${live ? .9 : .35}"><path d="M60 ${88 + i * 22} H${W - 20}" stroke="#FFD23F" stroke-width="3" stroke-dasharray="10 9" ${live ? `stroke-dashoffset="${(-st.t * 40) % 19}"` : ""}/></g>`).join("")}
@@ -8711,9 +8718,9 @@ function tropSceneSvg(st) {
     s += `<text x="${xs[i]}" y="${base + 31}" text-anchor="middle" font-size="26" font-weight="900" fill="${I.light ? CO : "#E6E1F5"}">${"ABCD"[i]}</text>`;
     s += `<line x1="${xs[i] - 26}" y1="${base - 150}" x2="${xs[i] + 26}" y2="${base - 150}" stroke="${I.light ? "#C9B8A8" : "#6E6590"}" stroke-width="1.5" stroke-dasharray="4 4"/>`;
   });
-  s += `<text x="${W - 10}" y="${base - 160}" text-anchor="end" font-size="15" font-weight="800" fill="${I.light ? "#9A8A86" : "#9C94BC"}">start height</text>`;
+  s += `<text text-anchor="end" font-size="14" font-weight="800" fill="${I.light ? "#9A8A86" : "#9C94BC"}"><tspan x="${W - 8}" y="${base - 170}">start</tspan><tspan x="${W - 8}" y="${base - 154}">height</tspan></text>`;
   if (st.run || p >= 1) s += `<text x="${W / 2}" y="26" text-anchor="middle" font-size="20" font-weight="900" fill="${I.light ? CO : "#E6E1F5"}">⏱ ${p >= 1 ? "after 2 days" : `day ${(p * 2).toFixed(1)}`}</text>`;
-  return `<svg class="${I.light ? "" : "dark"}" viewBox="0 0 ${W} 340" role="img" aria-label="${esc(I.who)}'s coleoptile experiment">${s}</svg>`;
+  return `<svg class="${I.light ? "" : "tdark"}" viewBox="0 0 ${W} 340" role="img" aria-label="${esc(I.who)}'s coleoptile experiment">${s}</svg>`;
 }
 // Static zoom: the bending zone, light side vs shaded side cells
 function tropWhySvg() {
