@@ -85,3 +85,5 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 - 2026-10-03 (s1science): Island **day/night lighting** (`coTod()` real-clock palette, sun/moon arc, key light via soft-light blend, rim light, lamp bloom, colour grade). Preview any hour with `__coop.tod(hour)`. Reusable for any SVG scene.
 
 - 2026-10-03 (s1science): Island 3.0 FX pattern: parallax via CSS vars on SVG layer groups (`--px/--py` from pointer, tilt, scroll), CSS-only ambient life (clouds, birds, boat, petals, fireflies), film grain overlay, finish moment (speed lines, chromatic edge, island punch, squash residents), plus a saved **Effects on/off** switch (`localStorage coFx`) for slow phones.
+
+- 2026-10-06 (s1science): **SVG scene performance rules**: no live/animated SVG filters (bake wobble into paths instead of animated feTurbulence displacement), no blend modes inside the animated SVG, glow filters only when effects are ON, ambient loops use `steps()` (~12 fps "on twos"), auto-switch effects off when the first 1.6 s runs under 40 fps, and never let a failed background refresh re-render (set the refresh timestamp even on failure; skip render when the payload is unchanged).
