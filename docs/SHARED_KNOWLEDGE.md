@@ -153,3 +153,5 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 - 2026-10-02: Multi-repo setup created; shared knowledge hub added.
 
 - 2026-10-03 (biology): Class sign-in switched on for S4–S6 Biology. `BIO_CONFIG.API_URL` in `src/auth.js` now points at the deployed Apps Script web app (Users tab holds the Biology students and 2 teachers; records go to `Biology Records` / `Biology Progress`).
+
+- 2026-10-06 (biology): Simulation Lab polish: roomy bordered option buttons and aligned action buttons (no clumping), wrapped lab tabs, phototropism diagram now fits phone / iPad / web (no swiping) with wrapping scientist buttons, and a **Predict first** card for every lab (`SIM_P` + `simPredict` in `src/sims.js`; controls unlock after a guess, +2 chestnuts for the first right guess; phototropism keeps its per-set-up predictions with a soft gate on Run). Reusable for the s1science/s3science labs.

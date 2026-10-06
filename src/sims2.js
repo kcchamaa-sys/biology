@@ -226,7 +226,7 @@ function tropismSim(root) {
   root.innerHTML = `<section class="card"><div class="tropline" role="tablist" aria-label="Investigations in time order">${TROP_ORDER.map((k, i) => `${i ? `<span class="tarrow" aria-hidden="true">→</span>` : ""}<button role="tab" data-ti="${k}"><b>${TROP[k].year}</b><span>${TROP[k].who.replace(" (part 2)", " ②")}</span></button>`).join("")}</div>
       <p class="small muted" style="margin:6px 0 0">Each scientist built on the one before. Tap one to open their experiment.</p></section>
     <div class="simgrid wide">
-      <section class="card"><div id="trAim"></div><div id="trSvg" class="simsvg"></div>
+      <section class="card"><div id="trAim"></div><div id="trSvg" class="simsvg nozoom"></div>
         <div id="trPred" class="trpred"></div>
         <div class="row simbtns"><button class="btn" id="trRun">💡 Run the experiment</button><button class="btn plain" id="trReset">↺ Reset</button></div></section>
       <section class="card"><h3 style="margin:0">📋 What it shows</h3><div id="trConc"></div>
@@ -237,7 +237,7 @@ function tropismSim(root) {
     root.querySelectorAll("[data-ti]").forEach(b => b.setAttribute("aria-selected", b.dataset.ti === st.inv ? "true" : "false"));
     root.querySelector("#trAim").innerHTML = `<span class="kicker">${I.year} · ${esc(I.who)}</span><p style="margin:2px 0 6px"><b>Aim:</b> ${esc(I.aim)} ${I.light ? `<span class="pill" style="background:#FFF3B0">☀️ light from the LEFT</span>` : `<span class="pill" style="background:#E6E1F5">🌙 in darkness</span>`}</p>`;
     const shown = st.p >= 1;
-    root.querySelector("#trPred").innerHTML = I.set.map((S, i) => {
+    root.querySelector("#trPred").innerHTML = (shown ? "" : `<p class="trph">🤔 <b>Predict first:</b> what will each set-up do? Tap a card to guess.</p>`) + I.set.map((S, i) => {
       const pr = st.pred[st.inv + i], ok = shown && pr === S.r, R = TROP_RES[S.r];
       return `<button class="trchip ${shown ? (ok ? "right" : "wrong") : ""}" data-pr="${i}" ${shown ? "disabled" : ""} aria-label="Set-up ${"ABCD"[i]}: ${esc(S.n)}. ${shown ? `Result: ${R[1]}` : `Your prediction: ${pr ? TROP_RES[pr][1] : "none yet"}`}">
         <b class="trl">${"ABCD"[i]}</b><span class="trn">${esc(S.n)}</span>
@@ -248,8 +248,12 @@ function tropismSim(root) {
       : `<p class="small muted">Predict each set-up (tap the cards), then press <b>Run</b>. Watch the <b style="color:#E9443F">red dots</b>: they show the growth chemical (auxin).</p>`;
   };
   const runBtn = root.querySelector("#trRun");
-  runBtn.onclick = () => { SFX.click(); st.p = 0; st.run = true; st.t = 0; draw(); };
-  root.querySelector("#trReset").onclick = () => { SFX.tap(); st.p = 0; st.run = false; TROP[st.inv].set.forEach((_, i) => delete st.pred[st.inv + i]); draw(); };
+  runBtn.onclick = () => {
+    const miss = TROP[st.inv].set.filter((_, i) => !st.pred[st.inv + i]).length;
+    if (miss && !st.nudged) { st.nudged = st.inv; SFX.tap(); toast(`🤔 Predict first! ${miss} set-up${miss > 1 ? "s" : ""} still need a guess. Tap the cards, or press Run again to skip.`); root.querySelector("#trPred").classList.add("nudge"); return; }
+    st.nudged = null; SFX.click(); st.p = 0; st.run = true; st.t = 0; draw();
+  };
+  root.querySelector("#trReset").onclick = () => { SFX.tap(); st.nudged = null; st.p = 0; st.run = false; TROP[st.inv].set.forEach((_, i) => delete st.pred[st.inv + i]); draw(); };
   root.querySelectorAll("[data-ti]").forEach(b => b.onclick = () => { SFX.tap(); st.inv = b.dataset.ti; st.p = st.done[st.inv] ? 1 : 0; st.run = false; draw(); });
   wireSimQuiz(root); wireFolds(root); draw();
   simLoop(root, dt => {
@@ -260,12 +264,12 @@ function tropismSim(root) {
   });
 }
 function tropSceneSvg(st) {
-  const I = TROP[st.inv], n = I.set.length, W = 130 * n + 130, xs = I.set.map((_, i) => 130 + i * 130), base = 300, p = st.p, live = st.run || p >= 1;
+  const I = TROP[st.inv], n = I.set.length, W = Math.max(430, 110 + 108 * n), xs = I.set.map((_, i) => 90 + (W - 110) / n * (i + .5)), base = 300, p = st.p, live = st.run || p >= 1;
   let s = `<rect width="${W}" height="340" rx="14" fill="${I.light ? "#F4FBFF" : "#2E2B45"}"/><rect y="${base}" width="${W}" height="40" fill="${I.light ? "#E8D9C6" : "#3D3858"}"/>`;
   if (I.light) {
     s += `<g><circle cx="34" cy="110" r="20" fill="#FFE27A" stroke="#E0B44A" stroke-width="3"/>${[0, 1, 2].map(i => `<g opacity="${live ? .9 : .35}"><path d="M60 ${88 + i * 22} H${W - 20}" stroke="#FFD23F" stroke-width="3" stroke-dasharray="10 9" ${live ? `stroke-dashoffset="${(-st.t * 40) % 19}"` : ""}/></g>`).join("")}
-      <text x="34" y="150" text-anchor="middle" font-size="14" font-weight="900" fill="#B07A10">light</text><text x="${W - 14}" y="76" text-anchor="end" font-size="13" font-weight="800" fill="#7A6A66">shaded side →</text></g>`;
-  } else s += `<g><circle cx="${W - 40}" cy="44" r="16" fill="#FFF1C5"/><circle cx="${W - 32}" cy="38" r="14" fill="#2E2B45"/><text x="20" y="36" font-size="15" font-weight="900" fill="#E6E1F5">In darkness</text></g>`;
+      <text x="34" y="152" text-anchor="middle" font-size="18" font-weight="900" fill="#B07A10">light</text><text x="${W - 14}" y="76" text-anchor="end" font-size="17" font-weight="800" fill="#7A6A66">shaded side →</text></g>`;
+  } else s += `<g><circle cx="${W - 40}" cy="44" r="16" fill="#FFF1C5"/><circle cx="${W - 32}" cy="38" r="14" fill="#2E2B45"/><text x="20" y="36" font-size="19" font-weight="900" fill="#E6E1F5">In darkness</text></g>`;
   I.set.forEach((S, i) => {
     const grows = S.r !== "N", len = 150 + (grows ? 55 * p : 0), bend = (S.r === "L" ? -1 : S.r === "R" ? 1 : 0) * .62 * p;
     const c = coleoSvg(xs[i], base, len, bend, S, p);
@@ -276,11 +280,11 @@ function tropSceneSvg(st) {
       // a plate right under the tip (stop ≥ .97) keeps the chemical up in the tip itself
       const up = stop >= .97 ? 5 + (k % 3) * 2 : 0, tx = (q[0] - q2[0]) / L, ty = (q[1] - q2[1]) / L, oo = up ? off * .5 : off;
       s += `<circle cx="${(q[0] + nx / L * oo + tx * up).toFixed(1)}" cy="${(q[1] + ny / L * oo + ty * up).toFixed(1)}" r="2.6" fill="#E9443F" opacity="${.55 + .45 * Math.sin(k + st.t * 3) ** 2}"/>`; } });
-    s += `<text x="${xs[i]}" y="${base + 26}" text-anchor="middle" font-size="20" font-weight="900" fill="${I.light ? CO : "#E6E1F5"}">${"ABCD"[i]}</text>`;
+    s += `<text x="${xs[i]}" y="${base + 31}" text-anchor="middle" font-size="26" font-weight="900" fill="${I.light ? CO : "#E6E1F5"}">${"ABCD"[i]}</text>`;
     s += `<line x1="${xs[i] - 26}" y1="${base - 150}" x2="${xs[i] + 26}" y2="${base - 150}" stroke="${I.light ? "#C9B8A8" : "#6E6590"}" stroke-width="1.5" stroke-dasharray="4 4"/>`;
   });
-  s += `<text x="${W - 10}" y="${base - 156}" text-anchor="end" font-size="12" font-weight="800" fill="${I.light ? "#9A8A86" : "#9C94BC"}">start height</text>`;
-  if (st.run || p >= 1) s += `<text x="${W / 2}" y="26" text-anchor="middle" font-size="16" font-weight="900" fill="${I.light ? CO : "#E6E1F5"}">⏱ ${p >= 1 ? "after 2 days" : `day ${(p * 2).toFixed(1)}`}</text>`;
+  s += `<text x="${W - 10}" y="${base - 160}" text-anchor="end" font-size="15" font-weight="800" fill="${I.light ? "#9A8A86" : "#9C94BC"}">start height</text>`;
+  if (st.run || p >= 1) s += `<text x="${W / 2}" y="26" text-anchor="middle" font-size="20" font-weight="900" fill="${I.light ? CO : "#E6E1F5"}">⏱ ${p >= 1 ? "after 2 days" : `day ${(p * 2).toFixed(1)}`}</text>`;
   return `<svg class="${I.light ? "" : "dark"}" viewBox="0 0 ${W} 340" role="img" aria-label="${esc(I.who)}'s coleoptile experiment">${s}</svg>`;
 }
 // Static zoom: the bending zone, light side vs shaded side cells
