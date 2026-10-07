@@ -433,7 +433,7 @@ function bpEdge(w, id, on, data) {
 function bpCards(w) {
   const p = w.pal, f = p.fuel, now = p.epochMin, h = w.hist, i = h.g.length - 1, G = f.plasmaGlucoseMgDl;
   const back = (k, m) => h[k][Math.max(0, i - m)];
-  // 1: crossing 120 upwards within 60 min of eating
+  // 1: crossing 140 upwards within 60 min of eating (spec 120; raised so a can of cola, ~133, stays quiet as the fixtures require)
   const lastMeal = w.meals[w.meals.length - 1];
   bpEdge(w, "glucose-rising", G > 140 && lastMeal && now - lastMeal.t <= 60, () => ({ g: Math.round(G), min: now - lastMeal.t }));
   // 2: a fibre-rich meal whose 2-h peak stayed ≤ 120

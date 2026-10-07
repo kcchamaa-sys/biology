@@ -498,6 +498,32 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .simgrid > section.card { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
 .simgrid > section.card > * { margin-top: 0; margin-bottom: 0; flex: 0 0 auto; }
 #trSvg svg { max-height: 460px; }
+/* 🫀 Body Pal */
+.bphead { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
+.bphead > div > b { font-size: 1.15rem; }
+.bpchips { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.bpbody { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 12px; align-items: center; }
+.bpfig svg { width: 120px; height: 120px; overflow: visible; display: block; }
+.bpbars { display: grid; gap: 6px; }
+.bpbar { display: grid; grid-template-columns: 22px 92px minmax(0, 1fr); gap: 6px; align-items: center; font-size: .85rem; }
+.bpacts { display: grid; gap: 12px; }
+.bpacts > div { display: grid; gap: 6px; }
+.bpacts[hidden] { display: none; }
+.bpfoods { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 6px; }
+.bpfood { border: 2px solid #E6DCD2; border-radius: 12px; background: #fff; font: inherit; cursor: pointer; padding: 6px 4px; display: grid; justify-items: center; gap: 2px; min-height: 64px; color: var(--ink); }
+.bpfood span { font-size: 1.6rem; line-height: 1; }
+.bpfood small { font-size: .72rem; font-weight: 700; line-height: 1.15; text-align: center; }
+.bpfood:hover, .bpfood:focus-visible { border-color: #3FA06B; }
+.bpcards { display: grid; gap: 6px; }
+.bpcard { border: 2px solid #E6DCD2; border-radius: 12px; padding: 6px 10px; background: #FFFDF8; }
+.bpcard summary { cursor: pointer; }
+.bpreport { border: 2px dashed #8A86C9; border-radius: 14px; padding: 8px 10px; background: #F6F3FF; display: grid; gap: 6px; }
+.bplos { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 4px; }
+.bpbox { display: inline-block; min-width: 4.6em; letter-spacing: 1px; color: #3FA06B; }
+.bpnum { width: 7em; font: inherit; padding: 8px; border: 2px solid var(--ink); border-radius: 10px; }
+.bpord { min-width: 1.2em; }
+.bplook { margin-bottom: 6px; }
+@media (max-width: 420px) { .bpbody { grid-template-columns: 84px minmax(0, 1fr); } .bpfig svg { width: 84px; height: 84px; } .bpbar { grid-template-columns: 20px 86px minmax(0, 1fr); } }
 .simpred { background: #F8F3FF; border-color: #8E5BD6; }
 .simpred .choice.picked { box-shadow: 0 0 0 3px #8E5BD6; }
 .spfb { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }

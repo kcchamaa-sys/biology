@@ -5,7 +5,7 @@ Part of a **three-repo family** that shares knowledge. Read [`docs/SHARED_KNOWLE
 Siblings: `kcchamaa-sys/biology` (hub), `kcchamaa-sys/s1science`, `kcchamaa-sys/s3science`. If a task would benefit from a sibling and it isn't in the session, attach it with `add_repo`.
 
 ## This repo
-- Hub repo. Sec 4–6 Biology escape rooms. Source is in `src/`; run `python3 tools/build.py` to regenerate `index.html` (never hand-edit it). Checks: `node tools/check_content.js`, `node tools/smoke.js`.
+- Hub repo. Sec 4–6 Biology escape rooms. Source is in `src/`; run `python3 tools/build.py` to regenerate `index.html` (never hand-edit it). Checks: `node tools/check_content.js`, `node tools/check_bodypal.js` (Body Pal engine), `node tools/smoke.js`.
 
 ## Working agreements
 - Keep this repo standalone: no runtime dependency on the siblings.

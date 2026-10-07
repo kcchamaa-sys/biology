@@ -70,7 +70,7 @@ Every topic is open, so students can jump to the one their class is on (the map 
 
 ## 🔬 Simulation Lab (🔬 Lab tab in the bottom bar)
 
-Seven interactive models, each with a 2-question quick check (+3 🌰 the first time). The Lab tabs follow the **topic order of the question mode** (Cell membrane → Osmosis tubing → Breathing → Pupil → Focusing → Hearing → Phototropism).
+Eight interactive models, each with a 2-question quick check (+3 🌰 the first time). The Lab tabs follow the **topic order of the question mode** (Cell membrane → Osmosis tubing → Body Pal → Breathing → Pupil → Focusing → Hearing → Phototropism).
 
 - **🫁 Breathing:** an animated chest (ribs, intercostal muscles, diaphragm, lungs, trachea) with auto or hand-controlled breathing and an exercise mode. A live graph plots **pressure in the lungs against time** (relative to atmospheric, with lung volume as an option), and the steps of inhalation/exhalation update as they happen.
 - **👁️ Pupil reflex:** a light slider (dark room → bright sun, plus a torch flash). The pupil changes size after a short reflex delay; circular vs radial muscles light up, the reflex arc animates, and a bar shows how much light reaches the retina.
@@ -83,6 +83,12 @@ Seven interactive models, each with a 2-question quick check (+3 🌰 the first 
   - **Level–time graph:** keeps the last 3 runs as ghost lines, so "steep = rate" and "levels off = final level" can be compared.
   - **Five picture cards** explain the idea: different water potentials → pores → net water in → rises then slows → control.
   - **Fair-test table:** change one variable (concentration, tubing length, volume of sucrose solution, volume of distilled water, temperature) and see whether it changes the **rate**, the **final level**, or neither.
+- **🫀 Body Pal (Topics 12 & 17, plus sleep):** from `New update direction.md` (the BODYPAL spec). Look after a pal whose body is simulated minute by minute: **fuel** (glucose, insulin, liver glycogen), **water** (losses, sweat, thirst at 1 % of body mass), **sleep** (two-process model, 90-minute cycles, caffeine half-life 5 h, evening screen light) and **teeth** (Stephan curve: plaque pH, the critical pH 5.5, saliva, fluoride).
+  - **Picture-first controls:** tap a food or drink (½ / 1 / 2 portions, gulp or sip slowly), walk / jog / sprint, brush, screens on/off, go to bed with or without an alarm; move time on by 15 min, 1 h or 3 h, or ▶ Play (one hour per second).
+  - **Inside your pal:** traces of glucose, plaque pH, sleep pressure (with the sleep gate and wake line), sleep stages, water deficit and caffeine, with little icons for what happened.
+  - **15 Why cards** appear when something worth explaining happens (glucose rising, insulin at work, the dip, sipping keeps the acid going, caffeine still here, short night, brush before bed…), each quoting the pal's own numbers. A **sleep report** follows every night.
+  - **Questions from your pal's own day** (last 48 h): read-the-trace, "what if" re-runs (the engine replays the day with one change), why-did-that-happen, order-the-steps and true-or-false claims checked against the sim. How many you get depends on the pal's **focus** (sleep, glucose, water). A Leitner learner tracks 22 learning objectives (📚 What Body Pal teaches).
+  - Deterministic engine (`src/bodypal_engine.js`, no DOM); the save is just the action log (`S.bodypal`), replayed on load. Science notes and tuning: `docs/bodypal_science_notes.md`. Checks: `node tools/check_bodypal.js`.
 - **🌱 Phototropism (Topic 16):** the five classic coleoptile investigations on a timeline (Darwin 1880, Boysen-Jensen 1913 ×2, Paál 1919, Went 1926).
   - **Predict first:** students tap each set-up (A–D) to predict "bends left / grows straight / bends right / no growth".
   - **Run:** the light shines from the left (or the scene goes dark), the coleoptiles grow and bend over "2 days", and **red dots show auxin** flowing down (and getting stopped by mica). Predictions are marked ✅/❌.
