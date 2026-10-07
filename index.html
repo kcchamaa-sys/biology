@@ -485,6 +485,33 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .studybar i { display: block; height: 100%; background: linear-gradient(90deg, #B9F3C9, #7CC47A); transition: width .4s; }
 .chk { display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; } .chk input { flex: 0 0 auto; width: 18px; height: 18px; }
 .simbtns { gap: 6px; } .simbtns .btn { min-height: 38px; padding: 4px 10px; font-size: .88rem; }
+/* Lab layout v2: roomy option buttons, wrapped tabs, aligned action buttons, predict-first card */
+.slottabs { flex-wrap: wrap; overflow: visible; gap: 8px; }
+.simseg { display: flex; flex-wrap: wrap; gap: 8px; background: none; padding: 0; width: 100%; }
+.simseg button { flex: 1 1 auto; min-height: 44px; padding: 8px 14px; background: #fff; border: 2px solid #E6DCD2; border-radius: 12px; text-align: center; line-height: 1.2; }
+.simseg button[aria-checked="true"] { background: #E6F8EC; border-color: #3FA06B; box-shadow: 0 0 0 2px #3FA06B; }
+.simctl { gap: 14px; } .simctl > div { display: grid; gap: 6px; } .simctl > div > b { min-width: 0; }
+.diaopts { gap: 14px; }
+.simbtns { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 8px; }
+.simbtns[hidden] { display: none; }
+.simbtns .btn { min-height: 44px; width: 100%; padding: 6px 10px; line-height: 1.2; text-align: center; }
+.simgrid > section.card { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.simgrid > section.card > * { margin-top: 0; margin-bottom: 0; flex: 0 0 auto; }
+#trSvg svg { max-height: 460px; }
+.simpred { background: #F8F3FF; border-color: #8E5BD6; }
+.simpred .choice.picked { box-shadow: 0 0 0 3px #8E5BD6; }
+.spfb { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+.spfb .btn { min-height: 44px; }
+.simlocked { opacity: .4; filter: grayscale(.5); }
+.tropline { flex-wrap: wrap; overflow: visible; gap: 6px; }
+.trph { grid-column: 1 / -1; margin: 0; font-size: .92rem; }
+.trpred.nudge .trchip { animation: trnudge .5s ease-in-out 2; border-color: #8E5BD6; }
+@keyframes trnudge { 50% { transform: scale(1.04); } }
+@media (max-width: 640px) {
+  .tropline { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); }
+  .tarrow { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .trpred.nudge .trchip { animation: none; } }
 /* Anti-guessing */
 .jam { border: var(--line); border-radius: 16px; background: #2B2433; color: #fff; padding: 12px; display: grid; gap: 6px; text-align: center; }
 .jam .jt { color: var(--led); font-weight: 800; font-size: 1.6rem; font-variant-numeric: tabular-nums; text-shadow: 0 0 8px rgba(255,107,107,.8); }
@@ -671,7 +698,7 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .healthtip > span:first-child { font-size: 1.2rem; }
 /* Sim labels stay readable over moving parts: a soft halo behind every diagram label */
 .simsvg text { paint-order: stroke fill; stroke: rgba(255,255,255,.92); stroke-width: 3.5px; stroke-linejoin: round; }
-.simsvg svg.dark text { stroke: rgba(30,24,52,.9); }
+.simsvg svg.tdark text { stroke: rgba(30,24,52,.9); }
 .simsvg text[fill="#fff"], .simsvg text[fill="#FFF"] { stroke: none; }
 /* Phones: wide, label-dense diagrams render bigger and scroll sideways inside their card */
 @media (max-width: 560px) {
@@ -1364,6 +1391,22 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
   .capad.lucky .adtext h2 { font-size: 1.4rem; } .capad.lucky .adtext p { font-size: .82rem; }
   .capad.lucky .adgo { font-size: .95rem; padding: 10px 14px; min-height: 46px; width: 100%; }
 }
+/* Friends: buttons get room to breathe */
+.frmine { gap: 12px; row-gap: 10px; } .frmine .btn { min-height: 44px; padding: 6px 16px; }
+.frcode { padding: 6px 14px; }
+#frBody { display: grid; gap: 14px; }
+.fradd { gap: 14px; align-items: stretch; } .fradd input { min-height: 48px; padding: 6px 14px; } .fradd .btn { min-height: 48px; padding: 6px 20px; flex: none; }
+.frpick { gap: 8px; } .fract { gap: 8px; }
+@media (max-width: 420px) { .frmine .small.muted { flex-basis: 100%; } .fradd { flex-wrap: wrap; } .fradd input { flex: 1 1 100%; } .fradd .btn { flex: 1 1 100%; } }
+/* Lab spacing v3: room between every section */
+#simBody { display: grid; gap: 24px; }
+.simgrid { gap: 24px; }
+.simgrid > section.card { gap: 18px; }
+.simhead { margin-bottom: 8px; }
+.simpred .choices { margin: 4px 0; }
+.simq .choices { margin: 8px 0; } .simqcard .simq + .simq { margin-top: 18px; }
+.simctl { gap: 18px; } .simbtns { gap: 10px; }
+.musc { gap: 10px; margin: 10px 0; } .lensres { margin: 12px 0; }
 </style>
 </head>
 <body>
@@ -1381,7 +1424,6 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
 <div id="journal"></div>
 <div id="toast" class="toast" hidden></div>
 <canvas id="fx" hidden></canvas>
-
 <script>
 /* ============================================================
    1. Characters: original kawaii-style SVG drawings (not official artwork)
@@ -7822,6 +7864,7 @@ function renderSims(tab) {
     <div id="simBody"></div>`;
   $app.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { SFX.tap(); renderSims(b.dataset.sim); });
   ({ lung: lungSim, pupil: pupilSim, lens: lensSim, ear: earSim, membrane: membraneSim, dialysis: dialysisSim, tropism: tropismSim })[simTab](document.getElementById("simBody"));
+  simPredict(document.getElementById("simBody"), simTab);
   wireFolds($app);
   // Phones: wide diagrams scroll inside their card; start them centred on the interesting middle
   setTimeout(() => $app.querySelectorAll(".simsvg:not(.nozoom)").forEach(e => { if (e.scrollWidth > e.clientWidth) e.scrollLeft = (e.scrollWidth - e.clientWidth) / 2; }), 120);
@@ -7861,6 +7904,53 @@ function wireSimQuiz(root) {
       const first = !S.simq[id + i]; S.simq[id + i] = 1; if (first) { S.coins += 3; S.stats.correct += 1; save(true); renderTools(); }
       fb.innerHTML = `✅ ${esc(why)}${first ? " <b>+3 🌰</b>" : ""}`;
     } else { SFX.wrong(); b.classList.add("wrong"); b.disabled = true; fb.innerHTML = "Not quite. Watch the simulation again and think! 🌱"; }
+  });
+}
+
+/* Predict first: students guess before they run each simulation (the Phototropism lab has its own per-set-up predictions).
+   A wrong guess costs nothing; the first right guess in a lab earns +2 🌰. Controls unlock once a guess is made (or Skip is pressed). */
+const SIM_P = {
+  membrane: ["You turn the temperature up to 65 °C. What do you think happens to the cell membrane?",
+    ["It leaks, because heat denatures the membrane proteins", "It gets stronger, so fewer substances can cross it", "Nothing changes, because membranes are not affected by heat", "It closes completely, so nothing at all can cross it"],
+    "Too much heat denatures the membrane proteins and disturbs the phospholipids, so the membrane leaks.", "slide the temperature and tap the particle buttons."],
+  dialysis: ["Dialysis tubing holds 20% sucrose and sits in a beaker of distilled water. What happens to the liquid level in the tubing after 30 minutes?",
+    ["The level rises, because water moves into the tubing by osmosis", "The level falls, because sucrose moves out into the beaker", "The level stays the same, because both sides are balanced", "The level rises first, then falls back to where it started"],
+    "Water moves from the higher water potential (beaker) into the lower water potential (sucrose) through the pores. Sucrose is too big to leave, so the level rises.", "press ▶ Start."],
+  lung: ["You tick 🏃 Exercise. What will happen to the lung-pressure graph?",
+    ["Bigger and faster pressure swings: deeper, quicker breaths", "Smaller and slower pressure swings: shallower breaths", "No change, because breathing is not affected by exercise", "The graph becomes a flat line, because the lungs stop moving"],
+    "Exercise needs more oxygen, so we breathe deeper and faster. The lung pressure changes more and more often.", "tick 🏃 Exercise and watch the graph."],
+  pupil: ["You move from a dark room into bright sun. What will the pupil do?",
+    ["It gets smaller, because the circular muscles contract", "It gets smaller, because the radial muscles contract", "It gets bigger, because the circular muscles contract", "It stays the same size, because the iris cannot move"],
+    "In bright light the circular muscles contract (the radial muscles relax), so the pupil gets smaller and protects the retina.", "move the light slider or tap Dark room / Bright sun."],
+  lens: ["A short-sighted eye with no glasses looks at a distant tree. Where do the light rays meet?",
+    ["In front of the retina, so the tree looks blurred", "Behind the retina, so the tree looks blurred", "Exactly on the retina, so the tree looks sharp", "On the lens itself, so no image forms at all"],
+    "A short-sighted eye focuses too strongly, so the rays meet in front of the retina. A concave lens spreads them out first and fixes this.", "set Eye to Short sight, then try the glasses."],
+  ear: ["You tick 🎧 Hearing damage and slide the pitch up to 15 kHz (a high ringtone). Can the person hear it?",
+    ["No: the hair cells for high pitches are damaged and do not regrow", "Yes: the sound is simply louder, so it is always heard", "Yes: the ear drum repairs itself, so every pitch is heard", "No: the whole ear stops working, so nothing is heard"],
+    "Loud noise damages the hair cells in the cochlea, usually the ones for high pitches first. Hair cells do not grow back.", "tick Hearing damage and slide the pitch."]
+};
+function simPredict(root, id) {
+  const P = SIM_P[id]; if (!P) return;
+  const [q, ch, why, tryIt] = P, order = shuffle(ch.map((_, k) => k)); let picked = null;
+  const card = document.createElement("section"); card.className = "card simpred";
+  card.innerHTML = `<span class="kicker">🤔 Predict first</span><p style="margin:2px 0 8px"><b>${esc(q)}</b></p>
+    <div class="choices">${order.map((k, n) => `<button class="choice" data-sp="${k}"><b>${"ABCD"[n]}</b><span>${esc(ch[k])}</span></button>`).join("")}</div>
+    <div class="spfb small" aria-live="polite"><span class="muted">Pick your best guess to unlock the simulation.</span><button class="btn plain" id="spSkip">Skip</button></div>`;
+  root.insertBefore(card, root.firstChild);
+  const lock = on => root.querySelectorAll(".simgrid, .simqcard").forEach(e => { e.inert = on; e.classList.toggle("simlocked", on); });
+  lock(true);
+  const fb = card.querySelector(".spfb");
+  card.querySelector("#spSkip").onclick = () => { SFX.tap(); lock(false); card.remove(); };
+  card.querySelectorAll("[data-sp]").forEach(b => b.onclick = () => {
+    SFX.tap(); picked = Number(b.dataset.sp); lock(false); b.classList.add("picked");
+    card.querySelectorAll("[data-sp]").forEach(x => x.disabled = true);
+    fb.innerHTML = `<span>🤔 Guess saved. Now ${esc(tryIt)} Then compare:</span><button class="btn" id="spCheck">🔍 Check my prediction</button>`;
+    fb.querySelector("#spCheck").onclick = () => {
+      const ok = picked === 0; S.simp = S.simp || {}; const first = ok && !S.simp[id];
+      card.querySelectorAll("[data-sp]").forEach(x => { x.classList.remove("picked"); if (Number(x.dataset.sp) === 0) x.classList.add("right"); else if (Number(x.dataset.sp) === picked) x.classList.add("wrong"); });
+      if (first) { S.simp[id] = 1; S.coins += 2; save(true); renderTools(); SFX.right(); } else ok ? SFX.right() : SFX.wrong();
+      fb.innerHTML = `<p class="lensres ${ok ? "ok" : "no"}" style="margin:0;width:100%">${ok ? "✅ Your prediction was right!" + (first ? " <b>+2 🌰</b>" : "") : "❌ Not this time, and that's how we learn."} <span style="font-weight:600">${esc(why)}</span></p>`;
+    };
   });
 }
 
@@ -8580,7 +8670,7 @@ function tropismSim(root) {
   root.innerHTML = `<section class="card"><div class="tropline" role="tablist" aria-label="Investigations in time order">${TROP_ORDER.map((k, i) => `${i ? `<span class="tarrow" aria-hidden="true">→</span>` : ""}<button role="tab" data-ti="${k}"><b>${TROP[k].year}</b><span>${TROP[k].who.replace(" (part 2)", " ②")}</span></button>`).join("")}</div>
       <p class="small muted" style="margin:6px 0 0">Each scientist built on the one before. Tap one to open their experiment.</p></section>
     <div class="simgrid wide">
-      <section class="card"><div id="trAim"></div><div id="trSvg" class="simsvg"></div>
+      <section class="card"><div id="trAim"></div><div id="trSvg" class="simsvg nozoom"></div>
         <div id="trPred" class="trpred"></div>
         <div class="row simbtns"><button class="btn" id="trRun">💡 Run the experiment</button><button class="btn plain" id="trReset">↺ Reset</button></div></section>
       <section class="card"><h3 style="margin:0">📋 What it shows</h3><div id="trConc"></div>
@@ -8591,7 +8681,7 @@ function tropismSim(root) {
     root.querySelectorAll("[data-ti]").forEach(b => b.setAttribute("aria-selected", b.dataset.ti === st.inv ? "true" : "false"));
     root.querySelector("#trAim").innerHTML = `<span class="kicker">${I.year} · ${esc(I.who)}</span><p style="margin:2px 0 6px"><b>Aim:</b> ${esc(I.aim)} ${I.light ? `<span class="pill" style="background:#FFF3B0">☀️ light from the LEFT</span>` : `<span class="pill" style="background:#E6E1F5">🌙 in darkness</span>`}</p>`;
     const shown = st.p >= 1;
-    root.querySelector("#trPred").innerHTML = I.set.map((S, i) => {
+    root.querySelector("#trPred").innerHTML = (shown ? "" : `<p class="trph">🤔 <b>Predict first:</b> what will each set-up do? Tap a card to guess.</p>`) + I.set.map((S, i) => {
       const pr = st.pred[st.inv + i], ok = shown && pr === S.r, R = TROP_RES[S.r];
       return `<button class="trchip ${shown ? (ok ? "right" : "wrong") : ""}" data-pr="${i}" ${shown ? "disabled" : ""} aria-label="Set-up ${"ABCD"[i]}: ${esc(S.n)}. ${shown ? `Result: ${R[1]}` : `Your prediction: ${pr ? TROP_RES[pr][1] : "none yet"}`}">
         <b class="trl">${"ABCD"[i]}</b><span class="trn">${esc(S.n)}</span>
@@ -8602,8 +8692,12 @@ function tropismSim(root) {
       : `<p class="small muted">Predict each set-up (tap the cards), then press <b>Run</b>. Watch the <b style="color:#E9443F">red dots</b>: they show the growth chemical (auxin).</p>`;
   };
   const runBtn = root.querySelector("#trRun");
-  runBtn.onclick = () => { SFX.click(); st.p = 0; st.run = true; st.t = 0; draw(); };
-  root.querySelector("#trReset").onclick = () => { SFX.tap(); st.p = 0; st.run = false; TROP[st.inv].set.forEach((_, i) => delete st.pred[st.inv + i]); draw(); };
+  runBtn.onclick = () => {
+    const miss = TROP[st.inv].set.filter((_, i) => !st.pred[st.inv + i]).length;
+    if (miss && !st.nudged) { st.nudged = st.inv; SFX.tap(); toast(`🤔 Predict first! ${miss} set-up${miss > 1 ? "s" : ""} still need a guess. Tap the cards, or press Run again to skip.`); root.querySelector("#trPred").classList.add("nudge"); return; }
+    st.nudged = null; SFX.click(); st.p = 0; st.run = true; st.t = 0; draw();
+  };
+  root.querySelector("#trReset").onclick = () => { SFX.tap(); st.nudged = null; st.p = 0; st.run = false; TROP[st.inv].set.forEach((_, i) => delete st.pred[st.inv + i]); draw(); };
   root.querySelectorAll("[data-ti]").forEach(b => b.onclick = () => { SFX.tap(); st.inv = b.dataset.ti; st.p = st.done[st.inv] ? 1 : 0; st.run = false; draw(); });
   wireSimQuiz(root); wireFolds(root); draw();
   simLoop(root, dt => {
@@ -8614,12 +8708,12 @@ function tropismSim(root) {
   });
 }
 function tropSceneSvg(st) {
-  const I = TROP[st.inv], n = I.set.length, W = 130 * n + 130, xs = I.set.map((_, i) => 130 + i * 130), base = 300, p = st.p, live = st.run || p >= 1;
+  const I = TROP[st.inv], n = I.set.length, W = Math.max(460, 160 + 108 * n), xs = I.set.map((_, i) => 90 + (W - 160) / n * (i + .5)), base = 300, p = st.p, live = st.run || p >= 1;
   let s = `<rect width="${W}" height="340" rx="14" fill="${I.light ? "#F4FBFF" : "#2E2B45"}"/><rect y="${base}" width="${W}" height="40" fill="${I.light ? "#E8D9C6" : "#3D3858"}"/>`;
   if (I.light) {
     s += `<g><circle cx="34" cy="110" r="20" fill="#FFE27A" stroke="#E0B44A" stroke-width="3"/>${[0, 1, 2].map(i => `<g opacity="${live ? .9 : .35}"><path d="M60 ${88 + i * 22} H${W - 20}" stroke="#FFD23F" stroke-width="3" stroke-dasharray="10 9" ${live ? `stroke-dashoffset="${(-st.t * 40) % 19}"` : ""}/></g>`).join("")}
-      <text x="34" y="150" text-anchor="middle" font-size="14" font-weight="900" fill="#B07A10">light</text><text x="${W - 14}" y="76" text-anchor="end" font-size="13" font-weight="800" fill="#7A6A66">shaded side →</text></g>`;
-  } else s += `<g><circle cx="${W - 40}" cy="44" r="16" fill="#FFF1C5"/><circle cx="${W - 32}" cy="38" r="14" fill="#2E2B45"/><text x="20" y="36" font-size="15" font-weight="900" fill="#E6E1F5">In darkness</text></g>`;
+      <text x="34" y="152" text-anchor="middle" font-size="18" font-weight="900" fill="#B07A10">light</text><text x="${W - 14}" y="76" text-anchor="end" font-size="17" font-weight="800" fill="#7A6A66">shaded side →</text></g>`;
+  } else s += `<g><circle cx="${W - 40}" cy="44" r="16" fill="#FFF1C5"/><circle cx="${W - 32}" cy="38" r="14" fill="#2E2B45"/><text x="20" y="36" font-size="19" font-weight="900" fill="#E6E1F5">In darkness</text></g>`;
   I.set.forEach((S, i) => {
     const grows = S.r !== "N", len = 150 + (grows ? 55 * p : 0), bend = (S.r === "L" ? -1 : S.r === "R" ? 1 : 0) * .62 * p;
     const c = coleoSvg(xs[i], base, len, bend, S, p);
@@ -8630,12 +8724,12 @@ function tropSceneSvg(st) {
       // a plate right under the tip (stop ≥ .97) keeps the chemical up in the tip itself
       const up = stop >= .97 ? 5 + (k % 3) * 2 : 0, tx = (q[0] - q2[0]) / L, ty = (q[1] - q2[1]) / L, oo = up ? off * .5 : off;
       s += `<circle cx="${(q[0] + nx / L * oo + tx * up).toFixed(1)}" cy="${(q[1] + ny / L * oo + ty * up).toFixed(1)}" r="2.6" fill="#E9443F" opacity="${.55 + .45 * Math.sin(k + st.t * 3) ** 2}"/>`; } });
-    s += `<text x="${xs[i]}" y="${base + 26}" text-anchor="middle" font-size="20" font-weight="900" fill="${I.light ? CO : "#E6E1F5"}">${"ABCD"[i]}</text>`;
+    s += `<text x="${xs[i]}" y="${base + 31}" text-anchor="middle" font-size="26" font-weight="900" fill="${I.light ? CO : "#E6E1F5"}">${"ABCD"[i]}</text>`;
     s += `<line x1="${xs[i] - 26}" y1="${base - 150}" x2="${xs[i] + 26}" y2="${base - 150}" stroke="${I.light ? "#C9B8A8" : "#6E6590"}" stroke-width="1.5" stroke-dasharray="4 4"/>`;
   });
-  s += `<text x="${W - 10}" y="${base - 156}" text-anchor="end" font-size="12" font-weight="800" fill="${I.light ? "#9A8A86" : "#9C94BC"}">start height</text>`;
-  if (st.run || p >= 1) s += `<text x="${W / 2}" y="26" text-anchor="middle" font-size="16" font-weight="900" fill="${I.light ? CO : "#E6E1F5"}">⏱ ${p >= 1 ? "after 2 days" : `day ${(p * 2).toFixed(1)}`}</text>`;
-  return `<svg class="${I.light ? "" : "dark"}" viewBox="0 0 ${W} 340" role="img" aria-label="${esc(I.who)}'s coleoptile experiment">${s}</svg>`;
+  s += `<text text-anchor="end" font-size="14" font-weight="800" fill="${I.light ? "#9A8A86" : "#9C94BC"}"><tspan x="${W - 8}" y="${base - 170}">start</tspan><tspan x="${W - 8}" y="${base - 154}">height</tspan></text>`;
+  if (st.run || p >= 1) s += `<text x="${W / 2}" y="26" text-anchor="middle" font-size="20" font-weight="900" fill="${I.light ? CO : "#E6E1F5"}">⏱ ${p >= 1 ? "after 2 days" : `day ${(p * 2).toFixed(1)}`}</text>`;
+  return `<svg class="${I.light ? "" : "tdark"}" viewBox="0 0 ${W} 340" role="img" aria-label="${esc(I.who)}'s coleoptile experiment">${s}</svg>`;
 }
 // Static zoom: the bending zone, light side vs shaded side cells
 function tropWhySvg() {
@@ -9449,7 +9543,6 @@ function markStudied() {
   S.study_days = S.study_days.filter(d => dayNum(t) - dayNum(d) < 14).concat(t);
   const n = S.current_streak, sc = streakCapsuleFor(n), after = [];
   if (sc) { S.coll.pending += sc; after.push(() => toast(`🎁 Streak reward: +${sc} capsule${sc > 1 ? "s" : ""} for day ${n}!`)); }
-  if (S.lucky && S.lucky.day !== t) after.push(() => setTimeout(() => toast("🎰 Your daily Lucky Capsule is unlocked! Draw it on 🏠 Home."), sc ? 2600 : 0));
   // The full-screen streak ceremony plays once, after the result screen has appeared.
   setTimeout(() => streakCeremony(n, prev, after), 900);
   return true;
@@ -9596,7 +9689,7 @@ const answerCoins = (pid, firstTry) => !firstTry ? 0 : Math.round((S.mastered_pu
 /* ----- One hook for every finished activity: streak, mission and class records ----- */
 function activityDone(ev) {
   if (!S) return;
-  if (ev.done !== false && (ev.ans || 0) > 0) markStudied();
+  if (ev.done !== false && (ev.ans || 0) > 0) { markStudied(); luckyCount(ev.ans); }
   palGain(ev);
   missionProgress(ev);
   if (ev.mode !== "sim") logRec({ mode: ev.mode, topic: ev.room ? String(TOPICS[ev.room.t].no) : ev.topic || "", stage: ev.room ? `${ev.room.id} ${ev.room.name}` : ev.stage || "",
@@ -10300,10 +10393,10 @@ function cardTile(c, own, full = false) {
 }
 
 /* ----- Odds: five rarities; streaks add luck; pity guarantees Epic+ every 10 capsules and Legendary+ every 40 ----- */
-const PITY_E = 10, PITY_L = 40;
-const streakLuck = () => Math.min(8, .4 * (S.current_streak || 0));
+const PITY_E = 20, PITY_L = 80;
+const streakLuck = () => Math.min(4, .2 * (S.current_streak || 0));
 function oddsNow() {
-  const L_ = streakLuck(), w = { common: 58 - L_, rare: 27, epic: 10 + .6 * L_, legend: 4 + .3 * L_, myth: 1 + .1 * L_ };
+  const L_ = streakLuck(), w = { common: 74 - L_, rare: 20, epic: 5 + .3 * L_, legend: 1 + .15 * L_, myth: .2 + .05 * L_ };
   return w;
 }
 function rollRarity() {
@@ -10315,8 +10408,8 @@ function rollRarity() {
   return "common";
 }
 function rollCollectible() {
-  const rar = rollRarity(), pool = COLLECTIBLES.filter(c => c.rar === rar), fresh = pool.filter(c => !S.coll.owned[c.id]);
-  const c = pick(fresh.length && Math.random() < .85 ? fresh : pool), k = CARD_ORDER.indexOf(c.rar);
+  const rar = rollRarity(), pool = COLLECTIBLES.filter(c => c.rar === rar);
+  const c = pick(pool), k = CARD_ORDER.indexOf(c.rar); // any card in the rarity can come up again: duplicates are normal
   S.coll.pity = k >= 2 ? 0 : S.coll.pity + 1; S.coll.pityL = k >= 3 ? 0 : S.coll.pityL + 1;
   return c;
 }
@@ -10408,7 +10501,8 @@ function machineSvg2() {
 
 /* ============================================================
    5l. 🎰 Daily Lucky Capsule (replaces the daily snack chest).
-   One free draw per study day, unlocked by today's first finished activity, so every draw is also a streak day.
+   One free draw per study day, unlocked by answering LUCKY_NEED questions in finished activities that day (a good session, not just one tap).
+   Odds are tough: Epic or better is guaranteed within LUCKY_PITY draws.
    Luck rises with the streak at 20 / 40 / 60 / 80 / 100 days (same idea as the S1 Science game).
    Epic or better is guaranteed within 10 draws. The capsule can "upgrade" colour before it bursts open.
    Prizes: chestnuts, food for your pal (pantry), Streak Freezes, outfits, biology card capsules,
@@ -10417,12 +10511,21 @@ function machineSvg2() {
 const LUCK_TIERS = ["common", "rare", "epic", "legend", "myth"];
 const LUCK_NAMES = { common: "Common", rare: "Rare", epic: "Epic", legend: "Legendary", myth: "Mythic" };
 // odds (%) by streak level: 0–19, 20–39, 40–59, 60–79, 80–99, 100+ days
-const LUCK_TABLE = [[60, 28, 9, 2.5, .5], [52, 28, 13, 5, 2], [44, 28, 17, 8, 3], [36, 28, 21, 11, 4], [28, 28, 25, 13, 6], [20, 28, 28, 16, 8]];
-const LUCK_PITY = 10;
+const LUCK_TABLE = [[68, 24, 6, 1.7, .3], [62, 26, 8.5, 3, .5], [56, 27, 11, 5, 1], [50, 28, 14, 7, 1], [44, 28, 17, 9, 2], [38, 28, 20, 11, 3]];
+const LUCK_PITY = 15;
+const LUCKY_NEED = 40; // questions answered in finished activities today before the draw unlocks (teachers: change this number)
 const luckLevel = () => Math.min(5, Math.floor((S.current_streak || 0) / 20));
 const luckOdds = () => LUCK_TABLE[luckLevel()];
 const luckyDrawn = () => S.lucky.day === today();
-const luckyReady = () => studiedToday() && !luckyDrawn();
+const luckyQ = () => { const p = S.lucky && S.lucky.prog; return p && p.day === today() ? p.q : 0; };
+const luckyReady = () => luckyQ() >= LUCKY_NEED && !luckyDrawn();
+// Called when an activity finishes: adds its answered questions to today's tally and announces the unlock
+function luckyCount(n) {
+  if (!S || !S.lucky || !(n > 0)) return;
+  const t = today(), p = S.lucky.prog && S.lucky.prog.day === t ? S.lucky.prog : (S.lucky.prog = { day: t, q: 0 }), was = p.q;
+  p.q += Math.round(n);
+  if (was < LUCKY_NEED && p.q >= LUCKY_NEED && !luckyDrawn()) setTimeout(() => toast("🎰 Lucky Capsule unlocked! Draw it on 🏠 Home."), 1800);
+}
 
 function rollLuckyTier() {
   if (S.lucky.pity + 1 >= LUCK_PITY) { const o = luckOdds().slice(2), t = o.reduce((a, b) => a + b, 0); let x = Math.random() * t; for (let i = 0; i < 3; i++) if ((x -= o[i]) < 0) return LUCK_TIERS[i + 2]; return "epic"; }
@@ -10468,7 +10571,7 @@ function prizeArt(p) {
 
 /* ----- The draw: crank → mix → drop → colour upgrades → burst → prize card ----- */
 function openLucky() {
-  if (!luckyReady()) { if (luckyDrawn()) toast("🎰 You've drawn today's capsule. Come back tomorrow!"); else toast("🔒 Finish one activity today to unlock the Lucky Capsule."); return; }
+  if (!luckyReady()) { if (luckyDrawn()) toast("🎰 You've drawn today's capsule. Come back tomorrow!"); else toast(`🔒 Answer ${LUCKY_NEED} questions today to unlock the Lucky Capsule (${luckyQ()}/${LUCKY_NEED}).`); return; }
   const o = luckOdds();
   const box = openModal(`<span class="kicker">🎰 Daily Lucky Capsule</span><h2>Turn the crank!</h2>
     <div class="lstage"><div class="lmach" id="lmach">${machineSvg2()}</div><div class="lcap t-common" id="lcap" hidden><i class="lhalf"></i><i class="lband"></i></div><i class="lrays" id="lrays" hidden></i></div>
@@ -10517,7 +10620,7 @@ function capsuleAdHtml() {
   const last = S.lucky.last;
   const btn = ready ? `<button class="btn big adgo" id="luckGo">🎰 Draw today's capsule!</button>`
     : drawn ? `<button class="btn big adgo done" id="luckDone" disabled>✓ Drawn today · next in ${hrs} h</button>`
-    : `<button class="btn big adgo locked" id="luckLock">🔒 Finish 1 activity to unlock</button>`;
+    : `<button class="btn big adgo locked" id="luckLock">🔒 Answer ${LUCKY_NEED - luckyQ()} more question${LUCKY_NEED - luckyQ() === 1 ? "" : "s"} to unlock</button><div class="tprog thick" role="progressbar" aria-valuemin="0" aria-valuemax="${LUCKY_NEED}" aria-valuenow="${luckyQ()}"><i style="width:${Math.round(100 * luckyQ() / LUCKY_NEED)}%"></i></div><span class="small muted">Today: ${luckyQ()} / ${LUCKY_NEED} questions answered</span>`;
   return `<section class="capad lucky" aria-label="Daily Lucky Capsule">
     <i class="adglow" aria-hidden="true"></i><span class="adspark s1" aria-hidden="true">${spk(5, 5, 5, "y")}</span><span class="adspark s2" aria-hidden="true">${spk(5, 5, 4, "k")}</span><span class="adspark s3" aria-hidden="true">${spk(5, 5, 3, "a")}</span>
     <div class="admain">
@@ -10525,7 +10628,7 @@ function capsuleAdHtml() {
       <div class="adtext">
         <span class="adnew">🎰 DAILY LUCKY CAPSULE</span>
         <h2>Lucky Capsule</h2>
-        <p>One free draw every study day: chestnuts, food, outfits, Streak Freezes, biology cards... and <b>very rare Study Pals</b>!</p>
+        <p>Answer ${LUCKY_NEED} questions in a day to earn one draw: chestnuts, food, outfits, Streak Freezes, biology cards... and <b>very rare Study Pals</b>!</p>
         ${btn}
         ${drawn && last ? `<span class="adlast">Today: <b>${esc(last.title)}</b> (${LUCK_NAMES[last.tier]})</span>` : ""}
       </div></div>
@@ -10541,7 +10644,7 @@ function capsuleAdHtml() {
 function wireCapsuleAd() {
   const g = id => document.getElementById(id);
   if (g("luckGo")) g("luckGo").onclick = () => { SFX.init(); SFX.tap(); openLucky(); };
-  if (g("luckLock")) g("luckLock").onclick = () => { SFX.init(); SFX.tap(); toast("🔒 Finish one stage, study series, Rush or dictation round today to unlock your draw!"); const ni = nextRoomIndex(); ni === -1 ? goTab("stages") : enterRoom(ROOMS[ni].id); };
+  if (g("luckLock")) g("luckLock").onclick = () => { SFX.init(); SFX.tap(); toast(`🔒 Keep practising! Answer ${LUCKY_NEED - luckyQ()} more question${LUCKY_NEED - luckyQ() === 1 ? "" : "s"} today (stages, study series, Rush, dictation or notebook) to unlock your draw.`); const ni = nextRoomIndex(); ni === -1 ? goTab("stages") : enterRoom(ROOMS[ni].id); };
   if (g("adOpen")) g("adOpen").onclick = () => { SFX.init(); SFX.tap(); openCapsule(); };
   if (g("adAlbum")) g("adAlbum").onclick = () => { SFX.init(); SFX.tap(); openAlbum(); };
 }

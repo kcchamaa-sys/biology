@@ -45,7 +45,6 @@ function markStudied() {
   S.study_days = S.study_days.filter(d => dayNum(t) - dayNum(d) < 14).concat(t);
   const n = S.current_streak, sc = streakCapsuleFor(n), after = [];
   if (sc) { S.coll.pending += sc; after.push(() => toast(`🎁 Streak reward: +${sc} capsule${sc > 1 ? "s" : ""} for day ${n}!`)); }
-  if (S.lucky && S.lucky.day !== t) after.push(() => setTimeout(() => toast("🎰 Your daily Lucky Capsule is unlocked! Draw it on 🏠 Home."), sc ? 2600 : 0));
   // The full-screen streak ceremony plays once, after the result screen has appeared.
   setTimeout(() => streakCeremony(n, prev, after), 900);
   return true;
@@ -192,7 +191,7 @@ const answerCoins = (pid, firstTry) => !firstTry ? 0 : Math.round((S.mastered_pu
 /* ----- One hook for every finished activity: streak, mission and class records ----- */
 function activityDone(ev) {
   if (!S) return;
-  if (ev.done !== false && (ev.ans || 0) > 0) markStudied();
+  if (ev.done !== false && (ev.ans || 0) > 0) { markStudied(); luckyCount(ev.ans); }
   palGain(ev);
   missionProgress(ev);
   if (ev.mode !== "sim") logRec({ mode: ev.mode, topic: ev.room ? String(TOPICS[ev.room.t].no) : ev.topic || "", stage: ev.room ? `${ev.room.id} ${ev.room.name}` : ev.stage || "",

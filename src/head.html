@@ -485,6 +485,33 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .studybar i { display: block; height: 100%; background: linear-gradient(90deg, #B9F3C9, #7CC47A); transition: width .4s; }
 .chk { display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; } .chk input { flex: 0 0 auto; width: 18px; height: 18px; }
 .simbtns { gap: 6px; } .simbtns .btn { min-height: 38px; padding: 4px 10px; font-size: .88rem; }
+/* Lab layout v2: roomy option buttons, wrapped tabs, aligned action buttons, predict-first card */
+.slottabs { flex-wrap: wrap; overflow: visible; gap: 8px; }
+.simseg { display: flex; flex-wrap: wrap; gap: 8px; background: none; padding: 0; width: 100%; }
+.simseg button { flex: 1 1 auto; min-height: 44px; padding: 8px 14px; background: #fff; border: 2px solid #E6DCD2; border-radius: 12px; text-align: center; line-height: 1.2; }
+.simseg button[aria-checked="true"] { background: #E6F8EC; border-color: #3FA06B; box-shadow: 0 0 0 2px #3FA06B; }
+.simctl { gap: 14px; } .simctl > div { display: grid; gap: 6px; } .simctl > div > b { min-width: 0; }
+.diaopts { gap: 14px; }
+.simbtns { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 8px; }
+.simbtns[hidden] { display: none; }
+.simbtns .btn { min-height: 44px; width: 100%; padding: 6px 10px; line-height: 1.2; text-align: center; }
+.simgrid > section.card { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.simgrid > section.card > * { margin-top: 0; margin-bottom: 0; flex: 0 0 auto; }
+#trSvg svg { max-height: 460px; }
+.simpred { background: #F8F3FF; border-color: #8E5BD6; }
+.simpred .choice.picked { box-shadow: 0 0 0 3px #8E5BD6; }
+.spfb { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+.spfb .btn { min-height: 44px; }
+.simlocked { opacity: .4; filter: grayscale(.5); }
+.tropline { flex-wrap: wrap; overflow: visible; gap: 6px; }
+.trph { grid-column: 1 / -1; margin: 0; font-size: .92rem; }
+.trpred.nudge .trchip { animation: trnudge .5s ease-in-out 2; border-color: #8E5BD6; }
+@keyframes trnudge { 50% { transform: scale(1.04); } }
+@media (max-width: 640px) {
+  .tropline { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); }
+  .tarrow { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .trpred.nudge .trchip { animation: none; } }
 /* Anti-guessing */
 .jam { border: var(--line); border-radius: 16px; background: #2B2433; color: #fff; padding: 12px; display: grid; gap: 6px; text-align: center; }
 .jam .jt { color: var(--led); font-weight: 800; font-size: 1.6rem; font-variant-numeric: tabular-nums; text-shadow: 0 0 8px rgba(255,107,107,.8); }
@@ -671,7 +698,7 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .healthtip > span:first-child { font-size: 1.2rem; }
 /* Sim labels stay readable over moving parts: a soft halo behind every diagram label */
 .simsvg text { paint-order: stroke fill; stroke: rgba(255,255,255,.92); stroke-width: 3.5px; stroke-linejoin: round; }
-.simsvg svg.dark text { stroke: rgba(30,24,52,.9); }
+.simsvg svg.tdark text { stroke: rgba(30,24,52,.9); }
 .simsvg text[fill="#fff"], .simsvg text[fill="#FFF"] { stroke: none; }
 /* Phones: wide, label-dense diagrams render bigger and scroll sideways inside their card */
 @media (max-width: 560px) {
@@ -1364,6 +1391,22 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
   .capad.lucky .adtext h2 { font-size: 1.4rem; } .capad.lucky .adtext p { font-size: .82rem; }
   .capad.lucky .adgo { font-size: .95rem; padding: 10px 14px; min-height: 46px; width: 100%; }
 }
+/* Friends: buttons get room to breathe */
+.frmine { gap: 12px; row-gap: 10px; } .frmine .btn { min-height: 44px; padding: 6px 16px; }
+.frcode { padding: 6px 14px; }
+#frBody { display: grid; gap: 14px; }
+.fradd { gap: 14px; align-items: stretch; } .fradd input { min-height: 48px; padding: 6px 14px; } .fradd .btn { min-height: 48px; padding: 6px 20px; flex: none; }
+.frpick { gap: 8px; } .fract { gap: 8px; }
+@media (max-width: 420px) { .frmine .small.muted { flex-basis: 100%; } .fradd { flex-wrap: wrap; } .fradd input { flex: 1 1 100%; } .fradd .btn { flex: 1 1 100%; } }
+/* Lab spacing v3: room between every section */
+#simBody { display: grid; gap: 24px; }
+.simgrid { gap: 24px; }
+.simgrid > section.card { gap: 18px; }
+.simhead { margin-bottom: 8px; }
+.simpred .choices { margin: 4px 0; }
+.simq .choices { margin: 8px 0; } .simqcard .simq + .simq { margin-top: 18px; }
+.simctl { gap: 18px; } .simbtns { gap: 10px; }
+.musc { gap: 10px; margin: 10px 0; } .lensres { margin: 12px 0; }
 </style>
 </head>
 <body>
@@ -1381,4 +1424,3 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
 <div id="journal"></div>
 <div id="toast" class="toast" hidden></div>
 <canvas id="fx" hidden></canvas>
-

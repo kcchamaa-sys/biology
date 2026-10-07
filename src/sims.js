@@ -35,6 +35,7 @@ function renderSims(tab) {
     <div id="simBody"></div>`;
   $app.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { SFX.tap(); renderSims(b.dataset.sim); });
   ({ lung: lungSim, pupil: pupilSim, lens: lensSim, ear: earSim, membrane: membraneSim, dialysis: dialysisSim, tropism: tropismSim })[simTab](document.getElementById("simBody"));
+  simPredict(document.getElementById("simBody"), simTab);
   wireFolds($app);
   // Phones: wide diagrams scroll inside their card; start them centred on the interesting middle
   setTimeout(() => $app.querySelectorAll(".simsvg:not(.nozoom)").forEach(e => { if (e.scrollWidth > e.clientWidth) e.scrollLeft = (e.scrollWidth - e.clientWidth) / 2; }), 120);
@@ -74,6 +75,53 @@ function wireSimQuiz(root) {
       const first = !S.simq[id + i]; S.simq[id + i] = 1; if (first) { S.coins += 3; S.stats.correct += 1; save(true); renderTools(); }
       fb.innerHTML = `✅ ${esc(why)}${first ? " <b>+3 🌰</b>" : ""}`;
     } else { SFX.wrong(); b.classList.add("wrong"); b.disabled = true; fb.innerHTML = "Not quite. Watch the simulation again and think! 🌱"; }
+  });
+}
+
+/* Predict first: students guess before they run each simulation (the Phototropism lab has its own per-set-up predictions).
+   A wrong guess costs nothing; the first right guess in a lab earns +2 🌰. Controls unlock once a guess is made (or Skip is pressed). */
+const SIM_P = {
+  membrane: ["You turn the temperature up to 65 °C. What do you think happens to the cell membrane?",
+    ["It leaks, because heat denatures the membrane proteins", "It gets stronger, so fewer substances can cross it", "Nothing changes, because membranes are not affected by heat", "It closes completely, so nothing at all can cross it"],
+    "Too much heat denatures the membrane proteins and disturbs the phospholipids, so the membrane leaks.", "slide the temperature and tap the particle buttons."],
+  dialysis: ["Dialysis tubing holds 20% sucrose and sits in a beaker of distilled water. What happens to the liquid level in the tubing after 30 minutes?",
+    ["The level rises, because water moves into the tubing by osmosis", "The level falls, because sucrose moves out into the beaker", "The level stays the same, because both sides are balanced", "The level rises first, then falls back to where it started"],
+    "Water moves from the higher water potential (beaker) into the lower water potential (sucrose) through the pores. Sucrose is too big to leave, so the level rises.", "press ▶ Start."],
+  lung: ["You tick 🏃 Exercise. What will happen to the lung-pressure graph?",
+    ["Bigger and faster pressure swings: deeper, quicker breaths", "Smaller and slower pressure swings: shallower breaths", "No change, because breathing is not affected by exercise", "The graph becomes a flat line, because the lungs stop moving"],
+    "Exercise needs more oxygen, so we breathe deeper and faster. The lung pressure changes more and more often.", "tick 🏃 Exercise and watch the graph."],
+  pupil: ["You move from a dark room into bright sun. What will the pupil do?",
+    ["It gets smaller, because the circular muscles contract", "It gets smaller, because the radial muscles contract", "It gets bigger, because the circular muscles contract", "It stays the same size, because the iris cannot move"],
+    "In bright light the circular muscles contract (the radial muscles relax), so the pupil gets smaller and protects the retina.", "move the light slider or tap Dark room / Bright sun."],
+  lens: ["A short-sighted eye with no glasses looks at a distant tree. Where do the light rays meet?",
+    ["In front of the retina, so the tree looks blurred", "Behind the retina, so the tree looks blurred", "Exactly on the retina, so the tree looks sharp", "On the lens itself, so no image forms at all"],
+    "A short-sighted eye focuses too strongly, so the rays meet in front of the retina. A concave lens spreads them out first and fixes this.", "set Eye to Short sight, then try the glasses."],
+  ear: ["You tick 🎧 Hearing damage and slide the pitch up to 15 kHz (a high ringtone). Can the person hear it?",
+    ["No: the hair cells for high pitches are damaged and do not regrow", "Yes: the sound is simply louder, so it is always heard", "Yes: the ear drum repairs itself, so every pitch is heard", "No: the whole ear stops working, so nothing is heard"],
+    "Loud noise damages the hair cells in the cochlea, usually the ones for high pitches first. Hair cells do not grow back.", "tick Hearing damage and slide the pitch."]
+};
+function simPredict(root, id) {
+  const P = SIM_P[id]; if (!P) return;
+  const [q, ch, why, tryIt] = P, order = shuffle(ch.map((_, k) => k)); let picked = null;
+  const card = document.createElement("section"); card.className = "card simpred";
+  card.innerHTML = `<span class="kicker">🤔 Predict first</span><p style="margin:2px 0 8px"><b>${esc(q)}</b></p>
+    <div class="choices">${order.map((k, n) => `<button class="choice" data-sp="${k}"><b>${"ABCD"[n]}</b><span>${esc(ch[k])}</span></button>`).join("")}</div>
+    <div class="spfb small" aria-live="polite"><span class="muted">Pick your best guess to unlock the simulation.</span><button class="btn plain" id="spSkip">Skip</button></div>`;
+  root.insertBefore(card, root.firstChild);
+  const lock = on => root.querySelectorAll(".simgrid, .simqcard").forEach(e => { e.inert = on; e.classList.toggle("simlocked", on); });
+  lock(true);
+  const fb = card.querySelector(".spfb");
+  card.querySelector("#spSkip").onclick = () => { SFX.tap(); lock(false); card.remove(); };
+  card.querySelectorAll("[data-sp]").forEach(b => b.onclick = () => {
+    SFX.tap(); picked = Number(b.dataset.sp); lock(false); b.classList.add("picked");
+    card.querySelectorAll("[data-sp]").forEach(x => x.disabled = true);
+    fb.innerHTML = `<span>🤔 Guess saved. Now ${esc(tryIt)} Then compare:</span><button class="btn" id="spCheck">🔍 Check my prediction</button>`;
+    fb.querySelector("#spCheck").onclick = () => {
+      const ok = picked === 0; S.simp = S.simp || {}; const first = ok && !S.simp[id];
+      card.querySelectorAll("[data-sp]").forEach(x => { x.classList.remove("picked"); if (Number(x.dataset.sp) === 0) x.classList.add("right"); else if (Number(x.dataset.sp) === picked) x.classList.add("wrong"); });
+      if (first) { S.simp[id] = 1; S.coins += 2; save(true); renderTools(); SFX.right(); } else ok ? SFX.right() : SFX.wrong();
+      fb.innerHTML = `<p class="lensres ${ok ? "ok" : "no"}" style="margin:0;width:100%">${ok ? "✅ Your prediction was right!" + (first ? " <b>+2 🌰</b>" : "") : "❌ Not this time, and that's how we learn."} <span style="font-weight:600">${esc(why)}</span></p>`;
+    };
   });
 }
 
