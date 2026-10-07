@@ -341,7 +341,7 @@ The game layers **many** motivational systems (a reviewer may judge whether this
 | Question authoring | Arrays (`[bloom, q, choices(correct first), hint, explain, tip?]`), objects, `KX()` (skill-tagged arrays) and `KH()` (formats + media objects, documented in `src/q_h0.js`) |
 | Save | localStorage (`escapeGame_biology`); 12-character save code / link for moving devices; cloud save for signed-in students |
 | Tests | `tools/check_content.js` (content validation), `tools/smoke.js` (Playwright smoke test, phone + desktop). Several feature regression scripts were written during development but live **outside the repo** (a gap: they should be added to `tools/`) |
-| Build / deploy | `python3 tools/build.py`, then commit, then GitHub Pages (`gh-pages` branch) and the claude.ai artifact |
+| Build / deploy | `python3 tools/build.py`, then commit; pushing to `claude/wonderful-turing-8ehr7a` auto-deploys to GitHub Pages (`gh-pages`) via `.github/workflows/deploy.yml`; the claude.ai artifact is still updated by hand |
 | Docs | `README.md` (feature list; **partly stale**, see below), `docs/LORE.md`, `docs/SHARED_KNOWLEDGE.md` (cross-project log), `server/SETUP.md` |
 
 ### Known documentation inconsistencies (README vs code)
