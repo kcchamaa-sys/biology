@@ -3,6 +3,7 @@
 A cosy kawaii-style biology escape-room adventure for **Secondary 4–6**. It is framed as exploring, not exam drilling, but the content follows the local senior secondary Biology curriculum (compulsory part) closely, so teachers can map it to lessons. English only. One file (`index.html`), no install, no build step for players.
 
 - **Play:** open `index.html` in any browser (or the GitHub Pages link).
+- **Auto-deploy:** every push or merged PR on `claude/wonderful-turing-8ehr7a` rebuilds the game, runs the checks and publishes it to GitHub Pages (`.github/workflows/deploy.yml`). Work on other branches goes live once it is merged.
 - **Session length:** one stage ≈ 15–20 minutes. One stage a day is the whole goal.
 
 ## 19 topics, 60 stages (escape rooms)

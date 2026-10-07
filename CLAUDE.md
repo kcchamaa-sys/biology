@@ -6,6 +6,7 @@ Siblings: `kcchamaa-sys/biology` (hub), `kcchamaa-sys/s1science`, `kcchamaa-sys/
 
 ## This repo
 - Hub repo. Sec 4–6 Biology escape rooms. Source is in `src/`; run `python3 tools/build.py` to regenerate `index.html` (never hand-edit it). Checks: `node tools/check_content.js`, `node tools/check_bodypal.js` (Body Pal engine), `node tools/smoke.js`.
+- Deploy is automatic: pushes to `claude/wonderful-turing-8ehr7a` run `.github/workflows/deploy.yml` (build + checks → `gh-pages`). Don't push to `gh-pages` by hand.
 
 ## Working agreements
 - Keep this repo standalone: no runtime dependency on the siblings.

@@ -1,0 +1,50 @@
+# Auto-deploy: every push to the main branch rebuilds the game and
+# publishes index.html to the gh-pages branch (the live GitHub Pages site).
+name: Deploy game
+
+on:
+  push:
+    branches: [claude/wonderful-turing-8ehr7a]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-gh-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build index.html from src/
+        run: python3 tools/build.py
+
+      - name: Content checks
+        run: node tools/check_content.js
+
+      - name: Body Pal checks
+        run: node tools/check_bodypal.js
+
+      - name: Publish to gh-pages
+        env:
+          SRC_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch --depth=1 origin gh-pages
+          git worktree add /tmp/pages FETCH_HEAD
+          cp index.html /tmp/pages/index.html
+          touch /tmp/pages/.nojekyll
+          cd /tmp/pages
+          git add index.html .nojekyll
+          if git diff --cached --quiet; then
+            echo "Live site already up to date."
+            exit 0
+          fi
+          git commit -m "Deploy: ${SRC_SHA:0:7} (auto)"
+          git push origin HEAD:gh-pages
