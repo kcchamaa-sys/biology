@@ -220,7 +220,7 @@ These check every stage for: ≥15 questions; Bloom spread; 4 unique options; a 
 
 ### 4.5 Simulation Lab (7 interactive models)
 
-Cell membrane (fluid mosaic, transport routes, temperature) · Osmosis with dialysis tubing (zoom, level–time graph with ghost runs, fair-test table) · Breathing (chest model + pressure graph) · Pupil reflex · Focusing and glasses (paraxial ray tracing, short/long sight, lenses) · Hearing (ear, cochlea map, hearing damage) · Phototropism (5 historical coleoptile experiments with predict → run → explain). Each has a 2-question quick check.
+Cell membrane (fluid mosaic, transport routes, temperature) · Osmosis with dialysis tubing (zoom, level–time graph with ghost runs, fair-test table) · Breathing (chest model + pressure graph) · Pupil reflex · Focusing and glasses (paraxial ray tracing, short/long sight, lenses) · Hearing (ear, cochlea map, hearing damage) · Phototropism (5 historical coleoptile experiments with predict → run → explain). Each now opens with a **"Predict first" card**: controls unlock after a guess, and the first right prediction gives +2 🌰. Each also has a 2-question quick check.
 
 ### 4.6 Retention, progression and reward systems
 
@@ -233,8 +233,8 @@ The game layers **many** motivational systems (a reviewer may judge whether this
 | Streak-risk reminder | A Home banner until today's study is done; turns red in the last 3 hours |
 | 📅 Daily mission | One story mission a day targeting the student's weakest area; +40 🌰 + a capsule |
 | 🌰 Chestnuts (currency) | +3 per first-try correct answer; stage clears +30 (boss +50); streak multiplier up to ×1.5; spent on outfits, power-ups, freezes, pals and food |
-| 🎰 Daily Lucky Capsule | A free gacha draw per study day; odds improve with the streak (mythic 0.5% → 8%); epic or better guaranteed within 10 draws |
-| 🃏 Capsule Lab cards | 40 biology trading cards in 5 rarities; pity every 10 / 40 |
+| 🎰 Daily Lucky Capsule | One gacha draw per day, unlocked only after **40 questions answered** in finished activities that day (`LUCKY_NEED`, teacher-adjustable; progress bar on Home). Odds improve with the streak in 6 bands (mythic 0.3% → 3%; legendary 1.7% → 11%); epic or better guaranteed within 15 draws |
+| 🃏 Capsule Lab cards | 40 biology trading cards in 5 rarities. Base odds Common 74 / Rare 20 / Epic 5 / Legendary 1 / Mythic 0.2%; streak luck up to +4%; pity: Epic+ every 20, Legendary+ every 80; **duplicates are normal** (converted to 🌰) |
 | 🐾 Study Pals (27 + 3 capsule-only) | Tamagotchi-like care (energy, happiness, food with nutrition cards, a sugar-crash mechanic), XP, evolution (Baby → Junior → Master), rarity tiers, a perk per pal |
 | 🦜 Pets (25) | Real animals (5 Hong Kong species) with biology stories; unlocked by goals |
 | 👗 Dress up | 35 items in 7 slots, including trend/meme items and Hong Kong items |
@@ -355,6 +355,7 @@ The game layers **many** motivational systems (a reviewer may judge whether this
 
 ## 9. Recent change history (most recent first)
 
+0. **(Another session, same day) Harder rewards and Lab polish:** the Lucky Capsule now needs 40 questions a day; card odds are rarer with more duplicates; the Lab has roomier spacing, a phototropism layout that fits every screen, and "Predict first" in every lab.
 1. **600 MCQs rebalanced** so the correct option isn't reliably the longest (80% → 59% longest; 3% → 20% shortest).
 2. **Multimedia Hard questions:** media engine, about 150 media items; the "mark like an examiner" format removed; format labels reworded to avoid exam terms.
 3. **240 Hard questions** in exam-board styles (statement combos, two-statement reasoning, data tables, comparisons, novel contexts, design flaws, chain reactions), each with per-option trap notes.
@@ -367,7 +368,7 @@ The game layers **many** motivational systems (a reviewer may judge whether this
 
 1. Is a **12-question exercise** the right length? Is Concept 5 : Data 2 : Investigate 2 : See 2 the right mix per level?
 2. Should Bloom labels be replaced or validated by **empirical difficulty** from the activity log?
-3. Which reward systems should be **cut or merged** to reduce cognitive load (chestnuts, XP, capsules, cards, trophies, pals, pets, outfits, freezes, missions)?
+3. Rewards were recently made **harder to earn** (40-question capsule gate, rarer cards). Is this the right balance between effort and reward? Which reward systems should be **cut or merged** to reduce cognitive load (chestnuts, XP, capsules, cards, trophies, pals, pets, outfits, freezes, missions)?
 4. Is the **Escape-mode penalty system** (jams, slip-backs, fines) motivating or anxiety-inducing for 15–17-year-olds? Should it be optional?
 5. How to raise **"See it"** coverage cheaply (e.g. a generic "tap the labelled part" tool on existing diagrams)?
 6. How to reduce **reading load** for ESL students in Hard items without lowering the cognitive demand (e.g. a key-word glossary on tap, audio read-aloud, shorter cards)?
