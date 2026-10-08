@@ -66,7 +66,7 @@ function greeting() {
 }
 function greeting0() {
   if (streakNote) return esc(streakNote);
-  if (!S.ill && MOOD_LINE[palMood()] && palMood() !== "sleepy") return MOOD_LINE[palMood()];
+  if (!S.ill && !["happy", "overjoyed"].includes(palMood())) return esc(lpNeedLine());
   if (S.ill) return `Achoo... I feel sick... 🤒 (${esc(illById(S.ill.id).sym.split(",")[0])})`;
   const h = new Date().getHours(), ni = nextRoomIndex();
   return pick([h < 12 ? `Good morning, ${esc(S.player_name)}! ☀️` : h < 18 ? `Hi ${esc(S.player_name)}! Ready for one small stage? 🌱` : `Evening study buddy~ 🌙`,
@@ -104,8 +104,8 @@ function homeHtml() {
     ${riskCardHtml()}
     <div class="homegrid">
     <div class="homeleft">
-    <section class="card roomwrap">${roomCard(greeting(), S.completed_rooms.length ? "happy" : "normal")}
-      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" data-go="pals">🍱 Feed & care</button></div></section>
+    <section class="card roomwrap">${lpRoomHtml(greeting())}
+      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" data-go="pals">🍱 Feed & care</button><button class="btn plain" id="lpHomeFeed">🥤 Quick drink of water</button></div></section>
     ${friendsHtml()}</div>
     <div class="homeside folds">
       ${foldHtml("h-streak", { icon: "🔥", title: "My streak", peek: `${S.current_streak} 🔥 · ${"❄️".repeat(S.streak_shields) || "0 ❄️"}` }, streakCardHtml())}
@@ -120,11 +120,13 @@ function wireHome() {
   const sg = document.getElementById("storyGo"); if (sg) sg.onclick = () => { SFX.tap(); openStory(); };
   wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured(); wireCapsuleAd(); wireHomeBoard();
   const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
+  wireLpRoom($app);
+  const hf = document.getElementById("lpHomeFeed"); if (hf) hf.onclick = () => lpAct(bpDrink(lpWorld(), "water", 250, 5), `${palName()} is asleep.`, 1) && toast(`💧 ${palName()} drank 250 mL of water.`);
 
 }
 let lastPat = 0;
 function wireCommon() {
-  $app.querySelectorAll(".petroom .pet").forEach(b => b.onclick = () => { if (Date.now() - lastPat < 20000) return; lastPat = Date.now(); const p = palState(activePalId()); p.happy = Math.min(100, p.happy + 2); save(); SFX.item(); b.classList.remove("hop"); void b.offsetWidth; b.classList.add("hop"); toast(`❤️ ${palName()} loves pats! Happy +2`); });
+  $app.querySelectorAll(".petroom .pet").forEach(b => b.onclick = () => { if (Date.now() - lastPat < 20000) return; lastPat = Date.now(); const p = palState(activePalId()); p.happy = Math.min(100, p.happy + 2); save(); SFX.item(); b.classList.remove("hop"); void b.offsetWidth; b.classList.add("hop"); toast(`❤️ ${palName()} loves pats! Happy +2${b.id === "lpPet" ? ". Touch the head, mouth, heart, tummy or hands to look inside" : ""}`); });
   $app.querySelectorAll(".rpet[data-pet]").forEach(b => b.onclick = () => { SFX.item(); const p = petById(b.dataset.pet); const bub = $app.querySelector(".pbubble"); if (bub) { bub.innerHTML = `<b>${esc(p.nick)}:</b> ${esc(pick(p.story.split(". ")))}${/[.!?]$/.test(p.story) ? "" : "."}`; bub.style.animation = "none"; void bub.offsetWidth; bub.style.animation = ""; } b.classList.remove("hop"); void b.offsetWidth; b.classList.add("hop"); });
   $app.querySelectorAll("[data-room]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); streakNote = ""; enterRoom(b.dataset.room); });
   $app.querySelectorAll("[data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });

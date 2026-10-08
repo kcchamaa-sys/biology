@@ -43,7 +43,15 @@ const BP_FOODS = [
   ["chicken-rice-veg", "Chicken, rice and vegetables", "🍛", "solid", [1.5, 18, 2, 12, 5, 60, 0], 60, false, 400],
   ["gummy-sweets", "Gummy sweets", "🍬", "solid", [60, 15, 0, 5, 0, 15, 0], 80, true, 40],
   ["cheese", "Cheese", "🧀", "solid", [0.5, 0, 0, 25, 33, 37, 0], 0, false, 30],
-  ["eggs-toast", "Eggs on wholemeal toast", "🍳", "solid", [2, 20, 4, 12, 9, 52, 0], 55, false, 200]
+  ["eggs-toast", "Eggs on wholemeal toast", "🍳", "solid", [2, 20, 4, 12, 9, 52, 0], 55, false, 200],
+  // Hong Kong dishes for the living Study Pal: per-serving estimates turned into per 100 g (GI from published tables of similar foods; grade C)
+  ...[["hk-salad", "Egg salad", "🥗", "solid", 200, [10, 10, 11, 4, 4, 150, 0], 30], ["hk-rice", "Rice with vegetables", "🍚", "solid", 350, [60, 7, 3, 2, 3, 240, 0], 73],
+    ["hk-fish", "Steamed fish with rice", "🐟", "solid", 400, [55, 30, 8, 2, 2, 290, 0], 70], ["hk-congee", "Fish congee", "🥣", "solid", 450, [40, 14, 4, 1, 1, 390, 0], 78],
+    ["hk-siumai", "Siu mai (4 pieces)", "🥟", "solid", 100, [12, 10, 12, 1, 0.5, 60, 0], 55], ["hk-fishball", "Curry fish balls", "🍢", "solid", 150, [18, 10, 10, 3, 0.5, 105, 0], 55],
+    ["hk-noodles", "Wonton noodles", "🍜", "solid", 500, [55, 20, 10, 2, 2, 410, 0], 55], ["hk-bun", "Pineapple bun", "🍞", "solid", 90, [45, 6, 11, 15, 1, 25, 0], 70],
+    ["hk-tart", "Egg tart", "🥧", "solid", 70, [20, 4, 12, 10, 0.3, 30, 0], 55], ["hk-milktea", "HK milk tea", "🫖", "drink", 250, [22, 3, 5, 20, 0, 215, 60], 45],
+    ["hk-boba", "Bubble tea", "🧋", "drink", 500, [70, 2, 7, 40, 0, 410, 40], 65]
+  ].map(([id, name, ic, kind, g, [carb, prot, fat, sugar, fibre, water, caf], gi]) => [id, name, ic, kind, [sugar, carb - sugar, fibre, prot, fat, water, caf].map(v => Math.round(v / g * 1000) / 10), gi, false, g])
 ].reduce((o, [id, name, ic, kind, v, gi, acidic, portion]) => {
   const [sugarsG, starchG, fibreG, proteinG, fatG, waterG, caffeineMg] = v;
   o[id] = { id, name, ic, kind, per100: { sugarsG, starchG, fibreG, proteinG, fatG, waterG, caffeineMg }, gi, acidic, defaultPortionG: portion };
@@ -82,6 +90,19 @@ function bpFocusParts(p) {
   return { sleep: 0.4 * (1 - bpClamp(bpSeff(p))), glucose: 0.3 * bpInRange(p.fuel.plasmaGlucoseMgDl, 75, 140), water: 0.2 * bpHyd(p), caffeine: 0.1 * bpClamp(p.sleep.caffeineMg / 100) };
 }
 function bpFocus(p) { const f = bpFocusParts(p); return bpClamp(f.sleep + f.glucose + f.water + f.caffeine); }
+/* Cartoon heart and breathing rates for the living pal (selectors only: nothing in the body reads them back).
+   Resting teen values; exercise raises both with effort; a water deficit makes the heart beat a little faster
+   because blood volume falls; caffeine adds a few beats. */
+function bpHeartRate(p) {
+  if (p.sleep.asleep) return p.sleep.stage === "REM" ? 66 : p.sleep.stage === "SWS" ? 56 : 60;
+  return Math.round(72 + [0, 28, 55, 85][p.activity.intensity] + 4 * bpClamp(p.water.deficitMl / 1000, 0, 2) + 0.04 * p.sleep.caffeineMg);
+}
+function bpBreathRate(p) {
+  if (p.sleep.asleep) return p.sleep.stage === "REM" ? 15 : 12;
+  return 15 + [0, 7, 15, 25][p.activity.intensity];
+}
+/* Living pal: very high sleep pressure after the gate opens and nothing else going on, so it dozes off by itself */
+const bpWantsDoze = p => !p.sleep.asleep && !p.sleep.inBed && !p.activity.intensity && bpGap(p) >= 0.12;
 const bpThirstMl = p => BPK.THIRST_FRACTION_MASS * p.massKg * 1000;
 const bpSleepDebt = p => bpClamp((p.sleep.sleepNeedMin - p.sleep.lastSleptMin) / p.sleep.sleepNeedMin);
 function bpStageAt(k) {   // k = minutes since sleep onset → [stage, cycle]
@@ -92,7 +113,9 @@ function bpStageAt(k) {   // k = minutes since sleep onset → [stage, cycle]
 }
 
 /* ---------- World ---------- */
+const bpClone = o => JSON.parse(JSON.stringify(o));
 function bpNewPal(epochMin, opts = {}) {
+  if (opts.snap) return bpClone(opts.snap.pal);
   return {
     epochMin, massKg: opts.massKg || BPK.MASS_DEFAULT_KG,
     activity: { intensity: 0, untilEpochMin: null, startEpochMin: null, sweatThisBoutMl: 0, glucoseAtStart: null, recentExerciseUntilEpochMin: null },
@@ -108,11 +131,24 @@ function bpNewPal(epochMin, opts = {}) {
 }
 const BP_HIST = ["g", "x", "ph", "S", "H", "L", "def", "caf", "st", "acid"];
 function bpCreateWorld(opts = {}) {
-  const start = opts.start != null ? opts.start : 420;
+  const sn = opts.snap, start = sn ? sn.pal.epochMin : opts.start != null ? opts.start : 420;
   const w = { pal: bpNewPal(start, opts), t0: start, scheduled: [], cards: {}, fired: [], events: [], meals: [], nights: [], bouts: [], drinks: [], attempts: [],
     hist: {}, seed: opts.seed || 1, opts, foods: BP_FOODS };
   BP_HIST.forEach(k => w.hist[k] = []);
+  if (sn) {   // a rebased save: carry what the next minutes need (pending sips, card edges, the last meals, a short history tail)
+    Object.assign(w, bpClone({ scheduled: sn.scheduled, cards: sn.cards, meals: sn.meals, attempts: sn.attempts }));
+    BP_HIST.forEach(k => w.hist[k] = (sn.hist[k] || []).slice());
+    w.t0 = start - (w.hist.g.length ? w.hist.g.length - 1 : 0);
+  }
   return w;
+}
+/* A living pal never stops, so its log can't grow for ever: replay to `keep` minutes ago, snapshot that moment,
+   and keep only the later actions. Replaying the new save gives the same pal as replaying the old one. */
+function bpRebase(save, now, keep = 2880) {
+  const cut = now - keep, w = bpReplay(save, cut), tail = {};
+  BP_HIST.forEach(k => tail[k] = w.hist[k].slice(-90).map(v => Math.round(v * 1000) / 1000));   // 90 min covers every card's look-back
+  const snap = bpClone({ pal: w.pal, scheduled: w.scheduled, cards: w.cards, meals: w.meals.slice(-3), attempts: w.attempts.slice(-1), hist: tail });
+  return { opts: Object.assign({}, save.opts, { snap }), log: (save.log || []).filter(e => e.t > cut) };
 }
 const bpHistAt = (w, k, epoch) => { const i = epoch - w.t0; return i >= 0 && i < w.hist[k].length ? w.hist[k][i] : null; };
 
@@ -462,6 +498,60 @@ function bpCards(w) {
   // 14: sipping, pH under 5.5 for ≥ 40 of the last 60 min
   let under = 0; for (let k = Math.max(0, i - 59); k <= i; k++) if (h.ph[k] < BPK.CRITICAL_PH) under++;
   bpEdge(w, "sipping", under >= 40 && !p.sleep.asleep && !p.sleep.inBed, () => ({ n: under }));
+}
+
+/* ---------- Touch the living pal (DOM-free so the voice lint can check every line) ----------
+   Each body part reads the live state and explains the mechanism behind what is happening right now. */
+const BP_ZONES = {
+  brain: ["🧠", "Brain and body clock", "sleep"], heart: ["❤️", "Heart and lungs", "fuel"], belly: ["🫃", "Stomach and blood glucose", "fuel"],
+  mouth: ["🦷", "Teeth and saliva", "teeth"], hands: ["🖐️", "Skin and water", "water"]
+};
+function bpPeek(w, zone) {
+  const p = w.pal, f = p.fuel, sl = p.sleep, te = p.teeth, wa = p.water, a = p.activity, G = Math.round(f.plasmaGlucoseMgDl);
+  const back = bpHistAt(w, "g", p.epochMin - 10), trend = back == null ? 0 : f.plasmaGlucoseMgDl - back;
+  const stage = { N1: "light", N2: "light", SWS: "deep", REM: "REM" }[sl.stage];
+  let read = "", why = "";
+  if (zone === "brain") {
+    read = `Sleep pressure ${sl.S.toFixed(2)} · focus ${Math.round(bpFocus(p) * 100)}/100${sl.caffeineMg >= 5 ? ` · caffeine ${Math.round(sl.caffeineMg)} mg` : ""}`;
+    const awakeH = Math.max(0, Math.round((p.epochMin - (sl.wokeAt || w.t0)) / 60));
+    why = sl.asleep ? (stage === "deep" ? "Deep sleep now. Sleep pressure clears fastest in these early cycles." : stage === "REM" ? "REM sleep now. The eyes dart about and dreams happen here. REM grows in the later cycles." : "Light sleep now. One full cycle of light, deep and REM sleep takes about 90 minutes.")
+      : sl.inBed ? "Lying in bed, waiting for the sleep gate. The more pressure, the faster sleep comes."
+      : p.flags.groggy ? "Woken in the middle of a cycle, so the brain stays slow for about 30 minutes."
+      : sl.caffeineMg >= 30 ? "Caffeine blocks the signal of sleep pressure, so I feel less sleepy. The pressure itself is still there."
+      : G < 75 ? `Glucose is only ${G} mg/dL. The brain runs mostly on glucose, so focus drops.`
+      : p.flags.sleepy ? "The body clock has opened the sleep gate. Going to bed now means falling asleep quickly."
+      : `Sleep pressure has built for ${awakeH} hours since I woke up. Only sleep clears it.`;
+  } else if (zone === "heart") {
+    read = `Heart ${bpHeartRate(p)} beats a minute · breathing ${bpBreathRate(p)} breaths a minute`;
+    why = a.intensity ? "Working muscles need more oxygen and glucose, so the heart and lungs speed up."
+      : sl.asleep ? "Asleep, the body needs less energy, so the heart and breathing slow down."
+      : wa.deficitMl >= 800 ? "Water loss lowers the blood volume, so the heart beats a little faster to keep blood flowing."
+      : p.activity.recentExerciseUntilEpochMin != null && p.epochMin < p.activity.recentExerciseUntilEpochMin ? "After exercise the muscles stay extra sensitive to insulin for about 12 hours."
+      : "At rest the heart pumps about 5 litres of blood every minute, carrying glucose and oxygen to every cell.";
+  } else if (zone === "belly") {
+    read = `Glucose ${G} mg/dL ${trend > 1 ? "↑" : trend < -1 ? "↓" : "→"} · food in the gut ${Math.round(f.gutMassG)} g · liver store ${Math.round(f.glycogenLiverG)} g`;
+    why = f.insulinAction >= 2 && trend < -1 ? "Insulin is high, so liver and muscle cells are taking glucose out of the blood."
+      : trend > 1 ? "Glucose from digested food is crossing the wall of the small intestine into the blood."
+      : f.gutMassG >= 30 ? `Food leaves the stomach a little at a time. Half of it empties every ${Math.round(f.gutEmptyHalfLifeMin)} minutes.`
+      : f.minutesSinceMeal >= 300 ? `No food for ${Math.round(f.minutesSinceMeal / 60)} hours. The liver breaks down glycogen to keep glucose steady.`
+      : p.flags.hungry ? "My stomach is nearly empty, so the hunger signal is on."
+      : "Glucose is steady. Insulin and glucagon from the pancreas keep it in range.";
+  } else if (zone === "mouth") {
+    read = `Plaque pH ${te.plaquePh.toFixed(1)} · ${te.plaquePh < BPK.CRITICAL_PH ? "enamel is losing minerals" : "enamel is safe"}`;
+    why = sl.asleep ? "Saliva almost stops during sleep, so any acid stays in the mouth for longer."
+      : te.plaquePh < BPK.CRITICAL_PH ? "Plaque bacteria turned sugar into acid. Below pH 5.5 the enamel starts to dissolve."
+      : te.acidLoad > 0.1 ? "Saliva is neutralising the acid. Recovery takes about 20 to 40 minutes."
+      : te.fluorideShield > 0.3 ? "Fluoride from brushing helps the enamel hold on to its minerals."
+      : "Plaque pH is close to neutral. Each sugary snack starts a new acid attack.";
+  } else {
+    read = wa.deficitMl > 20 ? `Water ${Math.round(wa.deficitMl)} mL short · thirst switches on at ${bpThirstMl(p)} mL` : `Water fully topped up · thirst switches on at ${bpThirstMl(p)} mL short`;
+    why = a.intensity ? `Sweat leaves through the skin at ${wa.sweatRateMlPerMin} mL a minute. It cools the body as it evaporates.`
+      : p.flags.thirsty ? `Thirst switched on only after ${bpThirstMl(p)} mL was already lost. Thirst is a late signal.`
+      : sl.asleep ? "Even asleep, water leaves in every breath, about 45 mL an hour."
+      : "Water leaves through breath, skin and urine all the time, about 95 mL an hour.";
+  }
+  const [ic, h, dom] = BP_ZONES[zone];
+  return { ic, h, dom, read, why };
 }
 
 /* ---------- Learning objectives (§B2), misconceptions (T3/T7) and claims (T10) ---------- */

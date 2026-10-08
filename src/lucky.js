@@ -42,7 +42,7 @@ function makePrize(tier) {
   const caps = n => ({ kind: "caps", n, title: `${n} card capsule${n > 1 ? "s" : ""}`, sub: "Open them for biology trading cards." });
   const outfit = max => { const o = unownedOutfits(max); if (!o.length) return null; const w = pick(o); return { kind: "outfit", id: w.id, title: w.name, sub: "A new outfit! Wear it in 👗 Dress up." }; };
   const pal = r_ => { const ps = capPals(r_); if (!ps.length) return null; const P = pick(ps); return { kind: "pal", id: P.id, title: `${P.name} the Study Pal`, sub: P.desc }; };
-  const everyday = FOODS.filter(f => f.r === "g"), fancy = FOODS.filter(f => f.r !== "g");
+  const everyday = FOODS.filter(f => f.price > 0 && f.price <= 8), fancy = FOODS.filter(f => f.price > 8);
   if (tier === "common") return r < .55 ? coin(15 + Math.floor(Math.random() * 16)) : food(everyday, 1);
   if (tier === "rare") return r < .3 ? coin(40 + Math.floor(Math.random() * 21)) : r < .6 ? food(fancy, 2) : r < .8 && S.streak_shields < FREEZE_MAX ? { kind: "freeze", n: 1, title: "Streak Freeze", sub: "Protects your streak on a missed day." } : caps(1);
   if (tier === "epic") return (r < .45 && outfit(140)) || (r < .75 ? caps(2) : coin(120));

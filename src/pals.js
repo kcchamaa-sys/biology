@@ -9,7 +9,7 @@
 const PAL_RAR = { common: ["Common", "#E5E5E5", "#AFAFAF"], rare: ["Rare", "#BDE7FF", "#1CB0F6"], epic: ["Epic", "#EBD4FF", "#CE82FF"], legend: ["Legendary", "#FFE9A6", "#FFC800"], myth: ["Mythic", "#FFD6F0", "#FF86D0"] };
 const PAL_ORDER = { myth: 0, legend: 1, epic: 2, rare: 3, common: 4 };
 const PERK_TXT = { xp: v => `+${Math.round(v * 100)}% pal XP`, coins: v => `+${Math.round(v * 100)}% chestnuts`, food: v => `Food ${Math.round(v * 100)}% cheaper`,
-  calm: v => `Happiness drops ${v >= 1 ? "never" : "half as fast"}`, energy: v => `Energy drops ${v >= 1 ? "never" : "half as fast"}`, notebook: v => `+${Math.round(v * 100)}% Mistake Notebook chestnuts`,
+  calm: v => `Happiness drops ${v >= 1 ? "never" : "half as fast"}`, energy: v => `+${Math.round(v * 100)}% happiness from pats and care`, notebook: v => `+${Math.round(v * 100)}% Mistake Notebook chestnuts`,
   dict: v => `+${Math.round(v * 100)}% dictation chestnuts`, rush: v => `+${Math.round(v * 100)}% Cell Rush chestnuts` };
 const P_ = (id, name, sp, body, belly, rar, price, cond, perk, fav, desc, fact, extra) => Object.assign({ id, name, sp, body, belly, rar, price, cond, perk, fav, desc, fact }, extra || {});
 const PALS = [
@@ -152,31 +152,26 @@ function palTick() {
   S.pals = S.pals || {}; if (!S.pals.mochi) S.pals.mochi = newPal(); if (!S.activePal || !S.pals[S.activePal]) S.activePal = "mochi";
   const p = palState(S.activePal), now = Date.now(), h = Math.min(72, (now - (p.t || now)) / 3600e3);
   if (h > .05) {
-    p.energy = Math.max(5, p.energy - h * 1.2 * (2 - perk("energy")));
     p.happy = Math.max(5, p.happy - h * .3 * (2 - perk("calm")));
     p.t = now;
   }
 }
+/* Mood now comes from the pal's living body (livepal.js): hunger, thirst, sleep, exercise; plus happiness from care */
 function palMood() {
   if (!S) return "happy";
-  const p = palState(activePalId()), h = new Date().getHours();
   if (S.ill) return "sick";
-  if (p.energy < 25) return "hungry";
-  if (p.happy < 25) return "lonely";
-  if (h >= 22 || h < 6 || p.energy < 42) return "sleepy";
-  if (p.happy >= 75 && p.energy >= 60) return "overjoyed";
-  return "happy";
+  return lpMood();
 }
-const MOOD_FACE = { sick: "sick", hungry: "cry", lonely: "cry", sleepy: "sleepy", overjoyed: "sparkle", happy: "happy" };
-const MOOD_INFO = { sick: ["🤒", "Sick"], hungry: ["🍙", "Hungry"], lonely: ["🥺", "Lonely"], sleepy: ["😴", "Sleepy"], overjoyed: ["🤩", "Overjoyed"], happy: ["😊", "Happy"] };
-const MOOD_LINE = { hungry: "My tummy is rumbling... 🍙 Hungry pals learn slower (my brain needs glucose!). Can we eat?", lonely: "Uu... play with me? 🥺 A quick Term Match would cheer me up!", sleepy: "Yawn... I'm a bit sleepy. 😴" };
+const MOOD_FACE = { sick: "sick", hungry: "cry", thirsty: "cry", lonely: "cry", sleepy: "sleepy", groggy: "sleepy", asleep: "sleepy", exercise: "brave", overjoyed: "sparkle", happy: "happy" };
+const MOOD_INFO = { sick: ["🤒", "Sick"], hungry: ["🍙", "Hungry"], thirsty: ["💧", "Thirsty"], lonely: ["🥺", "Lonely"], sleepy: ["😴", "Sleepy"], groggy: ["🥱", "Groggy"], asleep: ["💤", "Asleep"], exercise: ["🏃", "Playing outside"], overjoyed: ["🤩", "Overjoyed"], happy: ["😊", "Happy"] };
 function palGain(ev) {
   if (!S || !(ev.ans > 0)) return;
-  const p = palState(activePalId()), before = palLevel(p.xp);
-  const xp = Math.round((5 + 2 * Math.min(25, ev.cor || 0)) * perk("xp") * (p.energy < 25 ? .5 : 1));
-  p.xp += xp; p.energy = Math.max(5, p.energy - 6); p.happy = Math.min(100, p.happy + 3);
+  // studying never changes the pal's body; a pal with low focus (tired, thirsty, low glucose) just learns at half speed
+  const p = palState(activePalId()), before = palLevel(p.xp), low = bpFocus(lpWorld().pal) < 0.3;
+  const xp = Math.round((5 + 2 * Math.min(25, ev.cor || 0)) * perk("xp") * (low ? .5 : 1));
+  p.xp += xp; p.happy = Math.min(100, p.happy + 3);
   const after = palLevel(p.xp);
-  setTimeout(() => toast(after > before ? `⭐ ${palName()} reached level ${after}!${evoReady(activePalId()) ? " Evolution is ready! ✨" : ""}` : `+${xp} XP for ${palName()}${p.energy < 25 ? " (hungry: half XP)" : ""}`), 2600);
+  setTimeout(() => toast(after > before ? `⭐ ${palName()} reached level ${after}!${evoReady(activePalId()) ? " Evolution is ready! ✨" : ""}` : `+${xp} XP for ${palName()}${low ? " (low focus: half XP. Check sleep, water and food)" : ""}`), 2600);
 }
 function evoNeed(id) { const p = palState(id), P = palById(id); return p.stage >= 3 ? null : EVO[P.rar][p.stage - 1]; }
 const evoReady = id => { const n = evoNeed(id); return !!n && palLevel(palState(id).xp) >= n[0]; };
@@ -186,62 +181,96 @@ function evolve(id) {
   giftCeremony(palById(id).rar === "myth" ? "myth" : "legend", () => { SFX.fanfare(); confetti(200); yaha(`${STAGES[p.stage]}!`); toast(`✨ ${palById(id).name} evolved into a ${STAGES[p.stage]}!`); renderMap(); });
 }
 
-/* ----- 🍱 Food with nutrition cards (approximate values per typical serving) ----- */
+/* ----- 🍱 Food and drinks: each one goes into the pal's simulated body (BP_FOODS in bodypal_engine.js) ----- */
+const F_ = (id, e, name, cat, bp, price, hp, xp, note) => ({ id, e, name, cat, bp: typeof bp === "string" ? [[bp, BP_FOODS[bp].defaultPortionG]] : bp, price, hp, xp, note });
 const FOODS = [
-  { id: "apple", e: "🍎", name: "Apple", price: 4, en: 14, hp: 4, xp: 2, r: "g", n: [95, 25, .5, .3, 19, 4.4], note: "Fibre adds bulk, so food moves easily along the gut by peristalsis." },
-  { id: "banana", e: "🍌", name: "Banana", price: 4, en: 18, hp: 4, xp: 2, r: "g", n: [105, 27, 1.3, .4, 14, 3.1], note: "Rich in carbohydrate and potassium: quick energy for respiration." },
-  { id: "milk", e: "🥛", name: "Low-fat milk", price: 5, en: 14, hp: 5, xp: 3, r: "g", n: [110, 12, 8, 2.5, 12, 0], note: "Calcium and protein for strong bones and teeth. The sugar here is lactose." },
-  { id: "salad", e: "🥗", name: "Egg salad", price: 8, en: 16, hp: 6, xp: 4, r: "g", n: [180, 10, 10, 11, 4, 4], note: "Vitamins, minerals and fibre from vegetables, plus protein from the egg." },
-  { id: "rice", e: "🍚", name: "Rice with vegetables", price: 10, en: 34, hp: 6, xp: 4, r: "g", n: [300, 60, 7, 3, 2, 3], note: "Starch is digested to glucose: slow, steady energy for the brain." },
-  { id: "fish", e: "🐟", name: "Steamed fish with rice", price: 14, en: 40, hp: 8, xp: 6, r: "g", n: [420, 55, 30, 8, 2, 2], note: "Lean protein for growth and repair; fish oils are good unsaturated fats." },
-  { id: "congee", e: "🥣", name: "Fish congee", price: 9, en: 26, hp: 6, xp: 4, r: "g", n: [250, 40, 14, 4, 1, 1], note: "Easy to digest and full of water: great when you're unwell." },
-  { id: "egg", e: "🍳", name: "Fried egg on toast", price: 8, en: 24, hp: 7, xp: 4, r: "y", n: [260, 26, 11, 13, 3, 2], note: "Good protein, but frying adds fat. Boiling an egg is lighter." },
-  { id: "siumai", e: "🥟", name: "Siu mai (4 pieces)", price: 10, en: 22, hp: 10, xp: 3, r: "y", n: [200, 12, 10, 12, 1, .5], note: "Tasty protein, but quite fatty and salty. Too much salt can raise blood pressure." },
-  { id: "fishball", e: "🍢", name: "Curry fish balls", price: 9, en: 18, hp: 12, xp: 2, r: "y", n: [200, 18, 10, 10, 3, .5], note: "A Hong Kong favourite! Lots of salt and some fat, so not every day." },
-  { id: "noodles", e: "🍜", name: "Wonton noodles", price: 15, en: 36, hp: 12, xp: 4, r: "y", n: [400, 55, 20, 10, 2, 2], note: "Balanced carbohydrate and protein, but the soup is very salty." },
-  { id: "bun", e: "🍞", name: "Pineapple bun", price: 8, en: 20, hp: 14, xp: 2, r: "r", n: [300, 45, 6, 11, 15, 1], note: "Sugar and fat in the crunchy top. Yummy, but a treat." },
-  { id: "tart", e: "🥧", name: "Egg tart", price: 8, en: 14, hp: 16, xp: 2, r: "r", n: [200, 20, 4, 12, 10, .3], note: "Buttery pastry is high in saturated fat. A sometimes-snack!" },
-  { id: "milktea", e: "☕", name: "HK milk tea", price: 7, en: 10, hp: 14, xp: 1, r: "r", n: [150, 22, 3, 5, 20, 0], note: "Caffeine keeps you awake; added sugar gives a quick spike, then a dip." },
-  { id: "boba", e: "🧋", name: "Bubble tea", price: 12, en: 14, hp: 22, xp: 1, r: "r", n: [350, 70, 2, 7, 40, 0], note: "About 10 teaspoons of sugar in one cup! Fun, but a big treat." }
+  F_("congee", "🥣", "Fish congee", "meal", "hk-congee", 9, 6, 4, "Mostly water and soft rice starch: easy to digest, and it tops up water too."),
+  F_("oats", "🌾", "Porridge with milk", "meal", [["oats", 60], ["milk", 200]], 7, 6, 4, "Oat fibre and milk protein slow the stomach down, so glucose arrives gently."),
+  F_("egg", "🍳", "Eggs on toast", "meal", "eggs-toast", 8, 7, 4, "Protein and fat keep food in the stomach longer than toast alone."),
+  F_("rice", "🍚", "Rice with vegetables", "meal", "hk-rice", 10, 6, 4, "White rice starch is digested to glucose quite fast; the vegetables add some fibre."),
+  F_("pasta", "🍝", "Pasta with tomato", "meal", "pasta-tomato", 10, 6, 4, "Pasta starch is packed tightly, so it is digested more slowly than rice."),
+  F_("fish", "🐟", "Steamed fish with rice", "meal", "hk-fish", 14, 8, 6, "Lean protein for growth and repair; the protein slows how fast the stomach empties."),
+  F_("noodles", "🍜", "Wonton noodles", "meal", "hk-noodles", 15, 12, 4, "Starch and protein together, plus plenty of water from the soup."),
+  F_("salad", "🥗", "Egg salad", "meal", "hk-salad", 8, 6, 4, "Little carbohydrate, so glucose hardly moves; fibre adds bulk for peristalsis."),
+  F_("apple", "🍎", "Apple", "snack", "apple", 4, 4, 2, "Fruit sugar with fibre and lots of water."),
+  F_("banana", "🍌", "Banana", "snack", "banana", 4, 4, 2, "Sugar and starch for respiration, plus potassium."),
+  F_("cheese", "🧀", "Cheese", "snack", "cheese", 5, 4, 2, "Protein, fat and calcium with almost no sugar, so plaque gets nothing to ferment."),
+  F_("siumai", "🥟", "Siu mai (4 pieces)", "snack", "hk-siumai", 10, 10, 3, "Protein and fat with a little starch: a slow, small glucose rise."),
+  F_("fishball", "🍢", "Curry fish balls", "snack", "hk-fishball", 9, 12, 2, "A Hong Kong street snack: starch and protein, quite salty."),
+  F_("bun", "🍞", "Pineapple bun", "snack", "hk-bun", 8, 14, 2, "Soft white flour and a sugary top: glucose rises fast and plaque gets sugar."),
+  F_("tart", "🥧", "Egg tart", "snack", "hk-tart", 8, 16, 2, "Buttery pastry and sweet custard: the fat slows the stomach a little."),
+  F_("gummy", "🍬", "Gummy sweets", "snack", "gummy-sweets", 5, 14, 1, "Almost pure sugar that sticks to the teeth, and it is acidic too."),
+  F_("water", "💧", "Water", "drink", "water", 0, 1, 0, "Pure water: no glucose, no acid, just a smaller water deficit."),
+  F_("milk", "🥛", "Low-fat milk", "drink", "milk", 5, 5, 3, "Calcium and protein for bones and teeth. Its sugar, lactose, makes little acid."),
+  F_("oj", "🍊", "Orange juice", "drink", "orange-juice", 6, 8, 2, "Fruit sugar without the fibre, and acidic enough to touch enamel directly."),
+  F_("cola", "🥤", "Cola", "drink", "cola", 6, 12, 1, "Sugar, acid and some caffeine. Sipping it slowly keeps plaque acidic for longer."),
+  F_("coffee", "☕", "Black coffee", "drink", "coffee", 6, 6, 1, "About 95 mg of caffeine. Half is still in the blood 5 hours later."),
+  F_("milktea", "🫖", "HK milk tea", "drink", "hk-milktea", 7, 14, 1, "Strong tea with caffeine, plus sugar and evaporated milk."),
+  F_("boba", "🧋", "Bubble tea", "drink", "hk-boba", 12, 22, 1, "About 40 g of sugar in one cup, plus some caffeine from the tea.")
 ];
-const FOOD_R = { g: ["Everyday", "#58CC02"], y: ["Sometimes", "#FFC800"], r: ["Treat", "#FF4B4B"] };
-const foodPrice = f => Math.max(1, Math.round(f.price / perk("food")));
-function openFeed() {
-  const P = activePal();
-  openModal(`<span class="kicker">🍱 Feed ${esc(P.name)}</span><h2>What's for ${new Date().getHours() < 11 ? "breakfast" : new Date().getHours() < 16 ? "lunch" : "dinner"}?</h2>
-    <p class="small muted" style="margin:0">❤️ ${esc(P.name)}'s favourite: <b>${esc(FOODS.find(f => f.id === P.fav).name)}</b> (double happiness). Tap 🔍 for the nutrition card. 3 treats in one day = sugar crash!</p>
-    <div class="foodgrid">${FOODS.map(f => `<div class="food"><button class="fpic ${S.pantry[f.id] ? "free" : ""}" data-feed="${f.id}" aria-label="Feed ${esc(f.name)}${S.pantry[f.id] ? " (free from your pantry)" : ` for ${foodPrice(f)} chestnuts`}" ${!S.pantry[f.id] && S.coins < foodPrice(f) ? "disabled" : ""}><span class="fe">${f.e}</span><b class="small">${esc(f.name)}</b><span class="small"><i class="rdot" style="background:${FOOD_R[f.r][1]}"></i>${FOOD_R[f.r][0]}</span>${S.pantry[f.id] ? `<span class="pill freepill">🎁 Free ×${S.pantry[f.id]}</span>` : `<span class="pill coinpill">🌰 ${foodPrice(f)}</span>`}</button><button class="fnut" data-nut="${f.id}" aria-label="Nutrition card for ${esc(f.name)}">🔍</button></div>`).join("")}</div>`, { wide: true });
+const foodPrice = f => !f.price ? 0 : Math.max(1, Math.round(f.price / perk("food")));
+const foodBolus = f => bpBolus(f.bp);
+const isDrink = f => f.cat === "drink";
+let feedTab = "meal", feedSip = false;
+function openFeed(tab) {
+  const P = activePal(); if (tab) feedTab = tab;
+  const busy = lpBusy();
+  const tabs = [["meal", "🍱 Meals"], ["snack", "🍪 Snacks"], ["drink", "🥤 Drinks"]];
+  openModal(`<span class="kicker">🍱 Feed ${esc(P.name)}</span><h2>What should ${esc(P.name)} have?</h2>
+    <p class="small muted" style="margin:0">Everything goes into ${esc(P.name)}'s body: watch glucose, water, teeth and caffeine change. Tap 🔍 to see what's inside. ❤️ Favourite: <b>${esc(FOODS.find(f => f.id === P.fav).name)}</b> (double happiness).</p>
+    ${busy ? `<p class="lensres no" style="margin:6px 0">${esc(P.name)} is asleep. Food and drinks wait until it wakes up.</p>` : ""}
+    <div class="subnav" role="tablist">${tabs.map(([id, l]) => `<button role="tab" data-ftab="${id}" aria-selected="${feedTab === id}">${l}</button>`).join("")}</div>
+    ${feedTab === "drink" ? `<div class="row" style="justify-content:center">${segBtns("fsip", [["0", "Gulp it (5 min)"], ["1", "Sip slowly (60 min)"]], feedSip ? "1" : "0")}</div>` : ""}
+    <div class="foodgrid">${FOODS.filter(f => f.cat === feedTab).map(f => { const free = S.pantry[f.id], cost = foodPrice(f), sp = foodSpeed(f);
+      return `<div class="food"><button class="fpic ${free ? "free" : ""}" data-feed="${f.id}" aria-label="Give ${esc(f.name)}${free ? " (free from your pantry)" : cost ? ` for ${cost} chestnuts` : " (free)"}" ${busy || (!free && S.coins < cost) ? "disabled" : ""}><span class="fe">${f.e}</span><b class="small">${esc(f.name)}</b><span class="small">${sp[0]} ${esc(sp[1])}</span>${free ? `<span class="pill freepill">🎁 Free ×${free}</span>` : cost ? `<span class="pill coinpill">🌰 ${cost}</span>` : `<span class="pill freepill">Free</span>`}</button><button class="fnut" data-nut="${f.id}" aria-label="What's inside ${esc(f.name)}">🔍</button></div>`; }).join("")}</div>`, { wide: true });
+  $modal.querySelectorAll("[data-ftab]").forEach(b => b.onclick = () => { SFX.tap(); openFeed(b.dataset.ftab); });
+  $modal.querySelectorAll("[data-fsip]").forEach(b => b.onclick = () => { SFX.tap(); feedSip = b.dataset.fsip === "1"; $modal.querySelectorAll("[data-fsip]").forEach(x => x.setAttribute("aria-checked", x === b ? "true" : "false")); });
   $modal.querySelectorAll("[data-feed]").forEach(b => b.onclick = () => feed(b.dataset.feed));
   $modal.querySelectorAll("[data-nut]").forEach(b => b.onclick = () => { SFX.tap(); nutritionCard(b.dataset.nut); });
 }
+/* How a food behaves inside the pal, from the same formulas the engine uses (no good/bad labels, no energy numbers) */
+function foodSpeed(f) {
+  const b = foodBolus(f), K = BPK;
+  if (b.carb < 5) return b.caf >= 20 ? ["☕", "caffeine, little sugar"] : ["💧", "little carbohydrate"];
+  const rate = K.K_ABS_MAX * (b.gi / 100) / (1 + K.FIBRE_ABS_FACTOR * b.fibre);
+  const hl = b.drink ? K.EMPTY_HL_DRINK_MIN : bpClamp(K.EMPTY_HL_SOLID_BASE_MIN + K.EMPTY_HL_FAT_PER_G * b.fat + K.EMPTY_HL_PROTEIN_PER_G * b.prot + K.EMPTY_HL_FIBRE_PER_G * b.fibre, K.EMPTY_HL_SOLID_BASE_MIN, K.EMPTY_HL_CAP_MIN);
+  return rate >= 0.03 && hl <= 70 ? ["⚡", "fast glucose"] : rate < 0.022 || hl >= 110 ? ["🐢", "slow, steady glucose"] : ["🙂", "medium glucose"];
+}
 function nutritionCard(id) {
-  const f = FOODS.find(x => x.id === id), [kc, c, pr, fa, su, fi] = f.n, bar = (v, max, col) => `<div class="nbar"><i style="width:${Math.min(100, Math.round(100 * v / max))}%;background:${col}"></i></div>`;
-  openModal(`<span class="kicker">🔍 Nutrition card</span><h2>${f.e} ${esc(f.name)}</h2>
-    <span class="pill" style="background:${FOOD_R[f.r][1]};color:#fff">${FOOD_R[f.r][0]}</span>
+  const f = FOODS.find(x => x.id === id), b = foodBolus(f), K = BPK, r = x => Math.round(x * 10) / 10, sp = foodSpeed(f);
+  const bar = (v, max, col) => `<div class="nbar"><i style="width:${Math.min(100, Math.round(100 * v / max))}%;background:${col}"></i></div>`;
+  const hl = b.drink ? K.EMPTY_HL_DRINK_MIN : Math.round(bpClamp(K.EMPTY_HL_SOLID_BASE_MIN + K.EMPTY_HL_FAT_PER_G * b.fat + K.EMPTY_HL_PROTEIN_PER_G * b.prot + K.EMPTY_HL_FIBRE_PER_G * b.fibre, K.EMPTY_HL_SOLID_BASE_MIN, K.EMPTY_HL_CAP_MIN));
+  const inside = [`${sp[0]} ${b.carb < 5 ? "Hardly any carbohydrate, so blood glucose barely moves." : `${r(b.carb)} g of carbohydrate becomes glucose. ${sp[1] === "fast glucose" ? "It arrives fast, so expect a tall peak." : sp[1] === "medium glucose" ? "It arrives at a medium pace." : "Fibre, fat or protein slow it, so the peak is lower and later."}`}`,
+    `🫃 Half of it leaves the stomach every ${hl} minutes${b.drink ? ", because liquids empty fast" : ""}.`,
+    b.sugar >= 3 || b.acidic ? `🦷 ${b.sugar >= 3 ? `${r(b.sugar)} g of sugar for plaque bacteria to turn into acid.` : ""}${b.acidic ? " Acidic, so it touches enamel directly." : ""}` : "🦷 Very little sugar, so plaque pH hardly drops.",
+    `💧 Adds about ${Math.round(b.water)} mL of water.`].concat(b.caf >= 5 ? [`☕ ${Math.round(b.caf)} mg of caffeine: half is still there 5 hours later.`] : []);
+  openModal(`<span class="kicker">🔍 What's inside</span><h2>${f.e} ${esc(f.name)}</h2>
     <table class="ntab"><tbody>
-      <tr><td>Energy</td><td><b>${kc} kcal</b></td><td>${bar(kc, 600, "#FF9600")}</td></tr>
-      <tr><td>Carbohydrate</td><td><b>${c} g</b></td><td>${bar(c, 80, "#FFC800")}</td></tr>
-      <tr><td>&nbsp;· of which sugar</td><td><b>${su} g</b></td><td>${bar(su, 40, "#FF4B4B")}</td></tr>
-      <tr><td>Protein</td><td><b>${pr} g</b></td><td>${bar(pr, 35, "#1CB0F6")}</td></tr>
-      <tr><td>Fat</td><td><b>${fa} g</b></td><td>${bar(fa, 25, "#CE82FF")}</td></tr>
-      <tr><td>Dietary fibre</td><td><b>${fi} g</b></td><td>${bar(fi, 8, "#58CC02")}</td></tr></tbody></table>
-    <p class="small muted" style="margin:0">Approximate values for one typical serving.</p>
+      <tr><td>Carbohydrate</td><td><b>${r(b.carb)} g</b></td><td>${bar(b.carb, 80, "#FFC800")}</td></tr>
+      <tr><td>&nbsp;· of which sugar</td><td><b>${r(b.sugar)} g</b></td><td>${bar(b.sugar, 40, "#FF9600")}</td></tr>
+      <tr><td>Protein</td><td><b>${r(b.prot)} g</b></td><td>${bar(b.prot, 35, "#1CB0F6")}</td></tr>
+      <tr><td>Fat</td><td><b>${r(b.fat)} g</b></td><td>${bar(b.fat, 25, "#CE82FF")}</td></tr>
+      <tr><td>Dietary fibre</td><td><b>${r(b.fibre)} g</b></td><td>${bar(b.fibre, 8, "#58CC02")}</td></tr>
+      <tr><td>Water</td><td><b>${Math.round(b.water)} mL</b></td><td>${bar(b.water, 500, "#5B8DEF")}</td></tr></tbody></table>
+    <p class="small muted" style="margin:0">One serving (${b.mass} ${isDrink(f) ? "mL" : "g"}), approximate values.</p>
+    <p style="margin:6px 0 2px"><b>Inside ${esc(palName())}:</b></p><ul class="small lpinside-list">${inside.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
     ${say("chiikawa", esc(f.note), "normal", "hint")}
-    <div class="row"><button class="btn big" id="nFeed" ${S.coins < foodPrice(f) ? "disabled" : ""}>Feed for 🌰 ${foodPrice(f)}</button><button class="btn plain" id="nBack">← All food</button></div>`);
+    <div class="row"><button class="btn big" id="nFeed" ${lpBusy() || (!S.pantry[id] && S.coins < foodPrice(f)) ? "disabled" : ""}>Give it${S.pantry[id] ? " (free)" : foodPrice(f) ? ` for 🌰 ${foodPrice(f)}` : ""}</button><button class="btn plain" id="nBack">← All ${isDrink(f) ? "drinks" : "food"}</button></div>`);
   document.getElementById("nFeed").onclick = () => feed(id);
-  document.getElementById("nBack").onclick = () => { SFX.tap(); openFeed(); };
+  document.getElementById("nBack").onclick = () => { SFX.tap(); openFeed(f.cat); };
 }
 function feed(id) {
   const f = FOODS.find(x => x.id === id), P = activePal(), p = palState(P.id), free = (S.pantry[id] || 0) > 0, cost = free ? 0 : foodPrice(f); if (S.coins < cost) return;
+  const w = lpWorld();
+  const ok = isDrink(f) ? bpDrink(w, f.bp[0][0], f.bp[0][1], feedSip ? 60 : 5) : bpEat(w, f.bp);
+  if (!ok) { SFX.wrong(); toast(`${P.name} is asleep. Try again after it wakes up.`); return; }
   if (free) { S.pantry[id] -= 1; if (!S.pantry[id]) delete S.pantry[id]; } else S.coins -= cost; const fav = P.fav === id;
-  p.energy = Math.min(100, p.energy + f.en); p.happy = Math.min(100, p.happy + f.hp * (fav ? 2 : 1)); p.xp += Math.round(f.xp * perk("xp")); p.meals = (p.meals || 0) + 1;
-  S.treats = S.treats && S.treats.day === today() ? S.treats : { day: today(), n: 0 };
-  let crash = false; if (f.r === "r") { S.treats.n += 1; if (S.treats.n === 3) { crash = true; p.energy = Math.max(5, p.energy - 15); } }
-  S.stats.meals = (S.stats.meals || 0) + 1; save(true); SFX.item(); closeModal(); renderMap();
-  if (crash) openModal(`<span class="kicker">🍬 Sugar crash!</span><h2>${esc(P.name)} feels wobbly...</h2>${say("chiikawa", "Too many sweet treats today... 😵 First my blood glucose shot up, then insulin brought it down fast, and now I feel tired!", "cry")}
-      ${say("chiikawa", "Tip: choose 🟢 everyday foods. Starchy foods release glucose slowly, so energy stays steady.", "normal", "hint")}<div class="row"><button class="btn" id="crOk">OK</button></div>`), document.getElementById("crOk").onclick = () => { SFX.tap(); closeModal(); };
-  else toast(`${f.e} ${P.name} ate the ${f.name.toLowerCase()}!${fav ? " ❤️ Favourite!" : ""} Energy ${Math.round(p.energy)}`);
+  p.happy = Math.min(100, p.happy + Math.round(f.hp * (fav ? 2 : 1) * perk("energy"))); p.xp += Math.round(f.xp * perk("xp")); p.meals = (p.meals || 0) + 1;
+  S.stats.meals = (S.stats.meals || 0) + 1; SFX.item(); closeModal();
+  lpAfter(); refreshCoinsOnly();
+  toast(`${f.e} ${P.name} ${isDrink(f) ? (feedSip ? "is sipping" : "drank") : "ate"} the ${f.name.toLowerCase()}.${fav ? " ❤️ Favourite!" : ""} Touch the tummy to watch it.`);
 }
+const refreshCoinsOnly = () => { if (typeof renderTools === "function") renderTools(); };
 
 /* ----- 🃏 Play: Term Match (tap a term, then its meaning) ----- */
 function playMatch() {
@@ -298,22 +327,21 @@ const palChips = P => `<span class="pill rchip2" style="background:${PAL_RAR[P.r
 const palsSubnav = on => `<div class="subnav" role="tablist">${[["pals", "🐾", "Study Pals"], ["dress", "👗", "Dress up"], ["pets", "🦜", "Pets"]].map(([id, ic, nm]) => `<button role="tab" data-go="${id}" aria-selected="${on === id}"><span aria-hidden="true">${ic}</span>${nm}</button>`).join("")}</div>`;
 const meter = (v, cls, label) => `<div class="meter ${cls}" aria-label="${label} ${Math.round(v)} of 100"><span>${label}</span><div class="tprog"><i style="width:${Math.round(v)}%"></i></div><b>${Math.round(v)}</b></div>`;
 function palPanelHtml() {
-  const P = activePal(), p = palState(P.id), lv = palLevel(p.xp), mood = palMood(), [mi, ml] = MOOD_INFO[mood], n = evoNeed(P.id);
+  const P = activePal(), p = palState(P.id), lv = palLevel(p.xp), mood = palMood(), [mi, ml] = MOOD_INFO[mood];
   const xpPc = Math.round(100 * (p.xp - lvXP(lv)) / (lvXP(lv + 1) - lvXP(lv)));
-  return `<section class="card palpanel ${P.rar}"><div class="palhero"><div class="palbig ${frameCls()}">${figure("chiikawa", MOOD_FACE[mood], S.equip)}</div>
-      <div class="palinfo"><div class="row" style="gap:6px"><h2 style="margin:0">${esc(P.name)}</h2>${palChips(P)}</div>
-        <div class="small"><b>Lv ${lv}</b> · ${STAGES[p.stage]} · <span class="moodchip">${mi} ${ml}</span></div>
-        <div class="meter xp"><span>XP</span><div class="tprog"><i style="width:${xpPc}%"></i></div><b>${p.xp}</b></div>
-        ${meter(p.energy, "en", "⚡ Energy")}${meter(p.happy, "hp", "❤️ Happy")}
-        <p class="small muted" style="margin:0">🔬 ${esc(P.fact)}</p></div></div>
-    ${MOOD_LINE[mood] ? say("chiikawa", MOOD_LINE[mood], MOOD_FACE[mood]) : ""}
-    <div class="row"><button class="btn yellow" id="pFeed">🍱 Feed</button><button class="btn blue" id="pPlay">🃏 Play Term Match</button>
-      ${n ? `<button class="btn ${lv >= n[0] ? "pink" : "plain"}" id="pEvo" ${lv >= n[0] && S.coins >= n[1] ? "" : "disabled"}>✨ Evolve to ${STAGES[p.stage + 1]} · Lv ${n[0]} + 🌰 ${n[1]}</button>` : `<span class="pill saved">👑 Fully evolved</span>`}
-      <button class="btn plain" data-go="dress">👗 Dress up</button></div></section>`;
+  return `<section class="card palpanel lppanel ${P.rar}">
+      <div class="row" style="gap:6px;justify-content:space-between"><div class="row" style="gap:6px"><h2 style="margin:0">${esc(P.name)}</h2>${palChips(P)}</div>
+        <div class="small"><b>Lv ${lv}</b> · ${STAGES[p.stage]} · <span class="moodchip">${mi} ${ml}</span></div></div>
+      ${lpRoomHtml()}
+      <div class="row" style="justify-content:space-between;gap:6px"><span class="small" id="lpStatus">${esc(lpStatus(lpWorld().pal))}</span><span class="small muted">👆 Touch the head, mouth, heart, tummy or hands to look inside</span></div>
+      <div class="lpgrid"><div id="lpBars" class="bpbars">${lpBars(lpWorld().pal)}</div>
+        <div><div class="meter xp"><span>XP</span><div class="tprog"><i style="width:${xpPc}%"></i></div><b>${p.xp}</b></div>
+        <p class="small muted" style="margin:4px 0 0">🔬 ${esc(P.fact)}</p></div></div>
+      ${lpCareHtml()}</section>`;
 }
 function palsHtml() {
   const own = PALS.filter(P => S.pals[P.id]).length, list = PALS.slice().sort((a, b) => PAL_ORDER[a.rar] - PAL_ORDER[b.rar]);
-  return `${palsSubnav("pals")}<div class="homegrid">${palPanelHtml()}
+  return `${palsSubnav("pals")}<div class="homegrid">${palPanelHtml()}${lpInsideHtml()}
     <section class="card palcoll"><div class="collhead"><h2 style="margin:0">Collect every Study Pal!</h2><span class="pill">${own} / ${PALS.length}</span></div>
       <div class="tprog rainbow"><i style="width:${Math.round(100 * own / PALS.length)}%"></i></div>
       <div class="palstrip" aria-hidden="true">${list.map(P => `<span class="${S.pals[P.id] || !palMystery(P) ? "" : "sil"}">${palFig(P.id, "happy")}</span>`).join("")}</div>
@@ -355,7 +383,8 @@ function openPalInfo(id) {
 function wirePals() {
   wireCommon();
   const g = id => document.getElementById(id);
-  if (g("pFeed")) g("pFeed").onclick = () => { SFX.tap(); openFeed(); };
+  if (g("lpRoom")) { wireLpRoom($app); wireLpCare($app); wireLpInside($app); }
+  if (g("pFeed")) g("pFeed").onclick = () => { SFX.tap(); openFeed("meal"); };
   if (g("pPlay")) g("pPlay").onclick = () => { SFX.tap(); playMatch(); };
   if (g("pEvo")) g("pEvo").onclick = () => { SFX.tap(); evolve(activePalId()); };
   $app.querySelectorAll("[data-usepal]").forEach(b => b.onclick = () => setActivePal(b.dataset.usepal));

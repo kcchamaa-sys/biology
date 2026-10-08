@@ -4,7 +4,7 @@ from pathlib import Path
 root = Path(__file__).resolve().parent.parent
 src = root / "src"
 QFILES = [f"q_t{i}.js" for i in range(1, 9)] + ["q_t9.js", "q_t11.js", "q_t13.js", "q_t15.js", "q_t17.js", "q_graphs.js", "q_graphs2.js", "q_kb1.js", "q_kb2.js", "q_x1.js", "q_x2.js", "q_x3.js", "q_x4.js", "q_h0.js", "q_h1.js", "q_h2.js", "q_h3.js", "q_h4.js", "q_m1.js", "q_m2.js", "q_m3.js", "q_m4.js"]
-parts = ["head.html", "chars.js", "icons.js", "diagrams.js", "graphs.js", "media.js", "stages.js", "stages2.js", "scenes.js", "lore.js"] + QFILES + ["rush.js", "extras.js", "life.js", "pals.js", "sims.js", "sims2.js", "bodypal_engine.js", "bodypal.js", "study.js", "bookmarks.js", "escape2.js", "home.js", "daily.js", "streakfx.js", "auth.js", "friends.js", "teacher.js", "cards.js", "lucky.js", "skills.js", "engine.js"]
+parts = ["head.html", "chars.js", "icons.js", "diagrams.js", "graphs.js", "media.js", "stages.js", "stages2.js", "scenes.js", "lore.js"] + QFILES + ["rush.js", "extras.js", "life.js", "bodypal_engine.js", "pals.js", "livepal.js", "sims.js", "sims2.js", "study.js", "bookmarks.js", "escape2.js", "home.js", "daily.js", "streakfx.js", "auth.js", "friends.js", "teacher.js", "cards.js", "lucky.js", "skills.js", "engine.js"]
 html = "".join((src / p).read_text() for p in parts) + "</script>\n</body>\n</html>\n"
 (root / "index.html").write_text(html)
 print(f"index.html: {len(html):,} bytes")

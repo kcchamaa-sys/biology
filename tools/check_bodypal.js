@@ -4,7 +4,7 @@
 const fs = require("fs"), vm = require("vm"), path = require("path");
 const code = fs.readFileSync(path.join(__dirname, "../src/bodypal_engine.js"), "utf8");
 const ctx = { console }; vm.createContext(ctx);
-vm.runInContext(code + "\n;Object.assign(this, { BPK, BP_FOODS, BP_CARDS, BP_LOS, BP_MISC, BP_CLAIMS, BP_TEMPLATES, bpReplay, bpAdvance, bpCreateWorld, bpHistAt, bpFocus, bpBuildSession, bpNewLearner, bpRecordAnswer, bpCheckAnswer, bpValidate, bpVoiceLint, bpCountBelow, bpSleepReport, bpMastered });", ctx);
+vm.runInContext(code + "\n;Object.assign(this, { BPK, BP_FOODS, BP_CARDS, BP_LOS, BP_MISC, BP_CLAIMS, BP_TEMPLATES, bpReplay, bpAdvance, bpCreateWorld, bpHistAt, bpFocus, bpBuildSession, bpNewLearner, bpRecordAnswer, bpCheckAnswer, bpValidate, bpVoiceLint, bpCountBelow, bpSleepReport, bpMastered, bpRebase, bpPeek, BP_ZONES, bpHeartRate, bpBreathRate, bpWantsDoze, bpTrySleep, bpExercise, bpDrink, bpApply });", ctx);
 const B = ctx;
 let bad = 0, ok = 0;
 const check = (cond, msg) => { if (cond) ok++; else { bad++; console.log("✗", msg); } };
@@ -189,6 +189,49 @@ const normal = run(boring(1, { alarm: null }), D(2, "07:50"));
   const exp = { sip: 0, brush: 1, coffee: 1, alarm: 0, gulp: 1 };   // "sip" = the real drink was quick and the re-run sips it
   t2.forEach(([k, q]) => check(q.answer.correctIndex === exp[k], `T2 ${k}: re-run says "${q.answer.options[q.answer.correctIndex]}" | ${q.feedback.mechanism}`));
   check(t2.some(([k]) => k === "sip") && t2.some(([k]) => k === "brush"), "T2 has sip and brush counterfactuals on the week");
+}
+/* Living Study Pal: rebasing the save keeps the same pal; touch-zone text passes the voice lint in every state; HK foods are sane */
+{
+  const log = [];
+  for (let d = 1; d <= 5; d++) log.push(E(D(d, "07:30"), "eat", { items: [["hk-congee", 450]] }), E(D(d, "12:00"), "eat", { items: [["hk-noodles", 500]] }), E(D(d, "15:00"), "drink", { id: "hk-boba", ml: 500, over: 60 }),
+    E(D(d, "18:00"), "exercise", { intensity: 2, minutes: 30 }), E(D(d, "19:00"), "eat", { items: [["hk-fish", 400]] }), E(D(d, "20:00"), "drink", { id: "hk-milktea", ml: 250, over: 5 }), E(D(d, "23:00"), "sleep", { alarm: null }));
+  const save = { opts: { start: D(1, "07:00"), seed: 3 }, log }, now = D(6, "09:00"), full = B.bpReplay(save, now);
+  [D(5, "15:20"), D(5, "18:10"), D(5, "23:03"), D(6, "02:00")].forEach(cut => {
+    const rb = B.bpRebase(save, now, now - cut), w2 = B.bpReplay(rb, now);
+    check(same(full.pal, w2.pal), `rebase at ${cut}: same pal state`);
+    check(same(full.fired.filter(c => c.t > cut + 90).map(c => c.id + c.t), w2.fired.filter(c => c.t > cut + 90).map(c => c.id + c.t)), `rebase at ${cut}: same Why cards`);
+    check(same(B.bpReplay(B.bpRebase(rb, now, 60), now).pal, full.pal), `rebase twice at ${cut}: same pal state`);
+  });
+  check(JSON.stringify(B.bpRebase(save, now)).length < 20000, "rebased save stays small");
+  // every zone, at many moments of the week, gives lint-clean text with a reading
+  const states = [];
+  for (let t = D(1, "07:00"); t <= now; t += 37) states.push(t);
+  const wk = B.bpCreateWorld(save.opts); B.bpAdvance(wk, 0);
+  const lg = log.slice().sort((a, b) => a.t - b.t); let li = 0, nPeek = 0;
+  states.forEach(t => {
+    while (li < lg.length && lg[li].t <= t) { const e = lg[li++]; if (e.t > wk.pal.epochMin) B.bpAdvance(wk, e.t - wk.pal.epochMin); B.bpApply(wk, e); }
+    if (t > wk.pal.epochMin) B.bpAdvance(wk, t - wk.pal.epochMin);
+    Object.keys(B.BP_ZONES).forEach(z => { const k = B.bpPeek(wk, z); nPeek++;
+      check(k.read && k.why, `peek ${z} at ${t} has a reading and a reason`);
+      B.bpVoiceLint(k.why).concat(B.bpVoiceLint(k.read)).forEach(e => check(false, `peek ${z} voice: ${e} | ${k.why}`)); });
+  });
+  // the peeks on the real week (eating, exercise, sleep) cover the special branches
+  const seen = new Set();
+  Object.keys(B.BP_ZONES).forEach(z => { for (let t = D(5, "07:00"); t <= now; t += 11) { const w4 = B.bpReplay(save, t); seen.add(z + ":" + B.bpPeek(w4, z).why.split(" ")[0]); if (seen.size > 40) break; } });
+  check(seen.size >= 12, `touch zones explain many different states (${seen.size})`);
+  check(nPeek > 500, "peeks checked");
+  // heart and breathing respond to exercise and sleep; the pal dozes off only when sleep pressure is very high
+  const ex = B.bpReplay(save, D(5, "18:15")), sl = B.bpReplay(save, D(6, "02:00")), rest = B.bpReplay(save, D(5, "10:00"));
+  check(B.bpHeartRate(ex.pal) > B.bpHeartRate(rest.pal) + 20 && B.bpHeartRate(sl.pal) < B.bpHeartRate(rest.pal), "heart rate: exercise > rest > asleep");
+  check(B.bpBreathRate(ex.pal) > B.bpBreathRate(rest.pal) && B.bpBreathRate(sl.pal) < B.bpBreathRate(rest.pal), "breathing: exercise > rest > asleep");
+  check(!B.bpWantsDoze(rest.pal), "no dozing at 10:00");
+  const owl = run([], D(2, "03:00")); check(B.bpWantsDoze(owl.pal), "a pal kept awake until 03:00 dozes off by itself");
+  // HK foods: per-100 values are sane and match the per-serving recipe
+  Object.values(B.BP_FOODS).forEach(f => { const v = f.per100, tot = v.sugarsG + v.starchG + v.fibreG + v.proteinG + v.fatG + v.waterG;
+    check(tot <= 101 && Object.values(v).every(x => x >= 0), `${f.id}: per-100 values add up (${tot.toFixed(1)})`); B.bpVoiceLint(f.name).forEach(e => check(false, `food name voice: ${e}`)); });
+  const boba = B.BP_FOODS["hk-boba"]; check(Math.abs(boba.per100.sugarsG * 5 - 40) < 0.6 && Math.abs(boba.per100.caffeineMg * 5 - 40) < 0.6, "bubble tea: 40 g sugar and 40 mg caffeine per cup");
+  const bb = run([E(D(1, "15:00"), "drink", { id: "hk-boba", ml: 500, over: 5 })], D(1, "17:00"));
+  check(range(bb, "g", D(1, "15:00"), D(1, "17:00"))[1] >= 140 && ids(bb).includes(1), "bubble tea gives a tall glucose peak and card 1");
 }
 console.log(bad ? `\n${bad} Body Pal check(s) failed, ${ok} passed.` : `All ${ok} Body Pal checks passed.`);
 process.exit(bad ? 1 : 0);

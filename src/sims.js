@@ -12,7 +12,6 @@ let simTab = "membrane", SIM = null;
 const SIMS = [
   ["membrane", "🫧", "Cell membrane", "Topics 2–3 · Cells and movement across membranes"],
   ["dialysis", "💧", "Osmosis tubing", "Topic 3 · Movement of substances across membranes"],
-  ["bodypal", "🫀", "Body Pal", "Topics 12 & 17 · Nutrition, teeth and homeostasis (plus sleep)"],
   ["lung", "🫁", "Breathing", "Topic 13 · Gas exchange in humans"],
   ["pupil", "👁️", "Pupil reflex", "Topic 16 · Coordination and response"],
   ["lens", "🔍", "Focusing & glasses", "Topic 16 · Coordination and response"],
@@ -35,7 +34,7 @@ function renderSims(tab) {
     </section>
     <div id="simBody"></div>`;
   $app.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { SFX.tap(); renderSims(b.dataset.sim); });
-  ({ lung: lungSim, pupil: pupilSim, lens: lensSim, ear: earSim, membrane: membraneSim, dialysis: dialysisSim, tropism: tropismSim, bodypal: bodypalSim })[simTab](document.getElementById("simBody"));
+  ({ lung: lungSim, pupil: pupilSim, lens: lensSim, ear: earSim, membrane: membraneSim, dialysis: dialysisSim, tropism: tropismSim })[simTab](document.getElementById("simBody"));
   simPredict(document.getElementById("simBody"), simTab);
   wireFolds($app);
   // Phones: wide diagrams scroll inside their card; start them centred on the interesting middle

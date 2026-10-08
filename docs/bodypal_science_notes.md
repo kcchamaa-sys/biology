@@ -1,14 +1,14 @@
 # 🫀 Body Pal: science notes, tuning log and decisions
 
-Body Pal is the Simulation Lab version of the BODYPAL spec in `New update direction.md`.
+Body Pal is the living Study Pal's body (it started as a Simulation Lab tab), built from the BODYPAL spec in `New update direction.md`.
 The spec describes a TypeScript/React/Vitest project; this repo is a single-file plain-JS game, so it was adapted:
 
 | Spec | Here |
 | --- | --- |
 | `sim/` engine package | `src/bodypal_engine.js` (DOM-free, deterministic, no `Date.now()` / `Math.random()`) |
-| React screens | `src/bodypal.js` → Lab tab **🫀 Body Pal** (`bodypalSim`) |
+| React screens | `src/livepal.js` → the active Study Pal on 🏠 Home and 🐾 Pals (touch zones, care, traces, questions) |
 | Vitest fixtures | `node tools/check_bodypal.js` (loads the engine in a Node `vm`, runs every fixture) |
-| Save file | `S.bodypal = { n, opts, log, now, learner, sessions }`; the action log is replayed on load |
+| Save file | `S.pals[id].body = { opts, log, now }` per pal (replayed on load, rebased with `bpRebase` every 3 pal days); learner in `S.palLearn` |
 | Question oracle | `bpRerun`: replay the pal's own action log with one change and read the result |
 
 Every constant lives in `BPK` at the top of the engine, with the spec's value unless listed below.
@@ -61,5 +61,17 @@ The checker compares each fixture's cards as a set (the spec lists them by numbe
 ## Left out on purpose
 
 - Question template **T6** ("Which trace?": pick which of 3 trace snippets a card belongs to) is not built yet, because its options are pictures rather than text. T1–T5 and T7–T10 are built.
-- The spec's TS/React file layout, multiple pals and settings screens. One pal per student; "↺ New pal" restarts the body and keeps learning progress.
-- A pal's diary is capped at 14 days so the replay on load stays fast on phones.
+- The spec's TS/React file layout and settings screens. Each Study Pal has its own body; only the active pal's body runs.
+
+## Living Study Pal additions (2026-10-08)
+
+- **Pal time** runs only while the pal is on screen (1 pal minute per real second; ⏩ 10×). Pausing while away is a design decision: no neglect, no guilt.
+- **Rebasing.** A living pal never ends, so `bpRebase(save, now, 2880)` replays to 48 h ago and snapshots the pal, pending sips, card edges, the last meals and a 90-minute history tail (rounded to 3 decimals). Only later actions are kept. Checked: same pal state and same Why cards as the full replay (`check_bodypal.js`).
+- **Heart and breathing rates** (`bpHeartRate`, `bpBreathRate`) are cartoon selectors (grade C); nothing in the body reads them. Rest is 72 bpm and 15 breaths a minute. Walk / jog / sprint add 28 / 55 / 85 bpm and 7 / 15 / 25 breaths. Each litre of water deficit adds 4 bpm (lower blood volume), and each mg of caffeine adds 0.04 bpm. Asleep: 56–66 bpm and 12–15 breaths.
+- **Dozing off:** `bpWantsDoze` = awake, idle and Process S at least 0.12 above the sleep gate. The pal then calls `bpTrySleep` itself; this is logged like any action, so replay stays deterministic.
+- **Hong Kong foods** (`hk-*` in `BP_FOODS`) are per-serving estimates converted to per 100 g (grade C):
+  - carbohydrate, sugar, protein, fat and fibre come from the old nutrition cards; water and serving mass are estimated;
+  - GI comes from published tables for similar foods;
+  - HK milk tea has 60 mg caffeine per 250 mL cup; bubble tea has 40 g sugar and 40 mg caffeine per 500 mL cup.
+- **Touch zones** (`bpPeek`): every reading and reason passes the voice lint in hundreds of states across a scripted week.
+- **Removed:** the old "3 treats = sugar crash" rule and the everyday / sometimes / treat labels. The engine now shows the real glucose peak and the dip (card 7), in line with the spec's no good/bad food rule.

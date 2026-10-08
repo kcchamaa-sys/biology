@@ -524,6 +524,34 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .bpord { min-width: 1.2em; }
 .bplook { margin-bottom: 6px; }
 @media (max-width: 420px) { .bpbody { grid-template-columns: 84px minmax(0, 1fr); } .bpfig svg { width: 84px; height: 84px; } .bpbar { grid-template-columns: 20px 86px minmax(0, 1fr); } }
+/* 🫀 The living Study Pal: touch zones, pal time, night room */
+.lproom::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: rgba(46,36,92,.34); opacity: 0; transition: opacity 1.2s; pointer-events: none; z-index: 1; }
+.lproom.night::before { opacity: .55; } .lproom.asleep::before { opacity: 1; }
+.lproom .pbubble, .lproom .rwin, .lproom .lpclock { z-index: 3; }
+.lproom .pbubble { max-width: min(66%, 320px); }
+.lproom .pbubble.peek { display: grid; gap: 3px; font-weight: 600; font-size: .86rem; }
+.lproom .pbubble.peek b { font-size: .95rem; } .lpread { font-weight: 800; color: #5B4B8A; } .lpwhy { line-height: 1.35; }
+.lpclock { position: absolute; right: 14px; bottom: 12px; background: rgba(255,255,255,.88); border-radius: 12px; padding: 3px 10px; font-size: .8rem; }
+.lppet .squish { animation-duration: var(--breath, 2.8s); }
+.lproom.moving .lppet svg { animation: lprun .45s ease-in-out infinite alternate; }
+@keyframes lprun { from { transform: translateY(0); } to { transform: translateY(-7px); } }
+.lpsweat { position: absolute; left: 70%; top: 34%; font-size: 1.3rem; opacity: 0; pointer-events: none; }
+.lproom.moving .lpsweat { animation: lpsweat 1.2s ease-in infinite; }
+@keyframes lpsweat { 0% { opacity: 0; transform: translateY(0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(26px); } }
+.lpz { position: absolute; transform: translate(-50%, -50%); border: 0; background: transparent; border-radius: 50%; cursor: pointer; padding: 0; z-index: 4; -webkit-tap-highlight-color: transparent; }
+.lpz:hover, .lpz:focus-visible { background: rgba(255,255,255,.28); box-shadow: 0 0 0 2px rgba(255,134,168,.75); outline: none; }
+.lpz.ping { animation: lpping .6s ease-out; }
+@keyframes lpping { from { box-shadow: 0 0 0 0 rgba(255,134,168,.8); } to { box-shadow: 0 0 0 22px rgba(255,134,168,0); } }
+.lpbeat { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-style: normal; color: #FF6F96; font-size: 1rem; opacity: .75; animation: lpbeat var(--beat, .85s) ease-in-out infinite; pointer-events: none; }
+@keyframes lpbeat { 0%, 100% { transform: translate(-50%, -50%) scale(.85); } 18% { transform: translate(-50%, -50%) scale(1.15); } }
+.lppanel { display: grid; gap: 10px; }
+.lpgrid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+.lpacts { display: grid; gap: 8px; } .lpacts .row { gap: 6px; } .lpacts [hidden] { display: none; }
+.lpspeed { gap: 6px; align-items: center; }
+.lpinside { display: grid; gap: 10px; min-width: 0; }
+.lpinside-list { margin: 0; padding-left: 18px; display: grid; gap: 3px; }
+@media (max-width: 560px) { .lpgrid { grid-template-columns: 1fr; } .lproom .pbubble { max-width: 72%; } }
+@media (prefers-reduced-motion: reduce) { .lpbeat, .lproom.moving .lppet svg, .lproom.moving .lpsweat { animation: none; } }
 .simpred { background: #F8F3FF; border-color: #8E5BD6; }
 .simpred .choice.picked { box-shadow: 0 0 0 3px #8E5BD6; }
 .spfb { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }

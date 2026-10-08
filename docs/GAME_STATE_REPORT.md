@@ -355,6 +355,12 @@ The game layers **many** motivational systems (a reviewer may judge whether this
 
 ## 9. Recent change history (most recent first)
 
+0. **Living Study Pal (2026-10-08):** the Body Pal engine (built by Copilot as a Lab tab) now powers the active Study Pal itself.
+   - Pal time runs while the pal is on screen.
+   - Students touch the head, mouth, heart, tummy or hands to see live body readings with the reason behind them.
+   - Feeding, drinks, exercise, brushing, screens and bedtime all change the simulated body.
+   - Why cards, traces, a sleep report and questions from the pal's own day sit on the Pals tab.
+   - The Lab is back to 7 models. Details: README → 🐾 Study Pals.
 0. **(Another session, same day) Harder rewards and Lab polish:** the Lucky Capsule now needs 40 questions a day; card odds are rarer with more duplicates; the Lab has roomier spacing, a phototropism layout that fits every screen, and "Predict first" in every lab.
 1. **600 MCQs rebalanced** so the correct option isn't reliably the longest (80% → 59% longest; 3% → 20% shortest).
 2. **Multimedia Hard questions:** media engine, about 150 media items; the "mark like an examiner" format removed; format labels reworded to avoid exam terms.
