@@ -191,7 +191,8 @@ function lpDraw() {
   if (Date.now() > LP.peekUntil) { const b = g("lpBubble"); if (b.classList.contains("peek") || !b.dataset.t || Date.now() - b.dataset.t > 15000) { b.classList.remove("peek"); b.textContent = lpNeedLine(); b.dataset.t = Date.now(); } }
   if (g("lpStatus")) g("lpStatus").textContent = lpStatus(p);
   if (g("lpBars")) g("lpBars").innerHTML = lpBars(p);
-  if (g("lpActs")) lpActsState();
+  if (g("lpNeeds")) g("lpNeeds").innerHTML = lpNeedsHtml(p);
+  lpActsState();
   if (Date.now() - LP.lastSlow > 2000) lpDrawSlow();
 }
 function lpBars(p) {
@@ -253,52 +254,70 @@ function lpReportHtml(n) {
 }
 function lpSetTab() { document.querySelectorAll("[data-lptr]").forEach(x => x.setAttribute("aria-checked", x.dataset.lptr === LP.tab ? "true" : "false")); }
 
-/* ---------- Care (Pals tab) ---------- */
-function lpCareHtml() {
-  const P = activePal(), st = palState(P.id), n = evoNeed(P.id), lv = palLevel(st.xp);
-  return `<div class="row lpspeed" role="group" aria-label="Pal time">${[[0, "⏸ Pause"], [1, "▶ Live"], [10, "⏩ Fast"]].map(([v, l]) => `<button class="btn sm ${LP.speed === v ? "" : "plain"}" data-lpspeed="${v}">${l}</button>`).join("")}
-      <button class="btn sm plain" id="lpHour">+1 hour</button><span class="small muted">1 pal minute = 1 second</span></div>
-    <div id="lpActs" class="lpacts">
-      <div class="row lpawake"><button class="btn yellow" id="pFeed">🍱 Feed</button><button class="btn blue" id="lpDrink">🥤 Drink</button><button class="btn plain" id="lpBrush">🪥 Brush teeth</button><button class="btn plain" id="lpLight"></button></div>
-      <div class="row lpawake"><b class="small">🏃 Play outside, 30 min:</b><button class="btn sm plain" data-lpex="1">🚶 Walk</button><button class="btn sm plain" data-lpex="2">🏃 Jog</button><button class="btn sm plain" data-lpex="3">⚡ Sprint</button></div>
-      <div class="row lpawake"><b class="small">🛏️ Bedtime:</b>${segBtns("lpalarm", [["none", "No alarm"], ["06:30", "⏰ 06:30"], ["07:00", "⏰ 07:00"]], LP.alarm)}<button class="btn sm" id="lpBed">🛏️ Go to bed</button></div>
-      <div class="row lpbed" hidden><button class="btn" id="lpMorning">⏭ Sleep until morning</button><button class="btn plain" id="lpWake">☀️ Wake up now</button></div>
-      <div class="row"><button class="btn blue" id="pPlay">🃏 Play Term Match</button>
-      ${n ? `<button class="btn ${lv >= n[0] ? "pink" : "plain"}" id="pEvo" ${lv >= n[0] && S.coins >= n[1] ? "" : "disabled"}>✨ Evolve to ${STAGES[st.stage + 1]} · Lv ${n[0]} + 🌰 ${n[1]}</button>` : `<span class="pill saved">👑 Fully evolved</span>`}
-      <button class="btn plain" data-go="dress">👗 Dress up</button></div>
-    </div>`;
+/* ---------- Care (🏠 Home): picture tiles, one tap each ---------- */
+function lpSpeedHtml() {
+  return `<div class="lpspeed" role="group" aria-label="Pal time">${[[0, "⏸", "Pause pal time"], [1, "▶", "Live: 1 pal minute a second"], [10, "⏩", "Fast: 10 pal minutes a second"]].map(([v, ic, l]) => `<button class="lpsp ${LP.speed === v ? "on" : ""}" data-lpspeed="${v}" aria-label="${l}" title="${l}">${ic}</button>`).join("")}<button class="lpsp" id="lpHour" aria-label="Skip 1 pal hour" title="Skip 1 pal hour">+1h</button></div>`;
+}
+// needs as pictures: icon + fill bar (+ one word), most urgent first is not needed: fixed order so students learn where to look
+function lpNeedsHtml(p) {
+  const st = palState(activePalId()), thirst = bpClamp(p.water.deficitMl / bpThirstMl(p)), press = bpClamp((p.sleep.S - bpL(p)) / (bpH(p) - bpL(p)));
+  const n = (ic, nm, v, bad) => { const pc = Math.round(v * 100), warn = bad ? v >= .75 : v <= .3;
+    return `<div class="lpneed ${warn ? "warn" : ""}" title="${nm} ${pc}%" aria-label="${nm} ${pc}%"><span aria-hidden="true">${ic}</span><i><b style="width:${pc}%"></b></i><small>${nm}</small></div>`; };
+  return n("⚡", "Energy", bpEnergy(p)) + n("🎯", "Focus", bpFocus(p)) + n("❤️", "Happy", st.happy / 100)
+    + n("🍽️", "Hunger", bpHunger(p), true) + n("💧", "Thirst", thirst, true) + n("😴", "Sleepy", press, true);
+}
+function lpTileKey(p) { return [p.sleep.asleep || p.sleep.inBed, p.sleep.eveningLight, !!p.activity.intensity].join(); }
+function lpTilesHtml() {
+  const p = lpWorld().pal, nm = esc(palName()), t = (id, ic, label, cls) => `<button class="ctile ${cls || ""}" id="${id}"><span class="cti" aria-hidden="true">${ic}</span><b>${label}</b></button>`;
+  LP.tileKey = lpTileKey(p);
+  if (p.sleep.asleep || p.sleep.inBed) return t("lpMorning", "⏭", "Until morning", "c-sleep") + t("lpWake", "☀️", "Wake up", "c-sun") + t("pPlay", "🃏", "Term Match", "c-play") + t("lpDress", "👗", "Dress up", "c-dress");
+  return t("pFeed", "🍱", "Feed", "c-food") + t("lpDrink", "🥤", "Drink", "c-water") + t("lpExGo", p.activity.intensity ? "🏃" : "⚽", p.activity.intensity ? "Playing…" : "Play outside", "c-move" + (p.activity.intensity ? " busy" : ""))
+    + t("lpBrush", "🪥", "Brush", "c-teeth") + t("lpLight", "📱", p.sleep.eveningLight ? "Screens off" : "Screens on", "c-screen" + (p.sleep.eveningLight ? " lit" : "")) + t("lpBed", "🛏️", "Bedtime", "c-sleep")
+    + t("pPlay", "🃏", "Term Match", "c-play") + t("lpDress", "👗", "Dress up", "c-dress");
+  void nm;
 }
 function lpActsState() {
-  const p = lpWorld().pal, bed = p.sleep.asleep || p.sleep.inBed;
-  document.querySelectorAll(".lpawake").forEach(e => e.hidden = bed);
-  document.querySelectorAll(".lpbed").forEach(e => e.hidden = !bed);
-  const l = document.getElementById("lpLight"); if (l) l.textContent = p.sleep.eveningLight ? "📱 Screens off" : "📱 Screens on";
-  document.querySelectorAll("[data-lpex]").forEach(b => b.disabled = !!p.activity.intensity);
+  const box = document.getElementById("lpTiles"); if (!box) return;
+  if (LP.tileKey !== lpTileKey(lpWorld().pal)) { box.innerHTML = lpTilesHtml(); wireLpTiles(box.closest("section") || box); }
 }
-function lpSpeedBtns() { document.querySelectorAll("[data-lpspeed]").forEach(b => b.classList.toggle("plain", Number(b.dataset.lpspeed) !== LP.speed)); }
+function lpSpeedBtns() { document.querySelectorAll("[data-lpspeed]").forEach(b => b.classList.toggle("on", Number(b.dataset.lpspeed) === LP.speed)); }
 function lpAfter() { lpNews(); lpPersist(true); lpDraw(); lpDrawSlow(true); }
 function lpAct(ok, msg, happy) {
   if (ok) { SFX.click(); if (happy) lpHappy(happy); lpAfter(); return true; }
   SFX.wrong(); toast(msg || `${palName()} can't do that right now.`); return false;
 }
-function wireLpCare(root) {
-  const w = lpWorld(), $ = s => root.querySelector(s);
+function lpCareDone() { S.careDay = today(); }
+function wireLpSpeed(root) {
   root.querySelectorAll("[data-lpspeed]").forEach(b => b.onclick = () => { SFX.tap(); LP.speed = Number(b.dataset.lpspeed); lpSpeedBtns(); });
-  $("#lpHour").onclick = () => { SFX.tap(); lpAdvance(60); };
-  $("#lpDrink").onclick = () => { SFX.tap(); openFeed("drink"); };
-  $("#lpBrush").onclick = () => lpAct(bpBrush(lpWorld()), `${palName()} is in bed.`, 1);
-  $("#lpLight").onclick = () => { const p = lpWorld().pal; lpAct(bpSetLight(lpWorld(), !p.sleep.eveningLight)); };
-  root.querySelectorAll("[data-lpex]").forEach(b => b.onclick = () => lpAct(bpExercise(lpWorld(), Number(b.dataset.lpex), 30), `${palName()} is already moving, or it's in bed.`, 3));
-  root.querySelectorAll("[data-lpalarm]").forEach(b => b.onclick = () => { SFX.tap(); LP.alarm = b.dataset.lpalarm; root.querySelectorAll("[data-lpalarm]").forEach(x => x.setAttribute("aria-checked", x === b ? "true" : "false")); });
-  $("#lpBed").onclick = () => {
-    const ww = lpWorld(); let alarm = null;
-    if (LP.alarm !== "none") { const [h, m] = LP.alarm.split(":").map(Number); alarm = Math.floor(ww.pal.epochMin / 1440) * 1440 + h * 60 + m; if (alarm <= ww.pal.epochMin + 60) alarm += 1440; }
-    lpAct(bpTrySleep(ww, alarm), `${palName()} is still playing outside.`);
-  };
-  $("#lpWake").onclick = () => lpAct(bpWake(lpWorld()));
-  $("#lpMorning").onclick = () => { SFX.tap(); const ww = lpWorld(); for (let i = 0; i < 960 && (ww.pal.sleep.asleep || ww.pal.sleep.inBed); i++) { bpAdvance(ww, 1); } lpAfter(); };
-  lpActsState();
-  void w;
+  const h = root.querySelector("#lpHour"); if (h) h.onclick = () => { SFX.tap(); lpAdvance(60); };
+}
+function wireLpTiles(root) {
+  const $ = s => root.querySelector(s), on = (s, f) => { const e = $(s); if (e) e.onclick = f; };
+  on("#pFeed", () => { SFX.tap(); openFeed("meal"); });
+  on("#lpDrink", () => { SFX.tap(); openFeed("drink"); });
+  on("#pPlay", () => { SFX.tap(); playMatch(); });
+  on("#lpDress", () => { SFX.tap(); goTab("dress"); });
+  on("#lpBrush", () => { if (lpAct(bpBrush(lpWorld()), `${palName()} is in bed.`, 1)) { lpCareDone(); toast(`🪥 Brushed: fluoride now protects ${palName()}'s enamel.`); } });
+  on("#lpLight", () => { const p = lpWorld().pal; lpAct(bpSetLight(lpWorld(), !p.sleep.eveningLight)); });
+  on("#lpExGo", () => {
+    if (lpWorld().pal.activity.intensity) { toast(`🏃 ${palName()} is still playing outside.`); return; }
+    SFX.tap();
+    openModal(`<span class="kicker">⚽ Play outside · 30 min</span><h2>How hard?</h2><div class="pickrow">${[[1, "🚶", "Walk"], [2, "🏃", "Jog"], [3, "⚡", "Sprint"]].map(([v, ic, l]) => `<button class="pick" data-lpex="${v}"><span>${ic}</span><b>${l}</b></button>`).join("")}</div>
+      <p class="small muted" style="margin:0">💡 Then tap ${esc(palName())}'s ❤️ heart and 🖐️ hands.</p>`);
+    $modal.querySelectorAll("[data-lpex]").forEach(b => b.onclick = () => { closeModal(); if (lpAct(bpExercise(lpWorld(), Number(b.dataset.lpex), 30), `${palName()} is in bed.`, 3)) lpCareDone(); });
+  });
+  on("#lpBed", () => {
+    SFX.tap();
+    openModal(`<span class="kicker">🛏️ Bedtime</span><h2>Set an alarm?</h2><div class="pickrow">${[["none", "😴", "No alarm"], ["06:30", "⏰", "06:30"], ["07:00", "⏰", "07:00"]].map(([v, ic, l]) => `<button class="pick" data-lpalarm="${v}"><span>${ic}</span><b>${l}</b></button>`).join("")}</div>
+      <p class="small muted" style="margin:0">💡 Tomorrow, read the 🌙 sleep report in 🔬 Inside.</p>`);
+    $modal.querySelectorAll("[data-lpalarm]").forEach(b => b.onclick = () => {
+      closeModal(); const ww = lpWorld(); let alarm = null; LP.alarm = b.dataset.lpalarm;
+      if (LP.alarm !== "none") { const [h, m] = LP.alarm.split(":").map(Number); alarm = Math.floor(ww.pal.epochMin / 1440) * 1440 + h * 60 + m; if (alarm <= ww.pal.epochMin + 60) alarm += 1440; }
+      if (lpAct(bpTrySleep(ww, alarm), `${palName()} is still playing outside.`)) lpCareDone();
+    });
+  });
+  on("#lpWake", () => lpAct(bpWake(lpWorld())));
+  on("#lpMorning", () => { SFX.tap(); const ww = lpWorld(); for (let i = 0; i < 960 && (ww.pal.sleep.asleep || ww.pal.sleep.inBed); i++) bpAdvance(ww, 1); lpAfter(); });
 }
 
 /* ---------- "Inside your pal" and the question session (Pals tab) ---------- */

@@ -1,18 +1,18 @@
 
 /* ============================================================
    5d. Home screens: Mochi-style tabs with a bottom navigation bar, so students rarely scroll.
-   Tabs: 🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🏆 Rewards
+   Tabs: 🏠 Home (my pal + today's plan) · 🗺️ Stages · 🎮 Practice · 🎒 Collect (pals, dress up, pets, cards) · 🔬 Lab
    ============================================================ */
 let homeTab = "home", dressSlot = "hat", dressTry = null;
-const NAV_TABS = [["home", "🏠", "Home"], ["stages", "🗺️", "Stages"], ["play", "🎮", "Practice"], ["pals", "🐾", "Pals"], ["rewards", "🏆", "Rewards"], ["lab", "🔬", "Lab"]];
-const PAL_TABS = ["pals", "dress", "pets"];
+const NAV_TABS = [["home", "🏠", "Home"], ["stages", "🗺️", "Stages"], ["play", "🎮", "Practice"], ["pals", "🎒", "Collect"], ["lab", "🔬", "Lab"]];
+const PAL_TABS = ["pals", "dress", "pets", "rewards"];   // the 🎒 Collect tab's sub-pages
 function renderNav(active) {
   const nav = document.getElementById("bnav"); if (!nav) return;
   $app.className = active ? "tab-" + active : "";
   if (PAL_TABS.includes(active)) active = "pals";
   if (active === false || !S) { nav.hidden = true; document.body.classList.remove("has-nav"); return; }
   nav.hidden = false; document.body.classList.add("has-nav");
-  const badge = { play: mistakeKeys().length, rewards: S.coll.pending, home: S.ill ? "🤒" : 0 };
+  const badge = { play: mistakeKeys().length, pals: S.coll.pending, home: S.ill ? "🤒" : 0 };
   const tabs = isTeacher() ? NAV_TABS.concat([["stats", "📊", "Stats"]]) : NAV_TABS;
   nav.innerHTML = `<div class="nav-in">${tabs.map(([id, ic, label]) => `<button data-nav="${id}" ${active === id ? 'aria-current="page"' : ""}><span class="ni" aria-hidden="true">${ic}</span>${label}${badge[id] ? `<span class="nbadge">${badge[id]}</span>` : ""}</button>`).join("")}</div>`;
   nav.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); homeTab = b.dataset.nav; renderMap(); window.scrollTo({ top: 0 }); });
@@ -75,7 +75,7 @@ function greeting0() {
 
 function renderMap() {
   stopRush(); MUSIC.setMode("map"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; recomputeMastery(); save(); renderTools();
-  newDayCheck(); palTick();
+  newDayCheck(); palTick(); if (typeof tourAt !== "undefined" && tourAt >= 0) tourEnd();   // changing page ends the spotlight tour
   if (!NAV_TABS.some(t => t[0] === homeTab) && !PAL_TABS.includes(homeTab) && !(homeTab === "stats" && isTeacher())) homeTab = "home";
   if (homeTab === "lab") return renderSims();
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni];
@@ -87,42 +87,64 @@ function renderMap() {
   wireFolds($app); wireStaleBar();
 }
 
-/* ----- 🏠 Home ----- */
+/* ----- 🏠 Home: two views. ☀️ Today = my pal + today's plan (one glowing next step) + care tiles.
+   🔬 Inside = the pal's body: needs, live traces, Why cards and questions from its day. ----- */
+let homeSub = (() => { try { return localStorage.getItem("bsp_homesub") || "today"; } catch (e) { return "today"; } })();
+function setHomeSub(v) { homeSub = v; try { localStorage.setItem("bsp_homesub", v); } catch (e) {} renderMap(); window.scrollTo({ top: 0 }); }
+// Today's path: study → care → mission → capsule. Done steps get a tick; only the next one glows and owns the big button.
+function questSteps() {
+  const m = dailyMission(), ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni], P = palName();
+  return [
+    { id: "study", ic: "📖", t: "Study", done: studiedToday(), cta: nr ? `▶ ${isStudy() ? "Study" : "Enter"}: ${isStudy() ? stageName(nr) : nr.name}` : "▶ Replay a stage", go: () => { streakNote = ""; nr ? enterRoom(nr.id) : goTab("stages"); } },
+    { id: "care", ic: "🍱", t: "Care", done: S.careDay === today(), cta: `🍱 Feed ${P}`, go: () => openFeed("meal") },
+    { id: "mission", ic: "🎯", t: "Mission", done: m.done, sub: m.done ? "" : `${m.prog}/${m.n}`, cta: `🎯 ${missionText(m).title}`, go: () => missionGo() },
+    { id: "capsule", ic: "🎰", t: "Capsule", done: luckyDrawn(), sub: luckyDrawn() ? "" : `${Math.min(luckyQ(), LUCKY_NEED)}/${LUCKY_NEED}`, cta: luckyReady() ? "🎰 Draw today's capsule" : `✏️ Answer ${LUCKY_NEED - luckyQ()} more questions`, go: () => { if (luckyReady()) openLucky(); else { const ni2 = nextRoomIndex(); ni2 === -1 ? goTab("play") : enterRoom(ROOMS[ni2].id); } } }
+  ];
+}
+function questHtml() {
+  const st = questSteps(), next = st.find(x => !x.done), n = st.filter(x => x.done).length;
+  return `<section class="card questbar" id="questBar"><div class="qhead"><b>☀️ Today's plan</b><span class="pill">${n} / ${st.length}</span></div>
+    <ol class="qsteps">${st.map((x, i) => `<li class="${x.done ? "done" : x === next ? "next" : ""}"><button data-quest="${x.id}" aria-label="${x.t}${x.done ? " (done)" : ""}"><span class="qdot">${x.done ? "✓" : x.ic}</span><b>${x.t}</b>${x.sub ? `<small>${x.sub}</small>` : ""}</button></li>`).join("")}</ol>
+    ${next ? `<button class="btn big qgo" id="qGo">${esc(next.cta)}</button>` : `<div class="qall">🎉 <b>All done today!</b> <button class="btn plain sm" data-go="play">🎮 More practice</button></div>`}</section>`;
+}
 function homeHtml() {
-  const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni], T = nr && TOPICS[nr.t], m = dailyMission();
-  // 1) the daily capsule ad, 2) the ONE next step, 3) the pal room, 4) everything else folded into bars
-  return `${storyBannerHtml()}${capsuleAdHtml()}
-    ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>${esc(palName())} is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Mochi gets better.</div></div></div>
-      <button class="btn big" id="goClinic">🩺 Open the medicine cabinet</button></section>` : ""}
-    <section class="card nextcard">
-      <span class="kicker">✨ Next step</span>
-      ${nr ? (isStudy() ? `<h2>${T.icon} ${esc(stageName(nr))}</h2><p class="small muted" style="margin:0">📖 Topic ${T.no}: ${esc(T.name)}</p>` : `<h2>${T.icon} ${esc(nr.name)}</h2><p class="small muted" style="margin:0">Topic ${T.no} · ${nr.boss ? "⚔️ Boss stage" : `Stage ${nr.s}`} · ${esc(nr.focus)}</p>`)
-           : `<h2>🎉 Every stage escaped!</h2><p class="small muted" style="margin:0">Replay any stage in 🗺️ Stages to win 3 stars.</p>`}
-      ${modeSwitch()}
-      <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study this section" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">${isStudy() ? "🧭 Choose topic, skill & level" : "🗺️ All stages"}</button></div>
-    </section>
-    ${riskCardHtml()}
-    <div class="homegrid">
-    <div class="homeleft">
-    <section class="card roomwrap">${lpRoomHtml(greeting())}
-      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" data-go="pals">🍱 Feed & care</button><button class="btn plain" id="lpHomeFeed">🥤 Quick drink of water</button></div></section>
-    ${friendsHtml()}</div>
-    <div class="homeside folds">
-      ${foldHtml("h-streak", { icon: "🔥", title: "My streak", peek: `${S.current_streak} 🔥 · ${"❄️".repeat(S.streak_shields) || "0 ❄️"}` }, streakCardHtml())}
-      ${foldHtml("h-mission", { icon: "🎯", title: "Daily mission", peek: m.done ? "✓ Done" : m.n ? `${m.prog || 0}/${m.n}` : "" }, missionCardHtml())}
-      ${foldHtml("h-board", { icon: "🏆", title: "Class leaderboard", peek: `${dedication()} pts` }, homeBoardHtml())}
-      ${foldHtml("h-feat", { icon: "⭐", title: "Featured pal" }, featuredHtml())}
-      ${foldHtml("h-tips", { icon: "💡", title: "Tips & fun facts" }, healthTipHtml() + chatCardHtml())}
-    </div></div>`;
+  const P = palName(), p = lpWorld().pal, tabs = `<div class="segtabs homesub" role="tablist">${[["today", "☀️", "Today"], ["inside", "🔬", `Inside ${esc(P)}`]].map(([id, ic, l]) => `<button role="tab" data-hsub="${id}" aria-selected="${homeSub === id}"><span aria-hidden="true">${ic}</span>${l}</button>`).join("")}</div>`;
+  const sick = S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>${esc(P)} is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div></div>
+      <button class="btn" id="goClinic">🩺 Medicine</button></div></section>` : "";
+  const room = `<section class="card roomwrap homeroom">${lpRoomHtml(greeting())}
+      <div class="needrow"><div class="lpneeds" id="lpNeeds">${lpNeedsHtml(p)}</div>${lpSpeedHtml()}</div></section>`;
+  if (homeSub === "inside") return `${tabs}<div class="homegrid"><div class="homeleft">${room}
+      <section class="card"><h3 style="margin:0">📊 ${esc(P)}'s body now</h3><div class="small" id="lpStatus">${esc(lpStatus(p))}</div><div id="lpBars" class="bpbars">${lpBars(p)}</div></section></div>
+    <div class="homeside">${lpInsideHtml()}</div></div>`;
+  const m = dailyMission();
+  // phones read top to bottom: pal → today's plan (the one big button) → care → everything else in folds
+  return `${tabs}${sick}<div class="homegrid"><div class="homeleft">${room}</div>
+    <div class="homeside">${questHtml()}
+      <section class="card caretiles" id="careTiles"><h3 style="margin:0">💗 Look after ${esc(P)}</h3><div class="ctiles" id="lpTiles">${lpTilesHtml()}</div></section>
+      <div class="folds">
+        ${foldHtml("h-luck2", { icon: "🎰", title: "Lucky Capsule", peek: luckyDrawn() ? "✓" : luckyReady() ? "Ready!" : `${luckyQ()}/${LUCKY_NEED}` }, capsuleAdHtml())}
+        ${foldHtml("h-streak", { icon: "🔥", title: "My streak", peek: `${S.current_streak} 🔥 · ${"❄️".repeat(S.streak_shields) || "0 ❄️"}` }, riskCardHtml() + streakCardHtml())}
+        ${foldHtml("h-mission", { icon: "🎯", title: "Daily mission", peek: m.done ? "✓ Done" : m.n ? `${m.prog || 0}/${m.n}` : "" }, missionCardHtml())}
+        ${foldHtml("h-friends", { icon: "👥", title: "Friends" }, friendsHtml())}
+        ${foldHtml("h-board", { icon: "🏆", title: "Class leaderboard", peek: `${dedication()} pts` }, homeBoardHtml())}
+        ${foldHtml("h-tips", { icon: "💡", title: "Tips & fun facts" }, healthTipHtml() + chatCardHtml())}
+        ${foldHtml("h-story", { icon: "📜", title: "The story of Vita" }, storyBannerHtml() || `<button class="btn plain" id="storyGo2">📜 Read the story</button>`)}
+      </div></div></div>`;
 }
 function wireHome() {
+  if (homeSub === "inside") { wireCommon(); $app.querySelectorAll("[data-hsub]").forEach(b => b.onclick = () => { SFX.tap(); setHomeSub(b.dataset.hsub); }); wireLpRoom($app); wireLpSpeed($app); wireLpInside($app); return; }
   wireFriends();
   const sg = document.getElementById("storyGo"); if (sg) sg.onclick = () => { SFX.tap(); openStory(); };
-  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured(); wireCapsuleAd(); wireHomeBoard();
+  const sg2 = document.getElementById("storyGo2"); if (sg2) sg2.onclick = () => { SFX.tap(); openStory(); };
+  wireCommon(); wireChatCard(); wireDailyCards(); wireCapsuleAd(); wireHomeBoard();
   const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
-  wireLpRoom($app);
-  const hf = document.getElementById("lpHomeFeed"); if (hf) hf.onclick = () => lpAct(bpDrink(lpWorld(), "water", 250, 5), `${palName()} is asleep.`, 1) && toast(`💧 ${palName()} drank 250 mL of water.`);
-
+  $app.querySelectorAll("[data-hsub]").forEach(b => b.onclick = () => { SFX.tap(); setHomeSub(b.dataset.hsub); });
+  wireLpRoom($app); wireLpSpeed($app);
+  const tiles = document.getElementById("careTiles"); if (tiles) wireLpTiles(tiles);
+  const st = questSteps(), next = st.find(x => !x.done);
+  const q = document.getElementById("qGo"); if (q && next) q.onclick = () => { SFX.init(); SFX.tap(); next.go(); };
+  $app.querySelectorAll("[data-quest]").forEach(b => b.onclick = () => { SFX.tap(); const x = st.find(y => y.id === b.dataset.quest); if (x.done) toast(`✓ ${x.t}: done today`); else x.go(); });
+  maybeTour();
 }
 let lastPat = 0;
 function wireCommon() {
@@ -182,7 +204,7 @@ function wirePlay() {
 
 /* ----- 🏆 Rewards ----- */
 function rewardsHtml() {
-  return `<div class="homegrid">
+  return `${palsSubnav("rewards")}<div class="homegrid">
     <section class="card cream cabinet" id="cabinet">${cabinetHtml(false)}</section>
     <div class="homeside">
       <section class="card coll-mode"><div class="row" style="justify-content:space-between"><h2>🃏 Biology cards</h2><span class="pill">${collOwned()} / ${CARD_N} · ✨ ${collOwned(true)} / ${CARD_N - collTotal("common")} rare+</span></div>

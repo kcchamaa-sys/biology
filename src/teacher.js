@@ -53,7 +53,7 @@ function statsHtml() {
   if (!isTeacher()) return `<section class="card"><h2>📊 Statistics</h2><p>This page is for teacher accounts only.</p></section>`;
   if (!TS.data) {
     loadStats();
-    return `<section class="card"><h2>📊 Class statistics</h2>${TS.err === "update" ? say("chiikawa", "The class server needs the latest <b>server/Code.gs</b> to show statistics. In Apps Script: paste the new code, then <b>Deploy → Manage deployments → ✏️ → New version</b>. The web address stays the same.", "normal", "hint")
+    return `<section class="card"><h2>📊 Class statistics</h2>${TS.err === "update" ? say("chiikawa", "The class server needs the latest code to show statistics. Tap the button, then follow the 4 steps.", "normal", "hint") + `<button class="btn yellow" id="stCode2">📋 Copy server code</button>`
       : TS.err ? `<p class="bad">${esc(TS.err)}</p><button class="btn" id="stRetry">Try again</button>` : `<p class="muted">Loading class data… ⏳</p>`}</section>`;
   }
   const C = computeStats(), per = { 7: "7 days", 30: "30 days", 90: "90 days", all: "all time" }[TS.period], nDays = TS.period === "7" ? 7 : TS.period === "90" ? 90 : 30;
@@ -78,7 +78,7 @@ function statsHtml() {
   return `<section class="card stathead"><div class="row" style="justify-content:space-between"><h2 style="margin:0">📊 Class statistics</h2><span class="small muted">🕒 ${new Date(TS.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span></div>
       <div class="row stfilters"><label class="small"><select id="stCls" class="name" aria-label="Class">${["all", ...C.classes].map(c => `<option value="${esc(c)}" ${c === TS.cls ? "selected" : ""}>${c === "all" ? "All classes" : `Class ${esc(c)}`}</option>`).join("")}</select></label>
         <div class="slottabs" role="tablist" aria-label="Period">${["7", "30", "90", "all"].map(p => `<button role="tab" aria-selected="${p === TS.period}" data-per="${p}">${{ 7: "7 d", 30: "30 d", 90: "90 d", all: "All" }[p]}</button>`).join("")}</div>
-        <button class="btn plain sm" id="stRefresh" aria-label="Refresh">🔄</button><button class="btn yellow sm" id="stCsv">⬇️ CSV</button></div>
+        <button class="btn plain sm" id="stRefresh" aria-label="Refresh">🔄</button><button class="btn yellow sm" id="stCsv">⬇️ CSV</button><button class="btn plain sm" id="stCode">📋 Server code</button></div>
       ${chips ? `<div class="gchips">${chips}</div>` : ""}</section>
     <div class="kpis">${tile("👥", `${C.active.length}<small>/${C.rows.length}</small>`, "active", ring(C.active.length, C.rows.length))}${tile("✏️", C.ans.toLocaleString(), "questions")}${tile("🎯", C.acc == null ? "–" : `${C.acc}%`, "right")}${tile("🔥", avgStreak, "avg streak")}</div>
     <div class="statgrid">
@@ -113,12 +113,14 @@ function missedHtml(list) {
 function wireStats() {
   const g = id => document.getElementById(id);
   if (g("stRetry")) g("stRetry").onclick = () => { SFX.tap(); loadStats(true); renderMap(); };
+  if (g("stCode2")) g("stCode2").onclick = () => { SFX.tap(); openServerCode(); };
   if (!TS.data) return;
   g("stCls").onchange = e => { TS.cls = e.target.value; renderMap(); };
   $app.querySelectorAll("[data-per]").forEach(b => b.onclick = () => { SFX.tap(); TS.period = b.dataset.per; renderMap(); });
   $app.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.sort; TS.dir = TS.sort === k ? -TS.dir : (k === "no" || k === "name" ? 1 : -1); TS.sort = k; renderMap(); });
   g("stRefresh").onclick = () => { SFX.tap(); TS.data = null; loadStats(true); renderMap(); };
   g("stCsv").onclick = () => { SFX.tap(); downloadStatsCsv(); };
+  g("stCode").onclick = () => { SFX.tap(); openServerCode(); };
 }
 function downloadStatsCsv() {
   const C = computeStats(), q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
@@ -126,4 +128,34 @@ function downloadStatsCsv() {
   const lines = [head.map(q).join(",")].concat(C.rows.map(r => [r.s.cls, r.s.no, r.s.en, r.s.zh, r.sess, r.ans, r.cor, r.acc == null ? "" : r.acc, r.mins, r.streak, r.best, r.stages, r.stars, r.mistakes, r.trophies, r.last ? r.last.slice(0, 10) : ""].map(q).join(",")));
   const blob = new Blob(["﻿" + lines.join("\n")], { type: "text/csv;charset=utf-8" }), a = document.createElement("a");
   a.href = URL.createObjectURL(blob); a.download = `biology-stats-${TS.cls === "all" ? "all" : TS.cls}-${today()}.csv`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
+/* ----- 📋 Copy the class server code (server/Code.gs, built into the page by tools/build.py) -----
+   Every time the server changes, the teacher pastes the new code into Apps Script and makes a New version.
+   Open it from 📊 Stats, the ☰ menu, or the link ending in #server-code (works even when signed out). */
+function copyText(t) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t).then(() => true, () => copyFallback(t));
+  return Promise.resolve(copyFallback(t));
+}
+function copyFallback(t) {
+  const ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;left:-9999px;top:0";
+  document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand("copy"); } catch (e) {} ta.remove(); return ok;
+}
+function openServerCode() {
+  const lines = SERVER_CODE.split("\n").length;
+  openModal(`<span class="kicker">🧩 Class server code</span><h2>Update the class server</h2>
+    <button class="btn big yellow" id="scCopy">📋 Copy server code</button>
+    <p class="small muted" style="margin:0">Version <b>${SERVER_CODE_VER}</b> · ${lines} lines · always the latest, built with this game</p>
+    <ol class="scsteps">
+      <li><b>📋 Copy</b> (the button above)</li>
+      <li>Open your <b>Apps Script</b> project → <b>Code.gs</b></li>
+      <li><b>Select all</b> (Ctrl / ⌘ + A) → <b>Paste</b> → 💾 Save</li>
+      <li><b>Deploy → Manage deployments → ✏️ → Version: New version → Deploy</b></li>
+    </ol>
+    <p class="small muted" style="margin:0">✅ The web address stays the same, so the game needs no change.</p>
+    <details class="scview"><summary class="small">👀 Show the code</summary><textarea id="scText" readonly rows="10">${esc(SERVER_CODE)}</textarea></details>`, { wide: true });
+  const b = document.getElementById("scCopy");
+  b.onclick = () => { SFX.tap(); copyText(SERVER_CODE).then(ok => {
+    if (ok) { SFX.item(); b.textContent = "✅ Copied! Now paste it into Apps Script"; b.classList.remove("yellow"); toast("📋 Server code copied"); }
+    else { const t = document.getElementById("scText"); t.closest("details").open = true; t.focus(); t.select(); toast("Press Ctrl / ⌘ + C to copy the selected code"); } }); };
 }

@@ -266,7 +266,7 @@ function feed(id) {
   if (!ok) { SFX.wrong(); toast(`${P.name} is asleep. Try again after it wakes up.`); return; }
   if (free) { S.pantry[id] -= 1; if (!S.pantry[id]) delete S.pantry[id]; } else S.coins -= cost; const fav = P.fav === id;
   p.happy = Math.min(100, p.happy + Math.round(f.hp * (fav ? 2 : 1) * perk("energy"))); p.xp += Math.round(f.xp * perk("xp")); p.meals = (p.meals || 0) + 1;
-  S.stats.meals = (S.stats.meals || 0) + 1; SFX.item(); closeModal();
+  S.stats.meals = (S.stats.meals || 0) + 1; lpCareDone(); SFX.item(); closeModal();
   lpAfter(); refreshCoinsOnly();
   toast(`${f.e} ${P.name} ${isDrink(f) ? (feedSip ? "is sipping" : "drank") : "ate"} the ${f.name.toLowerCase()}.${fav ? " ❤️ Favourite!" : ""} Touch the tummy to watch it.`);
 }
@@ -323,26 +323,25 @@ function showPalUnlock() {
 function setActivePal(id) { if (!S.pals[id]) return; palTick(); S.activePal = id; palState(id).t = Date.now(); save(true); refreshPlayer(); if (!R && !RU) renderMap(); toast(`⭐ ${palById(id).name} is your active Study Pal!`); }
 const palChips = P => `<span class="pill rchip2" style="background:${PAL_RAR[P.rar][1]};border-color:${PAL_RAR[P.rar][2]}">${PAL_RAR[P.rar][0]}</span><span class="pill perk" style="background:#fff">✨ ${esc(perkLabel(P))}</span>`;
 
-/* ----- 🐾 Pals page: active pal care panel + collection ----- */
-const palsSubnav = on => `<div class="subnav" role="tablist">${[["pals", "🐾", "Study Pals"], ["dress", "👗", "Dress up"], ["pets", "🦜", "Pets"]].map(([id, ic, nm]) => `<button role="tab" data-go="${id}" aria-selected="${on === id}"><span aria-hidden="true">${ic}</span>${nm}</button>`).join("")}</div>`;
+/* ----- 🎒 Collect tab: Pals · Dress up · Pets · Cards & trophies (the living pal itself lives on 🏠 Home) ----- */
+const COLLECT_TABS = [["pals", "🐾", "Pals"], ["dress", "👗", "Dress up"], ["pets", "🦜", "Pets"], ["rewards", "🃏", "Cards"]];
+const palsSubnav = on => `<div class="subnav" role="tablist">${COLLECT_TABS.map(([id, ic, nm]) => `<button role="tab" data-go="${id}" aria-selected="${on === id}"><span aria-hidden="true">${ic}</span>${nm}${id === "rewards" && S.coll.pending ? `<span class="nbadge">${S.coll.pending}</span>` : ""}</button>`).join("")}</div>`;
 const meter = (v, cls, label) => `<div class="meter ${cls}" aria-label="${label} ${Math.round(v)} of 100"><span>${label}</span><div class="tprog"><i style="width:${Math.round(v)}%"></i></div><b>${Math.round(v)}</b></div>`;
+// The active pal as a card: level, XP and evolution (care and the body are on Home)
 function palPanelHtml() {
-  const P = activePal(), p = palState(P.id), lv = palLevel(p.xp), mood = palMood(), [mi, ml] = MOOD_INFO[mood];
+  const P = activePal(), p = palState(P.id), lv = palLevel(p.xp), n = evoNeed(P.id);
   const xpPc = Math.round(100 * (p.xp - lvXP(lv)) / (lvXP(lv + 1) - lvXP(lv)));
-  return `<section class="card palpanel lppanel ${P.rar}">
-      <div class="row" style="gap:6px;justify-content:space-between"><div class="row" style="gap:6px"><h2 style="margin:0">${esc(P.name)}</h2>${palChips(P)}</div>
-        <div class="small"><b>Lv ${lv}</b> · ${STAGES[p.stage]} · <span class="moodchip">${mi} ${ml}</span></div></div>
-      ${lpRoomHtml()}
-      <div class="row" style="justify-content:space-between;gap:6px"><span class="small" id="lpStatus">${esc(lpStatus(lpWorld().pal))}</span><span class="small muted">👆 Touch the head, mouth, heart, tummy or hands to look inside</span></div>
-      <div class="lpgrid"><div id="lpBars" class="bpbars">${lpBars(lpWorld().pal)}</div>
-        <div><div class="meter xp"><span>XP</span><div class="tprog"><i style="width:${xpPc}%"></i></div><b>${p.xp}</b></div>
-        <p class="small muted" style="margin:4px 0 0">🔬 ${esc(P.fact)}</p></div></div>
-      ${lpCareHtml()}</section>`;
+  return `<section class="card palpanel actpal ${P.rar}"><div class="apfig ${frameCls()}">${figure("chiikawa", "happy", S.equip)}</div>
+      <div class="apinfo"><span class="kicker" style="padding:0">⭐ My active pal</span><h2 style="margin:0">${esc(P.name)}</h2><div class="row" style="gap:6px">${palChips(P)}</div>
+        <div class="small"><b>Lv ${lv}</b> · ${STAGES[p.stage]}</div>
+        <div class="meter xp"><span>XP</span><div class="tprog"><i style="width:${xpPc}%"></i></div><b>${p.xp}</b></div>
+        <div class="row" style="gap:6px"><button class="btn yellow sm" data-go="home">🏠 Visit ${esc(P.name)}</button>
+          ${n ? `<button class="btn sm ${lv >= n[0] ? "pink" : "plain"}" id="pEvo" ${lv >= n[0] && S.coins >= n[1] ? "" : "disabled"}>✨ Evolve · Lv ${n[0]} + 🌰 ${n[1]}</button>` : `<span class="pill saved">👑 Fully evolved</span>`}</div></div></section>`;
 }
 function palsHtml() {
   const own = PALS.filter(P => S.pals[P.id]).length, list = PALS.slice().sort((a, b) => PAL_ORDER[a.rar] - PAL_ORDER[b.rar]);
-  return `${palsSubnav("pals")}<div class="homegrid">${palPanelHtml()}${lpInsideHtml()}
-    <section class="card palcoll"><div class="collhead"><h2 style="margin:0">Collect every Study Pal!</h2><span class="pill">${own} / ${PALS.length}</span></div>
+  return `${palsSubnav("pals")}<div class="homegrid"><div class="homeleft">${palPanelHtml()}${featuredHtml()}</div>
+    <section class="card palcoll"><div class="collhead"><h2 style="margin:0">🐾 Collect every pal</h2><span class="pill">${own} / ${PALS.length}</span></div>
       <div class="tprog rainbow"><i style="width:${Math.round(100 * own / PALS.length)}%"></i></div>
       <div class="palstrip" aria-hidden="true">${list.map(P => `<span class="${S.pals[P.id] || !palMystery(P) ? "" : "sil"}">${palFig(P.id, "happy")}</span>`).join("")}</div>
       ${palRarityFolds()}
@@ -383,9 +382,7 @@ function openPalInfo(id) {
 function wirePals() {
   wireCommon();
   const g = id => document.getElementById(id);
-  if (g("lpRoom")) { wireLpRoom($app); wireLpCare($app); wireLpInside($app); }
-  if (g("pFeed")) g("pFeed").onclick = () => { SFX.tap(); openFeed("meal"); };
-  if (g("pPlay")) g("pPlay").onclick = () => { SFX.tap(); playMatch(); };
+  wireFeatured();
   if (g("pEvo")) g("pEvo").onclick = () => { SFX.tap(); evolve(activePalId()); };
   $app.querySelectorAll("[data-usepal]").forEach(b => b.onclick = () => setActivePal(b.dataset.usepal));
   $app.querySelectorAll("[data-adopt]").forEach(b => b.onclick = () => { SFX.tap(); adoptPal(b.dataset.adopt); });

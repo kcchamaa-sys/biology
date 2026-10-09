@@ -9,6 +9,7 @@ Siblings: `kcchamaa-sys/biology` (hub), `kcchamaa-sys/s1science`, `kcchamaa-sys/
 - Deploy is automatic: pushes to `claude/wonderful-turing-8ehr7a` run `.github/workflows/deploy.yml` (build + checks → `gh-pages`). Don't push to `gh-pages` by hand.
 
 ## Working agreements
+- **Giving the user code to paste** (e.g. `server/Code.gs`): never paste long code into chat (it can't all be selected on a phone). Run `python3 tools/server_code_page.py <scratchpad>/server-code.html` and republish it to the Class Server Code artifact https://claude.ai/artifact/WXFFkJ9Wfja9yJKucS4eGT (one big Copy button). The game also has ☰ Menu → 📋 Copy server code for teachers, and the link `#server-code`.
 - Keep this repo standalone: no runtime dependency on the siblings.
 - When you build or change something reusable, add a line to the cross-project log in the hub's `docs/SHARED_KNOWLEDGE.md`.
 - Never commit student names or other personal data.

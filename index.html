@@ -1493,6 +1493,69 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
   .sttable td[data-l="Stages"]::before { content: "🚪"; font-size: .8rem; } .sttable td[data-l="Last"]::before { content: "🕒"; font-size: .8rem; }
   .sttable td[data-l="Last"] { margin-left: auto; color: #7E6378; } .sttable .spark { width: 40px; }
 }
+.scsteps { margin: 6px 0; padding-left: 22px; display: grid; gap: 6px; } .scsteps li::marker { font-weight: 900; color: #CE82FF; }
+.scview textarea { width: 100%; font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; border: 2px solid #EADBC8; border-radius: 12px; padding: 8px; box-sizing: border-box; }
+/* 🏠 Home 2.0: ☀️ Today / 🔬 Inside, today's plan, care tiles · 🎒 Collect · ❓ guide and spotlight tour */
+.homesub { display: flex; gap: 6px; background: #fff; border-radius: 999px; padding: 4px; box-shadow: 0 4px 14px rgba(107,74,107,.12); margin-bottom: 12px; }
+.homesub button { flex: 1 1 0; border: 0; background: transparent; border-radius: 999px; font: inherit; font-weight: 800; min-height: 44px; display: flex; gap: 6px; align-items: center; justify-content: center; cursor: pointer; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.homesub button[aria-selected="true"] { background: linear-gradient(180deg, #FFE1EE, #FFC6DD); box-shadow: 0 4px 12px rgba(255,141,187,.35); }
+.homeroom { padding-bottom: 10px; } .homeroom .petroom { height: 280px; }
+.needrow { display: flex; gap: 8px; align-items: center; margin-top: 44px; flex-wrap: wrap; }
+.lpneeds { flex: 1 1 260px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 10px; min-width: 0; }
+.lpneed { display: grid; grid-template-columns: 22px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 4px; align-items: center; font-size: .72rem; }
+.lpneed > span { grid-row: span 2; font-size: 1.15rem; text-align: center; }
+.lpneed i { display: block; height: 8px; background: #F1EAF2; border-radius: 999px; overflow: hidden; } .lpneed i b { display: block; height: 100%; background: #7CC47A; border-radius: 999px; }
+.lpneed small { font-weight: 800; color: #7E6378; line-height: 1.1; } .lpneed.warn i b { background: #E07A5F; } .lpneed.warn small { color: #B23B2A; }
+.lpspeed { display: inline-flex; gap: 3px; background: #F4EEF6; border-radius: 999px; padding: 3px; flex: 0 0 auto; }
+.lpsp { border: 0; background: transparent; border-radius: 999px; min-width: 36px; min-height: 36px; font: inherit; font-weight: 800; font-size: .85rem; cursor: pointer; color: var(--ink); }
+.lpsp.on { background: #fff; box-shadow: 0 2px 6px rgba(107,74,107,.2); }
+.ctiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+.ctile { border: 0; border-radius: 18px; background: #FFF7EE; min-height: 78px; display: grid; justify-items: center; align-content: center; gap: 4px; padding: 8px 4px; font: inherit; color: var(--ink); cursor: pointer; box-shadow: inset 0 -3px 0 rgba(107,74,107,.08); }
+.ctile .cti { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-size: 1.5rem; background: #fff; box-shadow: 0 2px 8px rgba(107,74,107,.12); }
+.ctile b { font-size: .78rem; line-height: 1.15; text-align: center; } .ctile:active { transform: translateY(2px); }
+.c-food { background: #FFF1D6; } .c-water { background: #E3F1FF; } .c-move { background: #E6F7E1; } .c-teeth { background: #F3EDFF; } .c-screen { background: #EEF0F4; } .c-screen.lit { background: #FFF6B8; } .c-sleep { background: #E9E4FF; } .c-sun { background: #FFF1C2; } .c-play { background: #FFE4EF; } .c-dress { background: #FCE7F6; }
+.ctile.busy .cti { animation: lpbob .6s ease-in-out infinite alternate; } @keyframes lpbob { to { transform: translateY(-4px); } }
+.pickrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.pick { border: 0; border-radius: 18px; background: #FFF7EE; min-height: 92px; display: grid; justify-items: center; align-content: center; gap: 4px; font: inherit; cursor: pointer; color: var(--ink); box-shadow: inset 0 -3px 0 rgba(107,74,107,.08); }
+.pick span { font-size: 2rem; } .pick:hover, .pick:focus-visible { box-shadow: 0 0 0 3px #FF86A8; }
+.questbar { display: grid; gap: 10px; border: 3px solid #FFC6DD; }
+.qhead { display: flex; justify-content: space-between; align-items: center; } .qhead b { font-size: 1.05rem; }
+.qsteps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); position: relative; }
+.qsteps::before { content: ""; position: absolute; left: 12%; right: 12%; top: 22px; height: 4px; background: #EFE5F0; border-radius: 4px; }
+.qsteps li { position: relative; display: flex; justify-content: center; }
+.qsteps button { border: 0; background: none; font: inherit; color: var(--ink); display: grid; justify-items: center; gap: 2px; cursor: pointer; padding: 0; }
+.qdot { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-size: 1.3rem; background: #fff; border: 3px solid #E6DCE8; position: relative; z-index: 1; }
+.qsteps b { font-size: .75rem; } .qsteps small { font-size: .68rem; color: #7E6378; font-weight: 800; }
+.qsteps li.done .qdot { background: #58CC02; border-color: #58CC02; color: #fff; font-weight: 900; }
+.qsteps li.next .qdot { border-color: #FF86A8; box-shadow: 0 0 0 0 rgba(255,134,168,.7); animation: qpulse 1.6s ease-out infinite; }
+@keyframes qpulse { 70% { box-shadow: 0 0 0 12px rgba(255,134,168,0); } 100% { box-shadow: 0 0 0 0 rgba(255,134,168,0); } }
+.qgo { width: 100%; white-space: normal; line-height: 1.25; }
+.qall { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.actpal { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 12px; align-items: center; }
+.apfig svg { width: 130px; height: auto; display: block; overflow: visible; } .apinfo { display: grid; gap: 6px; min-width: 0; }
+.helpbtn { min-width: 40px; justify-content: center; } .helpbtn.glow { animation: qpulse 1.6s ease-out infinite; box-shadow: 0 0 0 0 rgba(255,134,168,.7); }
+.guide { display: grid; gap: 10px; justify-items: center; text-align: center; }
+.gart { height: 170px; width: 100%; display: grid; place-items: center; background: radial-gradient(circle at 50% 60%, #FFE9F2, #FFF8F1 70%); border-radius: 24px; position: relative; overflow: hidden; }
+.gart > svg { height: 150px; width: auto; }
+
+.gtouch { grid-template-rows: 1fr auto; padding: 6px 0; } .gtbox { position: relative; height: 120px; aspect-ratio: 228 / 202; } .gtbox > svg { width: 100%; height: 100%; display: block; } .gpoint { position: absolute; left: 62%; top: 72%; font-size: 1.8rem; animation: lpbob .6s ease-in-out infinite alternate; } .gzones { display: flex; gap: 8px; } .gzones span { width: 34px; height: 34px; border-radius: 50%; background: #fff; display: grid; place-items: center; box-shadow: 0 0 0 2px #FF86A8; }
+.gquest { display: flex; align-items: center; justify-content: center; gap: 0; } .gquest span { width: 52px; height: 52px; border-radius: 50%; background: #fff; border: 3px solid #E6DCE8; display: grid; place-items: center; font-size: 1.4rem; }
+.gquest span.done { background: #58CC02; border-color: #58CC02; color: #fff; font-weight: 900; } .gquest span.next { border-color: #FF86A8; animation: qpulse 1.6s ease-out infinite; } .gquest i { width: 18px; height: 4px; background: #EFE5F0; }
+.gicons { display: flex; gap: 18px; justify-content: center; font-size: 3rem; } .gflame { font-size: 4rem; }
+.gstrip { display: flex; justify-content: center; } .gstrip span svg { width: 76px; height: auto; }
+.gline { margin: 0; font-size: 1.02rem; line-height: 1.4; max-width: 30em; }
+.gdots { display: flex; gap: 6px; } .gdots i { width: 8px; height: 8px; border-radius: 50%; background: #E6DCE8; } .gdots i.on { background: #FF86A8; width: 22px; border-radius: 6px; }
+.gnav { justify-content: center; }
+.tourblock { position: fixed; inset: 0; z-index: 90; }
+.tourspot { position: absolute; z-index: 91; border-radius: 22px; box-shadow: 0 0 0 4px #FF86A8, 0 0 0 9999px rgba(43,30,52,.62); pointer-events: none; }
+.tourspot.fixed, .tourtip.fixed { position: fixed; }
+.tourtip { position: absolute; z-index: 92; left: 12px; right: 12px; max-width: 420px; margin: 0 auto; background: #fff; border-radius: 20px; padding: 12px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+.ttnum { width: 44px; height: 44px; border-radius: 50%; background: #FF86A8; color: #fff; font-weight: 900; font-size: 1.3rem; display: grid; place-items: center; line-height: 1; } .ttnum small { font-size: .6rem; }
+.ttbody { display: grid; gap: 2px; } .ttbody b { font-size: 1.05rem; } .ttbody span { font-size: .92rem; }
+.ttbtns { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 6px; }
+@media (max-width: 560px) { .ctiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; } .ctile { min-height: 70px; } .ctile .cti { width: 38px; height: 38px; font-size: 1.3rem; } .ctile b { font-size: .7rem; }
+  .actpal { grid-template-columns: 96px minmax(0, 1fr); } .apfig svg { width: 96px; } .homeroom .petroom { height: 250px; } }
+@media (prefers-reduced-motion: reduce) { .qsteps li.next .qdot, .helpbtn.glow, .gpoint, .gquest span.next, .ctile.busy .cti { animation: none; } }
 </style>
 </head>
 <body>
@@ -8712,7 +8775,7 @@ function feed(id) {
   if (!ok) { SFX.wrong(); toast(`${P.name} is asleep. Try again after it wakes up.`); return; }
   if (free) { S.pantry[id] -= 1; if (!S.pantry[id]) delete S.pantry[id]; } else S.coins -= cost; const fav = P.fav === id;
   p.happy = Math.min(100, p.happy + Math.round(f.hp * (fav ? 2 : 1) * perk("energy"))); p.xp += Math.round(f.xp * perk("xp")); p.meals = (p.meals || 0) + 1;
-  S.stats.meals = (S.stats.meals || 0) + 1; SFX.item(); closeModal();
+  S.stats.meals = (S.stats.meals || 0) + 1; lpCareDone(); SFX.item(); closeModal();
   lpAfter(); refreshCoinsOnly();
   toast(`${f.e} ${P.name} ${isDrink(f) ? (feedSip ? "is sipping" : "drank") : "ate"} the ${f.name.toLowerCase()}.${fav ? " ❤️ Favourite!" : ""} Touch the tummy to watch it.`);
 }
@@ -8769,26 +8832,25 @@ function showPalUnlock() {
 function setActivePal(id) { if (!S.pals[id]) return; palTick(); S.activePal = id; palState(id).t = Date.now(); save(true); refreshPlayer(); if (!R && !RU) renderMap(); toast(`⭐ ${palById(id).name} is your active Study Pal!`); }
 const palChips = P => `<span class="pill rchip2" style="background:${PAL_RAR[P.rar][1]};border-color:${PAL_RAR[P.rar][2]}">${PAL_RAR[P.rar][0]}</span><span class="pill perk" style="background:#fff">✨ ${esc(perkLabel(P))}</span>`;
 
-/* ----- 🐾 Pals page: active pal care panel + collection ----- */
-const palsSubnav = on => `<div class="subnav" role="tablist">${[["pals", "🐾", "Study Pals"], ["dress", "👗", "Dress up"], ["pets", "🦜", "Pets"]].map(([id, ic, nm]) => `<button role="tab" data-go="${id}" aria-selected="${on === id}"><span aria-hidden="true">${ic}</span>${nm}</button>`).join("")}</div>`;
+/* ----- 🎒 Collect tab: Pals · Dress up · Pets · Cards & trophies (the living pal itself lives on 🏠 Home) ----- */
+const COLLECT_TABS = [["pals", "🐾", "Pals"], ["dress", "👗", "Dress up"], ["pets", "🦜", "Pets"], ["rewards", "🃏", "Cards"]];
+const palsSubnav = on => `<div class="subnav" role="tablist">${COLLECT_TABS.map(([id, ic, nm]) => `<button role="tab" data-go="${id}" aria-selected="${on === id}"><span aria-hidden="true">${ic}</span>${nm}${id === "rewards" && S.coll.pending ? `<span class="nbadge">${S.coll.pending}</span>` : ""}</button>`).join("")}</div>`;
 const meter = (v, cls, label) => `<div class="meter ${cls}" aria-label="${label} ${Math.round(v)} of 100"><span>${label}</span><div class="tprog"><i style="width:${Math.round(v)}%"></i></div><b>${Math.round(v)}</b></div>`;
+// The active pal as a card: level, XP and evolution (care and the body are on Home)
 function palPanelHtml() {
-  const P = activePal(), p = palState(P.id), lv = palLevel(p.xp), mood = palMood(), [mi, ml] = MOOD_INFO[mood];
+  const P = activePal(), p = palState(P.id), lv = palLevel(p.xp), n = evoNeed(P.id);
   const xpPc = Math.round(100 * (p.xp - lvXP(lv)) / (lvXP(lv + 1) - lvXP(lv)));
-  return `<section class="card palpanel lppanel ${P.rar}">
-      <div class="row" style="gap:6px;justify-content:space-between"><div class="row" style="gap:6px"><h2 style="margin:0">${esc(P.name)}</h2>${palChips(P)}</div>
-        <div class="small"><b>Lv ${lv}</b> · ${STAGES[p.stage]} · <span class="moodchip">${mi} ${ml}</span></div></div>
-      ${lpRoomHtml()}
-      <div class="row" style="justify-content:space-between;gap:6px"><span class="small" id="lpStatus">${esc(lpStatus(lpWorld().pal))}</span><span class="small muted">👆 Touch the head, mouth, heart, tummy or hands to look inside</span></div>
-      <div class="lpgrid"><div id="lpBars" class="bpbars">${lpBars(lpWorld().pal)}</div>
-        <div><div class="meter xp"><span>XP</span><div class="tprog"><i style="width:${xpPc}%"></i></div><b>${p.xp}</b></div>
-        <p class="small muted" style="margin:4px 0 0">🔬 ${esc(P.fact)}</p></div></div>
-      ${lpCareHtml()}</section>`;
+  return `<section class="card palpanel actpal ${P.rar}"><div class="apfig ${frameCls()}">${figure("chiikawa", "happy", S.equip)}</div>
+      <div class="apinfo"><span class="kicker" style="padding:0">⭐ My active pal</span><h2 style="margin:0">${esc(P.name)}</h2><div class="row" style="gap:6px">${palChips(P)}</div>
+        <div class="small"><b>Lv ${lv}</b> · ${STAGES[p.stage]}</div>
+        <div class="meter xp"><span>XP</span><div class="tprog"><i style="width:${xpPc}%"></i></div><b>${p.xp}</b></div>
+        <div class="row" style="gap:6px"><button class="btn yellow sm" data-go="home">🏠 Visit ${esc(P.name)}</button>
+          ${n ? `<button class="btn sm ${lv >= n[0] ? "pink" : "plain"}" id="pEvo" ${lv >= n[0] && S.coins >= n[1] ? "" : "disabled"}>✨ Evolve · Lv ${n[0]} + 🌰 ${n[1]}</button>` : `<span class="pill saved">👑 Fully evolved</span>`}</div></div></section>`;
 }
 function palsHtml() {
   const own = PALS.filter(P => S.pals[P.id]).length, list = PALS.slice().sort((a, b) => PAL_ORDER[a.rar] - PAL_ORDER[b.rar]);
-  return `${palsSubnav("pals")}<div class="homegrid">${palPanelHtml()}${lpInsideHtml()}
-    <section class="card palcoll"><div class="collhead"><h2 style="margin:0">Collect every Study Pal!</h2><span class="pill">${own} / ${PALS.length}</span></div>
+  return `${palsSubnav("pals")}<div class="homegrid"><div class="homeleft">${palPanelHtml()}${featuredHtml()}</div>
+    <section class="card palcoll"><div class="collhead"><h2 style="margin:0">🐾 Collect every pal</h2><span class="pill">${own} / ${PALS.length}</span></div>
       <div class="tprog rainbow"><i style="width:${Math.round(100 * own / PALS.length)}%"></i></div>
       <div class="palstrip" aria-hidden="true">${list.map(P => `<span class="${S.pals[P.id] || !palMystery(P) ? "" : "sil"}">${palFig(P.id, "happy")}</span>`).join("")}</div>
       ${palRarityFolds()}
@@ -8829,9 +8891,7 @@ function openPalInfo(id) {
 function wirePals() {
   wireCommon();
   const g = id => document.getElementById(id);
-  if (g("lpRoom")) { wireLpRoom($app); wireLpCare($app); wireLpInside($app); }
-  if (g("pFeed")) g("pFeed").onclick = () => { SFX.tap(); openFeed("meal"); };
-  if (g("pPlay")) g("pPlay").onclick = () => { SFX.tap(); playMatch(); };
+  wireFeatured();
   if (g("pEvo")) g("pEvo").onclick = () => { SFX.tap(); evolve(activePalId()); };
   $app.querySelectorAll("[data-usepal]").forEach(b => b.onclick = () => setActivePal(b.dataset.usepal));
   $app.querySelectorAll("[data-adopt]").forEach(b => b.onclick = () => { SFX.tap(); adoptPal(b.dataset.adopt); });
@@ -9049,7 +9109,8 @@ function lpDraw() {
   if (Date.now() > LP.peekUntil) { const b = g("lpBubble"); if (b.classList.contains("peek") || !b.dataset.t || Date.now() - b.dataset.t > 15000) { b.classList.remove("peek"); b.textContent = lpNeedLine(); b.dataset.t = Date.now(); } }
   if (g("lpStatus")) g("lpStatus").textContent = lpStatus(p);
   if (g("lpBars")) g("lpBars").innerHTML = lpBars(p);
-  if (g("lpActs")) lpActsState();
+  if (g("lpNeeds")) g("lpNeeds").innerHTML = lpNeedsHtml(p);
+  lpActsState();
   if (Date.now() - LP.lastSlow > 2000) lpDrawSlow();
 }
 function lpBars(p) {
@@ -9111,52 +9172,70 @@ function lpReportHtml(n) {
 }
 function lpSetTab() { document.querySelectorAll("[data-lptr]").forEach(x => x.setAttribute("aria-checked", x.dataset.lptr === LP.tab ? "true" : "false")); }
 
-/* ---------- Care (Pals tab) ---------- */
-function lpCareHtml() {
-  const P = activePal(), st = palState(P.id), n = evoNeed(P.id), lv = palLevel(st.xp);
-  return `<div class="row lpspeed" role="group" aria-label="Pal time">${[[0, "⏸ Pause"], [1, "▶ Live"], [10, "⏩ Fast"]].map(([v, l]) => `<button class="btn sm ${LP.speed === v ? "" : "plain"}" data-lpspeed="${v}">${l}</button>`).join("")}
-      <button class="btn sm plain" id="lpHour">+1 hour</button><span class="small muted">1 pal minute = 1 second</span></div>
-    <div id="lpActs" class="lpacts">
-      <div class="row lpawake"><button class="btn yellow" id="pFeed">🍱 Feed</button><button class="btn blue" id="lpDrink">🥤 Drink</button><button class="btn plain" id="lpBrush">🪥 Brush teeth</button><button class="btn plain" id="lpLight"></button></div>
-      <div class="row lpawake"><b class="small">🏃 Play outside, 30 min:</b><button class="btn sm plain" data-lpex="1">🚶 Walk</button><button class="btn sm plain" data-lpex="2">🏃 Jog</button><button class="btn sm plain" data-lpex="3">⚡ Sprint</button></div>
-      <div class="row lpawake"><b class="small">🛏️ Bedtime:</b>${segBtns("lpalarm", [["none", "No alarm"], ["06:30", "⏰ 06:30"], ["07:00", "⏰ 07:00"]], LP.alarm)}<button class="btn sm" id="lpBed">🛏️ Go to bed</button></div>
-      <div class="row lpbed" hidden><button class="btn" id="lpMorning">⏭ Sleep until morning</button><button class="btn plain" id="lpWake">☀️ Wake up now</button></div>
-      <div class="row"><button class="btn blue" id="pPlay">🃏 Play Term Match</button>
-      ${n ? `<button class="btn ${lv >= n[0] ? "pink" : "plain"}" id="pEvo" ${lv >= n[0] && S.coins >= n[1] ? "" : "disabled"}>✨ Evolve to ${STAGES[st.stage + 1]} · Lv ${n[0]} + 🌰 ${n[1]}</button>` : `<span class="pill saved">👑 Fully evolved</span>`}
-      <button class="btn plain" data-go="dress">👗 Dress up</button></div>
-    </div>`;
+/* ---------- Care (🏠 Home): picture tiles, one tap each ---------- */
+function lpSpeedHtml() {
+  return `<div class="lpspeed" role="group" aria-label="Pal time">${[[0, "⏸", "Pause pal time"], [1, "▶", "Live: 1 pal minute a second"], [10, "⏩", "Fast: 10 pal minutes a second"]].map(([v, ic, l]) => `<button class="lpsp ${LP.speed === v ? "on" : ""}" data-lpspeed="${v}" aria-label="${l}" title="${l}">${ic}</button>`).join("")}<button class="lpsp" id="lpHour" aria-label="Skip 1 pal hour" title="Skip 1 pal hour">+1h</button></div>`;
+}
+// needs as pictures: icon + fill bar (+ one word), most urgent first is not needed: fixed order so students learn where to look
+function lpNeedsHtml(p) {
+  const st = palState(activePalId()), thirst = bpClamp(p.water.deficitMl / bpThirstMl(p)), press = bpClamp((p.sleep.S - bpL(p)) / (bpH(p) - bpL(p)));
+  const n = (ic, nm, v, bad) => { const pc = Math.round(v * 100), warn = bad ? v >= .75 : v <= .3;
+    return `<div class="lpneed ${warn ? "warn" : ""}" title="${nm} ${pc}%" aria-label="${nm} ${pc}%"><span aria-hidden="true">${ic}</span><i><b style="width:${pc}%"></b></i><small>${nm}</small></div>`; };
+  return n("⚡", "Energy", bpEnergy(p)) + n("🎯", "Focus", bpFocus(p)) + n("❤️", "Happy", st.happy / 100)
+    + n("🍽️", "Hunger", bpHunger(p), true) + n("💧", "Thirst", thirst, true) + n("😴", "Sleepy", press, true);
+}
+function lpTileKey(p) { return [p.sleep.asleep || p.sleep.inBed, p.sleep.eveningLight, !!p.activity.intensity].join(); }
+function lpTilesHtml() {
+  const p = lpWorld().pal, nm = esc(palName()), t = (id, ic, label, cls) => `<button class="ctile ${cls || ""}" id="${id}"><span class="cti" aria-hidden="true">${ic}</span><b>${label}</b></button>`;
+  LP.tileKey = lpTileKey(p);
+  if (p.sleep.asleep || p.sleep.inBed) return t("lpMorning", "⏭", "Until morning", "c-sleep") + t("lpWake", "☀️", "Wake up", "c-sun") + t("pPlay", "🃏", "Term Match", "c-play") + t("lpDress", "👗", "Dress up", "c-dress");
+  return t("pFeed", "🍱", "Feed", "c-food") + t("lpDrink", "🥤", "Drink", "c-water") + t("lpExGo", p.activity.intensity ? "🏃" : "⚽", p.activity.intensity ? "Playing…" : "Play outside", "c-move" + (p.activity.intensity ? " busy" : ""))
+    + t("lpBrush", "🪥", "Brush", "c-teeth") + t("lpLight", "📱", p.sleep.eveningLight ? "Screens off" : "Screens on", "c-screen" + (p.sleep.eveningLight ? " lit" : "")) + t("lpBed", "🛏️", "Bedtime", "c-sleep")
+    + t("pPlay", "🃏", "Term Match", "c-play") + t("lpDress", "👗", "Dress up", "c-dress");
+  void nm;
 }
 function lpActsState() {
-  const p = lpWorld().pal, bed = p.sleep.asleep || p.sleep.inBed;
-  document.querySelectorAll(".lpawake").forEach(e => e.hidden = bed);
-  document.querySelectorAll(".lpbed").forEach(e => e.hidden = !bed);
-  const l = document.getElementById("lpLight"); if (l) l.textContent = p.sleep.eveningLight ? "📱 Screens off" : "📱 Screens on";
-  document.querySelectorAll("[data-lpex]").forEach(b => b.disabled = !!p.activity.intensity);
+  const box = document.getElementById("lpTiles"); if (!box) return;
+  if (LP.tileKey !== lpTileKey(lpWorld().pal)) { box.innerHTML = lpTilesHtml(); wireLpTiles(box.closest("section") || box); }
 }
-function lpSpeedBtns() { document.querySelectorAll("[data-lpspeed]").forEach(b => b.classList.toggle("plain", Number(b.dataset.lpspeed) !== LP.speed)); }
+function lpSpeedBtns() { document.querySelectorAll("[data-lpspeed]").forEach(b => b.classList.toggle("on", Number(b.dataset.lpspeed) === LP.speed)); }
 function lpAfter() { lpNews(); lpPersist(true); lpDraw(); lpDrawSlow(true); }
 function lpAct(ok, msg, happy) {
   if (ok) { SFX.click(); if (happy) lpHappy(happy); lpAfter(); return true; }
   SFX.wrong(); toast(msg || `${palName()} can't do that right now.`); return false;
 }
-function wireLpCare(root) {
-  const w = lpWorld(), $ = s => root.querySelector(s);
+function lpCareDone() { S.careDay = today(); }
+function wireLpSpeed(root) {
   root.querySelectorAll("[data-lpspeed]").forEach(b => b.onclick = () => { SFX.tap(); LP.speed = Number(b.dataset.lpspeed); lpSpeedBtns(); });
-  $("#lpHour").onclick = () => { SFX.tap(); lpAdvance(60); };
-  $("#lpDrink").onclick = () => { SFX.tap(); openFeed("drink"); };
-  $("#lpBrush").onclick = () => lpAct(bpBrush(lpWorld()), `${palName()} is in bed.`, 1);
-  $("#lpLight").onclick = () => { const p = lpWorld().pal; lpAct(bpSetLight(lpWorld(), !p.sleep.eveningLight)); };
-  root.querySelectorAll("[data-lpex]").forEach(b => b.onclick = () => lpAct(bpExercise(lpWorld(), Number(b.dataset.lpex), 30), `${palName()} is already moving, or it's in bed.`, 3));
-  root.querySelectorAll("[data-lpalarm]").forEach(b => b.onclick = () => { SFX.tap(); LP.alarm = b.dataset.lpalarm; root.querySelectorAll("[data-lpalarm]").forEach(x => x.setAttribute("aria-checked", x === b ? "true" : "false")); });
-  $("#lpBed").onclick = () => {
-    const ww = lpWorld(); let alarm = null;
-    if (LP.alarm !== "none") { const [h, m] = LP.alarm.split(":").map(Number); alarm = Math.floor(ww.pal.epochMin / 1440) * 1440 + h * 60 + m; if (alarm <= ww.pal.epochMin + 60) alarm += 1440; }
-    lpAct(bpTrySleep(ww, alarm), `${palName()} is still playing outside.`);
-  };
-  $("#lpWake").onclick = () => lpAct(bpWake(lpWorld()));
-  $("#lpMorning").onclick = () => { SFX.tap(); const ww = lpWorld(); for (let i = 0; i < 960 && (ww.pal.sleep.asleep || ww.pal.sleep.inBed); i++) { bpAdvance(ww, 1); } lpAfter(); };
-  lpActsState();
-  void w;
+  const h = root.querySelector("#lpHour"); if (h) h.onclick = () => { SFX.tap(); lpAdvance(60); };
+}
+function wireLpTiles(root) {
+  const $ = s => root.querySelector(s), on = (s, f) => { const e = $(s); if (e) e.onclick = f; };
+  on("#pFeed", () => { SFX.tap(); openFeed("meal"); });
+  on("#lpDrink", () => { SFX.tap(); openFeed("drink"); });
+  on("#pPlay", () => { SFX.tap(); playMatch(); });
+  on("#lpDress", () => { SFX.tap(); goTab("dress"); });
+  on("#lpBrush", () => { if (lpAct(bpBrush(lpWorld()), `${palName()} is in bed.`, 1)) { lpCareDone(); toast(`🪥 Brushed: fluoride now protects ${palName()}'s enamel.`); } });
+  on("#lpLight", () => { const p = lpWorld().pal; lpAct(bpSetLight(lpWorld(), !p.sleep.eveningLight)); });
+  on("#lpExGo", () => {
+    if (lpWorld().pal.activity.intensity) { toast(`🏃 ${palName()} is still playing outside.`); return; }
+    SFX.tap();
+    openModal(`<span class="kicker">⚽ Play outside · 30 min</span><h2>How hard?</h2><div class="pickrow">${[[1, "🚶", "Walk"], [2, "🏃", "Jog"], [3, "⚡", "Sprint"]].map(([v, ic, l]) => `<button class="pick" data-lpex="${v}"><span>${ic}</span><b>${l}</b></button>`).join("")}</div>
+      <p class="small muted" style="margin:0">💡 Then tap ${esc(palName())}'s ❤️ heart and 🖐️ hands.</p>`);
+    $modal.querySelectorAll("[data-lpex]").forEach(b => b.onclick = () => { closeModal(); if (lpAct(bpExercise(lpWorld(), Number(b.dataset.lpex), 30), `${palName()} is in bed.`, 3)) lpCareDone(); });
+  });
+  on("#lpBed", () => {
+    SFX.tap();
+    openModal(`<span class="kicker">🛏️ Bedtime</span><h2>Set an alarm?</h2><div class="pickrow">${[["none", "😴", "No alarm"], ["06:30", "⏰", "06:30"], ["07:00", "⏰", "07:00"]].map(([v, ic, l]) => `<button class="pick" data-lpalarm="${v}"><span>${ic}</span><b>${l}</b></button>`).join("")}</div>
+      <p class="small muted" style="margin:0">💡 Tomorrow, read the 🌙 sleep report in 🔬 Inside.</p>`);
+    $modal.querySelectorAll("[data-lpalarm]").forEach(b => b.onclick = () => {
+      closeModal(); const ww = lpWorld(); let alarm = null; LP.alarm = b.dataset.lpalarm;
+      if (LP.alarm !== "none") { const [h, m] = LP.alarm.split(":").map(Number); alarm = Math.floor(ww.pal.epochMin / 1440) * 1440 + h * 60 + m; if (alarm <= ww.pal.epochMin + 60) alarm += 1440; }
+      if (lpAct(bpTrySleep(ww, alarm), `${palName()} is still playing outside.`)) lpCareDone();
+    });
+  });
+  on("#lpWake", () => lpAct(bpWake(lpWorld())));
+  on("#lpMorning", () => { SFX.tap(); const ww = lpWorld(); for (let i = 0; i < 960 && (ww.pal.sleep.asleep || ww.pal.sleep.inBed); i++) bpAdvance(ww, 1); lpAfter(); });
 }
 
 /* ---------- "Inside your pal" and the question session (Pals tab) ---------- */
@@ -10624,18 +10703,18 @@ function powerUp() {
 
 /* ============================================================
    5d. Home screens: Mochi-style tabs with a bottom navigation bar, so students rarely scroll.
-   Tabs: 🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🏆 Rewards
+   Tabs: 🏠 Home (my pal + today's plan) · 🗺️ Stages · 🎮 Practice · 🎒 Collect (pals, dress up, pets, cards) · 🔬 Lab
    ============================================================ */
 let homeTab = "home", dressSlot = "hat", dressTry = null;
-const NAV_TABS = [["home", "🏠", "Home"], ["stages", "🗺️", "Stages"], ["play", "🎮", "Practice"], ["pals", "🐾", "Pals"], ["rewards", "🏆", "Rewards"], ["lab", "🔬", "Lab"]];
-const PAL_TABS = ["pals", "dress", "pets"];
+const NAV_TABS = [["home", "🏠", "Home"], ["stages", "🗺️", "Stages"], ["play", "🎮", "Practice"], ["pals", "🎒", "Collect"], ["lab", "🔬", "Lab"]];
+const PAL_TABS = ["pals", "dress", "pets", "rewards"];   // the 🎒 Collect tab's sub-pages
 function renderNav(active) {
   const nav = document.getElementById("bnav"); if (!nav) return;
   $app.className = active ? "tab-" + active : "";
   if (PAL_TABS.includes(active)) active = "pals";
   if (active === false || !S) { nav.hidden = true; document.body.classList.remove("has-nav"); return; }
   nav.hidden = false; document.body.classList.add("has-nav");
-  const badge = { play: mistakeKeys().length, rewards: S.coll.pending, home: S.ill ? "🤒" : 0 };
+  const badge = { play: mistakeKeys().length, pals: S.coll.pending, home: S.ill ? "🤒" : 0 };
   const tabs = isTeacher() ? NAV_TABS.concat([["stats", "📊", "Stats"]]) : NAV_TABS;
   nav.innerHTML = `<div class="nav-in">${tabs.map(([id, ic, label]) => `<button data-nav="${id}" ${active === id ? 'aria-current="page"' : ""}><span class="ni" aria-hidden="true">${ic}</span>${label}${badge[id] ? `<span class="nbadge">${badge[id]}</span>` : ""}</button>`).join("")}</div>`;
   nav.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => { SFX.init(); SFX.tap(); homeTab = b.dataset.nav; renderMap(); window.scrollTo({ top: 0 }); });
@@ -10698,7 +10777,7 @@ function greeting0() {
 
 function renderMap() {
   stopRush(); MUSIC.setMode("map"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; recomputeMastery(); save(); renderTools();
-  newDayCheck(); palTick();
+  newDayCheck(); palTick(); if (typeof tourAt !== "undefined" && tourAt >= 0) tourEnd();   // changing page ends the spotlight tour
   if (!NAV_TABS.some(t => t[0] === homeTab) && !PAL_TABS.includes(homeTab) && !(homeTab === "stats" && isTeacher())) homeTab = "home";
   if (homeTab === "lab") return renderSims();
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni];
@@ -10710,42 +10789,64 @@ function renderMap() {
   wireFolds($app); wireStaleBar();
 }
 
-/* ----- 🏠 Home ----- */
+/* ----- 🏠 Home: two views. ☀️ Today = my pal + today's plan (one glowing next step) + care tiles.
+   🔬 Inside = the pal's body: needs, live traces, Why cards and questions from its day. ----- */
+let homeSub = (() => { try { return localStorage.getItem("bsp_homesub") || "today"; } catch (e) { return "today"; } })();
+function setHomeSub(v) { homeSub = v; try { localStorage.setItem("bsp_homesub", v); } catch (e) {} renderMap(); window.scrollTo({ top: 0 }); }
+// Today's path: study → care → mission → capsule. Done steps get a tick; only the next one glows and owns the big button.
+function questSteps() {
+  const m = dailyMission(), ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni], P = palName();
+  return [
+    { id: "study", ic: "📖", t: "Study", done: studiedToday(), cta: nr ? `▶ ${isStudy() ? "Study" : "Enter"}: ${isStudy() ? stageName(nr) : nr.name}` : "▶ Replay a stage", go: () => { streakNote = ""; nr ? enterRoom(nr.id) : goTab("stages"); } },
+    { id: "care", ic: "🍱", t: "Care", done: S.careDay === today(), cta: `🍱 Feed ${P}`, go: () => openFeed("meal") },
+    { id: "mission", ic: "🎯", t: "Mission", done: m.done, sub: m.done ? "" : `${m.prog}/${m.n}`, cta: `🎯 ${missionText(m).title}`, go: () => missionGo() },
+    { id: "capsule", ic: "🎰", t: "Capsule", done: luckyDrawn(), sub: luckyDrawn() ? "" : `${Math.min(luckyQ(), LUCKY_NEED)}/${LUCKY_NEED}`, cta: luckyReady() ? "🎰 Draw today's capsule" : `✏️ Answer ${LUCKY_NEED - luckyQ()} more questions`, go: () => { if (luckyReady()) openLucky(); else { const ni2 = nextRoomIndex(); ni2 === -1 ? goTab("play") : enterRoom(ROOMS[ni2].id); } } }
+  ];
+}
+function questHtml() {
+  const st = questSteps(), next = st.find(x => !x.done), n = st.filter(x => x.done).length;
+  return `<section class="card questbar" id="questBar"><div class="qhead"><b>☀️ Today's plan</b><span class="pill">${n} / ${st.length}</span></div>
+    <ol class="qsteps">${st.map((x, i) => `<li class="${x.done ? "done" : x === next ? "next" : ""}"><button data-quest="${x.id}" aria-label="${x.t}${x.done ? " (done)" : ""}"><span class="qdot">${x.done ? "✓" : x.ic}</span><b>${x.t}</b>${x.sub ? `<small>${x.sub}</small>` : ""}</button></li>`).join("")}</ol>
+    ${next ? `<button class="btn big qgo" id="qGo">${esc(next.cta)}</button>` : `<div class="qall">🎉 <b>All done today!</b> <button class="btn plain sm" data-go="play">🎮 More practice</button></div>`}</section>`;
+}
 function homeHtml() {
-  const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni], T = nr && TOPICS[nr.t], m = dailyMission();
-  // 1) the daily capsule ad, 2) the ONE next step, 3) the pal room, 4) everything else folded into bars
-  return `${storyBannerHtml()}${capsuleAdHtml()}
-    ${S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>${esc(palName())} is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div><div class="small muted">Chestnut rewards are halved until Mochi gets better.</div></div></div>
-      <button class="btn big" id="goClinic">🩺 Open the medicine cabinet</button></section>` : ""}
-    <section class="card nextcard">
-      <span class="kicker">✨ Next step</span>
-      ${nr ? (isStudy() ? `<h2>${T.icon} ${esc(stageName(nr))}</h2><p class="small muted" style="margin:0">📖 Topic ${T.no}: ${esc(T.name)}</p>` : `<h2>${T.icon} ${esc(nr.name)}</h2><p class="small muted" style="margin:0">Topic ${T.no} · ${nr.boss ? "⚔️ Boss stage" : `Stage ${nr.s}`} · ${esc(nr.focus)}</p>`)
-           : `<h2>🎉 Every stage escaped!</h2><p class="small muted" style="margin:0">Replay any stage in 🗺️ Stages to win 3 stars.</p>`}
-      ${modeSwitch()}
-      <div class="row">${nr ? `<button class="btn big" data-room="${nr.id}">${isStudy() ? "📖 Study this section" : "▶ Enter"}</button>` : ""}<button class="btn plain" data-go="stages">${isStudy() ? "🧭 Choose topic, skill & level" : "🗺️ All stages"}</button></div>
-    </section>
-    ${riskCardHtml()}
-    <div class="homegrid">
-    <div class="homeleft">
-    <section class="card roomwrap">${lpRoomHtml(greeting())}
-      <div class="row" style="justify-content:center"><button class="btn plain" data-go="dress">👗 Dress up</button><button class="btn yellow" data-go="pals">🍱 Feed & care</button><button class="btn plain" id="lpHomeFeed">🥤 Quick drink of water</button></div></section>
-    ${friendsHtml()}</div>
-    <div class="homeside folds">
-      ${foldHtml("h-streak", { icon: "🔥", title: "My streak", peek: `${S.current_streak} 🔥 · ${"❄️".repeat(S.streak_shields) || "0 ❄️"}` }, streakCardHtml())}
-      ${foldHtml("h-mission", { icon: "🎯", title: "Daily mission", peek: m.done ? "✓ Done" : m.n ? `${m.prog || 0}/${m.n}` : "" }, missionCardHtml())}
-      ${foldHtml("h-board", { icon: "🏆", title: "Class leaderboard", peek: `${dedication()} pts` }, homeBoardHtml())}
-      ${foldHtml("h-feat", { icon: "⭐", title: "Featured pal" }, featuredHtml())}
-      ${foldHtml("h-tips", { icon: "💡", title: "Tips & fun facts" }, healthTipHtml() + chatCardHtml())}
-    </div></div>`;
+  const P = palName(), p = lpWorld().pal, tabs = `<div class="segtabs homesub" role="tablist">${[["today", "☀️", "Today"], ["inside", "🔬", `Inside ${esc(P)}`]].map(([id, ic, l]) => `<button role="tab" data-hsub="${id}" aria-selected="${homeSub === id}"><span aria-hidden="true">${ic}</span>${l}</button>`).join("")}</div>`;
+  const sick = S.ill ? `<section class="card sickcard"><div class="row" style="gap:12px;flex-wrap:nowrap"><span class="flame" aria-hidden="true">🤒</span><div style="flex:1;min-width:0"><b>${esc(P)} is sick!</b><div class="small">${esc(illById(S.ill.id).sym)}</div></div>
+      <button class="btn" id="goClinic">🩺 Medicine</button></div></section>` : "";
+  const room = `<section class="card roomwrap homeroom">${lpRoomHtml(greeting())}
+      <div class="needrow"><div class="lpneeds" id="lpNeeds">${lpNeedsHtml(p)}</div>${lpSpeedHtml()}</div></section>`;
+  if (homeSub === "inside") return `${tabs}<div class="homegrid"><div class="homeleft">${room}
+      <section class="card"><h3 style="margin:0">📊 ${esc(P)}'s body now</h3><div class="small" id="lpStatus">${esc(lpStatus(p))}</div><div id="lpBars" class="bpbars">${lpBars(p)}</div></section></div>
+    <div class="homeside">${lpInsideHtml()}</div></div>`;
+  const m = dailyMission();
+  // phones read top to bottom: pal → today's plan (the one big button) → care → everything else in folds
+  return `${tabs}${sick}<div class="homegrid"><div class="homeleft">${room}</div>
+    <div class="homeside">${questHtml()}
+      <section class="card caretiles" id="careTiles"><h3 style="margin:0">💗 Look after ${esc(P)}</h3><div class="ctiles" id="lpTiles">${lpTilesHtml()}</div></section>
+      <div class="folds">
+        ${foldHtml("h-luck2", { icon: "🎰", title: "Lucky Capsule", peek: luckyDrawn() ? "✓" : luckyReady() ? "Ready!" : `${luckyQ()}/${LUCKY_NEED}` }, capsuleAdHtml())}
+        ${foldHtml("h-streak", { icon: "🔥", title: "My streak", peek: `${S.current_streak} 🔥 · ${"❄️".repeat(S.streak_shields) || "0 ❄️"}` }, riskCardHtml() + streakCardHtml())}
+        ${foldHtml("h-mission", { icon: "🎯", title: "Daily mission", peek: m.done ? "✓ Done" : m.n ? `${m.prog || 0}/${m.n}` : "" }, missionCardHtml())}
+        ${foldHtml("h-friends", { icon: "👥", title: "Friends" }, friendsHtml())}
+        ${foldHtml("h-board", { icon: "🏆", title: "Class leaderboard", peek: `${dedication()} pts` }, homeBoardHtml())}
+        ${foldHtml("h-tips", { icon: "💡", title: "Tips & fun facts" }, healthTipHtml() + chatCardHtml())}
+        ${foldHtml("h-story", { icon: "📜", title: "The story of Vita" }, storyBannerHtml() || `<button class="btn plain" id="storyGo2">📜 Read the story</button>`)}
+      </div></div></div>`;
 }
 function wireHome() {
+  if (homeSub === "inside") { wireCommon(); $app.querySelectorAll("[data-hsub]").forEach(b => b.onclick = () => { SFX.tap(); setHomeSub(b.dataset.hsub); }); wireLpRoom($app); wireLpSpeed($app); wireLpInside($app); return; }
   wireFriends();
   const sg = document.getElementById("storyGo"); if (sg) sg.onclick = () => { SFX.tap(); openStory(); };
-  wireCommon(); wireChatCard(); wireModeSwitch($app); wireDailyCards(); wireFeatured(); wireCapsuleAd(); wireHomeBoard();
+  const sg2 = document.getElementById("storyGo2"); if (sg2) sg2.onclick = () => { SFX.tap(); openStory(); };
+  wireCommon(); wireChatCard(); wireDailyCards(); wireCapsuleAd(); wireHomeBoard();
   const gc = document.getElementById("goClinic"); if (gc) gc.onclick = () => { SFX.tap(); openClinic(); };
-  wireLpRoom($app);
-  const hf = document.getElementById("lpHomeFeed"); if (hf) hf.onclick = () => lpAct(bpDrink(lpWorld(), "water", 250, 5), `${palName()} is asleep.`, 1) && toast(`💧 ${palName()} drank 250 mL of water.`);
-
+  $app.querySelectorAll("[data-hsub]").forEach(b => b.onclick = () => { SFX.tap(); setHomeSub(b.dataset.hsub); });
+  wireLpRoom($app); wireLpSpeed($app);
+  const tiles = document.getElementById("careTiles"); if (tiles) wireLpTiles(tiles);
+  const st = questSteps(), next = st.find(x => !x.done);
+  const q = document.getElementById("qGo"); if (q && next) q.onclick = () => { SFX.init(); SFX.tap(); next.go(); };
+  $app.querySelectorAll("[data-quest]").forEach(b => b.onclick = () => { SFX.tap(); const x = st.find(y => y.id === b.dataset.quest); if (x.done) toast(`✓ ${x.t}: done today`); else x.go(); });
+  maybeTour();
 }
 let lastPat = 0;
 function wireCommon() {
@@ -10805,7 +10906,7 @@ function wirePlay() {
 
 /* ----- 🏆 Rewards ----- */
 function rewardsHtml() {
-  return `<div class="homegrid">
+  return `${palsSubnav("rewards")}<div class="homegrid">
     <section class="card cream cabinet" id="cabinet">${cabinetHtml(false)}</section>
     <div class="homeside">
       <section class="card coll-mode"><div class="row" style="justify-content:space-between"><h2>🃏 Biology cards</h2><span class="pill">${collOwned()} / ${CARD_N} · ✨ ${collOwned(true)} / ${CARD_N - collTotal("common")} rare+</span></div>
@@ -10909,6 +11010,90 @@ function wirePets() {
   $app.querySelectorAll("[data-pf]").forEach(b => b.onclick = () => { SFX.tap(); petFilter = b.dataset.pf; renderMap(); });
   $app.querySelectorAll("[data-openpet]").forEach(b => b.onclick = () => { SFX.tap(); openPet(b.dataset.openpet); });
 }
+/* ============================================================
+   5d-2. ❓ Help: a picture-story guide and a spotlight tour, so nobody gets lost.
+   - Spotlight tour: the first time a student sees the new Home, the screen dims and one part at a time lights up
+     with a numbered bubble (pal → today's plan → the glowing button → care → bottom bar → ❓).
+   - Picture guide: 6 cards drawn with the game's own art (dots, Back/Next, swipe). The ❓ button in the top bar
+     glows until the guide has been opened once, and the last card can replay the tour.
+   ============================================================ */
+const TOUR_V = 2;
+const GUIDE = [
+  ["🏠", "Meet your pal", "Your pal lives on Home. Its body works like a real one: it gets hungry, thirsty and sleepy.", () => `<div class="gart">${figure("chiikawa", "sparkle", S && S.equip)}</div>`],
+  ["☀️", "Follow the glowing step", "Today's plan shows 4 steps. Do the one that glows, then the next lights up.", () => `<div class="gart gquest">${["📖", "🍱", "🎯", "🎰"].map((ic, i) => `<span class="${i === 0 ? "done" : i === 1 ? "next" : ""}">${i === 0 ? "✓" : ic}</span>`).join("<i></i>")}</div>`],
+  ["👆", "Touch to look inside", "Tap the head, mouth, heart, tummy or hands to see what is happening in the body.", () => `<div class="gart gtouch"><div class="gtbox">${figure("chiikawa", "happy", S && S.equip)}<span class="gpoint" aria-hidden="true">👆</span></div><div class="gzones">${["brain", "mouth", "heart", "belly", "hands"].map(z => `<span>${BP_ZONES[z][0]}</span>`).join("")}</div></div>`],
+  ["🗺️", "Study the stages", "🗺️ Stages has every topic. ⏱️ Escape = with a timer. 📖 Study = calm, no timer.", () => `<div class="gart gicons"><span>🗺️</span><span>⏱️</span><span>📖</span></div>`],
+  ["🎒", "Collect and dress up", "🎒 Collect: new pals, outfits, pets and biology cards.", () => `<div class="gart gstrip">${["mochi", "matcha", "sakura", "pudding"].map(id => `<span>${palFig(id, "happy")}</span>`).join("")}</div>`],
+  ["🔥", "Keep your streak", "Finish one activity a day. Missed a day? A ❄️ Streak Freeze saves your streak.", () => `<div class="gart gicons"><span class="gflame">🔥</span><span>❄️</span><span>🎁</span></div>`]
+];
+const guideSeen = () => !!(S && S.guideSeen);
+function openGuide(i = 0) {
+  if (S && !S.guideSeen) { S.guideSeen = 1; save(); renderTools(); }
+  const n = GUIDE.length, [ic, title, line, art] = GUIDE[i];
+  const box = openModal(`<div class="guide" id="guideCard"><span class="kicker">❓ How to play · ${i + 1} / ${n}</span>
+      ${art()}<h2><span aria-hidden="true">${ic}</span> ${esc(title)}</h2><p class="gline">${esc(line)}</p>
+      <div class="gdots" aria-hidden="true">${GUIDE.map((_, k) => `<i class="${k === i ? "on" : ""}"></i>`).join("")}</div>
+      <div class="row gnav">${i ? `<button class="btn plain" id="gBack">‹ Back</button>` : ""}${i < n - 1 ? `<button class="btn big" id="gNext">Next ›</button>` : `<button class="btn big" id="gTour">🔦 Show me around</button><button class="btn plain" id="gDone">Let's go</button>`}</div></div>`, { wide: false });
+  const g = id => box.querySelector("#" + id);
+  if (g("gBack")) g("gBack").onclick = () => { SFX.tap(); openGuide(i - 1); };
+  if (g("gNext")) g("gNext").onclick = () => { SFX.tap(); openGuide(i + 1); };
+  if (g("gDone")) g("gDone").onclick = () => { SFX.tap(); closeModal(); };
+  if (g("gTour")) g("gTour").onclick = () => { SFX.tap(); closeModal(); homeTab = "home"; homeSub = "today"; renderMap(); setTimeout(() => startTour(true), 300); };
+  let x0 = null; const card = g("guideCard");
+  card.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+  card.addEventListener("touchend", e => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (dx < -50 && i < n - 1) openGuide(i + 1); else if (dx > 50 && i) openGuide(i - 1); });
+}
+
+/* ----- Spotlight tour: dim everything, light up one part, say one short thing ----- */
+const TOUR = [
+  ["#lpRoom", "👆", "This is your pal", "Touch its head, tummy or heart to see inside its body."],
+  ["#questBar .qsteps", "☀️", "Today's plan", "4 steps a day. The glowing one is next."],
+  ["#qGo", "▶", "Tap the big button", "It always takes you to the next step."],
+  ["#careTiles", "💗", "Look after your pal", "Food, drinks, sleep and play change its body."],
+  ["#bnav", "🧭", "Everything else", "🗺️ Stages · 🎮 Practice · 🎒 Collect · 🔬 Lab"],
+  ["#tHelp", "❓", "Lost?", "Tap ❓ any time for the picture guide."]
+];
+let tourAt = -1;
+function maybeTour() {
+  if (!S || S.tourV === TOUR_V || homeTab !== "home" || homeSub !== "today") return;
+  setTimeout(() => { if ($modal.innerHTML || homeTab !== "home" || !document.getElementById("questBar")) { setTimeout(maybeTour, 2500); return; } startTour(false); }, 900);
+}
+function startTour(replay) {
+  if (!S) return; if (!replay && S.tourV === TOUR_V) return;
+  tourAt = 0; tourShow();
+}
+function tourEnd() {
+  tourAt = -1; S.tourV = TOUR_V; save();
+  document.querySelectorAll(".tourspot, .tourtip, .tourblock").forEach(e => e.remove());
+}
+function tourShow() {
+  document.querySelectorAll(".tourspot, .tourtip, .tourblock").forEach(e => e.remove());
+  const steps = TOUR.filter(([sel]) => document.querySelector(sel));
+  if (tourAt < 0 || tourAt >= steps.length) return tourEnd();
+  const [sel, ic, title, line] = steps[tourAt], el = document.querySelector(sel);
+  el.scrollIntoView({ block: "center", behavior: reduced() ? "auto" : "smooth" });
+  setTimeout(() => {
+    if (tourAt < 0) return;
+    const r = el.getBoundingClientRect(), pad = 8, fixed = (() => { for (let e = el; e && e !== document.body; e = e.parentElement) { const ps = getComputedStyle(e).position; if (ps === "fixed" || ps === "sticky") return true; } return false; })();
+    const top = r.top + (fixed ? 0 : scrollY) - pad, left = Math.max(4, r.left - pad), w = Math.min(innerWidth - 8 - left, r.width + pad * 2), h = r.height + pad * 2;
+    const block = document.createElement("div"); block.className = "tourblock"; block.onclick = () => {};
+    const spot = document.createElement("div"); spot.className = "tourspot" + (fixed ? " fixed" : "");
+    Object.assign(spot.style, { top: top + "px", left: left + "px", width: w + "px", height: h + "px" });
+    const tip = document.createElement("div"); tip.className = "tourtip" + (fixed ? " fixed" : ""); tip.setAttribute("role", "dialog"); tip.setAttribute("aria-live", "polite");
+    tip.innerHTML = `<div class="ttnum">${tourAt + 1}<small>/${steps.length}</small></div><div class="ttbody"><b><span aria-hidden="true">${ic}</span> ${esc(title)}</b><span>${esc(line)}</span></div>
+      <div class="ttbtns"><button class="btn plain sm" id="ttSkip">Skip</button><button class="btn sm" id="ttNext">${tourAt + 1 < steps.length ? "Next ›" : "Got it ✓"}</button></div>`;
+    document.body.append(block, spot, tip);
+    // the bubble sits below the lit part, or above it when there is no room
+    const tipH = tip.offsetHeight, below = r.bottom + pad + 12 + tipH < innerHeight;
+    const tTop = below ? r.bottom + pad + 12 : Math.max(8, r.top - pad - 12 - tipH);
+    tip.style.top = (tTop + (fixed ? 0 : scrollY)) + "px";
+    tip.classList.add(below ? "below" : "above");
+    tip.querySelector("#ttNext").onclick = () => { SFX.tap(); tourAt++; tourShow(); };
+    tip.querySelector("#ttSkip").onclick = () => { SFX.tap(); tourEnd(); };
+    tip.querySelector("#ttNext").focus();
+  }, reduced() ? 30 : 380);
+}
+window.addEventListener("resize", () => { if (tourAt >= 0) tourShow(); });
 
 /* ============================================================
    5h. Daily life: 🔥 study streak with ❄️ Streak Freezes, the streak-risk reminder,
@@ -11660,7 +11845,7 @@ function statsHtml() {
   if (!isTeacher()) return `<section class="card"><h2>📊 Statistics</h2><p>This page is for teacher accounts only.</p></section>`;
   if (!TS.data) {
     loadStats();
-    return `<section class="card"><h2>📊 Class statistics</h2>${TS.err === "update" ? say("chiikawa", "The class server needs the latest <b>server/Code.gs</b> to show statistics. In Apps Script: paste the new code, then <b>Deploy → Manage deployments → ✏️ → New version</b>. The web address stays the same.", "normal", "hint")
+    return `<section class="card"><h2>📊 Class statistics</h2>${TS.err === "update" ? say("chiikawa", "The class server needs the latest code to show statistics. Tap the button, then follow the 4 steps.", "normal", "hint") + `<button class="btn yellow" id="stCode2">📋 Copy server code</button>`
       : TS.err ? `<p class="bad">${esc(TS.err)}</p><button class="btn" id="stRetry">Try again</button>` : `<p class="muted">Loading class data… ⏳</p>`}</section>`;
   }
   const C = computeStats(), per = { 7: "7 days", 30: "30 days", 90: "90 days", all: "all time" }[TS.period], nDays = TS.period === "7" ? 7 : TS.period === "90" ? 90 : 30;
@@ -11685,7 +11870,7 @@ function statsHtml() {
   return `<section class="card stathead"><div class="row" style="justify-content:space-between"><h2 style="margin:0">📊 Class statistics</h2><span class="small muted">🕒 ${new Date(TS.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span></div>
       <div class="row stfilters"><label class="small"><select id="stCls" class="name" aria-label="Class">${["all", ...C.classes].map(c => `<option value="${esc(c)}" ${c === TS.cls ? "selected" : ""}>${c === "all" ? "All classes" : `Class ${esc(c)}`}</option>`).join("")}</select></label>
         <div class="slottabs" role="tablist" aria-label="Period">${["7", "30", "90", "all"].map(p => `<button role="tab" aria-selected="${p === TS.period}" data-per="${p}">${{ 7: "7 d", 30: "30 d", 90: "90 d", all: "All" }[p]}</button>`).join("")}</div>
-        <button class="btn plain sm" id="stRefresh" aria-label="Refresh">🔄</button><button class="btn yellow sm" id="stCsv">⬇️ CSV</button></div>
+        <button class="btn plain sm" id="stRefresh" aria-label="Refresh">🔄</button><button class="btn yellow sm" id="stCsv">⬇️ CSV</button><button class="btn plain sm" id="stCode">📋 Server code</button></div>
       ${chips ? `<div class="gchips">${chips}</div>` : ""}</section>
     <div class="kpis">${tile("👥", `${C.active.length}<small>/${C.rows.length}</small>`, "active", ring(C.active.length, C.rows.length))}${tile("✏️", C.ans.toLocaleString(), "questions")}${tile("🎯", C.acc == null ? "–" : `${C.acc}%`, "right")}${tile("🔥", avgStreak, "avg streak")}</div>
     <div class="statgrid">
@@ -11720,12 +11905,14 @@ function missedHtml(list) {
 function wireStats() {
   const g = id => document.getElementById(id);
   if (g("stRetry")) g("stRetry").onclick = () => { SFX.tap(); loadStats(true); renderMap(); };
+  if (g("stCode2")) g("stCode2").onclick = () => { SFX.tap(); openServerCode(); };
   if (!TS.data) return;
   g("stCls").onchange = e => { TS.cls = e.target.value; renderMap(); };
   $app.querySelectorAll("[data-per]").forEach(b => b.onclick = () => { SFX.tap(); TS.period = b.dataset.per; renderMap(); });
   $app.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.sort; TS.dir = TS.sort === k ? -TS.dir : (k === "no" || k === "name" ? 1 : -1); TS.sort = k; renderMap(); });
   g("stRefresh").onclick = () => { SFX.tap(); TS.data = null; loadStats(true); renderMap(); };
   g("stCsv").onclick = () => { SFX.tap(); downloadStatsCsv(); };
+  g("stCode").onclick = () => { SFX.tap(); openServerCode(); };
 }
 function downloadStatsCsv() {
   const C = computeStats(), q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
@@ -11734,6 +11921,37 @@ function downloadStatsCsv() {
   const blob = new Blob(["﻿" + lines.join("\n")], { type: "text/csv;charset=utf-8" }), a = document.createElement("a");
   a.href = URL.createObjectURL(blob); a.download = `biology-stats-${TS.cls === "all" ? "all" : TS.cls}-${today()}.csv`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
+
+/* ----- 📋 Copy the class server code (server/Code.gs, built into the page by tools/build.py) -----
+   Every time the server changes, the teacher pastes the new code into Apps Script and makes a New version.
+   Open it from 📊 Stats, the ☰ menu, or the link ending in #server-code (works even when signed out). */
+function copyText(t) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t).then(() => true, () => copyFallback(t));
+  return Promise.resolve(copyFallback(t));
+}
+function copyFallback(t) {
+  const ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;left:-9999px;top:0";
+  document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand("copy"); } catch (e) {} ta.remove(); return ok;
+}
+function openServerCode() {
+  const lines = SERVER_CODE.split("\n").length;
+  openModal(`<span class="kicker">🧩 Class server code</span><h2>Update the class server</h2>
+    <button class="btn big yellow" id="scCopy">📋 Copy server code</button>
+    <p class="small muted" style="margin:0">Version <b>${SERVER_CODE_VER}</b> · ${lines} lines · always the latest, built with this game</p>
+    <ol class="scsteps">
+      <li><b>📋 Copy</b> (the button above)</li>
+      <li>Open your <b>Apps Script</b> project → <b>Code.gs</b></li>
+      <li><b>Select all</b> (Ctrl / ⌘ + A) → <b>Paste</b> → 💾 Save</li>
+      <li><b>Deploy → Manage deployments → ✏️ → Version: New version → Deploy</b></li>
+    </ol>
+    <p class="small muted" style="margin:0">✅ The web address stays the same, so the game needs no change.</p>
+    <details class="scview"><summary class="small">👀 Show the code</summary><textarea id="scText" readonly rows="10">${esc(SERVER_CODE)}</textarea></details>`, { wide: true });
+  const b = document.getElementById("scCopy");
+  b.onclick = () => { SFX.tap(); copyText(SERVER_CODE).then(ok => {
+    if (ok) { SFX.item(); b.textContent = "✅ Copied! Now paste it into Apps Script"; b.classList.remove("yellow"); toast("📋 Server code copied"); }
+    else { const t = document.getElementById("scText"); t.closest("details").open = true; t.focus(); t.select(); toast("Press Ctrl / ⌘ + C to copy the selected code"); } }); };
+}
+const SERVER_CODE = "/**\n * Mochi Bio Escape \u2013 class server (Google Apps Script web app)\n * ----------------------------------------------------------------\n * - Checks each Google sign-in (ID token) and looks the email up in the Users sheet.\n * - Saves every finished activity (escape stage, study series, Cell Rush, dictation,\n *   Mistake Notebook) and each student's game progress to the spreadsheet.\n * - Gives signed-in students the class leaderboard.\n * - Friends: each student has a 6-character friend code and can follow up to 5 classmates (any class in the\n *   Users list), see their study progress and send one preset cheer per friend per day. No free-text messages.\n * Guests never reach this server: their progress stays on their own device.\n *\n * Script Properties (Project Settings \u2192 Script properties):\n *   SHEET_ID     ID of the Google Sheet that holds the Users tab   (required)\n *   CLIENT_ID    Google OAuth Web client ID used by the game       (required)\n *   USERS_SHEET  optional, name of the users tab (default: \u4f7f\u7528\u8005 Users)\n *   TEACHER_EMAILS optional, comma-separated. If set, ONLY these emails see the teacher statistics.\n *                If empty, every staff account (Role contains \u6559\u8077\u54e1 / staff / teacher) can see them.\n *\n * Users tab columns: Email \u00b7 Role \u00b7 Chinese Name \u00b7 English Name \u00b7 Class \u00b7 Class No.\n * (the same tab the S1 Science game uses, so one list serves both games)\n */\nvar PROPS = PropertiesService.getScriptProperties();\nvar USERS_DEFAULT = '\u4f7f\u7528\u8005 Users';\nvar REC = 'Biology Records';\nvar PROG = 'Biology Progress';\nvar FRIENDS = 'Biology Friends';\nvar CHEERS = 'Biology Cheers';\nvar FRIEND_MAX = 5;\n// Preset cheers only (no free text between students). The client shows the same list in the same order.\nvar CHEER_MSGS = ['\ud83d\udd25 Keep your flame going!', '\ud83d\udc4f Great work today!', '\ud83d\udcaa You can do it!', '\ud83c\udf31 Study with me today?'];\nvar REC_HEAD = ['Timestamp', 'Session ID', 'Email', 'Role', 'Class', 'Class No.', 'Chinese Name', 'English Name',\n  'Mode', 'Topic', 'Stage', 'Answered', 'Correct', 'Accuracy %', 'Stars', 'Seconds', 'Status', 'Start', 'End',\n  'Question IDs', 'Wrong IDs'];\nvar PROG_HEAD = ['Email', 'Updated', 'Streak', 'Best streak', 'Stars', 'Stages cleared', 'Chestnuts', 'Active pet',\n  'Pets', 'Mistakes waiting', 'Mistakes cleared', 'Trophies', 'Last study day', 'Data (do not edit)',\n  'Dedication points', 'Collection', 'Active pal'];\nvar DATA_COL = 14; // column N holds the saved game data\nvar MODES = { escape: 'Escape stage', study: 'Study series', rush: 'Cell Rush', dict: 'Dictation', notebook: 'Mistake Notebook', bookmark: 'Bookmarks' };\nvar STATUS = { done: 'Finished', quit: 'Stopped early' };\n\nfunction doGet() {\n  return out({ ok: true, app: 'Mochi Bio Escape', time: new Date().toISOString() });\n}\n\nfunction doPost(e) {\n  try {\n    var body = JSON.parse(e.postData.contents);\n    var v = verifyToken(body.token);\n    if (!v.ok) return out(v);\n    var user = findUser(v.email);\n    if (!user) return out({ ok: false, error: 'not_listed' });\n    switch (body.action) {\n      case 'login': return out({ ok: true, user: user, progress: getProgress(user.email) });\n      case 'save': saveProgress(user, body.state, body.summary || {}); return out({ ok: true });\n      case 'record': return out({ ok: true, saved: appendRecords(user, body.records || []) });\n      case 'board': return out(board(user, body.scope === 'all' ? 'all' : 'class'));\n      case 'friends': return out(friendsData(user, true));\n      case 'friendAdd': return out(friendAdd(user, body.code));\n      case 'friendRemove': return out(friendRemove(user, body.code));\n      case 'cheer': return out(cheer(user, body.code, body.msg));\n      case 'stats':\n        if (!user.teacher) return out({ ok: false, error: 'forbidden' });\n        return out(stats());\n      default: return out({ ok: false, error: 'unknown_action' });\n    }\n  } catch (err) {\n    return out({ ok: false, error: 'server: ' + err });\n  }\n}\n\nfunction out(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }\nfunction book() { return SpreadsheetApp.openById(PROPS.getProperty('SHEET_ID')); }\nfunction sheet(name, head) {\n  var ss = book(), sh = ss.getSheetByName(name);\n  if (!sh) {\n    sh = ss.insertSheet(name);\n    sh.appendRow(head);\n    sh.setFrozenRows(1);\n    sh.getRange(1, 1, 1, head.length).setFontWeight('bold').setBackground('#FFE3EA');\n  }\n  return sh;\n}\n// Text from the game is trimmed and can never start a formula\nfunction clean(s, n) { return String(s == null ? '' : s).slice(0, n || 200).replace(/^[=+\\-@\\t\\r]+/, ''); }\nfunction num(x) { var n = Number(x); return isFinite(n) ? Math.max(0, Math.min(n, 1000000)) : 0; }\nfunction when(s) { var d = new Date(s); return isNaN(d) ? '' : d; }\n\n/** Verifies a Google ID token with Google and caches the result until it expires. */\nfunction verifyToken(token) {\n  if (!token) return { ok: false, error: 'no_token' };\n  var cache = CacheService.getScriptCache();\n  var key = 'tk_' + Utilities.base64EncodeWebSafe(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, token)).slice(0, 43);\n  var hit = cache.get(key);\n  if (hit) return JSON.parse(hit);\n  var r = UrlFetchApp.fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(token), { muteHttpExceptions: true });\n  if (r.getResponseCode() !== 200) return { ok: false, error: 'expired' };\n  var p = JSON.parse(r.getContentText());\n  if (p.aud !== PROPS.getProperty('CLIENT_ID')) return { ok: false, error: 'bad_client' };\n  if (String(p.email_verified) !== 'true') return { ok: false, error: 'unverified' };\n  var left = Number(p.exp) - Math.floor(Date.now() / 1000);\n  if (left <= 0) return { ok: false, error: 'expired' };\n  var res = { ok: true, email: String(p.email).trim().toLowerCase() };\n  cache.put(key, JSON.stringify(res), Math.max(1, Math.min(left, 3000)));\n  return res;\n}\n\nfunction isStaffRole(role) { return /\u6559\u8077\u54e1|staff|teacher|\u8001\u5e2b/i.test(role); }\nfunction findUser(email) {\n  var cache = CacheService.getScriptCache(), c = cache.get('bu_' + email);\n  if (c) return JSON.parse(c);\n  var sh = book().getSheetByName(PROPS.getProperty('USERS_SHEET') || USERS_DEFAULT);\n  if (!sh) throw 'Users sheet not found';\n  var v = sh.getDataRange().getValues();\n  var teachers = (PROPS.getProperty('TEACHER_EMAILS') || '').toLowerCase().split(/[,\\s]+/).filter(String);\n  for (var i = 1; i < v.length; i++) {\n    if (String(v[i][0]).trim().toLowerCase() !== email) continue;\n    var role = String(v[i][1] || '');\n    var u = {\n      email: email, role: role, zh: String(v[i][2] || ''), en: String(v[i][3] || ''),\n      cls: String(v[i][4] || ''), no: v[i][5] === '' || v[i][5] == null ? '' : String(v[i][5]),\n      teacher: teachers.length ? teachers.indexOf(email) >= 0 : isStaffRole(role)\n    };\n    cache.put('bu_' + email, JSON.stringify(u), 300);\n    return u;\n  }\n  return null;\n}\n\nfunction appendRecords(u, recs) {\n  if (!recs.length) return 0;\n  var lock = LockService.getScriptLock(); lock.waitLock(20000);\n  try {\n    var sh = sheet(REC, REC_HEAD);\n    var rows = recs.slice(0, 300).map(function (r) {\n      var ans = num(r.ans), cor = Math.min(num(r.cor), ans || num(r.cor));\n      return [new Date(), clean(r.session, 40), u.email, u.role, u.cls, u.no, u.zh, u.en,\n        MODES[r.mode] || clean(r.mode, 30), clean(r.topic, 10), clean(r.stage, 60), ans, cor,\n        ans ? Math.round(cor / ans * 100) : '', num(r.stars), num(r.secs), STATUS[r.status] || clean(r.status, 20),\n        when(r.start), when(r.end), clean(r.ids, 600), clean(r.wrong, 600)];\n    });\n    var start = sh.getLastRow() + 1;\n    sh.getRange(start, 10, rows.length, 2).setNumberFormat('@'); // keep \"1\" and \"t1s2\" as text\n    sh.getRange(start, 1, rows.length, REC_HEAD.length).setValues(rows);\n    return rows.length;\n  } finally { lock.releaseLock(); }\n}\n\nfunction findRow(sh, email) {\n  var last = sh.getLastRow();\n  if (last < 2) return -1;\n  var col = sh.getRange(2, 1, last - 1, 1).getValues();\n  for (var i = 0; i < col.length; i++) if (String(col[i][0]).toLowerCase() === email) return i + 2;\n  return -1;\n}\n// A day as yyyy-MM-dd, even when Sheets has turned the text into a Date (otherwise \"Thu Oct 08\u2026\" >= \"2026-\u2026\" is always true)\nfunction dayStr(v) {\n  if (v instanceof Date) return isNaN(v) ? '' : Utilities.formatDate(v, Session.getScriptTimeZone() || 'Asia/Hong_Kong', 'yyyy-MM-dd');\n  return String(v || '').slice(0, 10);\n}\nfunction saveProgress(u, state, s) {\n  state = String(state || '');\n  // Too big for one cell: still update the summary (streak, chestnuts\u2026) and keep the last data that fitted.\n  // (New game versions pack the save so this should not happen; this is the safety net.)\n  var keepOld = state.length > 49000;\n  var lock = LockService.getScriptLock(); lock.waitLock(20000);\n  try {\n    var sh = sheet(PROG, PROG_HEAD);\n    if (sh.getRange(1, PROG_HEAD.length).getValue() !== PROG_HEAD[PROG_HEAD.length - 1]) sh.getRange(1, 1, 1, PROG_HEAD.length).setValues([PROG_HEAD]); // older sheets: add new headers\n    var row = [u.email, new Date(), num(s.streak), num(s.best), num(s.stars), num(s.stages), num(s.coins), clean(s.pet, 30),\n      num(s.pets), num(s.mistakes), num(s.cleared), num(s.trophies), clean(s.lastDay, 12), state, num(s.xp), num(s.col), clean(s.pal, 20)];\n    var r = findRow(sh, u.email);\n    if (keepOld) row[DATA_COL - 1] = r < 0 ? '' : sh.getRange(r, DATA_COL).getValue();\n    if (r < 0) r = sh.getLastRow() + 1;\n    sh.getRange(r, 13).setNumberFormat('@');\n    sh.getRange(r, 1, 1, row.length).setValues([row]);\n  } finally { lock.releaseLock(); }\n}\nfunction getProgress(email) {\n  var sh = book().getSheetByName(PROG);\n  if (!sh) return null;\n  var r = findRow(sh, email);\n  return r < 0 ? null : String(sh.getRange(r, DATA_COL).getValue() || '') || null;\n}\n\n/** Class leaderboard: top 20 students for effort (dedication points), current streak and collection.\n *  Only signed-in students on the class list can see it. */\nfunction fullName(zh, en) {\n  zh = String(zh || '').trim();\n  return zh || String(en || '').trim() || '?';\n}\nfunction boardRows() {\n  var cache = CacheService.getScriptCache(), hit = cache.get('bio_board2');\n  if (hit) return JSON.parse(hit);\n  var ss = book(), rows = [];\n  var uv = ss.getSheetByName(PROPS.getProperty('USERS_SHEET') || USERS_DEFAULT).getDataRange().getValues();\n  var info = {};\n  for (var i = 1; i < uv.length; i++) {\n    if (!uv[i][0] || isStaffRole(String(uv[i][1] || ''))) continue;\n    info[String(uv[i][0]).trim().toLowerCase()] = { n: fullName(uv[i][2], uv[i][3]), en: String(uv[i][3] || '').trim(), c: String(uv[i][4] || '') };\n  }\n  var ps = ss.getSheetByName(PROG);\n  if (ps && ps.getLastRow() > 1) {\n    var n = ps.getLastRow() - 1;\n    var a = ps.getRange(2, 1, n, PROG_HEAD.length).getValues();\n    var tz = Session.getScriptTimeZone() || 'Asia/Hong_Kong';\n    var yest = Utilities.formatDate(new Date(Date.now() - 864e5), tz, 'yyyy-MM-dd');\n    a.forEach(function (r) {\n      var em = String(r[0]).toLowerCase(), u = info[em];\n      if (!u) return;\n      var last = dayStr(r[12]);\n      rows.push({ e: em, n: u.n, en: u.en, c: u.c, p: String(r[7] || ''), xp: Number(r[14]) || 0,\n        st: last >= yest ? Number(r[2]) || 0 : 0, col: Number(r[15]) || 0, s: Number(r[5]) || 0, stars: Number(r[4]) || 0,\n        last: last, pal: String(r[16] || '') });\n    });\n  }\n  cache.put('bio_board2', JSON.stringify(rows), 120);\n  return rows;\n}\nfunction board(user, scope) {\n  var rows = boardRows().filter(function (r) { return scope === 'all' || r.c === user.cls; });\n  function cat(key) {\n    var list = rows.filter(function (r) { return r[key] > 0; }).sort(function (x, y) { return y[key] - x[key] || y.xp - x.xp; });\n    var top = list.slice(0, 20).map(function (r) { return { n: r.n, c: r.c, p: r.p, v: r[key], me: r.e === user.email }; });\n    var me = null;\n    for (var i = 0; i < list.length; i++) if (list[i].e === user.email) { me = { rank: i + 1, v: list[i][key] }; break; }\n    return { top: top, me: me };\n  }\n  return { ok: true, scope: scope, cats: { xp: cat('xp'), streak: cat('st'), col: cat('col') } };\n}\n\n/** Teacher statistics (staff only): the class list, the last 365 days of records and each student's progress summary. */\nfunction stats() {\n  var ss = book();\n  var uv = ss.getSheetByName(PROPS.getProperty('USERS_SHEET') || USERS_DEFAULT).getDataRange().getValues();\n  var students = [];\n  for (var i = 1; i < uv.length; i++) {\n    if (!uv[i][0] || isStaffRole(String(uv[i][1] || ''))) continue;\n    students.push({ email: String(uv[i][0]).trim().toLowerCase(), zh: String(uv[i][2] || ''), en: String(uv[i][3] || ''),\n      cls: String(uv[i][4] || ''), no: uv[i][5] === '' || uv[i][5] == null ? '' : String(uv[i][5]) });\n  }\n  var rev = {}; for (var k in MODES) rev[MODES[k]] = k;\n  var since = Date.now() - 365 * 864e5, records = [], rs = ss.getSheetByName(REC);\n  if (rs && rs.getLastRow() > 1) {\n    rs.getRange(2, 1, rs.getLastRow() - 1, REC_HEAD.length).getValues().forEach(function (r) {\n      var t = r[0] instanceof Date ? r[0] : new Date(r[0]);\n      if (isNaN(t) || t.getTime() < since) return;\n      records.push({ t: t.toISOString(), email: String(r[2]).toLowerCase(), mode: rev[r[8]] || String(r[8]), topic: String(r[9]), stage: String(r[10]),\n        ans: Number(r[11]) || 0, cor: Number(r[12]) || 0, stars: Number(r[14]) || 0, secs: Number(r[15]) || 0,\n        status: r[16] === STATUS.quit ? 'quit' : 'done', wrong: String(r[20] || '') });\n    });\n  }\n  var progress = {}, ps = ss.getSheetByName(PROG);\n  if (ps && ps.getLastRow() > 1) {\n    ps.getRange(2, 1, ps.getLastRow() - 1, PROG_HEAD.length).getValues().forEach(function (r) {\n      progress[String(r[0]).toLowerCase()] = { upd: r[1] instanceof Date ? r[1].toISOString() : '', streak: Number(r[2]) || 0, best: Number(r[3]) || 0,\n        stars: Number(r[4]) || 0, stages: Number(r[5]) || 0, coins: Number(r[6]) || 0, pet: String(r[7] || ''), pets: Number(r[8]) || 0,\n        mistakes: Number(r[9]) || 0, cleared: Number(r[10]) || 0, trophies: Number(r[11]) || 0, lastDay: dayStr(r[12]), xp: Number(r[14]) || 0, col: Number(r[15]) || 0 };\n    });\n  }\n  return { ok: true, students: students, records: records, progress: progress };\n}\n\n\n/** Friends (signed-in students only).\n *  Friend codes are derived from the email, so nothing extra is stored and a code can't be guessed from a name.\n *  Following is one-way (like Duolingo): you can follow up to 5 people; they see your cheers. */\nvar CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';\nfunction friendCode(email) {\n  var salt = PROPS.getProperty('FRIEND_SALT') || 'bio-study-pals';\n  var d = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, salt + '|' + email), c = '';\n  for (var i = 0; i < 6; i++) c += CODE_ABC.charAt((d[i] + 256) % 32);\n  return c;\n}\nfunction codeMap() {\n  var cache = CacheService.getScriptCache(), hit = cache.get('bio_codes');\n  if (hit) return JSON.parse(hit);\n  var uv = book().getSheetByName(PROPS.getProperty('USERS_SHEET') || USERS_DEFAULT).getDataRange().getValues(), m = {};\n  for (var i = 1; i < uv.length; i++) {\n    if (!uv[i][0] || isStaffRole(String(uv[i][1] || ''))) continue;\n    var em = String(uv[i][0]).trim().toLowerCase(); m[friendCode(em)] = em;\n  }\n  cache.put('bio_codes', JSON.stringify(m), 600);\n  return m;\n}\nfunction studentInfo() {\n  var cache = CacheService.getScriptCache(), hit = cache.get('bio_uinfo');\n  if (hit) return JSON.parse(hit);\n  var uv = book().getSheetByName(PROPS.getProperty('USERS_SHEET') || USERS_DEFAULT).getDataRange().getValues(), m = {};\n  for (var i = 1; i < uv.length; i++) {\n    if (!uv[i][0] || isStaffRole(String(uv[i][1] || ''))) continue;\n    var en = String(uv[i][3] || '').trim();\n    m[String(uv[i][0]).trim().toLowerCase()] = { first: en.split(/\\s+/)[0] || fullName(uv[i][2], uv[i][3]), c: String(uv[i][4] || '') };\n  }\n  cache.put('bio_uinfo', JSON.stringify(m), 600);\n  return m;\n}\nfunction friendList(email) {\n  var sh = sheet(FRIENDS, ['Email', 'Friends', 'Updated']), r = findRow(sh, email);\n  if (r < 0) return { row: -1, list: [] };\n  return { row: r, list: String(sh.getRange(r, 2).getValue() || '').split(',').filter(String) };\n}\nfunction setFriends(email, list) {\n  var sh = sheet(FRIENDS, ['Email', 'Friends', 'Updated']), r = findRow(sh, email);\n  if (r < 0) r = sh.getLastRow() + 1;\n  sh.getRange(r, 1, 1, 3).setValues([[email, list.join(','), new Date()]]);\n}\nfunction cheerRows() { var sh = sheet(CHEERS, ['Timestamp', 'From', 'To', 'Message', 'Seen']); return { sh: sh, v: sh.getLastRow() > 1 ? sh.getRange(2, 1, sh.getLastRow() - 1, 5).getValues() : [] }; }\nfunction friendsData(user, markSeen) {\n  var tz = Session.getScriptTimeZone() || 'Asia/Hong_Kong', today = Utilities.formatDate(new Date(), tz, 'yyyy-MM-dd');\n  var mine = friendList(user.email).list, rows = boardRows(), byEmail = {}, info = studentInfo();\n  rows.forEach(function (r) { byEmail[r.e] = r; });\n  var friends = mine.map(function (em) {\n    var r = byEmail[em] || {}, u = info[em] || {};\n    return { code: friendCode(em), n: u.first || r.n || 'Classmate', c: u.c || r.c || '', st: r.st || 0, xp: r.xp || 0, s: r.s || 0,\n      stars: r.stars || 0, col: r.col || 0, last: r.last || '', today: r.last === today, pal: r.pal || '' };\n  });\n  var ch = cheerRows(), week = Date.now() - 7 * 864e5, got = [], sent = {}, nameOf = function (em) { return (info[em] && info[em].first) || 'A friend'; };\n  ch.v.forEach(function (r, i) {\n    var t = new Date(r[0]).getTime(), from = String(r[1]).toLowerCase(), to = String(r[2]).toLowerCase();\n    if (to === user.email && t > week) {\n      got.push({ n: nameOf(from), m: String(r[3]), t: new Date(r[0]).toISOString(), seen: !!r[4] });\n      if (markSeen && !r[4]) ch.sh.getRange(i + 2, 5).setValue('yes');\n    }\n    if (from === user.email && Utilities.formatDate(new Date(r[0]), tz, 'yyyy-MM-dd') === today) sent[friendCode(to)] = 1;\n  });\n  got.reverse();\n  return { ok: true, code: friendCode(user.email), max: FRIEND_MAX, friends: friends, cheers: got.slice(0, 20), sent: sent, msgs: CHEER_MSGS };\n}\nfunction friendAdd(user, code) {\n  code = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);\n  var em = codeMap()[code];\n  if (!em) return { ok: false, error: 'friend_unknown' };\n  if (em === user.email) return { ok: false, error: 'friend_self' };\n  var lock = LockService.getScriptLock(); lock.waitLock(20000);\n  try {\n    var f = friendList(user.email).list;\n    if (f.indexOf(em) >= 0) return { ok: false, error: 'friend_already' };\n    if (f.length >= FRIEND_MAX) return { ok: false, error: 'friend_full' };\n    f.push(em); setFriends(user.email, f);\n  } finally { lock.releaseLock(); }\n  return friendsData(user, false);\n}\nfunction friendRemove(user, code) {\n  var lock = LockService.getScriptLock(); lock.waitLock(20000);\n  try {\n    var f = friendList(user.email).list.filter(function (em) { return friendCode(em) !== code; });\n    setFriends(user.email, f);\n  } finally { lock.releaseLock(); }\n  return friendsData(user, false);\n}\nfunction cheer(user, code, msg) {\n  var i = Math.floor(Number(msg)); if (!(i >= 0 && i < CHEER_MSGS.length)) return { ok: false, error: 'bad_cheer' };\n  var to = null; friendList(user.email).list.forEach(function (em) { if (friendCode(em) === code) to = em; });\n  if (!to) return { ok: false, error: 'friend_unknown' };\n  var d = friendsData(user, false);\n  if (d.sent[code]) return { ok: false, error: 'cheer_once' };\n  var lock = LockService.getScriptLock(); lock.waitLock(20000);\n  try { sheet(CHEERS, ['Timestamp', 'From', 'To', 'Message', 'Seen']).appendRow([new Date(), user.email, to, CHEER_MSGS[i], '']); } finally { lock.releaseLock(); }\n  d.sent[code] = 1; return d;\n}\n", SERVER_CODE_VER = "52f01c9";
 
 /* ============================================================
    5k. 🃏 Biology Capsule Lab: 40 collectible trading cards (each a real biology term, structure or concept).
@@ -12932,23 +13150,26 @@ function renderTools() {
     <span class="hcur streak" title="Daily streak · chestnut bonus ×${streakMult().toFixed(2)}"><span class="ci">🔥</span><b>${S.current_streak}</b>${streakMult() > 1 ? `<span class="lbl"> ×${streakMult().toFixed(2).replace(/0$/, "")}</span>` : ""}</span>
     <button class="hcur coins" id="tCoins" aria-label="Chestnuts: ${S.coins}. Open the shop"><span class="ci">🌰</span><b>${S.coins}</b></button>
     ${S.coll.pending ? `<button class="hcur cap capbtn" id="tCap" aria-label="Open ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""}"><span class="ci">🎁</span><b>${S.coll.pending}</b></button>` : ""}
+    <button class="hcur helpbtn ${typeof guideSeen === "function" && !guideSeen() ? "glow" : ""}" id="tHelp" aria-label="How to play"><span class="ci">❓</span></button>
     <button class="menubtn ${typeof AUTH !== "undefined" && AUTH.stale ? "warn" : ""}" id="tMenu" aria-label="Menu"><span></span><span></span><span></span></button>` : "";
   const g = id => document.getElementById(id);
   if (g("tCoins")) g("tCoins").onclick = () => { SFX.init(); SFX.tap(); openShop(); };
   if (g("tCap")) g("tCap").onclick = () => { SFX.init(); SFX.tap(); openCapsule(); };
   if (g("tMenu")) g("tMenu").onclick = () => { SFX.init(); SFX.tap(); openMenu(); };
+  if (g("tHelp")) g("tHelp").onclick = () => { SFX.init(); SFX.tap(); if (typeof tourEnd === "function" && tourAt >= 0) tourEnd(); openGuide(0); };
 }
 function openMenu() {
   const acc = signedIn() ? userName().split(" ")[0] : "Guest";
   const tiles = [["mTro", "🏆", "Trophies", `${Object.keys(S.trophies).length} / ${TROPHIES.length}`], ["mAcc", signedIn() ? "🎓" : "👤", "Account", acc + (AUTH.stale ? " · sign in again" : "")],
     ["mStory", "📜", "The story", "The Codex of Life"], ["mJou", "📓", "Journal", "Textbook notes"], ["mSave", "🔑", "Save code", "Move to another device"], ["mLb", "🏆", "Leaderboard", signedIn() ? "Your class" : "Signed-in only"],
-    ...(isTeacher() ? [["mStats", "📊", "Class statistics", "Teachers only"]] : []), ["mMus", "🎵", "Music", MUSIC.on ? "On" : "Off"], ["mSnd", SFX.on ? "🔊" : "🔇", "Sound effects", SFX.on ? "On" : "Off"], ["mHome", "🏠", "Home", "Back to Mochi's room"]];
+    ...(isTeacher() ? [["mStats", "📊", "Class statistics", "Teachers only"], ["mCode", "📋", "Copy server code", `v ${SERVER_CODE_VER}`]] : []), ["mMus", "🎵", "Music", MUSIC.on ? "On" : "Off"], ["mSnd", SFX.on ? "🔊" : "🔇", "Sound effects", SFX.on ? "On" : "Off"], ["mHelp", "❓", "How to play", "Picture guide"], ["mTour", "🔦", "Show me around", "Spotlight tour"], ["mHome", "🏠", "Home", "Back to your pal"]];
   const box = openModal(`<span class="kicker">☰ Menu</span><h2>${esc(S.player_name)}'s settings</h2>
     <div class="menugrid">${tiles.map(([id, ic, t, sub]) => `<button class="mtile" id="${id}"><span class="mi">${ic}</span><b>${t}</b><span class="small muted">${esc(sub)}</span></button>`).join("")}</div>`);
   const on = (id, f) => { box.querySelector("#" + id).onclick = () => { SFX.tap(); f(); }; };
   on("mTro", () => { closeModal(); openCabinet(); }); on("mAcc", () => { closeModal(); openAccount(); }); on("mJou", () => { closeModal(); openJournal(); }); on("mStory", () => { closeModal(); openStory(); });
+  on("mHelp", () => openGuide(0)); on("mTour", () => { closeModal(); homeTab = "home"; homeSub = "today"; renderMap(); setTimeout(() => startTour(true), 300); });
   on("mSave", () => { closeModal(); openSaveModal(); }); on("mLb", () => { closeModal(); openLeaderboard(); }); on("mHome", () => { closeModal(); homeTab = "home"; renderMap(); });
-  if (isTeacher()) on("mStats", () => { closeModal(); goTab("stats"); });
+  if (isTeacher()) { on("mStats", () => { closeModal(); goTab("stats"); }); on("mCode", () => openServerCode()); }
   on("mMus", () => { MUSIC.on = !MUSIC.on; try { localStorage.setItem(MUSIC_KEY, MUSIC.on ? "on" : "off"); } catch (e) {} MUSIC.on ? MUSIC.start() : MUSIC.stop(); openMenu(); });
   on("mSnd", () => { SFX.on = !SFX.on; try { localStorage.setItem(SOUND_KEY, SFX.on ? "on" : "off"); } catch (e) {} if (SFX.on) SFX.init(); openMenu(); });
 }
@@ -14035,7 +14256,8 @@ document.addEventListener("visibilitychange", () => { if (document.hidden && S) 
 window.addEventListener("pagehide", () => { if (S) save(); });
 (function boot() {
   startIcons();
-  const linked = decodeCode(location.hash.slice(1));
+  if (location.hash === "#server-code") setTimeout(openServerCode, 300);   // teachers' bookmark: copy the class server code, even signed out
+  const linked = location.hash === "#server-code" ? null : decodeCode(location.hash.slice(1));
   if (linked) { S ? renderMap() : renderWelcome(); showCodeFromLink(linked); return; }
   // Class sign-in screen first, unless this device chose guest mode (or sign-in is off and there is saved progress)
   const pref = authPref();

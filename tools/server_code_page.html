@@ -1,0 +1,58 @@
+<title>Class Server Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700;800&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: one narrow column — the Copy button first, the 4 steps, then the code itself in a scroll box */
+:root { --bg: #FFF8F1; --card: #FFFFFF; --ink: #3B2B3F; --muted: #7A6278; --accent: #E2477E; --accent-ink: #FFFFFF; --ok: #2F8F3A; --line: #EADBE3; --code-bg: #FBF4F7;
+  --display: "Baloo 2", "Nunito", system-ui, sans-serif; --body: "Nunito", system-ui, -apple-system, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #1E1720; --card: #2A2130; --ink: #F5E9F1; --muted: #BBA6B8; --accent: #FF7AA8; --accent-ink: #2A1020; --ok: #7BD88A; --line: #46374C; --code-bg: #241C28; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #1E1720; --card: #2A2130; --ink: #F5E9F1; --muted: #BBA6B8; --accent: #FF7AA8; --accent-ink: #2A1020; --ok: #7BD88A; --line: #46374C; --code-bg: #241C28; color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.5 var(--body); }
+.wrap { max-width: 640px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 40px; display: grid; gap: 16px; }
+.eyebrow { font-size: .78rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 800 1.9rem/1.1 var(--display); margin: 0; text-wrap: balance; }
+.meta { color: var(--muted); font-size: .9rem; font-variant-numeric: tabular-nums; }
+.copy { appearance: none; border: 0; border-radius: 22px; background: var(--accent); color: var(--accent-ink); font: 800 1.35rem/1.2 var(--display); padding: 22px 20px; min-height: 76px; cursor: pointer; width: 100%;
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--accent) 65%, #000); transition: transform .08s; }
+.copy:active { transform: translateY(4px); box-shadow: 0 2px 0 color-mix(in srgb, var(--accent) 65%, #000); }
+.copy:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.copy.done { background: var(--ok); box-shadow: 0 6px 0 color-mix(in srgb, var(--ok) 65%, #000); }
+.status { min-height: 1.5em; font-weight: 700; color: var(--ok); text-align: center; }
+.steps { margin: 0; padding: 16px 16px 16px 40px; background: var(--card); border: 2px solid var(--line); border-radius: 18px; display: grid; gap: 10px; }
+.steps li::marker { font: 800 1rem var(--display); color: var(--accent); }
+.steps b { font-weight: 800; }
+.note { color: var(--muted); font-size: .92rem; margin: 0; }
+details { background: var(--card); border: 2px solid var(--line); border-radius: 18px; padding: 12px 14px; min-width: 0; }
+summary { cursor: pointer; font-weight: 800; }
+textarea { margin-top: 10px; width: 100%; height: 320px; box-sizing: border-box; font: 12px/1.45 var(--mono); color: var(--ink); background: var(--code-bg); border: 1px solid var(--line); border-radius: 12px; padding: 10px; resize: vertical; white-space: pre; overflow: auto; }
+@media (prefers-reduced-motion: reduce) { .copy { transition: none; } }
+</style>
+<main class="wrap">
+  <div><div class="eyebrow">Biology Study Pals · Apps Script</div><h1>Class server code</h1>
+    <div class="meta">Code.gs · version <b>__VER__</b> · __LINES__ lines</div></div>
+  <button class="copy" id="copyBtn" type="button">📋 Copy all the code</button>
+  <div class="status" id="status" aria-live="polite"></div>
+  <ol class="steps">
+    <li>Tap <b>Copy all the code</b> above.</li>
+    <li>Open your <b>Apps Script</b> project and click <b>Code.gs</b>.</li>
+    <li><b>Select all</b> (Ctrl / ⌘ + A), <b>paste</b>, then <b>Save</b>.</li>
+    <li><b>Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy</b>.</li>
+  </ol>
+  <p class="note">The web address stays the same, so the game needs no change. The game also has this button: ☰ Menu → 📋 Copy server code (teacher accounts).</p>
+  <details><summary>Show the code</summary><textarea id="code" readonly spellcheck="false" aria-label="Server code"></textarea></details>
+</main>
+<script>
+const CODE = __CODE__;
+const btn = document.getElementById("copyBtn"), status = document.getElementById("status"), ta = document.getElementById("code");
+ta.value = CODE;
+function selectAll() { const d = ta.closest("details"); d.open = true; ta.focus(); ta.select(); ta.setSelectionRange(0, CODE.length); }
+function fallback() {
+  selectAll(); let ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
+  if (ok) done(); else status.textContent = "The code is selected below. Press Ctrl / ⌘ + C (or tap Copy) to copy it.";
+}
+function done() { btn.textContent = "✅ Copied! Now paste it into Apps Script"; btn.classList.add("done"); status.textContent = "All " + CODE.length.toLocaleString() + " characters copied."; }
+btn.addEventListener("click", () => {
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(CODE).then(done, fallback);
+  else fallback();
+});
+</script>

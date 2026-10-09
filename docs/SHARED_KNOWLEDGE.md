@@ -174,3 +174,4 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
   - the server's `dayStr()` for Sheet cells that turned into Dates.
 
   Test harness: `tools/check_sync.js` (Playwright route as a fake Apps Script, `page.clock.setFixedTime` for multi-day streaks).
+- 2026-10-09 (biology): **Layout 3.0 + help**: merged Home and Pals (Home = living pal + 'Today's plan' quest bar with one glowing step and one named CTA; 🎒 Collect = pals/dress/pets/cards; 5 bottom tabs). Reusable: `src/guide.js`, a dependency-free spotlight tour (`TOUR` = [selector, icon, title, line]; a box-shadow cut-out, pinned to sticky/fixed parents, ends on page change) and a 6-card picture guide with swipe; `tools/build.py` embeds `server/Code.gs` as `SERVER_CODE` for a teacher 'Copy server code' button (also at `#server-code`); `tools/server_code_page.py` builds the same one-tap copy page as an artifact.

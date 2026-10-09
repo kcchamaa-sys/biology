@@ -685,23 +685,26 @@ function renderTools() {
     <span class="hcur streak" title="Daily streak · chestnut bonus ×${streakMult().toFixed(2)}"><span class="ci">🔥</span><b>${S.current_streak}</b>${streakMult() > 1 ? `<span class="lbl"> ×${streakMult().toFixed(2).replace(/0$/, "")}</span>` : ""}</span>
     <button class="hcur coins" id="tCoins" aria-label="Chestnuts: ${S.coins}. Open the shop"><span class="ci">🌰</span><b>${S.coins}</b></button>
     ${S.coll.pending ? `<button class="hcur cap capbtn" id="tCap" aria-label="Open ${S.coll.pending} capsule${S.coll.pending > 1 ? "s" : ""}"><span class="ci">🎁</span><b>${S.coll.pending}</b></button>` : ""}
+    <button class="hcur helpbtn ${typeof guideSeen === "function" && !guideSeen() ? "glow" : ""}" id="tHelp" aria-label="How to play"><span class="ci">❓</span></button>
     <button class="menubtn ${typeof AUTH !== "undefined" && AUTH.stale ? "warn" : ""}" id="tMenu" aria-label="Menu"><span></span><span></span><span></span></button>` : "";
   const g = id => document.getElementById(id);
   if (g("tCoins")) g("tCoins").onclick = () => { SFX.init(); SFX.tap(); openShop(); };
   if (g("tCap")) g("tCap").onclick = () => { SFX.init(); SFX.tap(); openCapsule(); };
   if (g("tMenu")) g("tMenu").onclick = () => { SFX.init(); SFX.tap(); openMenu(); };
+  if (g("tHelp")) g("tHelp").onclick = () => { SFX.init(); SFX.tap(); if (typeof tourEnd === "function" && tourAt >= 0) tourEnd(); openGuide(0); };
 }
 function openMenu() {
   const acc = signedIn() ? userName().split(" ")[0] : "Guest";
   const tiles = [["mTro", "🏆", "Trophies", `${Object.keys(S.trophies).length} / ${TROPHIES.length}`], ["mAcc", signedIn() ? "🎓" : "👤", "Account", acc + (AUTH.stale ? " · sign in again" : "")],
     ["mStory", "📜", "The story", "The Codex of Life"], ["mJou", "📓", "Journal", "Textbook notes"], ["mSave", "🔑", "Save code", "Move to another device"], ["mLb", "🏆", "Leaderboard", signedIn() ? "Your class" : "Signed-in only"],
-    ...(isTeacher() ? [["mStats", "📊", "Class statistics", "Teachers only"]] : []), ["mMus", "🎵", "Music", MUSIC.on ? "On" : "Off"], ["mSnd", SFX.on ? "🔊" : "🔇", "Sound effects", SFX.on ? "On" : "Off"], ["mHome", "🏠", "Home", "Back to Mochi's room"]];
+    ...(isTeacher() ? [["mStats", "📊", "Class statistics", "Teachers only"], ["mCode", "📋", "Copy server code", `v ${SERVER_CODE_VER}`]] : []), ["mMus", "🎵", "Music", MUSIC.on ? "On" : "Off"], ["mSnd", SFX.on ? "🔊" : "🔇", "Sound effects", SFX.on ? "On" : "Off"], ["mHelp", "❓", "How to play", "Picture guide"], ["mTour", "🔦", "Show me around", "Spotlight tour"], ["mHome", "🏠", "Home", "Back to your pal"]];
   const box = openModal(`<span class="kicker">☰ Menu</span><h2>${esc(S.player_name)}'s settings</h2>
     <div class="menugrid">${tiles.map(([id, ic, t, sub]) => `<button class="mtile" id="${id}"><span class="mi">${ic}</span><b>${t}</b><span class="small muted">${esc(sub)}</span></button>`).join("")}</div>`);
   const on = (id, f) => { box.querySelector("#" + id).onclick = () => { SFX.tap(); f(); }; };
   on("mTro", () => { closeModal(); openCabinet(); }); on("mAcc", () => { closeModal(); openAccount(); }); on("mJou", () => { closeModal(); openJournal(); }); on("mStory", () => { closeModal(); openStory(); });
+  on("mHelp", () => openGuide(0)); on("mTour", () => { closeModal(); homeTab = "home"; homeSub = "today"; renderMap(); setTimeout(() => startTour(true), 300); });
   on("mSave", () => { closeModal(); openSaveModal(); }); on("mLb", () => { closeModal(); openLeaderboard(); }); on("mHome", () => { closeModal(); homeTab = "home"; renderMap(); });
-  if (isTeacher()) on("mStats", () => { closeModal(); goTab("stats"); });
+  if (isTeacher()) { on("mStats", () => { closeModal(); goTab("stats"); }); on("mCode", () => openServerCode()); }
   on("mMus", () => { MUSIC.on = !MUSIC.on; try { localStorage.setItem(MUSIC_KEY, MUSIC.on ? "on" : "off"); } catch (e) {} MUSIC.on ? MUSIC.start() : MUSIC.stop(); openMenu(); });
   on("mSnd", () => { SFX.on = !SFX.on; try { localStorage.setItem(SOUND_KEY, SFX.on ? "on" : "off"); } catch (e) {} if (SFX.on) SFX.init(); openMenu(); });
 }
@@ -1788,7 +1791,8 @@ document.addEventListener("visibilitychange", () => { if (document.hidden && S) 
 window.addEventListener("pagehide", () => { if (S) save(); });
 (function boot() {
   startIcons();
-  const linked = decodeCode(location.hash.slice(1));
+  if (location.hash === "#server-code") setTimeout(openServerCode, 300);   // teachers' bookmark: copy the class server code, even signed out
+  const linked = location.hash === "#server-code" ? null : decodeCode(location.hash.slice(1));
   if (linked) { S ? renderMap() : renderWelcome(); showCodeFromLink(linked); return; }
   // Class sign-in screen first, unless this device chose guest mode (or sign-in is off and there is saved progress)
   const pref = authPref();

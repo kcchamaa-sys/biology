@@ -236,6 +236,24 @@ Card capsules are opened from the Lucky Capsule banner on Home, the 🎁 button 
 - **Streaks feed the machine:** +1 capsule on every 3rd streak day, +2 on days 7, 14, 21, 30, 50, 75, 100, 150 and 200, and **streak luck** (+0.4% better odds per streak day, up to +8%). Other sources: stages, bosses, the daily chest, Cell Rush 120+, perfect dictation, daily missions, trophies.
 - Saves from the old 20-item collection are converted automatically (each old item became the matching biology card).
 
+## 🧭 Layout 3.0: one home for your pal, one place to collect (2026-10-09)
+
+Students said they got lost: Home and the Pals tab both showed the pal, and Rewards overlapped with collecting.
+
+- **Bottom bar: 5 tabs**: 🏠 Home · 🗺️ Stages · 🎮 Practice · 🎒 Collect · 🔬 Lab.
+- **🏠 Home** has two views:
+  - **☀️ Today**: the living pal with picture need-bars (⚡ 🎯 ❤️ 🍽️ 💧 😴) and pal-time controls (⏸ ▶ ⏩ +1h). Below it:
+    - **Today's plan**: 📖 Study → 🍱 Care → 🎯 Mission → 🎰 Capsule. Done steps turn green ✓, only the next one glows, and one big button names the next action.
+    - **💗 Look after** tiles: Feed, Drink, Play outside, Brush, Screens, Bedtime, Term Match, Dress up.
+    - Everything else in fold bars: Lucky Capsule, streak, mission, friends, leaderboard, tips, story.
+  - **🔬 Inside \<pal\>**: the body bars, live traces, Why cards, the sleep report and questions from the pal's day.
+- **🎒 Collect** (was Pals + Rewards): 🐾 Pals (active pal card with level and evolve, featured pal, collection) · 👗 Dress up · 🦜 Pets · 🃏 Cards (trophies, biology cards, backpack).
+- **Help that shows instead of tells:**
+  - a **spotlight tour** on the first visit: the screen dims and 6 parts light up one by one with a numbered bubble;
+  - a **❓ picture guide** in the top bar: 6 cards drawn with the game's own art, swipe or Back/Next. It glows until opened once, and its last card replays the tour;
+  - both are also in ☰ Menu (❓ How to play, 🔦 Show me around).
+- **📋 Copy server code** for teachers: ☰ Menu, 📊 Stats, or the page link ending in `#server-code` (works signed out). It always holds the `server/Code.gs` built with this version.
+
 ## Saving
 
 - **Cloud save fix (2026-10-09).** Busy students' saves had grown past the 49,000-character limit of one sheet cell. The server refused every save, so their streak, chestnuts and progress stopped updating for the class (leaderboard, friends, teacher stats, other devices). Fixed:
