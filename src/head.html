@@ -1584,7 +1584,10 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
 .simtabs button { max-width: 100%; text-align: left; }
 .simtabs .simtabnm { min-width: 0; overflow-wrap: anywhere; }
 .simnow { margin: 0; } .simgo { font-weight: 800; color: #B07A00; white-space: nowrap; }
-@media (max-width: 400px) { .simparts { gap: 4px; } .simparts .spnm { font-size: .66rem; } .simparts button { padding: 6px 2px; } }
+.simparts .spshort { display: none; }
+@media (max-width: 520px) { .simparts { gap: 4px; } .simparts .splong { display: none; } .simparts .spshort { display: inline; } .simparts .spnm { font-size: .72rem; overflow-wrap: normal; } .simparts button { padding: 6px 2px; min-height: 70px; }
+  .simsecs { grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 5px; } .simsecs button { min-height: 52px; padding: 6px 3px 5px; } .simsecs .ssic { font-size: 1.2rem; } .simsecs .ssnm { font-size: .74rem; }
+  .simtabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; } .simtabs button { padding: 5px 8px; font-size: .8rem; gap: 4px; line-height: 1.15; } .simtabs .simtabst { margin-left: auto; } }
 /* 🗺️ Lab map (modal) */
 .simmap { display: grid; gap: 12px; }
 .simmappart { --pc: #3D8BD9; border-radius: 16px; padding: 10px; background: color-mix(in srgb, var(--pc) 7%, #fff); box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--pc) 35%, #fff); }

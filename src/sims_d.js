@@ -32,7 +32,7 @@ simStyle(`
 function reflexSim(root) {
   const st = { stim: "hot", cut: "none", drug: false, zoom: true, t: 0, running: false, pulse: 0, ran: false };
   root.innerHTML = `<div class="simgrid wide">
-    <section class="card"><div id="reflexSvg" class="simsvg"></div>
+    <section class="card"><div id="reflexSvg" class="simsvg nozoom"></div>
       <div class="simctl"><div><b class="small">Stimulus</b>${segBtns("rstim", [["hot", "🔥 Hot"], ["pin", "📌 Pin"], ["knee", "🦵 Knee tap"]], st.stim)}</div>
       <div><b class="small">Cut / damage</b>${segBtns("rcut", [["none", "✅ None"], ["sensory", "Sensory"], ["relay", "Relay"], ["motor", "Motor"], ["brain", "To brain"]], st.cut)}</div></div>
       <div class="row simbtns"><button class="btn yellow" id="rRun">▶ Stimulus</button><button class="btn plain" id="rReset">↺ Reset</button></div>
@@ -94,21 +94,27 @@ function reflexExplain(st, p) {
 function reflexSvg(st, p) {
   const hot = st.stim === "hot", knee = st.stim === "knee", pin = st.stim === "pin";
   const on = k => p.lit.includes(k), col = k => on(k) ? "#FFB12E" : p.blocked === k ? "#E45C5C" : "#9BA7BA";
-  const w = k => on(k) ? 8 : 4;
+  const w = k => on(k) ? 6 : 3.2;
   const pulse = p.pathLit;
   const stimIcon = hot ? "🔥 hot object" : pin ? "📌 pin prick" : "🦵 knee tap";
-  const hand = knee ? `<path d="M88 180 q38 -22 72 0 q16 10 24 30" fill="none" stroke="#7C5C4D" stroke-width="22" stroke-linecap="round"/><circle cx="186" cy="222" r="15" fill="#F2C2A8" stroke="#7C5C4D" stroke-width="3"/><path d="M178 238 q18 36 4 74" fill="none" stroke="#7C5C4D" stroke-width="20" stroke-linecap="round"/>` : `<path d="M38 216 q50 -60 106 -36 q22 10 24 36 q-8 20 -34 14 l-22 -8 q-16 28 -50 24 q-22 -4 -24 -30Z" fill="#F2C2A8" stroke="#7C5C4D" stroke-width="3"/><path d="M116 178 q-4 -48 18 -72 q10 -8 20 2 q-14 35 2 66" fill="#F2C2A8" stroke="#7C5C4D" stroke-width="3"/>`;
-  const stimShape = hot ? `<rect x="34" y="248" width="108" height="38" rx="12" fill="#EA5E43" stroke="#7A2A20" stroke-width="3"/><path d="M54 248 q6 -20 18 0 M84 248 q6 -24 18 0 M114 248 q6 -20 18 0" stroke="#FFD98A" stroke-width="5" fill="none"/>` : pin ? `<path d="M46 266 L126 218" stroke="#596579" stroke-width="5"/><circle cx="42" cy="268" r="11" fill="#D8DEE8" stroke="#596579" stroke-width="3"/><path d="M126 218 l-17 -2 l10 14Z" fill="#596579"/>` : `<path d="M150 226 h88" stroke="#596579" stroke-width="12" stroke-linecap="round"/><path d="M238 226 l-16 -14 v28Z" fill="#596579"/>`;
+  const hand = knee ? `<path d="M36 154 q20 -13 42 0 q10 7 15 20" fill="none" stroke="#7C5C4D" stroke-width="13" stroke-linecap="round"/><circle cx="96" cy="184" r="9" fill="#F2C2A8" stroke="#7C5C4D" stroke-width="2"/><path d="M92 194 q11 28 4 52" fill="none" stroke="#7C5C4D" stroke-width="12" stroke-linecap="round"/>` : `<path d="M18 172 q28 -36 66 -22 q15 7 16 26 q-5 13 -22 10 l-14 -6 q-10 18 -32 16 q-14 -3 -14 -24Z" fill="#F2C2A8" stroke="#7C5C4D" stroke-width="2"/><path d="M67 150 q-2 -32 12 -48 q7 -6 14 1 q-9 24 1 45" fill="#F2C2A8" stroke="#7C5C4D" stroke-width="2"/>`;
+  const stimShape = hot ? `<rect x="14" y="204" width="72" height="26" rx="9" fill="#EA5E43" stroke="#7A2A20" stroke-width="2"/><path d="M27 204 q5 -14 13 0 M47 204 q5 -16 13 0 M67 204 q5 -14 13 0" stroke="#FFD98A" stroke-width="3.5" fill="none"/>` : pin ? `<path d="M18 214 L76 178" stroke="#596579" stroke-width="4"/><circle cx="17" cy="215" r="7" fill="#D8DEE8" stroke="#596579" stroke-width="2"/><path d="M76 178 l-13 -1 l8 10Z" fill="#596579"/>` : `<path d="M72 184 h54" stroke="#596579" stroke-width="8" stroke-linecap="round"/><path d="M126 184 l-12 -10 v20Z" fill="#596579"/>`;
   const pulseDot = (x, y, k) => pulse === k ? `<circle class="reflex-pulse" cx="${x}" cy="${y}" r="6" fill="#FFB12E"/>` : "";
-  return `<svg viewBox="0 0 760 360" role="img" aria-label="Reflex arc from stimulus through spinal cord to effector and brain">
-    <rect width="760" height="360" rx="18" fill="#F8FBFF"/><text x="34" y="28" font-size="16" font-weight="900" fill="${CO}">${stimIcon}</text>${stimShape}${hand}
-    <circle cx="148" cy="202" r="10" fill="${col("receptor")}" stroke="#fff" stroke-width="3"/><text x="130" y="190" font-size="12" font-weight="900" fill="${CO}">receptor</text>${pulseDot(148,202,"receptor")}
-    <path d="M154 202 C228 118 300 98 390 104" fill="none" stroke="${col("sensory")}" stroke-width="${w("sensory")}" stroke-linecap="round"/><circle cx="330" cy="104" r="18" fill="${on("sensory") ? "#FFD778" : "#DCE4F0"}" stroke="${CO}" stroke-width="3"/><text x="284" y="82" font-size="13" font-weight="900" fill="${CO}">dorsal root ganglion</text>${pulseDot(285,120,"sensory")}
-    <ellipse cx="458" cy="176" rx="78" ry="112" fill="#EAF0F8" stroke="#66758A" stroke-width="4"/><path d="M420 84 q38 38 0 92 q38 22 0 92 M496 84 q-38 38 0 92 q-38 22 0 92" fill="none" stroke="#BFC9D8" stroke-width="18" stroke-linecap="round"/><path d="M430 116 q28 38 28 60 q0 36 -30 66 M486 116 q-28 38 -28 60 q0 36 30 66" fill="none" stroke="#8B8FA0" stroke-width="18" stroke-linecap="round"/><text x="406" y="338" font-size="13" font-weight="900" fill="${CO}">spinal cord cross-section</text><text x="392" y="58" font-size="12" font-weight="900" fill="#66758A">white matter</text><text x="470" y="178" font-size="12" font-weight="900" fill="#fff">grey</text>
-    <path d="M390 104 C420 112 438 126 450 148" fill="none" stroke="${col("sensory")}" stroke-width="${w("sensory")}" stroke-linecap="round"/><path d="M450 148 C428 174 430 204 456 224" fill="none" stroke="${col("relay")}" stroke-width="${w("relay")}" stroke-linecap="round"/><path d="M456 224 C392 250 280 260 168 236" fill="none" stroke="${col("motor")}" stroke-width="${w("motor")}" stroke-linecap="round"/><path d="M168 236 q-36 -42 -14 -72" fill="none" stroke="${col("effector")}" stroke-width="${w("effector")}" stroke-linecap="round" stroke-dasharray="8 7"/>
-    <path d="M480 116 C570 78 614 58 660 76" fill="none" stroke="${col("brain")}" stroke-width="${w("brain")}" stroke-linecap="round" stroke-dasharray="9 7"/><path d="M660 76 q34 -40 62 0 q22 34 -10 62 q-28 20 -58 -2 q-28 -24 6 -60Z" fill="${on("brain") ? "#FFD778" : "#E8DDF5"}" stroke="${CO}" stroke-width="3"/><text x="650" y="154" font-size="14" font-weight="900" fill="${CO}">brain feels pain later</text>
-    <g font-size="13" font-weight="900" fill="${CO}"><text x="218" y="151">sensory neurone</text><text x="360" y="205">relay</text><text x="242" y="286">motor neurone</text><text x="66" y="154">effector muscle</text></g>
-    ${p.blocked ? `<g><circle cx="${p.blocked === "sensory" ? 330 : p.blocked === "relay" ? 450 : p.blocked === "motor" ? 338 : 575}" cy="${p.blocked === "sensory" ? 104 : p.blocked === "relay" ? 174 : p.blocked === "motor" ? 252 : 78}" r="19" fill="#FFE1E1" stroke="#E45C5C" stroke-width="4"/><text x="${p.blocked === "brain" ? 562 : p.blocked === "sensory" ? 318 : p.blocked === "motor" ? 326 : 438}" y="${p.blocked === "brain" ? 84 : p.blocked === "sensory" ? 111 : p.blocked === "motor" ? 259 : 181}" font-size="22" font-weight="900" fill="#E45C5C">×</text></g>` : ""}
+  return `<svg viewBox="0 0 360 260" role="img" aria-label="Reflex arc: receptor in skin sends impulses along a sensory neurone through the dorsal root ganglion to grey matter. A relay neurone synapses with a motor neurone in the ventral horn. The motor neurone leaves by the ventral root to the effector muscle. A separate pathway goes to the brain later.">
+    <rect width="360" height="260" rx="18" fill="#F8FBFF"/><text x="14" y="22" font-size="13" font-weight="900" fill="${CO}">${stimIcon}</text>${stimShape}${hand}
+    <circle cx="79" cy="156" r="7" fill="${col("receptor")}" stroke="#fff" stroke-width="2.5"/><text x="16" y="142" font-size="11" font-weight="900" fill="${CO}">receptor in skin</text>${pulseDot(79,156,"receptor")}
+    <path d="M82 156 C116 92 151 73 194 78" fill="none" stroke="${col("sensory")}" stroke-width="${w("sensory")}" stroke-linecap="round"/><circle cx="164" cy="77" r="12" fill="${on("sensory") ? "#FFD778" : "#DCE4F0"}" stroke="${CO}" stroke-width="2.5"/><text x="126" y="58" font-size="11" font-weight="900" fill="${CO}">dorsal root</text><text x="125" y="70" font-size="10.5" font-weight="900" fill="${CO}">ganglion</text><circle cx="160" cy="77" r="3" fill="#7B61D1"/><circle cx="168" cy="75" r="3" fill="#7B61D1"/>${pulseDot(132,93,"sensory")}
+    <ellipse cx="228" cy="134" rx="43" ry="72" fill="#EAF0F8" stroke="#66758A" stroke-width="3"/>
+    <path d="M207 73 q24 25 0 61 q24 18 0 61 M249 73 q-24 25 0 61 q-24 18 0 61" fill="none" stroke="#C9D3E2" stroke-width="12" stroke-linecap="round"/>
+    <path d="M213 94 q15 22 15 40 q0 24 -17 45 M243 94 q-15 22 -15 40 q0 24 17 45" fill="none" stroke="#8B8FA0" stroke-width="12" stroke-linecap="round"/>
+    <text x="198" y="216" font-size="11" font-weight="900" fill="${CO}">spinal cord</text><text x="194" y="49" font-size="11" font-weight="900" fill="#66758A">white matter</text><text x="236" y="138" font-size="11" font-weight="900" fill="#fff">grey</text>
+    <path d="M194 78 C212 84 218 96 224 111" fill="none" stroke="${col("sensory")}" stroke-width="${w("sensory")}" stroke-linecap="round"/><circle cx="224" cy="111" r="4" fill="#fff" stroke="${CO}" stroke-width="1.4"/><text x="185" y="104" font-size="10.5" font-weight="900" fill="${CO}">synapse</text>
+    <path d="M224 111 C207 130 210 148 230 164" fill="none" stroke="${col("relay")}" stroke-width="${w("relay")}" stroke-linecap="round"/><circle cx="226" cy="136" r="5" fill="${on("relay") ? "#FFD778" : "#D8D1E8"}" stroke="${CO}" stroke-width="1.8"/><text x="237" y="157" font-size="11" font-weight="900" fill="${CO}">relay</text>
+    <circle cx="230" cy="164" r="6" fill="${on("motor") ? "#FFD778" : "#F0C9D7"}" stroke="${CO}" stroke-width="2"/><text x="235" y="180" font-size="10.5" font-weight="900" fill="${CO}">motor cell body</text>
+    <path d="M230 164 C192 189 127 191 88 175" fill="none" stroke="${col("motor")}" stroke-width="${w("motor")}" stroke-linecap="round"/><text x="138" y="205" font-size="11" font-weight="900" fill="${CO}">ventral root · motor neurone</text><path d="M88 175 q-22 -25 -9 -47" fill="none" stroke="${col("effector")}" stroke-width="${w("effector")}" stroke-linecap="round" stroke-dasharray="6 5"/>
+    <path d="M242 96 C285 62 315 47 342 62" fill="none" stroke="${col("brain")}" stroke-width="${w("brain")}" stroke-linecap="round" stroke-dasharray="7 6"/><path d="M333 52 q14 -16 25 0 q11 17 -4 31 q-14 10 -28 -2 q-12 -12 7 -29Z" fill="${on("brain") ? "#FFD778" : "#E8DDF5"}" stroke="${CO}" stroke-width="2.3"/><text x="349" y="101" text-anchor="end" font-size="11" font-weight="900" fill="${CO}">brain</text><text x="349" y="113" text-anchor="end" font-size="11" font-weight="900" fill="${CO}">pain later</text>
+    <g font-size="11" font-weight="900" fill="${CO}"><text x="102" y="117">sensory neurone</text><text x="17" y="127">effector muscle</text></g>
+    ${p.blocked ? `<g><circle cx="${p.blocked === "sensory" ? 164 : p.blocked === "relay" ? 224 : p.blocked === "motor" ? 160 : 301}" cy="${p.blocked === "sensory" ? 77 : p.blocked === "relay" ? 111 : p.blocked === "motor" ? 185 : 58}" r="13" fill="#FFE1E1" stroke="#E45C5C" stroke-width="3"/><text x="${p.blocked === "brain" ? 292 : p.blocked === "sensory" ? 157 : p.blocked === "motor" ? 153 : 218}" y="${p.blocked === "brain" ? 65 : p.blocked === "sensory" ? 84 : p.blocked === "motor" ? 192 : 118}" font-size="18" font-weight="900" fill="#E45C5C">×</text></g>` : ""}
   </svg>`;
 }
 function reflexSynapseSvg(st, p) {
@@ -125,11 +131,12 @@ function reflexSynapseSvg(st, p) {
 }
 function reflexTimerSvg(p) {
   const max = 320, rw = p.reflexMs / max * 320, vw = p.voluntaryMs / max * 320, bw = p.brainMs / max * 320;
+  const barText = (w, y, t) => `<text x="${w > 270 ? w - 6 : w + 6}" y="${y}" font-size="12" font-weight="900" fill="${CO}" text-anchor="${w > 270 ? "end" : "start"}">${t}</text>`;
   return `<svg viewBox="0 0 420 150" role="img" aria-label="Reflex time ${p.reflexMs} milliseconds compared with voluntary reaction ${p.voluntaryMs} milliseconds">
     <rect width="420" height="150" rx="16" fill="#F7FBFF"/><g font-size="13" font-weight="900" fill="${CO}"><text x="22" y="38">reflex</text><text x="22" y="76">pain felt</text><text x="22" y="114">voluntary</text></g>
-    <g transform="translate(92 20)"><rect width="320" height="22" rx="11" fill="#E8EEF7"/><rect width="${rw}" height="22" rx="11" fill="#39B87F"/><text x="${rw + 6}" y="16" font-size="12" font-weight="900" fill="${CO}">${p.reflexMs} ms</text>
-    <rect y="38" width="320" height="22" rx="11" fill="#E8EEF7"/><rect y="38" width="${bw}" height="22" rx="11" fill="#FFB12E"/><text x="${bw + 6}" y="54" font-size="12" font-weight="900" fill="${CO}">${p.brainMs} ms</text>
-    <rect y="76" width="320" height="22" rx="11" fill="#E8EEF7"/><rect y="76" width="${vw}" height="22" rx="11" fill="#7B61D1"/><text x="${vw + 6}" y="92" font-size="12" font-weight="900" fill="${CO}">${p.voluntaryMs} ms</text></g>
+    <g transform="translate(92 20)"><rect width="320" height="22" rx="11" fill="#E8EEF7"/><rect width="${rw}" height="22" rx="11" fill="#39B87F"/>${barText(rw, 16, p.reflexMs + " ms")}
+    <rect y="38" width="320" height="22" rx="11" fill="#E8EEF7"/><rect y="38" width="${bw}" height="22" rx="11" fill="#FFB12E"/>${barText(bw, 54, p.brainMs + " ms")}
+    <rect y="76" width="320" height="22" rx="11" fill="#E8EEF7"/><rect y="76" width="${vw}" height="22" rx="11" fill="#7B61D1"/>${barText(vw, 92, p.voluntaryMs + " ms")}</g>
   </svg>`;
 }
 
@@ -137,7 +144,7 @@ function reflexTimerSvg(p) {
 function muscleSim(root) {
   const st = { angle: 118, target: 118, nerve: "none", weight: 1, worn: false, last: 118, impulseT: 0 };
   root.innerHTML = `<div class="simgrid wide">
-    <section class="card"><div id="muscleSvg" class="simsvg"></div>
+    <section class="card"><div id="muscleSvg" class="simsvg nozoom"></div>
       <label class="small"><b>Elbow angle</b> <input id="mAngle" type="range" min="55" max="155" value="118" style="width:100%"></label>
       <div class="row simbtns"><button class="btn" id="mBend">💪 Bend</button><button class="btn" id="mStraight">🦾 Straighten</button><button class="btn plain" id="mReset">↺ Reset</button></div></section>
     <section class="card"><h3 style="margin:0">🎛️ Controls</h3><div class="simctl"><div><b class="small">Nerve impulse</b>${segBtns("mnerve", [["none", "None"], ["biceps", "💪 Biceps"], ["triceps", "🦾 Triceps"]], st.nerve)}</div><div><b class="small">Weight in hand</b>${segBtns("mweight", [["0", "🪶 none"], ["1", "🎒 light"], ["2", "🏋️ heavy"]], String(st.weight))}</div></div><label class="small chk"><input id="mWorn" type="checkbox"> 🦴 Cartilage worn (arthritis)</label><div id="muscleRead" class="muscle-read"></div><div id="muscleBits" class="muscle-jointbits"></div><h3 style="margin:10px 0 0">⚖️ Lever force</h3><div class="muscle-force"><i id="mForceBar"></i></div><p id="muscleWhy" class="small muscle-note"></p></section>
@@ -184,25 +191,36 @@ function muscleExplain(p) {
   return "Choose a nerve impulse or move the angle. Muscles pull on bones using tendons.";
 }
 function muscleSvg(st, p) {
-  const sh = [126, 175], el = [306, 184], L = 180, th = -(170 - st.angle) * Math.PI / 180, wr = [el[0] + L * Math.cos(th), el[1] + L * Math.sin(th)], hand = [wr[0] + 28 * Math.cos(th), wr[1] + 28 * Math.sin(th)];
-  const perp = [-Math.sin(th), Math.cos(th)], bIns = [el[0] + 72 * Math.cos(th) + 18 * perp[0], el[1] + 72 * Math.sin(th) + 18 * perp[1]], tIns = [el[0] + 80 * Math.cos(th) - 22 * perp[0], el[1] + 80 * Math.sin(th) - 22 * perp[1]];
-  const bic = p.contract === "biceps", tri = p.contract === "triceps", worn = p.worn;
-  const musclePath = (a, b, up, c, active) => `<path class="${active ? "muscle-active" : ""}" d="M${a[0]} ${a[1]} Q${(a[0]+b[0])/2} ${(a[1]+b[1])/2 + up} ${b[0]} ${b[1]}" fill="none" stroke="${c}" stroke-width="${active ? 30 : 18}" stroke-linecap="round" opacity="${active ? .98 : .64}"/>`;
-  const tendon = (a, b) => `<path d="M${a[0]} ${a[1]} L${b[0]} ${b[1]}" stroke="#F8F4E8" stroke-width="7" stroke-linecap="round"/><path d="M${a[0]} ${a[1]} L${b[0]} ${b[1]}" stroke="#84796A" stroke-width="1.5" stroke-linecap="round"/>`;
-  const weight = p.weight ? `<g transform="translate(${hand[0]} ${hand[1] + 30})"><path d="M0 -18 v18" stroke="#596579" stroke-width="4"/><rect x="${p.weight === 2 ? -24 : -16}" y="0" width="${p.weight === 2 ? 48 : 32}" height="34" rx="8" fill="${p.weight === 2 ? "#7B61D1" : "#61A5E8"}" stroke="${CO}" stroke-width="3"/><text y="24" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">${p.weight === 2 ? "2" : "1"}</text><path d="M0 42 v42 m-12 -14 l12 16 l12 -16" stroke="#E45C5C" stroke-width="5" fill="none" stroke-linecap="round"/></g>` : "";
-  return `<svg viewBox="0 0 620 380" role="img" aria-label="Arm showing biceps triceps elbow hinge joint tendons and lever force">
-    <rect width="620" height="380" rx="18" fill="#FFFCF7"/><path d="M80 196 q24 -78 78 -92 q24 -6 42 10 q-38 28 -38 72 q0 46 30 82 q-64 8 -112 -72Z" fill="#F2C2A8" stroke="#7C5C4D" stroke-width="3"/>
-    <path d="M${sh[0]} ${sh[1]} L${el[0]} ${el[1]}" stroke="#EBD9B6" stroke-width="34" stroke-linecap="round"/><path d="M${el[0]} ${el[1]} L${wr[0]} ${wr[1]}" stroke="#EBD9B6" stroke-width="28" stroke-linecap="round"/><path d="M${sh[0]} ${sh[1]} L${el[0]} ${el[1]} M${el[0]} ${el[1]} L${wr[0]} ${wr[1]}" stroke="#8A7A63" stroke-width="3" stroke-linecap="round"/>
-    <circle cx="${el[0]}" cy="${el[1]}" r="34" fill="#F9F2E1" stroke="${CO}" stroke-width="3"/><path d="M${el[0]-18} ${el[1]-20} q18 ${worn ? 5 : 16} 36 0" stroke="${worn ? "#E45C5C" : "#6CC6D8"}" stroke-width="${worn ? 5 : 11}" fill="none" stroke-linecap="round"/><path d="M${el[0]-18} ${el[1]+20} q18 ${worn ? -5 : -16} 36 0" stroke="${worn ? "#E45C5C" : "#6CC6D8"}" stroke-width="${worn ? 5 : 11}" fill="none" stroke-linecap="round"/><circle cx="${el[0]}" cy="${el[1]}" r="13" fill="#DFF7FF" opacity=".8"/><text x="${el[0]}" y="${el[1]+5}" text-anchor="middle" font-size="13" font-weight="900" fill="${CO}">hinge</text>
-    ${musclePath([150, 132], bIns, -42, "#E84D7A", bic)}${musclePath([154, 222], tIns, 44, "#5D7FE8", tri)}${tendon([150,132],[176,142])}${tendon(bIns,[el[0]+64*Math.cos(th),el[1]+64*Math.sin(th)])}${tendon([154,222],[184,214])}${tendon(tIns,[el[0]+74*Math.cos(th),el[1]+74*Math.sin(th)])}
-    <circle cx="${hand[0]}" cy="${hand[1]}" r="21" fill="#F2C2A8" stroke="#7C5C4D" stroke-width="3"/>${weight}
-    <path d="M${bIns[0]} ${bIns[1]} q-18 12 -34 34" stroke="${bic ? "#E84D7A" : "#A9AFC0"}" stroke-width="5" fill="none" marker-end="url(#mArr)"/><path d="M${tIns[0]} ${tIns[1]} q24 -8 42 -28" stroke="${tri ? "#5D7FE8" : "#A9AFC0"}" stroke-width="5" fill="none" marker-end="url(#mArr)"/>
+  const sh = [82, 158], el = [198, 168], L = 130, th = -(170 - st.angle) * Math.PI / 180;
+  const wr = [el[0] + L * Math.cos(th), el[1] + L * Math.sin(th)], hand = [wr[0] + 20 * Math.cos(th), wr[1] + 20 * Math.sin(th)];
+  const perp = [-Math.sin(th), Math.cos(th)];
+  const rad = [el[0] + 54 * Math.cos(th) + 8 * perp[0], el[1] + 54 * Math.sin(th) + 8 * perp[1]];
+  const ulna = [el[0] + 60 * Math.cos(th) - 10 * perp[0], el[1] + 60 * Math.sin(th) - 10 * perp[1]];
+  const bOrg = [72, 127], tOrg = [74, 198], bic = p.contract === "biceps", tri = p.contract === "triceps", worn = p.worn;
+  const bone = (a, b, w) => `<path d="M${a[0]} ${a[1]} L${b[0]} ${b[1]}" stroke="#EBD9B6" stroke-width="${w}" stroke-linecap="round"/><path d="M${a[0]} ${a[1]} L${b[0]} ${b[1]}" stroke="#8A7A63" stroke-width="2.4" stroke-linecap="round"/>`;
+  const tendon = (a, b) => `<path d="M${a[0]} ${a[1]} L${b[0]} ${b[1]}" stroke="#FFF9EA" stroke-width="5.5" stroke-linecap="round"/><path d="M${a[0]} ${a[1]} L${b[0]} ${b[1]}" stroke="#817566" stroke-width="1.3" stroke-linecap="round"/>`;
+  const muscle = (a, b, lift, col, on) => `<path class="${on ? "muscle-active" : ""}" d="M${a[0]} ${a[1]} Q${(a[0]+b[0])/2} ${(a[1]+b[1])/2 + lift} ${b[0]} ${b[1]}" fill="none" stroke="${col}" stroke-width="${on ? 22 : 15}" stroke-linecap="round" opacity="${on ? .98 : .62}"/>`;
+  const lab = (x, y, t, col = CO) => `<text x="${x}" y="${y}" font-size="12.5" font-weight="900" fill="${col}">${t}</text>`;
+  const weight = p.weight ? `<g transform="translate(${hand[0]} ${hand[1] + 20})"><path d="M0 -12 v14" stroke="#596579" stroke-width="3.5"/><rect x="${p.weight === 2 ? -18 : -13}" y="0" width="${p.weight === 2 ? 36 : 26}" height="28" rx="7" fill="${p.weight === 2 ? "#7B61D1" : "#61A5E8"}" stroke="${CO}" stroke-width="2.5"/><text y="19" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">${p.weight === 2 ? "2" : "1"}</text><path d="M0 36 v22 m-9 -10 l9 12 l9 -12" stroke="#E45C5C" stroke-width="4" fill="none" stroke-linecap="round"/></g>` : "";
+  return `<svg viewBox="0 0 420 330" role="img" aria-label="Accurate arm model: scapula humerus radius ulna biceps triceps tendons elbow hinge cartilage synovial membrane fluid and ligaments">
     <defs><marker id="mArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#596579"/></marker></defs>
-    ${worn ? `<g stroke="#E45C5C" stroke-width="4" stroke-linecap="round"><path d="M286 136 l12 18 M322 134 l-12 18 M336 178 l20 2"/></g>` : ""}
-    <g font-size="14" font-weight="900" fill="${CO}"><text x="156" y="112">biceps ${bic ? "contracts" : "relaxes"}</text><text x="154" y="260">triceps ${tri ? "contracts" : "relaxes"}</text><text x="360" y="206">radius / ulna</text><text x="210" y="174">humerus</text><text x="362" y="330">Load creates a turning force about the elbow</text></g>
+    <rect width="420" height="330" rx="18" fill="#FFFCF7"/>
+    <path d="M34 92 q42 -30 78 -4 q-28 34 -16 82 q8 32 36 58 q-70 16 -106 -40 q-18 -42 8 -96Z" fill="#F2C2A8" stroke="#7C5C4D" stroke-width="2.5"/>
+    <path d="M62 112 q35 -10 58 9" fill="none" stroke="#7C5C4D" stroke-width="3" stroke-linecap="round"/>
+    ${bone(sh, el, 27)}${bone([el[0], el[1] - 7], [wr[0] + 7 * perp[0], wr[1] + 7 * perp[1]], 12)}${bone([el[0], el[1] + 9], [wr[0] - 8 * perp[0], wr[1] - 8 * perp[1]], 12)}
+    <circle cx="${el[0]}" cy="${el[1]}" r="27" fill="#FFF4DC" stroke="${CO}" stroke-width="2.5"/>
+    <ellipse cx="${el[0]}" cy="${el[1]}" rx="34" ry="24" fill="none" stroke="#C28FB8" stroke-width="3" stroke-dasharray="5 4"/>
+    <path d="M${el[0]-16} ${el[1]-15} q16 ${worn ? 4 : 12} 32 0" stroke="${worn ? "#E45C5C" : "#6CC6D8"}" stroke-width="${worn ? 4 : 8}" fill="none" stroke-linecap="round"/>
+    <path d="M${el[0]-16} ${el[1]+15} q16 ${worn ? -4 : -12} 32 0" stroke="${worn ? "#E45C5C" : "#6CC6D8"}" stroke-width="${worn ? 4 : 8}" fill="none" stroke-linecap="round"/>
+    <circle cx="${el[0]}" cy="${el[1]}" r="10" fill="#DFF7FF" opacity=".92"/><path d="M${el[0]-24} ${el[1]-30} q24 -16 48 0 M${el[0]-27} ${el[1]+28} q27 19 54 0" stroke="#B88A54" stroke-width="5" fill="none" stroke-linecap="round"/>
+    ${muscle(bOrg, rad, -33, "#E84D7A", bic)}${muscle(tOrg, ulna, 35, "#5D7FE8", tri)}
+    ${tendon(bOrg, [96, 132])}${tendon(rad, [el[0] + 38 * Math.cos(th) + 6 * perp[0], el[1] + 38 * Math.sin(th) + 6 * perp[1]])}${tendon(tOrg, [99, 200])}${tendon(ulna, [el[0] + 45 * Math.cos(th) - 8 * perp[0], el[1] + 45 * Math.sin(th) - 8 * perp[1]])}
+    <circle cx="${hand[0]}" cy="${hand[1]}" r="17" fill="#F2C2A8" stroke="#7C5C4D" stroke-width="2.5"/>${weight}
+    <path d="M${rad[0]} ${rad[1]} q-15 8 -27 25" stroke="${bic ? "#E84D7A" : "#A9AFC0"}" stroke-width="4" fill="none" marker-end="url(#mArr)"/><path d="M${ulna[0]} ${ulna[1]} q19 -8 32 -26" stroke="${tri ? "#5D7FE8" : "#A9AFC0"}" stroke-width="4" fill="none" marker-end="url(#mArr)"/>
+    ${worn ? `<g stroke="#E45C5C" stroke-width="3.5" stroke-linecap="round"><path d="M181 124 l12 16 M215 124 l-12 16 M226 169 l15 3"/></g>` : ""}
+    <g>${lab(24, 82, "scapula")}${lab(112, 126, "humerus")}${lab(226, 133, "radius")}${lab(226, 203, "ulna")}${lab(92, 101, "biceps origin")}${lab(Math.max(150, Math.min(286, rad[0] - 10)), Math.max(42, Math.min(286, rad[1] - 18)), "inserts on radius", "#A83B62")}${lab(142, 294, "triceps inserts on ulna", "#405FB8")}${lab(158, 217, "cartilage + fluid")}${lab(154, 239, "synovial membrane")}${lab(170, 103, "ligaments")}${lab(260, 314, "load = turning force")}</g>
   </svg>`;
 }
-
 SIM_CH.reflex = {
   title: "Reflex Rescue", mins: 15,
   story: "Prove that a spinal reflex protects the body before the brain feels pain.",

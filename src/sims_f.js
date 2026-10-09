@@ -11,11 +11,13 @@ if (!document.getElementById("sim-f-style")) {
   .fw-node{cursor:pointer}.fw-node circle{transition:transform .15s}.fw-node:hover circle,.fw-node.sel circle{transform:scale(1.06);filter:drop-shadow(0 3px 3px rgba(0,0,0,.18))}
   .fw-species{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:6px}.fw-species button{min-height:44px;border:2px solid #E6DCD2;border-radius:13px;background:#fff;font-weight:900;color:var(--ink)}.fw-species button[aria-pressed=true]{background:#E6F8EC;border-color:#3FA06B}
   .fw-read,.quad-read{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}.fw-read b,.quad-read b{display:block;font-size:1.25rem}
+  .fw-map-label{font-size:10.5px;font-weight:900;fill:var(--ink)}
   .fw-pyr{display:grid;gap:8px}.fw-bar{display:grid;grid-template-columns:84px 1fr 72px;gap:6px;align-items:center}.fw-bar i{display:block;height:18px;border-radius:999px;border:2px solid rgba(107,74,107,.18)}
   .fw-chain{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px}
   .fw-chain button,.quad-target button{min-height:44px;border:2px solid #E6DCD2;border-radius:12px;background:#fff;font-weight:900;color:var(--ink);padding:6px 8px}.fw-chain button[aria-checked=true],.quad-target button[aria-checked=true]{background:#EAF6FF;border-color:#3E8FDF}
   .quad-target{display:flex;flex-wrap:wrap;gap:6px}.quad-field-dot{stroke:#fff;stroke-width:.7}
   .quad-table th,.quad-table td{padding:5px 6px;text-align:right}.quad-table th:first-child,.quad-table td:first-child{text-align:left}.quad-table .unlock{color:#8C6B35;font-weight:900}
+  .quad-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.quad-card{border:2px solid #E6DCD2;border-radius:14px;background:#fff;padding:8px;min-width:0}.quad-card h4{margin:0 0 6px;font-size:.95rem}.quad-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.quad-metrics span{border-radius:10px;background:#F7F2EA;padding:5px 6px;font-size:.78rem;font-weight:800;min-width:0}.quad-metrics b{display:block;font-size:.95rem}.quad-good{color:#27804F;font-weight:900}.quad-lock{color:#8C6B35;font-weight:900}
   .quad-mode-panels{display:grid;gap:12px}.quad-note{border:2px dashed #D9CBBE;border-radius:14px;padding:8px;background:#FFF8E8}
   `;
   document.head.appendChild(fwStyle);
@@ -23,15 +25,15 @@ if (!document.getElementById("sim-f-style")) {
 
 /* ---------------- 🕸️ Food web & energy ---------------- */
 const FW_SPEC = [
-  { id: "algae", name: "algae", ic: "🟢", lv: "Producer", col: "#5EBB63", x: 78, y: 240, init: 9000, K: 16000, r: .28, mass: .02, eats: [] },
-  { id: "pondweed", name: "pondweed", ic: "🌿", lv: "Producer", col: "#3FA06B", x: 238, y: 245, init: 1600, K: 2700, r: .22, mass: .5, eats: [] },
-  { id: "mosquito", name: "mosquito larva", ic: "〰️", lv: "Primary", col: "#F5C96B", x: 72, y: 145, init: 600, K: 1300, r: .2, mass: .02, eats: ["algae"] },
-  { id: "snail", name: "snail", ic: "🐚", lv: "Primary", col: "#EFC15B", x: 248, y: 145, init: 320, K: 760, r: .16, mass: 3, eats: ["algae", "pondweed"] },
-  { id: "tadpole", name: "tadpole", ic: "⚫", lv: "Primary", col: "#F2D276", x: 395, y: 150, init: 220, K: 520, r: .14, mass: 1, eats: ["algae"] },
-  { id: "dragonfly", name: "dragonfly nymph", ic: "💧", lv: "Secondary", col: "#EE8A4A", x: 108, y: 57, init: 80, K: 190, r: .12, mass: .3, eats: ["mosquito", "tadpole"] },
-  { id: "smallfish", name: "small fish", ic: "🐟", lv: "Secondary", col: "#E97856", x: 316, y: 58, init: 55, K: 130, r: .1, mass: 8, eats: ["mosquito", "snail", "tadpole"] },
-  { id: "kingfisher", name: "kingfisher", ic: "🐦", lv: "Tertiary", col: "#9C76D8", x: 505, y: 62, init: 6, K: 18, r: .06, mass: 40, eats: ["smallfish", "dragonfly"] },
-  { id: "decomp", name: "decomposers", ic: "🍄", lv: "Decomposer", col: "#B98A5A", x: 505, y: 245, init: 1100, K: 2200, r: .08, mass: .001, eats: ["detritus"] }
+  { id: "algae", name: "algae", ic: "🟢", lv: "Producer", col: "#5EBB63", x: 56, y: 215, init: 9000, K: 16000, r: .28, mass: .02, eats: [] },
+  { id: "pondweed", name: "pondweed", ic: "🌿", lv: "Producer", col: "#3FA06B", x: 145, y: 222, init: 1600, K: 2700, r: .22, mass: .5, eats: [] },
+  { id: "mosquito", name: "mosquito larva", ic: "〰️", lv: "Primary", col: "#F5C96B", x: 58, y: 134, init: 600, K: 1300, r: .2, mass: .02, eats: ["algae"] },
+  { id: "snail", name: "snail", ic: "🐚", lv: "Primary", col: "#EFC15B", x: 150, y: 141, init: 320, K: 760, r: .16, mass: 3, eats: ["algae", "pondweed"] },
+  { id: "tadpole", name: "tadpole", ic: "⚫", lv: "Primary", col: "#F2D276", x: 238, y: 143, init: 220, K: 520, r: .14, mass: 1, eats: ["algae"] },
+  { id: "dragonfly", name: "dragonfly nymph", ic: "💧", lv: "Secondary", col: "#EE8A4A", x: 82, y: 58, init: 80, K: 190, r: .12, mass: .3, eats: ["mosquito", "tadpole"] },
+  { id: "smallfish", name: "small fish", ic: "🐟", lv: "Secondary", col: "#E97856", x: 206, y: 61, init: 55, K: 130, r: .1, mass: 8, eats: ["mosquito", "snail", "tadpole"] },
+  { id: "kingfisher", name: "kingfisher", ic: "🐦", lv: "Tertiary", col: "#9C76D8", x: 303, y: 61, init: 6, K: 18, r: .06, mass: 40, eats: ["smallfish", "dragonfly"] },
+  { id: "decomp", name: "decomposers", ic: "🍄", lv: "Decomposer", col: "#B98A5A", x: 302, y: 220, init: 1100, K: 2200, r: .08, mass: .001, eats: ["detritus"] }
 ];
 const FW = Object.fromEntries(FW_SPEC.map(s => [s.id, s]));
 const FW_CHAINS = [
@@ -49,7 +51,7 @@ function foodwebSim(root) {
   const st = { pop: Object.fromEntries(FW_SPEC.map(s => [s.id, s.init])), on: Object.fromEntries(FW_SPEC.map(s => [s.id, true])), sel: "algae", chain: fwChainKey(FW_CHAINS[1]), run: false, fast: false, t: 0, acc: 0, last: "none", hist: [] };
   st.hist.push(fwSnapshot(st));
   root.innerHTML = `<div class="simgrid wide">
-    <section class="card"><div id="fwMap" class="simsvg"></div>
+    <section class="card"><div id="fwMap" class="simsvg nozoom"></div>
       <div class="fw-key">${[["Producer", "#3FA06B", "🌿"], ["Primary", "#F5C96B", "1°"], ["Secondary", "#EE8A4A", "2°"], ["Tertiary", "#9C76D8", "3°"], ["Decomposer", "#B98A5A", "🍄"]].map(k => `<span><i style="width:12px;height:12px;border-radius:999px;background:${k[1]};display:inline-block"></i>${k[2]} ${k[0]}</span>`).join("")}</div>
       <div class="fw-species">${FW_SPEC.map(s => `<button data-fw-sel="${s.id}" aria-pressed="${s.id === st.sel}">${s.ic} ${s.name}</button>`).join("")}</div>
       <div class="row simbtns"><button class="btn yellow" data-fw-act="remove">➖ Remove</button><button class="btn" data-fw-act="add">➕ Add back</button><button class="btn blue" data-fw-act="double">✖️2 Double</button></div></section>
@@ -125,38 +127,50 @@ function fwProbe(st) {
   FW_SPEC.forEach(s => { p["pop_" + s.id] = Math.round(st.pop[s.id]); p["on_" + s.id] = !!st.on[s.id]; });
   return p;
 }
+function fwIcon(id, x, y, faint) {
+  const op = faint ? .48 : 1;
+  if (id === "algae") return `<g opacity="${op}">${[-8,-2,5,10].map((dx,i)=>`<circle cx="${x+dx}" cy="${y+(i%2)*6-4}" r="5" fill="#55B95D" stroke="${CO}" stroke-width="1"/>`).join("")}</g>`;
+  if (id === "pondweed") return `<g opacity="${op}" stroke="#277B48" stroke-width="3" stroke-linecap="round" fill="none"><path d="M${x} ${y+12} C${x-10} ${y} ${x-4} ${y-12} ${x-12} ${y-20}"/><path d="M${x} ${y+12} C${x+6} ${y-2} ${x+4} ${y-14} ${x+12} ${y-22}"/><path d="M${x-8} ${y-4} q-8 -3 -12 4 M${x+7} ${y-9} q8 -4 12 2"/></g>`;
+  if (id === "mosquito") return `<g opacity="${op}" fill="none" stroke="${CO}" stroke-width="2.2" stroke-linecap="round"><path d="M${x-15} ${y} q10 -14 20 0 t20 0"/><circle cx="${x-18}" cy="${y}" r="3" fill="#F7D46B"/><path d="M${x-4} ${y-5} l-8 -9 M${x+8} ${y+3} l8 10"/></g>`;
+  if (id === "snail") return `<g opacity="${op}"><path d="M${x-16} ${y+7} q24 8 38 -2 q-3 12 -25 13 h-20 q-10 0 -13 -6Z" fill="#E9B45B" stroke="${CO}" stroke-width="2"/><circle cx="${x-5}" cy="${y-2}" r="13" fill="#F4CC74" stroke="${CO}" stroke-width="2"/><path d="M${x-8} ${y-2} q7 -8 13 -1 q2 7 -6 9" fill="none" stroke="#9B6B3D" stroke-width="2"/><path d="M${x+18} ${y-2} q8 -12 16 -8 M${x+18} ${y-2} q9 -5 17 0" stroke="${CO}" stroke-width="1.5" fill="none"/></g>`;
+  if (id === "tadpole") return `<g opacity="${op}"><ellipse cx="${x-7}" cy="${y}" rx="15" ry="11" fill="#5B5C50" stroke="${CO}" stroke-width="2"/><path d="M${x+6} ${y} C${x+22} ${y-14} ${x+28} ${y+10} ${x+39} ${y-2}" fill="none" stroke="#5B5C50" stroke-width="7" stroke-linecap="round"/><circle cx="${x-12}" cy="${y-3}" r="2" fill="#fff"/></g>`;
+  if (id === "dragonfly") return `<g opacity="${op}"><ellipse cx="${x}" cy="${y}" rx="7" ry="18" fill="#9ACAD4" stroke="${CO}" stroke-width="1.8"/><ellipse cx="${x-11}" cy="${y-7}" rx="14" ry="6" fill="#D8F4FF" stroke="#6EA7B9" stroke-width="1.3"/><ellipse cx="${x+11}" cy="${y-7}" rx="14" ry="6" fill="#D8F4FF" stroke="#6EA7B9" stroke-width="1.3"/><path d="M${x-8} ${y+13} l-8 8 M${x+8} ${y+13} l8 8" stroke="${CO}" stroke-width="1.6"/></g>`;
+  if (id === "smallfish") return `<g opacity="${op}"><path d="M${x-19} ${y} q18 -15 38 0 q-18 15 -38 0Z" fill="#F07755" stroke="${CO}" stroke-width="2"/><path d="M${x+17} ${y} l15 -11 v22Z" fill="#F4A365" stroke="${CO}" stroke-width="2"/><circle cx="${x-9}" cy="${y-3}" r="2.4" fill="#fff"/><path d="M${x-2} ${y+2} q6 5 13 0" stroke="#9A3F30" stroke-width="1.4" fill="none"/></g>`;
+  if (id === "kingfisher") return `<g opacity="${op}"><path d="M${x-18} ${y+7} q14 -25 36 -6 q-2 20 -24 24Z" fill="#4BA7D8" stroke="${CO}" stroke-width="2"/><path d="M${x-6} ${y+5} q11 8 23 0 q-3 12 -16 13Z" fill="#F08A3C"/><path d="M${x+15} ${y-1} l22 -7 l-19 14Z" fill="#D9673A" stroke="${CO}" stroke-width="1.5"/><circle cx="${x+5}" cy="${y-8}" r="2.5" fill="#fff"/></g>`;
+  return `<g opacity="${op}"><path d="M${x-12} ${y+13} h24" stroke="#7B5838" stroke-width="4" stroke-linecap="round"/><path d="M${x-11} ${y+13} v-16 M${x+6} ${y+13} v-22" stroke="#7B5838" stroke-width="4"/><path d="M${x-25} ${y-5} q14 -18 28 0Z" fill="#DFA36B" stroke="${CO}" stroke-width="1.8"/><path d="M${x-7} ${y-13} q16 -20 32 0Z" fill="#F0C287" stroke="${CO}" stroke-width="1.8"/></g>`;
+}
 function fwMapSvg(st) {
   const edges = [];
   FW_SPEC.forEach(s => s.eats.forEach(prey => prey !== "detritus" && edges.push([prey, s.id])));
-  return `<svg viewBox="0 0 600 310" role="img" aria-label="Hong Kong pond food web. Arrows show energy flows from food to feeder.">
-    <defs><marker id="fwArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#6B4A6B"/></marker></defs>
-    <rect width="600" height="310" rx="18" fill="#EAF7FF"/><path d="M0 255 C120 230 180 285 310 252 S500 220 600 255 V310 H0Z" fill="#BFE8D5"/>
-    <text x="300" y="24" text-anchor="middle" font-size="18" font-weight="900" fill="${CO}">HK pond: energy flows to the eater</text>
+  return `<svg viewBox="0 0 360 280" role="img" aria-label="Hong Kong pond food web. Arrows show energy flows from food to feeder.">
+    <defs><marker id="fwArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#6B4A6B"/></marker></defs>
+    <rect width="360" height="280" rx="18" fill="#EAF7FF"/><path d="M0 224 C70 205 118 246 190 222 S294 200 360 226 V280 H0Z" fill="#BFE8D5"/>
+    <text x="180" y="21" text-anchor="middle" font-size="15" font-weight="900" fill="${CO}">pond energy: food → feeder</text>
     ${edges.map(([a, b]) => {
       const A = FW[a], B = FW[b], on = st.pop[a] > 1 && st.pop[b] > 1;
-      return `<path d="M${A.x} ${A.y} C${(A.x + B.x) / 2} ${A.y - 30}, ${(A.x + B.x) / 2} ${B.y + 30}, ${B.x} ${B.y}" fill="none" stroke="${on ? "#6B4A6B" : "#CFC4BA"}" stroke-width="${on ? 3 : 2}" stroke-dasharray="${on ? "0" : "6 5"}" marker-end="url(#fwArr)"/>`;
+      return `<path d="M${A.x} ${A.y} C${(A.x + B.x) / 2} ${A.y - 22}, ${(A.x + B.x) / 2} ${B.y + 22}, ${B.x} ${B.y}" fill="none" stroke="${on ? "#6B4A6B" : "#CFC4BA"}" stroke-width="${on ? 2.6 : 1.8}" stroke-dasharray="${on ? "0" : "5 4"}" marker-end="url(#fwArr)"/>`;
     }).join("")}
-    <path d="M500 225 C450 205 395 225 332 218" fill="none" stroke="#B98A5A" stroke-width="3" stroke-dasharray="5 4" marker-end="url(#fwArr)"/><text x="438" y="217" font-size="12" font-weight="900" fill="#7A5B38">dead matter</text>
+    <path d="M292 199 C256 184 224 193 175 193" fill="none" stroke="#B98A5A" stroke-width="2.3" stroke-dasharray="5 4" marker-end="url(#fwArr)"/><text x="232" y="187" font-size="10" font-weight="900" fill="#7A5B38">dead matter</text>
     ${FW_SPEC.map(s => {
-      const r = s.id === "decomp" ? 35 : 31, faint = st.pop[s.id] < 1, sel = st.sel === s.id;
+      const r = s.id === "decomp" ? 27 : 24, faint = st.pop[s.id] < 1, sel = st.sel === s.id;
       return `<g class="fw-node ${sel ? "sel" : ""}" data-fw-node="${s.id}" role="button" tabindex="0" aria-label="${s.name}, ${Math.round(st.pop[s.id])}">
-        <circle cx="${s.x}" cy="${s.y}" r="${r}" fill="${faint ? "#EEE7DF" : s.col}" stroke="${sel ? "#1E66B8" : CO}" stroke-width="${sel ? 5 : 3}" opacity="${faint ? .55 : 1}"/>
-        <text x="${s.x}" y="${s.y - 4}" text-anchor="middle" font-size="19" font-weight="900" fill="${CO}">${s.ic}</text>
-        <text x="${s.x}" y="${s.y + 15}" text-anchor="middle" font-size="11" font-weight="900" fill="${CO}">${Math.round(st.pop[s.id])}</text>
-        <text x="${s.x}" y="${s.y + r + 15}" text-anchor="middle" font-size="12" font-weight="900" fill="${CO}">${s.name}</text>
+        <circle cx="${s.x}" cy="${s.y}" r="${r}" fill="${faint ? "#EEE7DF" : s.col}" stroke="${sel ? "#1E66B8" : CO}" stroke-width="${sel ? 4 : 2.4}" opacity="${faint ? .55 : 1}"/>
+        ${fwIcon(s.id, s.x, s.y - 4, faint)}
+        <text x="${s.x}" y="${s.y + r + 11}" text-anchor="middle" class="fw-map-label">${s.name.replace(" larva", "")}</text>
+        <text x="${s.x}" y="${s.y + 6}" text-anchor="middle" font-size="11.5" font-weight="900" fill="${CO}">${Math.round(st.pop[s.id])}</text>
       </g>`;
     }).join("")}
   </svg>`;
 }
 function fwGraphSvg(st) {
   const ids = ["algae", "pondweed", "mosquito", "snail", "tadpole", "dragonfly", "smallfish", "kingfisher"];
-  const X = t => 38 + (t - Math.max(0, st.t - 24)) / 24 * 340, Y = (id, v) => 156 - (v / FW[id].K) * 128;
-  let s = `<svg viewBox="0 0 390 176" role="img" aria-label="Population graph over time"><rect width="390" height="176" rx="14" fill="#fff"/><path d="M38 18 V156 H372" stroke="${CO}" stroke-width="2"/><text x="205" y="171" text-anchor="middle" font-size="10" font-weight="800" fill="#7A6A66">time (months) →</text><text x="12" y="91" transform="rotate(-90 12 91)" font-size="10" font-weight="800" fill="#7A6A66">population (% of carrying capacity)</text>`;
+  const X = t => 42 + (t - Math.max(0, st.t - 24)) / 24 * 294, Y = (id, v) => 188 - (v / FW[id].K) * 104;
+  let s = `<svg viewBox="0 0 360 228" role="img" aria-label="Population graph over time"><rect width="360" height="228" rx="14" fill="#fff"/><text x="44" y="17" font-size="12" font-weight="900" fill="#7A6A66">pop (%K)</text><text x="44" y="34" font-size="12" font-weight="900" fill="${CO}">Month ${st.t}</text><path d="M42 78 V188 H342" stroke="${CO}" stroke-width="2"/><text x="194" y="218" text-anchor="middle" font-size="12" font-weight="800" fill="#7A6A66">time (months) →</text>`;
   ids.forEach(id => {
     const pts = st.hist.map(h => `${X(h.t).toFixed(1)},${Y(id, h.pop[id]).toFixed(1)}`).join(" ");
     s += `<polyline points="${pts}" fill="none" stroke="${FW[id].col}" stroke-width="${id === st.sel ? 4 : 2}" opacity="${id === st.sel ? 1 : .65}"/>`;
   });
-  s += `<text x="48" y="30" font-size="11" font-weight="900" fill="${CO}">Month ${st.t}</text>${ids.slice(0, 6).map((id, i) => `<text x="${62 + i * 52}" y="30" font-size="9" font-weight="900" fill="${FW[id].col}">${FW[id].ic} ${FW[id].name.split(" ")[0]}</text>`).join("")}</svg>`;
+  s += `${ids.slice(0, 4).map((id, i) => `<text x="122" y="${22 + i * 13}" font-size="11.5" font-weight="900" fill="${FW[id].col}">● ${FW[id].name.split(" ")[0]}</text>`).join("")}${ids.slice(4, 8).map((id, i) => `<text x="232" y="${22 + i * 13}" font-size="11.5" font-weight="900" fill="${FW[id].col}">● ${FW[id].name.split(" ")[0]}</text>`).join("")}</svg>`;
   return s;
 }
 function fwReadHtml(st) {
@@ -193,7 +207,7 @@ simReg({ id: "quadrat", ic: "🟩", name: "Quadrat sampling", sec: "3f", ord: 20
 function quadratSim(root) {
   const st = { mode: "random", size: 5, target: 10, samples: [], seed: 18221, last: null };
   root.innerHTML = `<div class="simgrid wide">
-    <section class="card"><div id="quadField" class="simsvg"></div>
+    <section class="card"><div id="quadField" class="simsvg nozoom"></div>
       <div class="quad-key">${QUAD_SPEC.map(s => `<span><i style="width:12px;height:12px;border-radius:999px;background:${s[3]};display:inline-block"></i>${s[2]} ${s[1]}</span>`).join("")}</div>
       <div class="row">${segBtns("quad-mode", [["random", "🎲 Random"], ["transect", "📏 Transect"]], st.mode)}</div>
       <div class="row">${segBtns("quad-size", [[5, "5 × 5 m"], [10, "10 × 10 m"], [15, "15 × 15 m"]], st.size)}</div>
@@ -257,19 +271,24 @@ function quadProbe(st) {
   QUAD_SPEC.forEach(q => { const id = q[0], a = qs[id]; p["mean_" + id] = +a.mean.toFixed(2); p["est_" + id] = Math.round(a.est); p["true_" + id] = a.trueCount; p["freq_" + id] = +a.freq.toFixed(1); p["cover_" + id] = +a.cover.toFixed(1); });
   return p;
 }
+function quadPlantUse(p, x, y) {
+  if (p.sp === "grass") return `<use href="#qGrass" x="${x.toFixed(1)}" y="${y.toFixed(1)}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${(.55 + p.cover * .45).toFixed(2)}) translate(${-x.toFixed(1)} ${-y.toFixed(1)})"/>`;
+  if (p.sp === "daisy") return `<use href="#qDaisy" x="${x.toFixed(1)}" y="${y.toFixed(1)}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${(.65 + p.cover * .55).toFixed(2)}) translate(${-x.toFixed(1)} ${-y.toFixed(1)})"/>`;
+  return `<use href="#qReed" x="${x.toFixed(1)}" y="${y.toFixed(1)}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${(.62 + p.cover * .28).toFixed(2)}) translate(${-x.toFixed(1)} ${-y.toFixed(1)})"/>`;
+}
 function quadFieldSvg(st) {
-  const sx = 5, sy = 5, recent = st.samples.slice(-12);
-  return `<svg viewBox="0 0 520 330" role="img" aria-label="School lawn field with random quadrats and clumped plants">
-    <defs><linearGradient id="qBg" x1="0" x2="1"><stop offset="0" stop-color="#DDF1FF"/><stop offset=".42" stop-color="#E6F8EC"/><stop offset="1" stop-color="#FFF2C7"/></linearGradient></defs>
-    <rect x="10" y="10" width="500" height="300" rx="16" fill="url(#qBg)" stroke="${CO}" stroke-width="3"/>
-    <text x="22" y="30" font-size="12" font-weight="900" fill="${CO}">water + shade</text><text x="498" y="30" text-anchor="end" font-size="12" font-weight="900" fill="${CO}">bright + dry</text>
-    ${QUAD_PLANTS.map(p => {
-      const spec = QUAD_SPEC.find(q => q[0] === p.sp);
-      return `<circle class="quad-field-dot" cx="${10 + p.x * sx}" cy="${10 + p.y * sy}" r="${p.sp === "reed" ? 2.7 : p.sp === "daisy" ? 2.3 : 1.8}" fill="${spec[3]}"><title>${spec[1]}</title></circle>`;
-    }).join("")}
-    ${recent.map((q, i) => `<rect x="${10 + q.x * sx}" y="${10 + q.y * sy}" width="${q.size * sx}" height="${q.size * sy}" fill="none" stroke="${i === recent.length - 1 ? "#E0457B" : "#1E66B8"}" stroke-width="${i === recent.length - 1 ? 4 : 2}" opacity="${.45 + i / recent.length * .5}"/>`).join("")}
-    ${st.mode === "transect" ? `<line x1="10" y1="160" x2="510" y2="160" stroke="#E0457B" stroke-width="5" stroke-linecap="round"/><text x="260" y="151" text-anchor="middle" font-size="13" font-weight="900" fill="#E0457B">line transect</text>` : ""}
-    <text x="260" y="323" text-anchor="middle" font-size="12" font-weight="900" fill="${CO}">${st.samples.length} random quadrat${st.samples.length === 1 ? "" : "s"} · quadrat ${st.size} × ${st.size} m</text>
+  const sx = 3.4, sy = 3.2, ox = 10, oy = 20, recent = st.samples.slice(-12);
+  return `<svg viewBox="0 0 360 260" role="img" aria-label="School lawn field with random quadrats and clumped grass daisies and reeds">
+    <defs><linearGradient id="qBg" x1="0" x2="1"><stop offset="0" stop-color="#DDF1FF"/><stop offset=".42" stop-color="#E6F8EC"/><stop offset="1" stop-color="#FFF2C7"/></linearGradient>
+      <g id="qGrass" stroke="#3F9147" stroke-width="1.7" stroke-linecap="round"><path d="M0 0 q-4 -8 -1 -15 M1 0 q2 -10 6 -16 M-2 1 q-7 -5 -8 -12"/></g>
+      <g id="qDaisy"><path d="M0 7 V-5" stroke="#4A8C45" stroke-width="1.5"/><g fill="#FFF7CA" stroke="#B9902F" stroke-width=".7"><circle cx="0" cy="-10" r="3.2"/><circle cx="-4" cy="-6" r="3.2"/><circle cx="4" cy="-6" r="3.2"/><circle cx="0" cy="-3" r="3.2"/></g><circle cx="0" cy="-6" r="2.3" fill="#E8B83E"/></g>
+      <g id="qReed" stroke="#2C7A9D" stroke-width="2" stroke-linecap="round" fill="none"><path d="M0 9 C-2 -6 2 -16 0 -28"/><path d="M0 -9 q-8 3 -12 12 M1 -17 q9 2 14 10"/><path d="M0 -30 q4 -8 8 -1 q-4 7 -8 1" fill="#7AB6DB" stroke="#2C7A9D"/></g></defs>
+    <rect x="10" y="20" width="340" height="194" rx="16" fill="url(#qBg)" stroke="${CO}" stroke-width="2.5"/>
+    <text x="20" y="37" font-size="12" font-weight="900" fill="${CO}">water + shade</text><text x="340" y="37" text-anchor="end" font-size="12" font-weight="900" fill="${CO}">bright + dry</text>
+    ${QUAD_PLANTS.map(p => quadPlantUse(p, ox + p.x * sx, oy + p.y * sy)).join("")}
+    ${recent.map((q, i) => `<rect x="${ox + q.x * sx}" y="${oy + q.y * sy}" width="${q.size * sx}" height="${q.size * sy}" fill="none" stroke="${i === recent.length - 1 ? "#E0457B" : "#1E66B8"}" stroke-width="${i === recent.length - 1 ? 3.5 : 2}" opacity="${.45 + i / recent.length * .5}"/>`).join("")}
+    ${st.mode === "transect" ? `<line x1="10" y1="117" x2="350" y2="117" stroke="#E0457B" stroke-width="4.5" stroke-linecap="round"/><text x="180" y="108" text-anchor="middle" font-size="12" font-weight="900" fill="#E0457B">line transect</text>` : ""}
+    <text x="180" y="239" text-anchor="middle" font-size="12" font-weight="900" fill="${CO}">${st.samples.length} random quadrat${st.samples.length === 1 ? "" : "s"} · quadrat ${st.size} × ${st.size} m</text>
   </svg>`;
 }
 function quadReadHtml(st) {
@@ -278,10 +297,10 @@ function quadReadHtml(st) {
 }
 function quadTableHtml(st) {
   const qs = quadStats(st), unlocked = st.samples.length >= 10;
-  return `<div class="tscroll"><table class="tterms quad-table small"><tbody><tr><th>Species</th><th>Mean</th><th>Estimate</th><th>Frequency</th><th>Cover</th><th>True</th></tr>
+  return `<div class="quad-cards">
     ${QUAD_SPEC.map(q => { const a = qs[q[0]], err = unlocked ? Math.round((a.est - a.trueCount) / a.trueCount * 100) : null;
-      return `<tr><td>${q[2]} ${q[1]}</td><td>${a.mean.toFixed(2)}</td><td><b>${Math.round(a.est)}</b>${unlocked ? ` <span class="${Math.abs(err) < 20 ? "good" : "unlock"}">${err > 0 ? "+" : ""}${err}%</span>` : ""}</td><td>${a.freq.toFixed(0)}%</td><td>${a.cover.toFixed(1)}%</td><td>${unlocked ? a.trueCount : `<span class="unlock">after 10</span>`}</td></tr>`;
-    }).join("")}</tbody></table></div>`;
+      return `<section class="quad-card"><h4>${q[2]} ${q[1]}</h4><div class="quad-metrics"><span>Mean<b>${a.mean.toFixed(2)}</b></span><span>Estimate<b>${Math.round(a.est)}${unlocked ? ` <em class="${Math.abs(err) < 20 ? "quad-good" : "quad-lock"}">${err > 0 ? "+" : ""}${err}%</em>` : ""}</b></span><span>Frequency<b>${a.freq.toFixed(0)}%</b></span><span>Cover<b>${a.cover.toFixed(1)}%</b></span><span>True count<b>${unlocked ? a.trueCount : `<em class="quad-lock">after 10</em>`}</b></span></div></section>`;
+    }).join("")}</div>`;
 }
 function quadTransectData() {
   const xs = Array.from({ length: 11 }, (_, i) => i * 10);
@@ -294,12 +313,12 @@ function quadTransectData() {
   return { rows, reedPeak: reed.x, daisyPeak: daisy.x, moistureAtReedPeak: reed.moisture, lightAtDaisyPeak: daisy.light };
 }
 function quadTransectSvg() {
-  const d = quadTransectData(), X = x => 36 + x / 100 * 300, Yc = n => 138 - n / 32 * 95, Yr = v => 138 - v / 100 * 95;
-  let s = `<svg viewBox="0 0 380 168" role="img" aria-label="Line transect graph showing abiotic factors and species distribution"><rect width="380" height="168" rx="14" fill="#fff"/><path d="M36 18 V138 H344" stroke="${CO}" stroke-width="2"/><text x="190" y="162" text-anchor="middle" font-size="10" font-weight="800" fill="#7A6A66">distance along transect (m)</text>`;
+  const d = quadTransectData(), X = x => 42 + x / 100 * 284, Yc = n => 142 - n / 32 * 92, Yr = v => 142 - v / 100 * 92;
+  let s = `<svg viewBox="0 0 360 184" role="img" aria-label="Line transect graph showing abiotic factors and species distribution"><rect width="360" height="184" rx="14" fill="#fff"/><path d="M42 22 V142 H334" stroke="${CO}" stroke-width="2" fill="none"/><text x="188" y="176" text-anchor="middle" font-size="12" font-weight="800" fill="#7A6A66">distance along transect (m)</text>`;
   [["moisture", "#3E8FDF"], ["light", "#E8B83E"]].forEach(([k, col]) => { s += `<polyline points="${d.rows.map(r => `${X(r.x)},${Yr(r[k])}`).join(" ")}" fill="none" stroke="${col}" stroke-width="3" stroke-dasharray="${k === "light" ? "0" : "5 4"}"/>`; });
-  QUAD_SPEC.forEach(q => { s += `<polyline points="${d.rows.map(r => `${X(r.x)},${Yc(r.counts[q[0]])}`).join(" ")}" fill="none" stroke="${q[3]}" stroke-width="2.5"/>`; });
-  s += d.rows.map(r => `<text x="${X(r.x)}" y="151" text-anchor="middle" font-size="8" fill="#7A6A66">${r.x}</text>`).join("");
-  s += `<g font-size="10" font-weight="900"><text x="46" y="30" fill="#3E8FDF">moisture</text><text x="295" y="30" fill="#E8B83E">light</text><text x="48" y="124" fill="#3E8FDF">🌾 reeds peak near ${d.reedPeak} m</text><text x="208" y="50" fill="#E8B83E">🌼 daisies peak near ${d.daisyPeak} m</text></g></svg>`;
+  QUAD_SPEC.forEach(q => { s += `<polyline points="${d.rows.map(r => `${X(r.x)},${Yc(r.counts[q[0]])}`).join(" ")}" fill="none" stroke="${q[3]}" stroke-width="2.6"/>`; });
+  s += d.rows.map(r => `<text x="${X(r.x)}" y="158" text-anchor="middle" font-size="10.5" font-weight="800" fill="#7A6A66">${r.x}</text>`).join("");
+  s += `<g font-size="12" font-weight="900"><text x="48" y="38" fill="#3E8FDF">moisture</text><text x="286" y="38" fill="#E8B83E">light</text><text x="50" y="126" fill="#3E8FDF">🌾 reeds peak: ${d.reedPeak} m</text><text x="194" y="56" fill="#E8B83E">🌼 daisies: ${d.daisyPeak} m</text></g></svg>`;
   return s;
 }
 

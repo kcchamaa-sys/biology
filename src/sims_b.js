@@ -103,7 +103,7 @@ function dgRate(st, useX) {
 function digestSim(root) {
   const st = { food: "starch", region: "mouth", temp: 37, ph: 7, bile: true, graph: "temp", t: 0, cut: 0, absorbed: 0, pts: [] };
   root.innerHTML = `<div class="simgrid wide">
-    <section class="card"><div id="dgGut" class="simsvg"></div>
+    <section class="card"><div id="dgGut" class="simsvg nozoom"></div>
       <div class="simctl"><div><b class="small">Food</b>${segBtns("dgfood", Object.entries(DG_FOOD).map(([k, f]) => [k, `${f.ic} ${f.name}`]), st.food)}</div>
       <div><b class="small">Region</b>${segBtns("dgregion", Object.entries(DG_REGIONS).map(([k, r]) => [k, `${r.ic} ${r.name}`]), st.region)}</div></div>
       <div id="dgInfo" class="dg-panel"></div></section>
@@ -145,22 +145,36 @@ function dgInfoHtml(st, r) {
 }
 function dgGutSvg(st) {
   const active = st.region, food = DG_FOOD[st.food], cut = st.cut / 100, abs = st.absorbed / 100;
-  const R = { mouth: [74, 70], stomach: [162, 158], duod: [262, 150], small: [336, 208], large: [500, 196] };
-  const node = (k, x, y, label) => `<g class="${active === k ? "on" : ""}"><circle cx="${x}" cy="${y}" r="${active === k ? 32 : 24}" fill="${active === k ? "#FFE27A" : "#fff"}" stroke="${CO}" stroke-width="3"/><text x="${x}" y="${y + 44}" text-anchor="middle" font-size="13" font-weight="900" fill="${CO}">${label}</text></g>`;
-  const mol = (i, small) => { const [x, y] = R[active], a = i * 1.35 + st.t * .8, rr = small ? 40 + i * 5 : 24 + i * 3, cx = x + Math.cos(a) * rr, cy = y + Math.sin(a * 1.2) * rr * .55; return dgMolSvg(st.food, cx, cy, small ? .55 : 1, food.col, i); };
+  const R = { mouth: [78, 46], stomach: [118, 151], duod: [178, 178], small: [187, 262], large: [242, 254] };
+  const node = (k, x, y, label, dx = 0, dy = 0) => `<g class="${active === k ? "on" : ""}"><circle cx="${x}" cy="${y}" r="${active === k ? 19 : 13}" fill="${active === k ? "#FFE27A" : "#fff"}" stroke="${CO}" stroke-width="2.4"/><text x="${x + dx}" y="${y + dy}" text-anchor="middle" font-size="11" font-weight="900" fill="${CO}">${label}</text></g>`;
+  const lab = (x1, y1, x2, y2, t, a = "start") => `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${CO}" stroke-width="1.1"/><text x="${x2 + (a === "end" ? -3 : 3)}" y="${y2 + 4}" text-anchor="${a}" font-size="10.5" font-weight="900" fill="${CO}">${t}</text>`;
+  const mol = (i, small) => { const [x, y] = R[active], a = i * 1.35 + st.t * .8, rr = small ? 29 + i * 2.5 : 17 + i * 2, cx = x + Math.cos(a) * rr, cy = y + Math.sin(a * 1.2) * rr * .55; return dgMolSvg(st.food, cx, cy, small ? .48 : .78, food.col, i); };
   const smallN = Math.round(3 + cut * 10), bigN = Math.max(1, Math.round(7 - cut * 5));
-  const arrows = DG_REGIONS[active].absorb ? Array.from({ length: Math.round(abs * 7) }, (_, i) => `<path d="M${312 + i * 18} 244 q18 28 42 42" stroke="#3E8FDF" stroke-width="4" fill="none" marker-end="url(#dgArr)" opacity="${.35 + abs * .65}"/>`).join("") : "";
-  return `<svg viewBox="0 0 620 330" role="img" aria-label="Digestive system: ${DG_REGIONS[active].name} selected">
+  const arrows = DG_REGIONS[active].absorb ? Array.from({ length: Math.round(abs * 6) }, (_, i) => `<path d="M${142 + i * 12} 304 q18 24 44 30" stroke="#3E8FDF" stroke-width="3" fill="none" marker-end="url(#dgArr)" opacity="${.35 + abs * .65}"/>`).join("") : "";
+  return `<svg viewBox="0 0 360 430" role="img" aria-label="Alimentary canal with mouth, oesophagus, stomach, liver, gall bladder, pancreas, duodenum, ileum with villi, large intestine, rectum and anus; ${DG_REGIONS[active].name} selected">
     <defs><marker id="dgArr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#3E8FDF"/></marker></defs>
-    <rect width="620" height="330" rx="18" fill="#FFF8EC"/><path d="M74 94 C76 128 130 116 138 146 C144 170 124 190 154 212 C198 248 260 202 250 164 C244 134 190 118 190 92" fill="none" stroke="#D98968" stroke-width="20" stroke-linecap="round"/>
-    <path d="M250 164 C324 120 384 132 398 184 C414 246 320 278 280 226 C252 190 302 166 354 184" fill="none" stroke="#F2B47E" stroke-width="18" stroke-linecap="round"/>
-    <path d="M420 114 C530 108 570 160 554 238 C538 314 416 300 396 244" fill="none" stroke="#C79774" stroke-width="24" stroke-linecap="round"/><path d="M414 114 v146 M552 156 H420 M554 234 H404" stroke="#B07F5F" stroke-width="7" stroke-linecap="round" opacity=".5"/>
-    ${node("mouth", 74, 70, "mouth")}${node("stomach", 162, 158, "stomach")}${node("duod", 262, 150, "duodenum")}${node("small", 336, 208, "small intestine")}${node("large", 500, 196, "large intestine")}
-    ${active === "small" || active === "duod" ? `<g>${Array.from({ length: 9 }, (_, i) => `<path d="M${288 + i * 15} 236 q7 -28 15 0" fill="#F6D9A8" stroke="${CO}" stroke-width="1.5"/>`).join("")}<rect x="300" y="278" width="136" height="18" rx="9" fill="#E9573F"/><circle cx="322" cy="287" r="5" fill="#8DD7FF"/><circle cx="370" cy="287" r="5" fill="#8DD7FF"/><text x="438" y="292" font-size="12" font-weight="900" fill="${CO}">blood</text>${arrows}</g>` : ""}
-    ${Array.from({ length: bigN }, (_, i) => mol(i, false)).join("")}${Array.from({ length: smallN }, (_, i) => mol(i + 10, true)).join("")}
-    <text x="18" y="28" font-size="16" font-weight="900" fill="${CO}">${food.ic} ${food.name} → ${food.product}</text><text x="602" y="28" text-anchor="end" font-size="13" font-weight="900" fill="${CO}">cut ${Math.round(st.cut)}% · absorbed ${Math.round(st.absorbed)}%</text>
+    <rect width="360" height="430" rx="16" fill="#FFF8EC"/>
+    <g font-family="system-ui, sans-serif">
+      <text x="16" y="24" font-size="15" font-weight="900" fill="${CO}">${food.ic} ${food.name} → ${food.product}</text>
+      <text x="344" y="42" text-anchor="end" font-size="12" font-weight="900" fill="${CO}">cut ${Math.round(st.cut)}% · absorb ${Math.round(st.absorbed)}%</text>
+      <path d="M78 54 C76 82 90 95 103 112 C122 137 95 163 120 183" fill="none" stroke="#D98968" stroke-width="14" stroke-linecap="round"/>
+      <path d="M126 123 C166 112 194 135 180 164 C165 193 118 189 104 164 C98 145 105 130 126 123Z" fill="#E79A7A" stroke="${CO}" stroke-width="2.3"/>
+      <path d="M171 168 C199 165 215 177 218 198" fill="none" stroke="#F2B47E" stroke-width="13" stroke-linecap="round"/>
+      <path d="M74 112 C118 85 178 92 217 116 C203 142 160 152 102 139 C78 134 67 126 74 112Z" fill="#B77A3A" stroke="${CO}" stroke-width="2.2"/>
+      <ellipse cx="174" cy="145" rx="9" ry="13" fill="#3FA06B" stroke="${CO}" stroke-width="1.6"/><text x="193" y="149" font-size="10.5" font-weight="900" fill="${CO}">gall bladder</text>
+      <path d="M198 169 C229 157 262 167 274 188" fill="none" stroke="#F3CF8A" stroke-width="11" stroke-linecap="round"/><text x="252" y="156" font-size="10.5" font-weight="900" fill="${CO}">pancreas</text>
+      <path d="M224 164 C258 180 274 217 262 252 C252 284 218 304 179 300 C132 295 108 258 120 222 C130 190 178 184 205 205 C230 228 208 260 174 250 C146 240 148 214 174 211" fill="none" stroke="#F2B47E" stroke-width="17" stroke-linecap="round"/>
+      <path d="M236 159 C310 160 330 220 312 292 C296 358 230 372 180 344" fill="none" stroke="#C79774" stroke-width="22" stroke-linecap="round"/>
+      <path d="M236 159 V312 M316 206 H242 M310 290 H204" stroke="#B07F5F" stroke-width="5" stroke-linecap="round" opacity=".55"/>
+      <path d="M180 344 C208 366 214 384 203 404" fill="none" stroke="#C79774" stroke-width="20" stroke-linecap="round"/><circle cx="203" cy="408" r="7" fill="#8B5E45" stroke="${CO}" stroke-width="2"/>
+      ${node("mouth", 78, 46, "mouth", -42, 4)}${node("stomach", 118, 151, "stomach", -42, 0)}${node("duod", 178, 178, "duodenum", 0, 35)}${node("small", 187, 262, "ileum + villi", 0, 42)}${node("large", 242, 254, "large intestine", 58, 0)}
+      ${active === "small" || active === "duod" ? `<g>${Array.from({ length: 9 }, (_, i) => `<path d="M${104 + i * 17} 306 q7 -26 15 0" fill="#F6D9A8" stroke="${CO}" stroke-width="1.2"/>`).join("")}<rect x="112" y="344" width="120" height="15" rx="8" fill="#E9573F"/><circle cx="132" cy="351" r="4" fill="#8DD7FF"/><circle cx="176" cy="351" r="4" fill="#8DD7FF"/><text x="238" y="355" font-size="11" font-weight="900" fill="${CO}">blood</text>${arrows}</g>` : ""}
+      ${Array.from({ length: bigN }, (_, i) => mol(i, false)).join("")}${Array.from({ length: smallN }, (_, i) => mol(i + 10, true)).join("")}
+      ${lab(80, 68, 16, 64, "oesophagus")}${lab(138, 112, 172, 72, "liver")}${lab(203, 404, 252, 408, "rectum + anus")}
+    </g>
   </svg>`;
 }
+
 function dgMolSvg(food, x, y, s, col, i) {
   if (food === "starch") return `<polygon points="${[0, 1, 2, 3, 4, 5].map(k => `${(x + s * 10 * Math.cos(k * Math.PI / 3)).toFixed(1)},${(y + s * 10 * Math.sin(k * Math.PI / 3)).toFixed(1)}`).join(" ")}" fill="${col}" stroke="${CO}" stroke-width="${1.6 * s}"/>`;
   if (food === "protein") return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(9 * s).toFixed(1)}" fill="${col}" stroke="${CO}" stroke-width="${1.6 * s}"/><path d="M${x - 5 * s} ${y} h${10 * s}" stroke="#fff" stroke-width="${2 * s}"/>`;
@@ -170,7 +184,7 @@ function dgGraphSvg(st) {
   const isT = st.graph === "temp", W = 330, H = 190, X = x => 34 + (isT ? x / 80 : (x - 1) / 9) * 274, Y = y => 152 - y / 100 * 126;
   const vals = Array.from({ length: 61 }, (_, i) => isT ? i * 80 / 60 : 1 + i * 9 / 60), curve = vals.map((x, i) => `${i ? "L" : "M"}${X(x).toFixed(1)} ${Y(dgRate(st, isT ? { temp: x } : { ph: x })).toFixed(1)}`).join(" ");
   const pts = st.pts.filter(p => p.graph === st.graph && p.food === st.food && p.region === st.region);
-  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Rate graph with measured points"><rect width="${W}" height="${H}" rx="12" fill="#fff"/><path d="M34 20 V152 H308" stroke="${CO}" stroke-width="2.4" fill="none"/><text x="172" y="182" text-anchor="middle" font-size="11" font-weight="800" fill="#7A6A66">${isT ? "temperature (°C)" : "pH"} →</text><text x="10" y="88" transform="rotate(-90 10 88)" text-anchor="middle" font-size="11" font-weight="800" fill="#7A6A66">rate</text>${(isT ? [0, 37, 60, 80] : [1, 2, 7, 8, 10]).map(x => `<text x="${X(x)}" y="166" text-anchor="middle" font-size="9" fill="#7A6A66">${x}</text>`).join("")}${[0, 50, 100].map(y => `<text x="28" y="${Y(y) + 3}" text-anchor="end" font-size="9" fill="#7A6A66">${y}</text>`).join("")}<path d="${curve}" fill="none" stroke="#3FA06B" stroke-width="4" stroke-linecap="round"/><path d="M${X(isT ? 37 : (DG_FOOD[st.food].opt[st.region] || DG_REGIONS[st.region].ph))} 20 V152" stroke="#E9573F" stroke-width="2" stroke-dasharray="4 4"/><text x="302" y="28" text-anchor="end" font-size="10" font-weight="900" fill="#E9573F">optimum</text>${pts.map(p => `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="5.5" fill="#FFD27A" stroke="${CO}" stroke-width="2"><title>${p.y}</title></circle>`).join("")}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Rate graph with measured points"><rect width="${W}" height="${H}" rx="12" fill="#fff"/><path d="M34 20 V152 H308" stroke="${CO}" stroke-width="2.4" fill="none"/><text x="172" y="182" text-anchor="middle" font-size="12" font-weight="800" fill="#7A6A66">${isT ? "temperature (°C)" : "pH"} →</text><text x="14" y="88" transform="rotate(-90 14 88)" text-anchor="middle" font-size="12" font-weight="800" fill="#7A6A66">rate</text>${(isT ? [0, 37, 60, 80] : [1, 2, 7, 8, 10]).map(x => `<text x="${X(x)}" y="166" text-anchor="middle" font-size="11" font-weight="800" fill="#7A6A66">${x}</text>`).join("")}${[0, 50, 100].map(y => `<text x="28" y="${Y(y) + 3}" text-anchor="end" font-size="11" font-weight="800" fill="#7A6A66">${y}</text>`).join("")}<path d="${curve}" fill="none" stroke="#3FA06B" stroke-width="4" stroke-linecap="round"/><path d="M${X(isT ? 37 : (DG_FOOD[st.food].opt[st.region] || DG_REGIONS[st.region].ph))} 20 V152" stroke="#E9573F" stroke-width="2" stroke-dasharray="4 4"/><text x="302" y="28" text-anchor="end" font-size="11" font-weight="900" fill="#E9573F">optimum</text>${pts.map(p => `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="5.5" fill="#FFD27A" stroke="${CO}" stroke-width="2"><title>${p.y}</title></circle>`).join("")}</svg>`;
 }
 
 simReg({ id: "digest", ic: "🍙", name: "Digestion lab", sec: "3b", ord: 10, topic: "t8", fn: digestSim,
@@ -193,9 +207,10 @@ function htPressures(f, leaky) {
   return { la: +la.toFixed(1), lv: +lv.toFixed(1), ao: +ao.toFixed(1), phase };
 }
 function heartSim(root) {
+  if (typeof tourEnd === "function" && typeof tourAt !== "undefined" && tourAt >= 0) tourEnd();
   const st = { t: 0, run: true, slow: false, rate: 72, leaky: false, hist: [] };
   root.innerHTML = `<div class="simgrid wide">
-    <section class="card"><div id="htSvg" class="simsvg"></div><div class="ht-controls">
+    <section class="card"><div id="htSvg" class="simsvg nozoom"></div><div class="ht-controls">
       <div class="ht-row simbtns"><button class="btn" id="htPlay">⏸ Pause</button><button class="btn plain" id="htSlow">🐢 Slow</button><label class="small chk"><input type="checkbox" id="htLeak"> 💧 Leaky bicuspid valve</label></div>
       <div><b class="small">Heart rate</b>${segBtns("htrate", [["72", "Rest 72/min"], ["120", "Exercise 120/min"]], "72")}</div>
       <div class="ht-phase">${HT_PHASES.map(([k, n]) => `<button class="btn plain" data-htphase="${k}">${n}</button>`).join("")}</div></div></section>
@@ -223,27 +238,51 @@ function htInfoHtml(st, p) {
     <div class="ht-legend"><span>🔵 deoxygenated right heart</span><span>🔴 oxygenated left heart</span><span>▲ valve open</span><span>× valve closed</span></div>`;
 }
 function htSvg(st, p) {
-  const av = p.phase !== "vent", semi = p.phase === "vent" && p.lv > p.ao, beat = .5 + .08 * Math.sin(htFrac(st.t, st.rate) * Math.PI * 2);
-  const valve = (x, y, open, red) => open ? `<path d="M${x - 14} ${y} l12 -12 M${x + 14} ${y} l-12 -12" stroke="${red ? "#C0392B" : "#1E66B8"}" stroke-width="4" stroke-linecap="round"/>` : `<path d="M${x - 12} ${y - 10} L${x + 12} ${y + 10} M${x + 12} ${y - 10} L${x - 12} ${y + 10}" stroke="#6A4A3C" stroke-width="4" stroke-linecap="round"/>`;
+  const av = p.phase !== "vent", semi = p.phase === "vent" && p.lv > p.ao, f = htFrac(st.t, st.rate);
+  const beat = 1 + (st.run ? .018 * Math.sin(f * Math.PI * 2) : 0);
+  const valve = (x, y, open, col, flip) => open
+    ? `<path d="M${x - 13} ${y} q${flip ? -6 : 6} -16 ${x} ${y - 21} M${x + 13} ${y} q${flip ? 6 : -6} -16 ${x} ${y - 21}" stroke="${col}" stroke-width="4" fill="none" stroke-linecap="round"/>`
+    : `<path d="M${x - 13} ${y - 18} L${x + 13} ${y} M${x + 13} ${y - 18} L${x - 13} ${y}" stroke="#6A4A3C" stroke-width="4" stroke-linecap="round"/>`;
+  const semiValve = (x, y, open, col) => open
+    ? `<path d="M${x - 15} ${y} q15 -18 30 0" stroke="${col}" stroke-width="4" fill="none" stroke-linecap="round"/>`
+    : `<path d="M${x - 14} ${y - 4} q14 12 28 0 M${x - 10} ${y - 10} q10 9 20 0" stroke="#6A4A3C" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
   const arrow = (d, col, leak) => `<path d="${d}" fill="none" stroke="${col}" stroke-width="${leak ? 4 : 6}" stroke-linecap="round" marker-end="url(#htArr${col === "#C0392B" ? "R" : "B"})" opacity="${leak ? .65 : .9}"/>`;
-  return `<svg viewBox="0 0 640 390" role="img" aria-label="Four chamber heart with valves and blood flow arrows">
-    <defs><marker id="htArrR" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#C0392B"/></marker><marker id="htArrB" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#1E66B8"/></marker></defs>
-    <rect width="640" height="390" rx="18" fill="#F8FBFF"/><text x="320" y="24" text-anchor="middle" font-size="16" font-weight="900" fill="${CO}">Labels use the body's left/right (your view is mirrored)</text>
-    <path d="M132 64 C80 118 82 284 190 338 C256 370 304 322 320 280 C340 326 394 370 460 338 C568 284 560 118 508 64 C450 4 358 46 320 98 C282 46 190 4 132 64Z" fill="#F7B8B8" stroke="${CO}" stroke-width="4" transform="scale(${1 + beat * .015}) translate(${-320 * beat * .015} ${-195 * beat * .015})"/>
-    <path d="M320 92 V326" stroke="${CO}" stroke-width="5"/><path d="M106 190 H534" stroke="${CO}" stroke-width="4"/>
-    <path d="M116 80 C78 130 84 182 156 186 C218 184 236 110 190 70 C164 48 134 58 116 80Z" fill="#9CC9F2" stroke="${CO}" stroke-width="3"/><path d="M116 205 C80 254 106 322 186 336 C260 322 270 224 210 202 C170 188 136 192 116 205Z" fill="#5B8FE0" stroke="${CO}" stroke-width="3"/>
-    <path d="M450 70 C404 110 422 184 484 186 C556 182 562 130 524 80 C506 58 476 48 450 70Z" fill="#F2A0A0" stroke="${CO}" stroke-width="3"/><path d="M430 202 C370 224 380 322 454 336 C534 322 560 254 524 205 C504 192 470 188 430 202Z" fill="#E9573F" stroke="${CO}" stroke-width="3"/>
-    <g font-size="15" font-weight="900" fill="${CO}"><text x="154" y="130" text-anchor="middle">Right atrium</text><text x="170" y="275" text-anchor="middle">Right ventricle</text><text x="488" y="130" text-anchor="middle">Left atrium</text><text x="470" y="275" text-anchor="middle">Left ventricle</text></g>
-    ${valve(176, 198, av, false)}${valve(464, 198, av && !st.leaky, true)}${valve(206, 82, semi, false)}${valve(434, 82, semi, true)}
-    ${arrow("M70 52 C96 80 112 98 130 116", "#1E66B8")}${arrow("M170 178 C166 198 166 214 172 236", "#1E66B8")}${semi ? arrow("M204 222 C250 174 246 88 218 64", "#1E66B8") : ""}${arrow("M570 52 C544 80 528 98 510 116", "#C0392B")}${arrow("M470 178 C474 198 474 214 468 236", "#C0392B")}${semi ? arrow("M438 222 C390 150 424 76 484 54", "#C0392B") : ""}${st.leaky && p.phase === "vent" ? arrow("M456 236 C444 214 450 190 482 158", "#C0392B", true) : ""}
-    <path d="M218 64 C228 10 296 10 320 78 C344 10 412 10 422 64" fill="none" stroke="#C0392B" stroke-width="18" stroke-linecap="round"/><path d="M218 64 C196 18 138 20 124 62" fill="none" stroke="#1E66B8" stroke-width="18" stroke-linecap="round"/>
-    <text x="28" y="374" font-size="13" font-weight="900" fill="#1E66B8">Body's right side: deoxygenated blood → lungs</text><text x="612" y="374" text-anchor="end" font-size="13" font-weight="900" fill="#C0392B">Body's left side: oxygenated blood → body</text>
+  const chords = (x, y, col) => `<path d="M${x - 12} ${y} L${x - 34} ${y + 62} M${x + 12} ${y} L${x + 30} ${y + 62}" stroke="${col}" stroke-width="1.6" opacity=".75"/>`;
+  return `<svg viewBox="0 0 360 520" role="img" aria-label="Front view section of the heart with four chambers, valves, septum and main blood vessels">
+    <defs><marker id="htArrR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#C0392B"/></marker><marker id="htArrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#1E66B8"/></marker>
+      <linearGradient id="htBlue" x1="0" x2="1"><stop offset="0" stop-color="#CFE8FF"/><stop offset="1" stop-color="#5B8FE0"/></linearGradient><linearGradient id="htRed" x1="0" x2="1"><stop offset="0" stop-color="#FFD6D6"/><stop offset="1" stop-color="#E9573F"/></linearGradient></defs>
+    <rect width="360" height="520" rx="18" fill="#F8FBFF"/>
+    <text x="180" y="22" text-anchor="middle" font-size="13" font-weight="900" fill="${CO}">Front view: body's left is on picture right</text>
+    <g transform="translate(180 266) scale(${beat}) translate(-180 -266)">
+      <path d="M88 86 C42 130 42 246 70 344 C93 421 150 470 180 484 C214 466 272 416 294 336 C322 238 314 130 272 86 C238 48 202 68 180 112 C158 68 122 48 88 86Z" fill="#FFE5E5" stroke="${CO}" stroke-width="3"/>
+      <path d="M178 98 C163 142 164 222 175 484" stroke="#7B3F3F" stroke-width="8" fill="none" stroke-linecap="round"/>
+      <path d="M85 104 C55 146 60 206 112 210 C155 212 164 151 135 113 C120 93 101 88 85 104Z" fill="url(#htBlue)" stroke="${CO}" stroke-width="2.5"/>
+      <path d="M74 226 C50 286 73 382 144 434 C171 384 168 286 136 236 C116 214 92 211 74 226Z" fill="#6EA5E8" stroke="${CO}" stroke-width="2.5"/>
+      <path d="M226 112 C196 151 205 212 248 210 C300 206 305 146 275 104 C259 88 240 93 226 112Z" fill="url(#htRed)" stroke="${CO}" stroke-width="2.5"/>
+      <path d="M224 236 C191 292 187 394 216 456 C289 409 316 287 286 226 C266 211 242 214 224 236Z" fill="#E9573F" stroke="${CO}" stroke-width="5"/>
+      <path d="M222 252 C199 304 198 385 220 432" stroke="#B83232" stroke-width="5" opacity=".7" fill="none"/>
+      <path d="M55 82 V168 M43 98 H75 M292 104 H326 M305 80 V168" stroke="#1E66B8" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M105 58 C130 18 164 30 180 72 C196 30 230 18 256 58" stroke="#C0392B" stroke-width="18" stroke-linecap="round" fill="none"/>
+      <path d="M132 62 C104 20 80 38 70 86" stroke="#1E66B8" stroke-width="16" stroke-linecap="round" fill="none"/>
+      ${valve(116, 222, av, "#1E66B8", false)}${chords(116, 222, "#1E66B8")}
+      ${valve(248, 222, av && !st.leaky, "#C0392B", true)}${chords(248, 222, "#C0392B")}
+      ${semiValve(132, 84, semi, "#1E66B8")}${semiValve(232, 84, semi, "#C0392B")}
+      ${arrow("M34 90 C58 116 70 134 88 150", "#1E66B8")}${arrow("M116 206 C110 230 108 257 115 294", "#1E66B8")}${semi ? arrow("M128 300 C160 220 154 118 134 78", "#1E66B8") : ""}
+      ${arrow("M326 118 C300 132 284 148 268 162", "#C0392B")}${arrow("M248 206 C254 234 252 260 244 294", "#C0392B")}${semi ? arrow("M238 300 C204 218 218 112 252 62", "#C0392B") : ""}${st.leaky && p.phase === "vent" ? arrow("M244 292 C238 260 244 228 262 190", "#C0392B", true) : ""}
+    </g>
+    <g font-size="11" font-weight="900" fill="${CO}">
+      <text x="21" y="188">Right atrium</text><text x="22" y="420">Right ventricle</text><text x="266" y="188">Left atrium</text><text x="250" y="438">Left ventricle</text>
+      <text x="180" y="502" text-anchor="middle">Thick left ventricle wall · septum separates sides</text>
+      <text x="38" y="56" fill="#1E66B8">vena cava</text><text x="82" y="42" fill="#1E66B8">pulmonary artery</text><text x="228" y="42" fill="#C0392B">aorta</text><text x="258" y="88" fill="#C0392B">pulmonary veins</text>
+      <text x="82" y="247" fill="#1E66B8">tricuspid</text><text x="232" y="247" fill="#C0392B">bicuspid</text>
+    </g>
+    <text x="180" y="480" text-anchor="middle" font-size="13" font-weight="950" fill="${p.phase === "vent" ? "#E9573F" : p.phase === "atrial" ? "#5B8FE0" : "#3FA06B"}">${HT_PHASES.find(x => x[0] === p.phase)[1]} · AV ${av ? "open" : st.leaky ? "leaky" : "closed"} · semilunar ${semi ? "open" : "closed"}</text>
   </svg>`;
 }
 function htGraphSvg(st) {
   const c = htCycle(st.rate), start = st.t - c, X = t => 38 + (t - start) / c * 270, Y = p => 154 - p / 130 * 128, path = key => st.hist.filter(h => h.t >= start).map((h, i) => `${i ? "L" : "M"}${X(h.t).toFixed(1)} ${Y(h.p[key]).toFixed(1)}`).join(" ");
   const curX = X(st.t), labels = [["la", "#8E44AD", "left atrium"], ["lv", "#E9573F", "left ventricle"], ["ao", "#C0392B", "aorta"]];
-  return `<svg viewBox="0 0 330 190" role="img" aria-label="Pressure time graph for left atrium, left ventricle and aorta"><rect width="330" height="190" rx="12" fill="#fff"/><path d="M38 20 V154 H308" stroke="${CO}" stroke-width="2.3" fill="none"/>${[0, 40, 80, 120].map(y => `<text x="32" y="${Y(y) + 3}" text-anchor="end" font-size="9" fill="#7A6A66">${y}</text><path d="M38 ${Y(y)} H308" stroke="#EAE2DA"/>`).join("")}<text x="174" y="181" text-anchor="middle" font-size="10" font-weight="800" fill="#7A6A66">one cardiac cycle (${c.toFixed(2)} s)</text><text x="10" y="92" transform="rotate(-90 10 92)" text-anchor="middle" font-size="10" font-weight="800" fill="#7A6A66">pressure / mmHg</text>${labels.map(([k, col]) => `<path d="${path(k)}" fill="none" stroke="${col}" stroke-width="3"/>`).join("")}<path d="M${curX} 18 V156" stroke="#222" stroke-width="2" stroke-dasharray="4 3"/><g font-size="9" font-weight="900">${labels.map(([k, col, lab], i) => `<text x="306" y="${26 + i * 14}" text-anchor="end" fill="${col}">${lab}</text>`).join("")}</g></svg>`;
+  return `<svg viewBox="0 0 330 190" role="img" aria-label="Pressure time graph for left atrium, left ventricle and aorta"><rect width="330" height="190" rx="12" fill="#fff"/><path d="M38 20 V154 H308" stroke="${CO}" stroke-width="2.3" fill="none"/>${[0, 40, 80, 120].map(y => `<text x="32" y="${Y(y) + 3}" text-anchor="end" font-size="12" fill="#7A6A66">${y}</text><path d="M38 ${Y(y)} H308" stroke="#EAE2DA"/>`).join("")}<text x="174" y="181" text-anchor="middle" font-size="12" font-weight="800" fill="#7A6A66">one cardiac cycle (${c.toFixed(2)} s)</text><text x="18" y="92" transform="rotate(-90 18 92)" text-anchor="middle" font-size="12" font-weight="800" fill="#7A6A66">pressure / mmHg</text>${labels.map(([k, col]) => `<path d="${path(k)}" fill="none" stroke="${col}" stroke-width="3"/>`).join("")}<path d="M${curX} 18 V156" stroke="#222" stroke-width="2" stroke-dasharray="4 3"/><g font-size="12" font-weight="900">${labels.map(([k, col, lab], i) => `<text x="306" y="${26 + i * 14}" text-anchor="end" fill="${col}">${lab}</text>`).join("")}</g></svg>`;
 }
 
 simReg({ id: "heart", ic: "❤️", name: "Heart & cardiac cycle", sec: "3b", ord: 30, topic: "t14", fn: heartSim,

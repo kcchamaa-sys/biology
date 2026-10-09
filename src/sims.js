@@ -1,22 +1,23 @@
 /* ============================================================
-   5f. 🔬 Simulation Lab: interactive models for "Organisms and Environment"
-   (HKDSE Biology compulsory part: a. Plants · b. Animals · c. Reproduction, growth and development ·
-   d. Coordination and response · e. Homeostasis · f. Ecosystems)
+   5f. 🔬 Simulation Lab: interactive models for the whole HKDSE Biology compulsory part
+   I. Cells and Molecules of Life (a–e) · II. Genetics and Evolution (a–c) · III. Organisms and Environment (a–f) ·
+   IV. Health and Diseases (a–c). The Lab shows 4 part tabs → section chips → simulation tabs (+ 🗺️ All labs map).
    How it fits together (read docs/SIM_LAB_GUIDE.md before adding a simulation):
-   - simReg({ id, ic, name, sec, ord, topic, fn, words }) registers a simulation; the Lab groups them by section.
+   - simReg({ id, ic, name, sec, ord, topic, fn, words }) registers a simulation; sec is a SIM_SECS key ("1a"–"4c").
    - Each simulation function draws into root and starts simLoop(); it calls simProbe(() => ({ ...live values }))
      so the challenge engine (simchal.js) can check what the student has set up.
    - SIM_P[id] = predict-first question · SIM_Q[id] = exam-style checks · SIM_CH[id] = the ~15-minute challenge.
-   This file: core + 1. Breathing · 2. Pupil reflex · 3. Focusing & glasses · 4. Hearing · 5. Cell membrane (root hair).
-   sims2.js: osmosis tubing, phototropism. sims_a–f.js: one file per curriculum section.
+   This file: core + Breathing · Pupil reflex · Focusing & glasses · Hearing · Root-hair membrane.
+   sims2.js: osmosis tubing, phototropism. sims_a–f.js: Part III sections a–f. sims_p1a–p1c.js: Part I.
+   sims_p2a–p2b.js: Part II. sims_p4a–p4b.js: Part IV.
    ============================================================ */
 let simTab = null, SIM = null, SIM_PROBE = null;
-// The four parts of the HKDSE Biology compulsory part: [key, icon, short name, full name, colour]
+// The four parts of the HKDSE Biology compulsory part: [key, icon, short name, full name, colour, phone name]
 const SIM_PARTS = [
-  ["1", "🧪", "Cells & Molecules", "I. Cells and Molecules of Life", "#3D8BD9"],
-  ["2", "🧬", "Genetics & Evolution", "II. Genetics and Evolution", "#8E5BD6"],
-  ["3", "🌿", "Organisms & Environment", "III. Organisms and Environment", "#2F9E5B"],
-  ["4", "🩺", "Health & Diseases", "IV. Health and Diseases", "#D2455F"]
+  ["1", "🧪", "Cells & Molecules", "I. Cells and Molecules of Life", "#3D8BD9", "Cells"],
+  ["2", "🧬", "Genetics & Evolution", "II. Genetics and Evolution", "#8E5BD6", "Genetics"],
+  ["3", "🌿", "Organisms & Environment", "III. Organisms and Environment", "#2F9E5B", "Organisms"],
+  ["4", "🩺", "Health & Diseases", "IV. Health and Diseases", "#D2455F", "Health"]
 ];
 // Curriculum sections (HKDSE sub-topics): [key, icon, short name, full name, part key]. key = part + letter, e.g. "3a"
 const SIM_SECS = [
@@ -70,6 +71,7 @@ simReg({ id: "ear", ic: "👂", name: "Hearing", sec: "3d", ord: 30, topic: "t16
 function renderSims(tab) {
   if (tab) simTab = tab;
   stopRush(); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; MUSIC.setMode("calm"); renderTools(); homeTab = "lab"; renderNav("lab");
+  if (typeof tourEnd === "function" && typeof tourAt !== "undefined" && tourAt >= 0) tourEnd();
   if (!SIMS.some(x => x.id === simTab)) simTab = SIMS.some(x => x.id === S.simLast) ? S.simLast : SIMS[0].id;
   S.simLast = simTab; SIM_PROBE = null;
   S.sims = S.sims || {}; if (!S.sims[simTab]) { S.sims[simTab] = today(); save(); checkTrophies(); } activityDone({ mode: "sim", sim: simTab, ans: 0 });
@@ -81,7 +83,7 @@ function renderSims(tab) {
   $app.innerHTML = `
     <section class="card simhead" style="--pc:${part[4]}">
       <div class="simtop"><h2 style="margin:0">🔬 Simulation Lab</h2><span class="simtopr"><button class="pill simmapb" id="simMap" aria-haspopup="dialog">🗺️ All labs</button><span class="pill" title="Challenges finished">🏆 ${fins(SIMS)}/${SIMS.length}</span></span></div>
-      <div class="simparts" role="tablist" aria-label="HKDSE compulsory parts">${SIM_PARTS.filter(x => inPart(x[0]).length).map(([k, ic, nm, full, col]) => { const L = inPart(k), f = fins(L); return `<button role="tab" aria-selected="${k === part[0]}" data-simpart="${k}" style="--pc:${col}" title="${esc(full)}"><span class="spic" aria-hidden="true">${ic}</span><span class="spno">${roman(k)}</span><span class="spnm">${esc(nm)}</span><span class="spbar" aria-label="${f} of ${L.length} challenges done"><i style="width:${Math.round(100 * f / L.length)}%"></i></span></button>`; }).join("")}</div>
+      <div class="simparts" role="tablist" aria-label="HKDSE compulsory parts">${SIM_PARTS.filter(x => inPart(x[0]).length).map(([k, ic, nm, full, col, tiny]) => { const L = inPart(k), f = fins(L); return `<button role="tab" aria-selected="${k === part[0]}" data-simpart="${k}" style="--pc:${col}" title="${esc(full)}"><span class="spic" aria-hidden="true">${ic}</span><span class="spno">${roman(k)}</span><span class="spnm"><span class="splong">${esc(nm)}</span><span class="spshort">${esc(tiny)}</span></span><span class="spbar" aria-label="${f} of ${L.length} challenges done"><i style="width:${Math.round(100 * f / L.length)}%"></i></span></button>`; }).join("")}</div>
       <p class="simpartname"><b>${esc(part[3])}</b></p>
       <div class="simsecs" role="tablist" aria-label="Sections of ${esc(part[3])}">${secs.map(([k, ic, nm, full]) => { const L = inSec(k), f = fins(L); return `<button role="tab" aria-selected="${k === info.sec}" data-simsec="${k}" title="${esc(roman(k[0]) + "(" + k[1] + ") " + full)}"><span class="ssic" aria-hidden="true">${ic}</span><span class="ssnm"><b>${k[1]}.</b> ${nm}</span><span class="ssdots" aria-label="${f} of ${L.length} challenges done">${L.map(x => simChalState(x.id)[2] ? "●" : "○").join("")}</span></button>`; }).join("")}</div>
       <p class="simsecname"><b>${roman(sec[0][0])}(${sec[0][1]}) ${esc(sec[3])}</b></p>
@@ -122,7 +124,7 @@ function simWords(root, info) {
   if (!info.words || !info.words.length) return;
   const W = info.words, card = document.createElement("section"); card.className = "card simwords";
   const mean = i => { const [w, ic, m] = W[i]; return `<span class="swic" aria-hidden="true">${ic}</span><span class="swt"><b>${esc(w)}</b>${typeof sayBtns === "function" ? sayBtns(w) : ""}<small>${esc(m)}</small></span>`; };
-  card.innerHTML = foldHtml("lab-words", { icon: "📖", title: "Key words", peek: `${W.length} words · tap one`, cls: "fold-flat", open: true },
+  card.innerHTML = foldHtml("lab-words", { icon: "📖", title: "Key words", peek: `${W.length} words · tap one`, cls: "fold-flat", open: false },
     `<div class="swrow" role="tablist" aria-label="Key words">${W.map(([w, ic], i) => `<button role="tab" class="swchip" aria-selected="${i === 0}" data-sw="${i}"><span aria-hidden="true">${ic}</span>${esc(w)}</button>`).join("")}</div>
     <div class="swcard" aria-live="polite">${mean(0)}</div>`);
   card.querySelectorAll("[data-sw]").forEach(b => b.onclick = () => {
@@ -201,14 +203,15 @@ function simPredict(root, id) {
 
 /* ---------------- 1. 🫁 Breathing ---------------- */
 function lungSim(root) {
+  if (typeof tourEnd === "function" && typeof tourAt !== "undefined" && tourAt >= 0) tourEnd();
   const st = { t: 0, v: .2, vPrev: .2, auto: true, deep: false, target: null, from: 0, to: 0, k: 0, showVol: true, hist: [] };
   root.innerHTML = `<div class="simgrid">
-    <section class="card"><div id="lungSvg" class="simsvg"></div>
+    <section class="card"><div id="lungSvg" class="simsvg nozoom"></div>
       <div class="row">${segBtns("lmode", [["auto", "▶ Auto breathing"], ["manual", "✋ I control it"]], "auto")}</div>
       <div class="row simbtns" id="lungManual" hidden><button class="btn blue" id="lIn">⬇️ Breathe in</button><button class="btn yellow" id="lOut">⬆️ Breathe out</button></div>
       <label class="small chk"><input type="checkbox" id="lDeep"> 🏃 Exercise (deeper, faster breathing)</label></section>
     <section class="card"><h3 style="margin:0">📈 Pressure in the lungs vs time</h3>
-      <div id="lungGraph" class="simsvg"></div>
+      <div id="lungGraph" class="simsvg nozoom"></div>
       <label class="small chk"><input type="checkbox" id="lVol" checked> Show lung volume too</label>
       <div id="lungSteps" class="simsteps"></div></section></div>`;
   const $s = root.querySelector("#lungSvg"), $g = root.querySelector("#lungGraph"), $steps = root.querySelector("#lungSteps");
@@ -268,7 +271,7 @@ function thoraxSvg(v, dv) {
   const dTxt = dv > .03 ? "Diaphragm contracts → flattens" : dv < -.03 ? "Diaphragm relaxes → domes up" : "Diaphragm";
   const rTxt = dv > .03 ? "Ribs move up and out" : dv < -.03 ? "Ribs move down and in" : "Ribs";
   const dia = `M58 ${side} Q210 ${ctrl} 362 ${side}`;
-  return `<svg viewBox="0 -10 420 360" role="img" aria-label="Chest model: lung volume ${Math.round(v * 100)}%">
+  return `<svg viewBox="0 -24 420 380" role="img" aria-label="Chest model: thorax with trachea, bronchi, lungs, ribs, intercostal muscles and diaphragm; lung volume ${Math.round(v * 100)}%">
     <defs><radialGradient id="lgF" cx=".45" cy=".4" r=".75"><stop offset="0" stop-color="#FAD0D9"/><stop offset="1" stop-color="#E38EA3"/></radialGradient>
       <clipPath id="dCT"><rect x="165" y="200" width="90" height="140"/></clipPath></defs>
     <path d="M60 330 C40 220 60 110 120 80 Q210 50 300 80 C360 110 380 220 360 330Z" fill="#FFF1E6" stroke="#E6CBB0" stroke-width="3"/>
@@ -282,9 +285,9 @@ function thoraxSvg(v, dv) {
     ${[80, 110, 140, 280, 310, 340].map(x => { const t = (x - 58) / 304, y = (1 - t) * (1 - t) * side + 2 * t * (1 - t) * ctrl + t * t * side; return `<path d="M${x} ${y - 4} l3 8" stroke="#7A2A26" stroke-width="1" opacity=".6"/>`; }).join("")}
     ${arrow}
     <g font-size="13" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">
-      <text x="230" y="30">Trachea</text><text x="6" y="200">Lung</text><text x="6" y="96">${rTxt}</text><text x="252" y="240" font-size="11">Heart</text>
+      <text x="226" y="30" text-anchor="middle">Trachea rings</text><text x="24" y="202">Pleural membrane</text><text x="18" y="100">${rTxt}</text><text x="252" y="240" font-size="13">Heart</text>
       <text x="210" y="${side + 30}" text-anchor="middle">${dTxt}</text>
-      <text x="210" y="-2" text-anchor="middle" fill="${inF ? "#5B8FE0" : outF ? "#E07A3F" : CO}" transform="translate(70 0)">${inF ? "Air in" : outF ? "Air out" : ""}</text></g>
+      <text x="322" y="10" text-anchor="middle" fill="${inF ? "#5B8FE0" : outF ? "#E07A3F" : CO}">${inF ? "Air in" : outF ? "Air out" : ""}</text></g>
   </svg>`;
 }
 function pressureGraph(hist, t, showVol) {
@@ -294,13 +297,13 @@ function pressureGraph(hist, t, showVol) {
   const last = hist[hist.length - 1] || [t, 0, 0];
   return `<svg viewBox="0 0 420 230" role="img" aria-label="Graph of lung pressure against time">
     <rect x="46" y="26" width="360" height="84" fill="#EAF3FF"/><rect x="46" y="110" width="360" height="84" fill="#FFF1E6"/>
-    <g font-size="11" font-weight="800" fill="#7A6A66" font-family="system-ui, sans-serif">
+    <g font-size="13" font-weight="800" fill="#7A6A66" font-family="system-ui, sans-serif">
       <text x="400" y="42" text-anchor="end">above atmospheric → air flows OUT</text><text x="400" y="186" text-anchor="end">below atmospheric → air flows IN</text>
       <text x="40" y="30" text-anchor="end">+0.6</text><text x="40" y="114" text-anchor="end">0</text><text x="40" y="198" text-anchor="end">−0.6</text>
       <text x="226" y="222" text-anchor="middle">Time (s) →</text><text x="12" y="112" transform="rotate(-90 12 112)" text-anchor="middle">Pressure (kPa, relative)</text></g>
-    <path d="M46 110 H406" stroke="${CO}" stroke-width="2" stroke-dasharray="6 4"/><text x="50" y="104" font-size="10" fill="${CO}" font-family="system-ui, sans-serif">atmospheric pressure</text>
+    <path d="M46 110 H406" stroke="${CO}" stroke-width="2" stroke-dasharray="6 4"/><text x="50" y="104" font-size="13" fill="${CO}" font-family="system-ui, sans-serif">atmospheric pressure</text>
     <path d="M46 26 V194 H406" fill="none" stroke="${CO}" stroke-width="2.5"/>
-    ${showVol ? `<path d="${vline}" fill="none" stroke="#3FA06B" stroke-width="3" opacity=".55" stroke-dasharray="2 3"/><text x="404" y="${yv(last[2]) - 6}" text-anchor="end" font-size="11" font-weight="800" fill="#3FA06B" font-family="system-ui, sans-serif">lung volume</text>` : ""}
+    ${showVol ? `<path d="${vline}" fill="none" stroke="#3FA06B" stroke-width="3" opacity=".55" stroke-dasharray="2 3"/><text x="404" y="${yv(last[2]) - 6}" text-anchor="end" font-size="13" font-weight="800" fill="#3FA06B" font-family="system-ui, sans-serif">lung volume</text>` : ""}
     <path d="${line}" fill="none" stroke="#C0392B" stroke-width="3.5" stroke-linejoin="round"/>
     <circle cx="${x(last[0])}" cy="${y(last[1])}" r="6" fill="#C0392B" stroke="#fff" stroke-width="2"/>
   </svg>`;
@@ -316,7 +319,7 @@ function lungSteps(phase) {
 function pupilSim(root) {
   const st = { light: 50, r: 28, target: 28, delay: 0, pulse: 0, flash: 0 };
   root.innerHTML = `<div class="simgrid">
-    <section class="card"><div id="pupScene" class="simsvg pupscene"></div>
+    <section class="card"><div id="pupScene" class="simsvg pupscene nozoom"></div>
       <label class="small"><b>💡 Light intensity</b> <input type="range" id="pLight" min="0" max="100" value="50" style="width:100%"></label>
       <div class="row simbtns"><button class="btn plain" data-pl="3">🌑 Dark room</button><button class="btn plain" data-pl="50">💡 Classroom</button><button class="btn plain" data-pl="100">☀️ Bright sun</button><button class="btn yellow" id="pTorch">🔦 Torch flash</button></div></section>
     <section class="card"><h3 style="margin:0">🧠 What's happening?</h3><div id="pupInfo"></div>
@@ -343,27 +346,34 @@ function pupilSim(root) {
   });
 }
 function eyeFrontSvg(L, r) {
-  const bg = `hsl(45, ${20 + L * .6}%, ${8 + L * .85}%)`;
-  let fib = "";
-  for (let i = 0; i < 40; i++) { const a = i / 40 * Math.PI * 2, c = Math.cos(a), s = Math.sin(a); fib += `M${(180 + (r + 3) * c).toFixed(1)} ${(120 + (r + 3) * s).toFixed(1)} L${(180 + 70 * c).toFixed(1)} ${(120 + 70 * s).toFixed(1)} `; }
-  const bright = r < 28;
-  return `<svg viewBox="0 0 360 240" role="img" aria-label="Eye with pupil diameter ${(r / 44 * 8).toFixed(1)} millimetres">
+  const bg = `hsl(45, ${18 + L * .45}%, ${92 - L * .28}%)`;
+  const bright = r < 28, gap = 16 + r / 44 * 36, irisCol = bright ? "#4187C9" : "#C34B78";
+  const lab = (x, y, t, a = "middle") => `<text x="${x}" y="${y}" text-anchor="${a}">${t}</text>`;
+  const rayOp = clamp(.18 + L / 115, .18, .95).toFixed(2);
+  return `<svg viewBox="0 0 360 240" role="img" aria-label="Horizontal section of the eye. It shows cornea, aqueous humour, iris muscles, pupil, lens, ciliary body, suspensory ligaments, vitreous humour, retina, fovea, blind spot, optic nerve, choroid and sclera. Pupil diameter ${(r / 44 * 8).toFixed(1)} millimetres.">
     <rect width="360" height="240" rx="16" fill="${bg}"/>
-    ${L > 60 ? `<g opacity="${(L - 60) / 40}">${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `<path d="M${40 + i * 40} 0 L${60 + i * 40} 30" stroke="#FFE27A" stroke-width="6" stroke-linecap="round"/>`).join("")}</g>` : ""}
-    <path d="M6 120 Q180 -34 354 120 Q180 268 6 120Z" fill="#F2CDB4" opacity=".85"/>
-    <path d="M20 120 Q180 -8 340 120 Q180 248 20 120Z" fill="#FFFDF8" stroke="#7A5040" stroke-width="3.5"/>
-    <path d="M40 112 Q70 104 96 110 M300 110 Q320 116 334 122 M48 132 Q72 138 92 132 M296 134 Q314 132 330 126" fill="none" stroke="#E8A0A0" stroke-width="1.2"/>
-    <clipPath id="eyeClip"><path d="M20 120 Q180 -8 340 120 Q180 248 20 120Z"/></clipPath>
-    <g clip-path="url(#eyeClip)"><circle cx="180" cy="120" r="72" fill="url(#irisG)"/>
-      <path d="${fib}" stroke="${bright ? "#5A7FB0" : "#C0392B"}" stroke-width="${bright ? 1.4 : 2.4}" opacity=".9"/>
-      ${[5, 10, 15].map(d => `<circle cx="180" cy="120" r="${r + d}" fill="none" stroke="${bright ? "#C0392B" : "#5A7FB0"}" stroke-width="${bright ? 2.6 : 1.2}" opacity=".9"/>`).join("")}
-      ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(k => { const a = k / 12 * Math.PI * 2 + .2, rr = r + 12 + (k % 3) * 9; return `<ellipse cx="${(180 + rr * Math.cos(a)).toFixed(1)}" cy="${(120 + rr * Math.sin(a)).toFixed(1)}" rx="4" ry="2.2" fill="#3F5F8C" opacity=".45" transform="rotate(${(a * 57.3).toFixed(0)} ${(180 + rr * Math.cos(a)).toFixed(1)} ${(120 + rr * Math.sin(a)).toFixed(1)})"/>`; }).join("")}
-      <circle cx="180" cy="120" r="72" fill="none" stroke="#243A5C" stroke-width="5"/><circle cx="180" cy="120" r="${r}" fill="#15121A"/><circle cx="${180 + r * .35}" cy="${120 - r * .4}" r="${Math.max(3, r * .22)}" fill="#fff" opacity=".85"/></g>
-    <path d="M20 120 Q180 -8 340 120" fill="none" stroke="#5A3A2E" stroke-width="5" stroke-linecap="round"/>
-    ${Array.from({ length: 22 }, (_, k) => { const t = .08 + k * .04, x = (1 - t) * (1 - t) * 20 + 2 * t * (1 - t) * 180 + t * t * 340, y = (1 - t) * (1 - t) * 120 + 2 * t * (1 - t) * -8 + t * t * 120; return `<path d="M${x.toFixed(1)} ${y.toFixed(1)} q${(t - .5) * 14} -12 ${(t - .5) * 22} -14" fill="none" stroke="#3A2A24" stroke-width="1.8" stroke-linecap="round"/>`; }).join("")}
-    <path d="M40 60 Q180 -22 320 60" fill="none" stroke="#C99A80" stroke-width="2" opacity=".7"/>
-    <defs><radialGradient id="irisG" cx=".5" cy=".5" r=".5"><stop offset=".25" stop-color="#9A7B4A"/><stop offset=".45" stop-color="#6F97C9"/><stop offset=".85" stop-color="#4E78AE"/><stop offset="1" stop-color="#2F4E7A"/></radialGradient></defs>
-    <g font-size="12" font-weight="800" font-family="system-ui, sans-serif" fill="${L < 35 ? "#fff" : CO}"><text x="14" y="228">Iris</text><text x="346" y="228" text-anchor="end">Pupil: ${bright ? "constricted" : "dilated"}</text></g>
+    <g opacity="${rayOp}" stroke="#F6B400" stroke-width="2.4" stroke-linecap="round">
+      <path d="M8 88 L82 104 L128 112 L292 114"/><path d="M8 152 L82 136 L128 128 L292 126"/>
+    </g>
+    <path d="M38 120 C68 44 148 24 235 42 C294 52 327 86 330 120 C327 154 294 188 235 198 C148 216 68 196 38 120Z" fill="#FFFDF8" stroke="#6F5A56" stroke-width="4"/>
+    <path d="M50 120 C78 56 150 38 230 54 C278 64 306 91 309 120 C306 149 278 176 230 186 C150 202 78 184 50 120Z" fill="#EAF6FF" opacity=".72"/>
+    <path d="M53 120 C80 60 150 42 228 58 C270 66 294 91 297 120 C294 149 270 174 228 182 C150 198 80 180 53 120Z" fill="none" stroke="#5D93BF" stroke-width="3" opacity=".35"/>
+    <path d="M295 68 C316 96 316 144 295 172" fill="none" stroke="#E95F8E" stroke-width="6"/><path d="M286 72 C306 98 306 142 286 168" fill="none" stroke="#7D5D48" stroke-width="3" opacity=".9"/>
+    <path d="M38 120 C24 91 24 149 38 120Z" fill="#D7ECFF" stroke="#4F7EA9" stroke-width="3"/><path d="M37 120 C58 104 58 136 37 120Z" fill="#C8E8FF" opacity=".8"/>
+    <path d="M101 ${120 - gap / 2} Q124 ${94 - gap / 5} 136 82 L139 92 Q126 104 122 ${120 - gap / 2}Z" fill="${irisCol}" stroke="${CO}" stroke-width="2"/>
+    <path d="M101 ${120 + gap / 2} Q124 ${146 + gap / 5} 136 158 L139 148 Q126 136 122 ${120 + gap / 2}Z" fill="${irisCol}" stroke="${CO}" stroke-width="2"/>
+    ${[0,1,2,3].map(i => `<path d="M105 ${101 + i * 7} L130 ${93 + i * 11}" stroke="#255B94" stroke-width="1.6" opacity=".75"/><path d="M105 ${139 - i * 7} L130 ${147 - i * 11}" stroke="#255B94" stroke-width="1.6" opacity=".75"/>`).join("")}
+    <path d="M99 ${120 - gap / 2} Q96 120 99 ${120 + gap / 2}" stroke="#222" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="156" cy="120" rx="${bright ? 13 : 17}" ry="35" fill="#FFE8A8" stroke="${CO}" stroke-width="2.5"/>
+    <path d="M138 91 L151 88 M138 149 L151 152 M174 88 L188 78 M174 152 L188 162" stroke="#B7986C" stroke-width="2"/>
+    <ellipse cx="196" cy="74" rx="16" ry="10" fill="#E57FA1" stroke="${CO}" stroke-width="2"/><ellipse cx="196" cy="166" rx="16" ry="10" fill="#E57FA1" stroke="${CO}" stroke-width="2"/>
+    <circle cx="276" cy="117" r="6" fill="#FFD94D" stroke="${CO}" stroke-width="1.8"/><circle cx="300" cy="146" r="5" fill="#7A6A66"/><path d="M302 146 C324 150 334 162 350 178" stroke="#F2D06B" stroke-width="16" fill="none" stroke-linecap="round"/><path d="M302 146 C324 150 334 162 350 178" stroke="#B8902E" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <g font-size="10.5" font-weight="900" fill="${CO}" font-family="system-ui, sans-serif">
+      ${lab(48, 36, "cornea")}${lab(94, 62, "aqueous")}${lab(119, 79, "iris muscles")}${lab(102, 119, "pupil", "end")}
+      ${lab(157, 184, "lens")}${lab(204, 56, "ciliary body")}${lab(195, 184, "ligaments")}${lab(229, 116, "vitreous")}
+      ${lab(296, 58, "retina")}${lab(276, 101, "fovea")}${lab(304, 133, "blind spot")}${lab(318, 199, "optic nerve")}${lab(252, 204, "choroid")}${lab(111, 217, "sclera")}
+    </g>
+    <text x="180" y="22" text-anchor="middle" font-size="12" font-weight="900" fill="${CO}" font-family="system-ui, sans-serif">${bright ? "Bright: circular muscles contract" : "Dim: radial muscles contract"}</text>
   </svg>`;
 }
 
@@ -374,7 +384,7 @@ const GLASS = { none: 0, concave: -4.4, convex: 2.46 };      // spectacle power 
 function lensSim(root) {
   const st = { obj: "far", eye: "normal", gl: "none", P: P_MIN };
   root.innerHTML = `<div class="simgrid wide">
-    <section class="card"><div id="lensSvg" class="simsvg"></div>
+    <section class="card"><div id="lensSvg" class="simsvg nozoom"></div>
       <div class="simctl"><div><b class="small">Look at</b>${segBtns("lo", [["far", "🌳 Distant tree"], ["near", "📖 Book (25 cm)"]], st.obj)}</div>
         <div><b class="small">Eye</b>${segBtns("le", [["normal", "🙂 Normal"], ["short", "👓 Short sight"], ["long", "🔭 Long sight"]], st.eye)}</div>
         <div><b class="small">Glasses</b>${segBtns("lg", [["none", "None"], ["concave", "Concave )("], ["convex", "Convex ()"]], st.gl)}</div></div></section>
@@ -422,40 +432,41 @@ function eyeTip(st, sharp) {
   return `<p class="small">🙂 A normal eye changes the thickness of its lens (accommodation) to focus both distant and near objects on the retina. ${st.gl === "none" ? "" : sharp ? "With glasses on, the lens has to change shape more to cope. A normal eye doesn't need glasses." : "It can't make up for these glasses here, so the image is blurred. A normal eye doesn't need glasses!"}</p>`;
 }
 function eyeSideSvg(st, rays, D, xf) {
-  const S = 15, XE = 330, CY = 150, XR = XE + D * S, XG = XE - 12 * S, Y = y => CY - y * 13;
-  const thick = 7 + 13 * clamp((st.P - P_MIN) / (P_MAX - P_MIN), 0, 1), acc = thick > 9;
-  const ex0 = XE - 34, cx = (ex0 + XR) / 2, rx = (XR - ex0) / 2;
-  const lig = acc ? (s => `<path d="M${XE} ${CY + s * 40} q-4 ${s * 3} 0 ${s * 6} q4 ${s * 3} 0 ${s * 6}" stroke="#B89A7A" stroke-width="2" fill="none"/>`) : (s => `<path d="M${XE} ${CY + s * 40} L${XE} ${CY + s * 54}" stroke="#B89A7A" stroke-width="2"/>`);
-  const cil = s => `<ellipse cx="${XE}" cy="${CY + s * 62}" rx="${acc ? 13 : 9}" ry="${acc ? 10 : 7}" fill="${acc ? "#E0457B" : "#E9A0B0"}" stroke="${CO}" stroke-width="2"/>`;
-  const objX = 18, far = st.obj === "far";
+  const CY = 112, xCor = 118, xLens = 166, xRet = 166 + D * 8.2, xGl = 74, yS = y => CY - y * 12;
+  const acc = clamp((st.P - P_MIN) / (P_MAX - P_MIN), 0, 1), thick = 8 + 11 * acc, far = st.obj === "far";
+  const lig = s => `<path d="M${xLens - 9} ${CY + s * 34} L${xLens - 28} ${CY + s * (acc > .15 ? 48 : 58)}" stroke="#B89A7A" stroke-width="2"/>`;
+  const cil = s => `<ellipse cx="${xLens - 34}" cy="${CY + s * 61}" rx="${acc > .15 ? 13 : 9}" ry="8" fill="${acc > .15 ? "#E0457B" : "#E9A0B0"}" stroke="${CO}" stroke-width="2"/>`;
+  const objX = 18, fx = xLens + xf * 8.2, fOK = isFinite(xf) && fx > xLens && fx < 378;
   let rp = "";
   rays.forEach(r => {
-    const start = far ? `M${objX + 30} ${Y(r.yg)}` : `M${objX + 16} ${CY}`;
-    const endY = Y(r.yr);
-    rp += `<path d="${start} L${st.gl !== "none" ? `${XG} ${Y(r.yg)} L` : ""}${XE} ${Y(r.ye)} L${XR} ${endY}" fill="none" stroke="#F2A900" stroke-width="2.4" stroke-linejoin="round"/>`;
-    if (xf > D && isFinite(xf)) { const xe = Math.min(640, XE + xf * S); rp += `<path d="M${XR} ${endY} L${xe} ${Y(r.ye + r.th * (xe - XE) / S)}" stroke="#F2A900" stroke-width="2" stroke-dasharray="4 4" opacity=".7"/>`; }
+    const ys = far ? yS(r.yg) : CY, yg = yS(r.yg), yc = yS(r.yg * .62 + r.ye * .38), yl = yS(r.ye), yr = yS(r.yr);
+    const throughGlass = st.gl !== "none" ? ` L${xGl} ${yg}` : "";
+    rp += `<path d="M${far ? objX + 28 : objX + 12} ${ys}${throughGlass} L${xCor} ${yc} L${xLens} ${yl} L${xRet} ${yr}" fill="none" stroke="#F2A900" stroke-width="2.2" stroke-linejoin="round"/>`;
+    if (xf > D && isFinite(xf)) rp += `<path d="M${xRet} ${yr} L${Math.min(378, fx)} ${yS(r.ye + r.th * (Math.min(xf, 26) - 0))}" stroke="#F2A900" stroke-width="1.8" stroke-dasharray="4 4" opacity=".7"/>`;
   });
-  const fx = XE + xf * S, fOK = isFinite(xf) && fx > XE && fx < 640;
-  const glasses = st.gl === "concave" ? `<path d="M${XG - 10} ${CY - 50} Q${XG - 2} ${CY} ${XG - 10} ${CY + 50} L${XG + 10} ${CY + 50} Q${XG + 2} ${CY} ${XG + 10} ${CY - 50}Z" fill="rgba(160,196,255,.5)" stroke="${CO}" stroke-width="2.5"/>`
-    : st.gl === "convex" ? `<path d="M${XG} ${CY - 50} Q${XG - 18} ${CY} ${XG} ${CY + 50} Q${XG + 18} ${CY} ${XG} ${CY - 50}Z" fill="rgba(160,196,255,.5)" stroke="${CO}" stroke-width="2.5"/>` : "";
-  return `<svg viewBox="0 0 640 300" role="img" aria-label="Ray diagram of the eye">
-    <rect width="640" height="300" rx="14" fill="#FBF7EE"/>
-    ${far ? `<g transform="translate(${objX} ${CY - 34})"><rect x="11" y="30" width="8" height="30" fill="#8C5A3C"/><circle cx="15" cy="22" r="20" fill="#7CC47A" stroke="${CO}" stroke-width="2"/></g><text x="${objX}" y="${CY + 52}" font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">far away</text>`
-      : `<g transform="translate(${objX} ${CY - 16})"><rect x="0" y="0" width="16" height="32" rx="2" fill="#E0457B" stroke="${CO}" stroke-width="2"/><path d="M4 8 h8 M4 14 h8 M4 20 h8" stroke="#fff" stroke-width="2"/></g><text x="${objX}" y="${CY + 34}" font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">25 cm (not to scale)</text>`}
-    <path d="M${XR - 4} ${CY + 30} C${XR + 30} ${CY + 40} ${XR + 40} ${CY + 80} 640 ${CY + 96}" stroke="#B8902E" stroke-width="22" fill="none"/><path d="M${XR - 4} ${CY + 30} C${XR + 30} ${CY + 40} ${XR + 40} ${CY + 80} 640 ${CY + 96}" stroke="#F2D06B" stroke-width="16" fill="none"/>
-    <ellipse cx="${cx}" cy="${CY}" rx="${rx}" ry="118" fill="#FFFDF8" stroke="#A8998A" stroke-width="7"/>
-    <ellipse cx="${cx}" cy="${CY}" rx="${rx - 5}" ry="113" fill="rgba(230,242,255,.55)" stroke="#5A3A2E" stroke-width="2.5"/>
-    <path d="M${XE - 10} ${CY - 60} V${CY - 38} M${XE - 10} ${CY + 38} V${CY + 60}" stroke="#4E78AE" stroke-width="6" stroke-linecap="round"/>
-    <g font-size="10" font-weight="700" fill="#7A6A66" font-family="system-ui, sans-serif"><text x="${XE - 14}" y="${CY - 104}" text-anchor="end">iris</text><text x="${cx}" y="${CY - 100}" text-anchor="middle">vitreous humour</text><text x="${XR - 20}" y="${CY + 112}" text-anchor="end">optic nerve →</text><text x="${cx + 60}" y="${CY - 124}">sclera</text></g>
-    <path d="M${XR - 6} ${CY - 100} Q${XR + 6} ${CY} ${XR - 6} ${CY + 100}" fill="none" stroke="#E0457B" stroke-width="7" opacity=".55"/><text x="${Math.min(XR, 600)}" y="${CY + 136}" font-size="11" font-weight="800" fill="${CO}" text-anchor="middle" font-family="system-ui, sans-serif">retina</text>
-    <path d="M${ex0 + 4} ${CY - 60} Q${ex0 - 22} ${CY} ${ex0 + 4} ${CY + 60}" fill="rgba(211,228,255,.6)" stroke="${CO}" stroke-width="2.5"/><text x="${ex0 - 16}" y="${CY - 66}" font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">cornea</text>
+  const glasses = st.gl === "concave" ? `<path d="M${xGl - 7} ${CY - 45} Q${xGl - 1} ${CY} ${xGl - 7} ${CY + 45} L${xGl + 7} ${CY + 45} Q${xGl + 1} ${CY} ${xGl + 7} ${CY - 45}Z" fill="rgba(160,196,255,.55)" stroke="${CO}" stroke-width="2.2"/>`
+    : st.gl === "convex" ? `<path d="M${xGl} ${CY - 45} Q${xGl - 15} ${CY} ${xGl} ${CY + 45} Q${xGl + 15} ${CY} ${xGl} ${CY - 45}Z" fill="rgba(160,196,255,.55)" stroke="${CO}" stroke-width="2.2"/>` : "";
+  return `<svg viewBox="0 0 380 224" role="img" aria-label="Ray diagram: most refraction occurs at the cornea; the lens changes shape to fine tune focus on the retina.">
+    <rect width="380" height="224" rx="14" fill="#FBF7EE"/>
+    ${far ? `<g transform="translate(${objX} ${CY - 30})"><rect x="10" y="28" width="8" height="28" fill="#8C5A3C"/><circle cx="14" cy="20" r="18" fill="#7CC47A" stroke="${CO}" stroke-width="2"/></g><text x="${objX + 16}" y="${CY + 48}" font-size="10.5" font-weight="900" fill="${CO}" text-anchor="middle" font-family="system-ui, sans-serif">distant</text>`
+      : `<g transform="translate(${objX} ${CY - 15})"><rect width="16" height="30" rx="2" fill="#E0457B" stroke="${CO}" stroke-width="2"/><path d="M4 8 h8 M4 14 h8 M4 20 h8" stroke="#fff" stroke-width="2"/></g><text x="${objX + 13}" y="${CY + 34}" font-size="10.5" font-weight="900" fill="${CO}" text-anchor="middle" font-family="system-ui, sans-serif">25 cm</text>`}
+    <path d="M${xRet + 4} ${CY + 28} C${xRet + 28} ${CY + 42} ${xRet + 45} ${CY + 70} 378 ${CY + 86}" stroke="#B8902E" stroke-width="18" fill="none"/><path d="M${xRet + 4} ${CY + 28} C${xRet + 28} ${CY + 42} ${xRet + 45} ${CY + 70} 378 ${CY + 86}" stroke="#F2D06B" stroke-width="12" fill="none"/>
+    <path d="M108 ${CY} C118 38 184 24 ${xRet - 2} 48 C${xRet + 22} 66 ${xRet + 30} 92 ${xRet + 28} ${CY} C${xRet + 30} 132 ${xRet + 22} 158 ${xRet - 2} 176 C184 200 118 186 108 ${CY}Z" fill="#FFFDF8" stroke="#A8998A" stroke-width="5"/>
+    <path d="M118 ${CY} C130 54 186 42 ${xRet - 10} 58 C${xRet + 10} 76 ${xRet + 16} 96 ${xRet + 16} ${CY} C${xRet + 16} 128 ${xRet + 10} 148 ${xRet - 10} 166 C186 182 130 170 118 ${CY}Z" fill="rgba(230,242,255,.62)" stroke="#5A3A2E" stroke-width="2"/>
+    <path d="M${xCor} ${CY - 55} Q${xCor - 23} ${CY} ${xCor} ${CY + 55}" fill="rgba(211,228,255,.68)" stroke="${CO}" stroke-width="2.5"/>
+    <path d="M${xRet + 8} ${CY - 82} Q${xRet + 20} ${CY} ${xRet + 8} ${CY + 82}" fill="none" stroke="#E0457B" stroke-width="6" opacity=".58"/><circle cx="${xRet + 2}" cy="${CY - 8}" r="4.5" fill="#FFD94D" stroke="${CO}" stroke-width="1.4"/><circle cx="${xRet + 10}" cy="${CY + 28}" r="4" fill="#7A6A66"/>
+    <path d="M${xLens - 40} ${CY - 52} V${CY - 30} M${xLens - 40} ${CY + 30} V${CY + 52}" stroke="#4E78AE" stroke-width="5" stroke-linecap="round"/>
     ${lig(-1)}${lig(1)}${cil(-1)}${cil(1)}
-    <ellipse cx="${XE}" cy="${CY}" rx="${thick.toFixed(1)}" ry="40" fill="rgba(255,236,170,.85)" stroke="${CO}" stroke-width="2.5"/>
-    <g font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif"><text x="${XE + 18}" y="${CY - 64}">ciliary muscle</text><text x="${XE + 18}" y="${CY - 44}">suspensory ligament</text><text x="${XE - 6}" y="${CY + 88}" text-anchor="middle">lens</text></g>
-    ${glasses}${st.gl !== "none" ? `<text x="${XG}" y="${CY + 70}" font-size="11" font-weight="800" fill="${CO}" text-anchor="middle" font-family="system-ui, sans-serif">${st.gl} lens</text>` : ""}
-    <path d="M0 ${CY} H640" stroke="${CO}" stroke-width="1" stroke-dasharray="3 5" opacity=".35"/>
+    <ellipse cx="${xLens}" cy="${CY}" rx="${thick.toFixed(1)}" ry="36" fill="rgba(255,236,170,.9)" stroke="${CO}" stroke-width="2.5"/>
+    ${glasses}${st.gl !== "none" ? `<text x="${xGl}" y="${CY + 61}" font-size="10.5" font-weight="900" fill="${CO}" text-anchor="middle" font-family="system-ui, sans-serif">${st.gl}</text>` : ""}
+    <path d="M0 ${CY} H380" stroke="${CO}" stroke-width="1" stroke-dasharray="3 5" opacity=".35"/>
     ${rp}
-    ${fOK ? `<circle cx="${fx}" cy="${CY}" r="5" fill="#C0392B" stroke="#fff" stroke-width="2"/><text x="${fx}" y="${CY - 10}" font-size="11" font-weight="800" fill="#C0392B" text-anchor="middle" font-family="system-ui, sans-serif">focus</text>` : ""}
+    ${fOK ? `<circle cx="${fx}" cy="${CY}" r="4.8" fill="#C0392B" stroke="#fff" stroke-width="2"/><text x="${Math.min(356, Math.max(205, fx))}" y="${CY - 12}" font-size="10.5" font-weight="900" fill="#C0392B" text-anchor="middle" font-family="system-ui, sans-serif">focus</text>` : ""}
+    <g font-size="10.5" font-weight="900" fill="${CO}" font-family="system-ui, sans-serif">
+      <text x="${xCor - 34}" y="48">cornea bends most</text><text x="${xLens + 16}" y="50">lens fine-tunes</text><text x="${xLens - 54}" y="${CY - 46}">iris / pupil</text>
+      <text x="${xLens - 4}" y="${CY + 54}" text-anchor="middle">lens</text><text x="${xLens - 54}" y="${CY + 88}">ciliary muscle</text><text x="${xLens + 20}" y="${CY + 88}">ligaments</text>
+      <text x="${(xLens + xRet) / 2}" y="106" text-anchor="middle">vitreous humour</text><text x="${xRet + 8}" y="34" text-anchor="end">retina</text><text x="${xRet - 2}" y="${CY - 20}" text-anchor="end">fovea</text><text x="${xRet - 6}" y="${CY + 46}" text-anchor="end">blind spot</text><text x="362" y="${CY + 102}" text-anchor="end">optic nerve</text>
+    </g>
   </svg>`;
 }
 function viewSvg(obj, blur) {
@@ -487,7 +498,7 @@ function playTone(f, loud) {
 function earSim(root) {
   const st = { fv: 50, f: 632, loud: 60, on: true, dmg: false, ph: 0, imp: [], step: 0, stepT: 0 };
   root.innerHTML = `<div class="simgrid wide">
-    <section class="card"><div id="earSvg" class="simsvg"></div><div id="cochSvg" class="simsvg"></div></section>
+    <section class="card"><div id="earSvg" class="simsvg nozoom"></div><div id="cochSvg" class="simsvg nozoom"></div></section>
     <section class="card"><h3 style="margin:0">🎚️ Sound controls</h3>
       <label class="small"><b>Pitch (frequency): <span id="eF"></span></b><input type="range" id="eFreq" min="0" max="100" value="50" style="width:100%"></label>
       <div class="row simbtns"><button class="btn plain" data-ef="100">🥁 Drum 100 Hz</button><button class="btn plain" data-ef="500">🗣️ Voice 500 Hz</button><button class="btn plain" data-ef="4000">🐦 Bird 4 kHz</button><button class="btn plain" data-ef="15000">📱 Ringtone 15 kHz</button></div>
@@ -525,43 +536,43 @@ function earSim(root) {
 function earSvg(st, A) {
   const v = Math.sin(st.ph) * A, d = v * 5, lam = 70 - 50 * st.fv / 100;
   let waves = "";
-  for (let x = 98; x < 244; x += 5) { const o = .5 + .5 * Math.cos(2 * Math.PI * (x - st.ph / (2 * Math.PI) * lam) / lam); waves += `<path d="M${x} 128 v24" stroke="#5B8FE0" stroke-width="2.4" opacity="${(A * o * .9).toFixed(2)}"/>`; }
+  for (let x = 62; x < 136; x += 4) { const o = .5 + .5 * Math.cos(2 * Math.PI * (x - st.ph / (2 * Math.PI) * lam) / lam); waves += `<path d="M${x} 96 v18" stroke="#5B8FE0" stroke-width="2" opacity="${(A * o * .9).toFixed(2)}"/>`; }
   const lab = (x, y, t, a = "start") => `<text x="${x}" y="${y}" text-anchor="${a}">${t}</text>`;
-  let spiral = ""; for (let a2 = 0; a2 < 5.2 * Math.PI; a2 += .18) { const r = 38 - a2 * 2.05; spiral += `${spiral ? "L" : "M"}${(440 + r * Math.cos(a2)).toFixed(1)} ${(174 + r * Math.sin(a2)).toFixed(1)} `; }
-  const bone = Array.from({ length: 60 }, (_, i) => `<circle cx="${112 + (i * 67) % 480}" cy="${14 + (i * 41) % 270}" r="1.3" fill="#D8C6A6"/>`).join("");
-  return `<svg viewBox="0 0 640 300" role="img" aria-label="Cross-section of the ear">
+  let spiral = ""; for (let a2 = 0; a2 < 5.2 * Math.PI; a2 += .2) { const r = 24 - a2 * 1.25; spiral += `${spiral ? "L" : "M"}${(244 + r * Math.cos(a2)).toFixed(1)} ${(132 + r * Math.sin(a2)).toFixed(1)} `; }
+  const bone = Array.from({ length: 34 }, (_, i) => `<circle cx="${74 + (i * 47) % 270}" cy="${10 + (i * 31) % 196}" r="1" fill="#D8C6A6"/>`).join("");
+  return `<svg viewBox="0 0 360 220" role="img" aria-label="Cross-section of the ear showing pinna, ear canal, eardrum, ossicles, oval window, round window, cochlea, semicircular canals, Eustachian tube and auditory nerve.">
     <defs><linearGradient id="erC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBE2D4"/><stop offset="1" stop-color="#EFC4AE"/></linearGradient>
       <radialGradient id="erK" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#EAF4FF"/><stop offset="1" stop-color="#BFD8F2"/></radialGradient></defs>
-    <rect width="640" height="300" rx="14" fill="#FBF7EE"/>
-    <path d="M110 0 H640 V300 H110 Q120 150 110 0Z" fill="#F2E7D2"/>${bone}
-    <path d="M78 34 C28 40 12 104 24 152 C34 198 62 236 96 248 C114 252 120 234 108 220 C96 204 86 196 90 176 L94 158 L94 122 C100 92 110 60 78 34Z" fill="#F2C4A8" stroke="#B07A5C" stroke-width="2.4"/>
-    <path d="M70 58 C44 70 38 122 50 160 C58 184 72 196 82 190" fill="none" stroke="#D59C7E" stroke-width="3" stroke-linecap="round"/><path d="M76 96 C62 110 64 140 80 150" fill="none" stroke="#D59C7E" stroke-width="2.2"/>
-    <path d="M92 122 H250 V158 H92Z" fill="url(#erC)" stroke="#B07A5C" stroke-width="2"/>${[100, 108, 116].map(x => `<path d="M${x} 124 l3 6 M${x + 2} 156 l3 -6" stroke="#8C6A52" stroke-width="1"/>`).join("")}<circle cx="132" cy="154" r="2.2" fill="#C9A24A"/><circle cx="146" cy="126" r="1.8" fill="#C9A24A"/>${waves}
-    <path d="M250 84 Q306 76 368 86 Q380 140 368 196 Q306 206 250 196Z" fill="#F7E3E6" stroke="#B89A8C" stroke-width="2"/>
-    <path d="M318 196 Q340 250 396 288" stroke="#E8B9C2" stroke-width="16" fill="none" stroke-linecap="round"/><path d="M318 196 Q340 250 396 288" stroke="#B07A8A" stroke-width="1.5" fill="none" opacity=".6"/>
-    <path d="M${252 + d} 106 Q${238 + d * 1.6} 140 ${252 + d} 174" fill="none" stroke="#B790A0" stroke-width="5"/><path d="M${252 + d} 106 Q${238 + d * 1.6} 140 ${252 + d} 174" fill="none" stroke="#F4E6EE" stroke-width="2"/>
-    <g transform="translate(${d * .7} 0)" fill="#FFF6E4" stroke="#8C7A66" stroke-width="1.6" stroke-linejoin="round">
-      <path d="M${248 + d * .3} 146 L262 112 Q262 98 273 96 Q284 98 282 110 Q278 119 267 117 L${254 + d * .3} 148Z"/>
-      <path d="M276 100 Q292 90 306 99 Q313 110 302 118 L313 136 Q308 141 301 133 Q289 121 280 114Z"/>
-      <path d="M313 134 Q334 118 356 126 L356 154 Q334 160 313 140" fill="none" stroke-width="3.2"/><rect x="354" y="124" width="7" height="32" rx="2"/></g>
-    <ellipse cx="${367 + d * .6}" cy="140" rx="3.5" ry="14" fill="#A0C4FF" stroke="#5B7FB0" stroke-width="1.5"/><ellipse cx="370" cy="178" rx="3" ry="9" fill="#C9DDF5" stroke="#5B7FB0" stroke-width="1.2"/><path d="M366 154 L300 248" stroke="${CO}" stroke-width="1.4"/><circle cx="366" cy="154" r="2.4" fill="${CO}"/>
-    <g fill="none"><ellipse cx="398" cy="64" rx="18" ry="30" stroke="#7A6AA8" stroke-width="9"/><ellipse cx="398" cy="64" rx="18" ry="30" stroke="#E2D8F6" stroke-width="5.5"/>
-      <ellipse cx="436" cy="74" rx="30" ry="11" stroke="#7A6AA8" stroke-width="9"/><ellipse cx="436" cy="74" rx="30" ry="11" stroke="#E2D8F6" stroke-width="5.5"/>
-      <ellipse cx="418" cy="52" rx="24" ry="14" stroke="#7A6AA8" stroke-width="9" transform="rotate(35 418 52)"/><ellipse cx="418" cy="52" rx="24" ry="14" stroke="#E2D8F6" stroke-width="5.5" transform="rotate(35 418 52)"/></g>
-    <ellipse cx="404" cy="112" rx="24" ry="16" fill="#E2D8F6" stroke="#7A6AA8" stroke-width="2"/>
-    <circle cx="440" cy="174" r="${46 + Math.abs(v) * 2}" fill="url(#erK)" stroke="#5B7FB0" stroke-width="2.4"/>
-    <path d="${spiral}" fill="none" stroke="#4A6FA8" stroke-width="11" stroke-linecap="round"/><path d="${spiral}" fill="none" stroke="#9EC3EC" stroke-width="7" stroke-linecap="round"/>
-    <path d="M420 118 C450 140 460 160 466 178" stroke="#E0B44A" stroke-width="5" fill="none"/>
-    <path d="M466 178 C520 176 552 186 604 190" stroke="#B8902E" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M466 178 C520 176 552 186 604 190" stroke="#F2D06B" stroke-width="8" fill="none" stroke-linecap="round"/>
-    <path d="M470 176 C520 174 552 184 602 188 M470 181 C520 179 552 189 602 193" stroke="#D9B24A" stroke-width="1" fill="none"/>
-    ${st.imp.map(x => `<circle cx="${466 + x * 136}" cy="${178 + x * 12}" r="5" fill="#FF6B6B" stroke="#fff" stroke-width="1.5"/>`).join("")}
-    <g font-size="12" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">
-      ${lab(14, 24, "Pinna")}${lab(120, 116, "Ear canal")}${lab(236, 78, "Eardrum", "middle")}${lab(300, 72, "Ossicles", "middle")}${lab(296, 256, "Oval window", "end")}
-      ${lab(454, 30, "Semicircular canals")}${lab(440, 240, "Cochlea", "middle")}${lab(604, 212, "Auditory nerve →", "end")}${lab(612, 184, "🧠", "end")}${lab(388, 298, "Eustachian tube", "end")}${lab(160, 30, "Temporal bone")}</g>
+    <rect width="360" height="220" rx="14" fill="#FBF7EE"/>
+    <path d="M66 0 H360 V220 H66 Q72 110 66 0Z" fill="#F2E7D2"/>${bone}
+    <path d="M49 27 C20 32 10 74 17 112 C23 148 42 176 60 182 C72 184 78 172 70 162 C61 150 55 144 58 129 L61 116 L61 91 C65 68 70 42 49 27Z" fill="#F2C4A8" stroke="#B07A5C" stroke-width="2.2"/>
+    <path d="M45 47 C29 58 27 96 34 120 C39 138 49 147 55 142" fill="none" stroke="#D59C7E" stroke-width="2.6" stroke-linecap="round"/><path d="M48 76 C39 88 41 107 53 114" fill="none" stroke="#D59C7E" stroke-width="2"/>
+    <path d="M58 90 H138 V116 H58Z" fill="url(#erC)" stroke="#B07A5C" stroke-width="2"/>${waves}
+    <path d="M138 62 Q174 57 208 64 Q216 103 208 144 Q174 151 138 144Z" fill="#F7E3E6" stroke="#B89A8C" stroke-width="2"/>
+    <path d="M180 144 Q197 178 236 207" stroke="#E8B9C2" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M180 144 Q197 178 236 207" stroke="#B07A8A" stroke-width="1.3" fill="none" opacity=".7"/>
+    <path d="M${140 + d} 78 Q${131 + d * 1.6} 103 ${140 + d} 128" fill="none" stroke="#B790A0" stroke-width="4.2"/><path d="M${140 + d} 78 Q${131 + d * 1.6} 103 ${140 + d} 128" fill="none" stroke="#F4E6EE" stroke-width="1.8"/>
+    <g transform="translate(${d * .7} 0)" fill="#FFF6E4" stroke="#8C7A66" stroke-width="1.4" stroke-linejoin="round">
+      <path d="M139 104 L149 78 Q150 68 158 67 Q166 69 164 78 Q161 85 153 84 L144 106Z"/>
+      <path d="M164 70 Q175 62 185 70 Q191 79 182 86 L190 99 Q186 103 181 98 Q173 88 166 82Z"/>
+      <path d="M190 98 Q203 88 216 94 L216 115 Q203 119 190 103" fill="none" stroke-width="2.8"/><rect x="215" y="92" width="6" height="25" rx="2"/></g>
+    <ellipse cx="${223 + d * .6}" cy="104" rx="3.4" ry="11" fill="#A0C4FF" stroke="#5B7FB0" stroke-width="1.3"/><ellipse cx="225" cy="130" rx="3" ry="8" fill="#C9DDF5" stroke="#5B7FB0" stroke-width="1.2"/>
+    <g fill="none"><ellipse cx="238" cy="43" rx="13" ry="24" stroke="#7A6AA8" stroke-width="7"/><ellipse cx="238" cy="43" rx="13" ry="24" stroke="#E2D8F6" stroke-width="4.2"/>
+      <ellipse cx="266" cy="50" rx="23" ry="9" stroke="#7A6AA8" stroke-width="7"/><ellipse cx="266" cy="50" rx="23" ry="9" stroke="#E2D8F6" stroke-width="4.2"/>
+      <ellipse cx="254" cy="34" rx="19" ry="11" stroke="#7A6AA8" stroke-width="7" transform="rotate(35 254 34)"/><ellipse cx="254" cy="34" rx="19" ry="11" stroke="#E2D8F6" stroke-width="4.2" transform="rotate(35 254 34)"/></g>
+    <ellipse cx="244" cy="81" rx="18" ry="12" fill="#E2D8F6" stroke="#7A6AA8" stroke-width="2"/>
+    <circle cx="246" cy="132" r="${29 + Math.abs(v) * 2}" fill="url(#erK)" stroke="#5B7FB0" stroke-width="2.2"/>
+    <path d="${spiral}" fill="none" stroke="#4A6FA8" stroke-width="8" stroke-linecap="round"/><path d="${spiral}" fill="none" stroke="#9EC3EC" stroke-width="5" stroke-linecap="round"/>
+    <path d="M232 85 C250 98 260 113 263 132" stroke="#E0B44A" stroke-width="4" fill="none"/>
+    <path d="M263 132 C295 130 315 136 346 140" stroke="#B8902E" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M263 132 C295 130 315 136 346 140" stroke="#F2D06B" stroke-width="6" fill="none" stroke-linecap="round"/>
+    ${st.imp.map(x => `<circle cx="${263 + x * 76}" cy="${132 + x * 8}" r="4" fill="#FF6B6B" stroke="#fff" stroke-width="1.2"/>`).join("")}
+    <g font-size="10.5" font-weight="900" fill="${CO}" font-family="system-ui, sans-serif">
+      ${lab(12, 22, "pinna")}${lab(78, 84, "ear canal")}${lab(137, 57, "eardrum", "middle")}${lab(182, 58, "malleus")}
+      ${lab(190, 84, "incus")}${lab(214, 88, "stapes")}      ${lab(232, 104, "oval window")}${lab(210, 166, "round window", "middle")}
+      ${lab(256, 18, "semicircular canals", "middle")}${lab(246, 178, "cochlea", "middle")}${lab(346, 158, "auditory nerve →", "end")}${lab(347, 131, "🧠", "end")}${lab(236, 212, "Eustachian tube", "middle")}</g>
   </svg>`;
 }
 function cochleaSvg(st, A, pos, heard) {
-  const x0 = 60, x1 = 600, n = 44;
+  const x0 = 24, x1 = 336, n = 36;
   let mem = "", hairs = "";
   for (let i = 0; i <= 80; i++) { const p = i / 80, env = Math.exp(-Math.pow((p - pos) / .09, 2)), y = 70 - A * 22 * env * Math.sin(st.ph - p * 18); mem += `${i ? "L" : "M"}${(x0 + p * (x1 - x0)).toFixed(1)} ${y.toFixed(1)} `; }
   for (let i = 0; i < n; i++) {
@@ -569,13 +580,13 @@ function cochleaSvg(st, A, pos, heard) {
     const y = 70 - A * 22 * env * Math.sin(st.ph - p * 18);
     hairs += dead ? `<path d="M${x} ${y - 2} l-6 -6" stroke="#A89F9A" stroke-width="3" stroke-linecap="round"/>` : `<path d="M${x} ${y - 2} v-11" stroke="${act ? "#FF6B6B" : "#8FB8E8"}" stroke-width="${act ? 4 : 2.5}" stroke-linecap="round"/>`;
   }
-  return `<svg viewBox="0 0 640 132" role="img" aria-label="Uncoiled cochlea">
-    <rect width="640" height="132" rx="14" fill="#E7F3FF"/>
-    <text x="320" y="20" text-anchor="middle" font-size="12" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">The cochlea, uncoiled: which hair cells vibrate?</text>
+  return `<svg viewBox="0 0 360 132" role="img" aria-label="Uncoiled cochlea showing which hair cells vibrate">
+    <rect width="360" height="132" rx="14" fill="#E7F3FF"/>
+    <text x="180" y="20" text-anchor="middle" font-size="11" font-weight="900" fill="${CO}" font-family="system-ui, sans-serif">Uncoiled cochlea: hair cells vibrate</text>
     <path d="${mem}" fill="none" stroke="${CO}" stroke-width="3"/>${hairs}
     ${st.dmg ? `<rect x="${x0}" y="96" width="${.32 * (x1 - x0)}" height="8" rx="4" fill="#A89F9A" opacity=".6"/>` : ""}
-    <g font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif"><text x="${x0}" y="118">Base · HIGH pitch</text><text x="${x1}" y="118" text-anchor="end">Apex (tip) · LOW pitch</text>
-      <text x="320" y="118" text-anchor="middle" fill="${heard ? "#C0392B" : "#7A6A66"}">${heard ? "→ impulses to the brain" : A > .02 ? "no impulses" : ""}</text></g>
+    <g font-size="10.5" font-weight="900" fill="${CO}" font-family="system-ui, sans-serif"><text x="${x0}" y="118">Base HIGH</text><text x="${x1}" y="118" text-anchor="end">Apex LOW</text>
+      <text x="180" y="118" text-anchor="middle" fill="${heard ? "#C0392B" : "#7A6A66"}">${heard ? "impulses → brain" : A > .02 ? "no impulses" : ""}</text></g>
   </svg>`;
 }
 
@@ -604,7 +615,7 @@ function membraneSim(root) {
   const st = { T: 37, parts: [], busy: 0, atp: 0, hl: null, labels: true, t: 0, move: "o2" };
   for (let i = 0; i < 8; i++) st.parts.push({ k: "active", x: 40 + Math.random() * 560, y: 248 + Math.random() * 48, ph: "in", vx: 0, vy: 0 });
   root.innerHTML = `<div class="simgrid wide">
-    <section class="card"><div id="memSvg" class="simsvg"></div>
+    <section class="card"><div id="memSvg" class="simsvg nozoom"></div>
       <div class="row simbtns">${Object.entries(MEM_MOVE).map(([k, m]) => `<button class="btn plain" data-mv="${k}">${m.l}</button>`).join("")}</div>
       <label class="small"><b>🌡️ Temperature: <span id="mT"></span></b><input type="range" id="mTemp" min="0" max="70" value="37" style="width:100%"></label>
       <label class="small chk"><input type="checkbox" id="mLab" checked> Show labels</label></section>
@@ -659,32 +670,54 @@ function stepParticle(p, dt, st, PX, fl, hot) {
 }
 function membraneSvg(lip, st, PX, fl, hot) {
   const hl = st.hlT > 0 ? st.hl : null, glow = k => hl === k ? `stroke="#E0457B" stroke-width="4"` : `stroke="${CO}" stroke-width="2"`;
-  const pw = Math.sin(st.t * 3) * 3 * fl;
-  let s = `<rect width="640" height="310" rx="14" fill="#EAF6FF"/><rect y="220" width="640" height="90" rx="14" fill="#FFF3E6"/>`;
-  s += `<g font-size="12" font-weight="800" fill="#7A6A66" font-family="system-ui, sans-serif"><text x="12" y="22">OUTSIDE the cell</text><text x="12" y="302">INSIDE (cytoplasm)</text></g>`;
+  const pw = Math.sin(st.t * 3) * 3 * fl, mx = x => 16 + x / 640 * 328, my = y => 142 + y / 310 * 264;
+  let s = `<rect width="360" height="430" rx="16" fill="#F4FBFF"/>
+    <g font-family="system-ui, sans-serif">
+      <rect x="10" y="10" width="340" height="114" rx="16" fill="#FFF8EA" stroke="#E0C7A8" stroke-width="2"/>
+      ${[28, 58, 86, 318, 286, 256].map((x, i) => `<circle cx="${x}" cy="${32 + (i % 3) * 25}" r="${7 + i % 2}" fill="#A88055" opacity=".85"/>`).join("")}
+      <path d="M18 84 C60 74 112 80 160 68 C210 56 266 64 340 46" stroke="#9ED8FF" stroke-width="8" stroke-linecap="round" opacity=".75"/>
+      <path d="M46 98 C94 98 142 92 194 106 C246 120 290 98 332 112" stroke="#9ED8FF" stroke-width="5" stroke-linecap="round" opacity=".55"/>
+      <path d="M78 112 C90 72 98 44 142 30 C204 8 258 34 296 54 C254 70 226 96 194 112Z" fill="#BFE9A8" stroke="${CO}" stroke-width="4"/>
+      <path d="M89 106 C101 73 112 51 146 40 C198 24 241 44 273 58 C238 74 218 96 190 108Z" fill="#F0FFE7" stroke="#4E9B5B" stroke-width="2"/>
+      <path d="M116 86 C145 62 185 52 236 60" fill="none" stroke="#75B35B" stroke-width="20" stroke-linecap="round" opacity=".38"/>
+      <ellipse cx="220" cy="56" rx="16" ry="10" fill="#B9A6D9" stroke="${CO}" stroke-width="2"/>
+      <g font-size="10.5" font-weight="900" fill="${CO}">
+        <path d="M272 55 L318 40" stroke="${CO}" stroke-width="1.5"/><text x="322" y="43" text-anchor="end">cell wall</text>
+        <path d="M190 104 L218 118" stroke="${CO}" stroke-width="1.5"/><text x="222" y="120">cell membrane</text>
+        <path d="M219 56 L250 30" stroke="${CO}" stroke-width="1.5"/><text x="254" y="32">nucleus</text>
+        <path d="M146 82 L86 58" stroke="${CO}" stroke-width="1.5"/><text x="23" y="57">large vacuole</text>
+        <text x="20" y="28">soil particles + water films</text>
+      </g>
+    </g>
+    <rect x="10" y="132" width="340" height="286" rx="16" fill="#EAF6FF" stroke="#CFE4F4" stroke-width="2"/>
+    <rect x="10" y="330" width="340" height="88" rx="16" fill="#FFF3E6" opacity=".95"/>
+    <g font-size="12" font-weight="900" fill="#6A5B58" font-family="system-ui, sans-serif"><text x="20" y="154">SOIL WATER (outside)</text><text x="20" y="408">CYTOPLASM (inside)</text></g>`;
   lip.forEach(p => {
-    const x = p.x + p.o, top = p.l === 0, hy = top ? 124 : 216, ty = top ? 168 : 172, dir = top ? 1 : -1, tw = hl === "tail" ? "#E0457B" : "#E0B44A";
-    s += `<path d="M${x - 3} ${hy + dir * 6} Q${x - 6} ${(hy + ty) / 2} ${x - 3} ${ty} M${x + 3} ${hy + dir * 6} Q${x + 6} ${(hy + ty) / 2} ${x + 3} ${ty}" stroke="${tw}" stroke-width="${hl === "tail" ? 3.5 : 2.6}" fill="none" stroke-linecap="round"/>`;
-    s += `<circle cx="${x}" cy="${hy}" r="8" fill="${hl === "head" || hl === "phospholipid" ? "#FF8FB1" : "#7FB2FF"}" ${hl === "phospholipid" ? `stroke="#E0457B" stroke-width="3"` : `stroke="${CO}" stroke-width="1.5"`}/>`;
+    const x = mx(p.x + p.o), top = p.l === 0, hy = my(top ? 124 : 216), ty = my(top ? 168 : 172), dir = top ? 1 : -1, tw = hl === "tail" ? "#E0457B" : "#E0B44A";
+    s += `<path d="M${x - 1.8} ${hy + dir * 4} Q${x - 3.2} ${(hy + ty) / 2} ${x - 1.8} ${ty} M${x + 1.8} ${hy + dir * 4} Q${x + 3.2} ${(hy + ty) / 2} ${x + 1.8} ${ty}" stroke="${tw}" stroke-width="${hl === "tail" ? 2.6 : 2}" fill="none" stroke-linecap="round"/>`;
+    s += `<circle cx="${x}" cy="${hy}" r="5.4" fill="${hl === "head" || hl === "phospholipid" ? "#FF8FB1" : "#7FB2FF"}" ${hl === "phospholipid" ? `stroke="#E0457B" stroke-width="2.4"` : `stroke="${CO}" stroke-width="1"`}/>`;
   });
-  [100, 255, 410, 575].forEach((x, i) => { s += `<rect x="${x - 4}" y="${i % 2 ? 176 : 142}" width="8" height="24" rx="4" fill="#F7E36D" ${glow("chol")}/>`; });
+  [100, 255, 410, 575].forEach((x, i) => { s += `<rect x="${mx(x) - 3}" y="${my(i % 2 ? 176 : 142)}" width="6" height="20" rx="3" fill="#F7E36D" ${glow("chol")}/>`; });
   const dn = hot ? `fill="#C9C0B8"` : "", jig = hot ? ` rotate(${Math.sin(st.t * 7) * 8})` : "";
-  s += `<g transform="translate(${PX.channel + pw} 0)${jig}"><rect x="-28" y="108" width="20" height="124" rx="10" ${dn || `fill="#9ED39B"`} ${glow("channel")}/><rect x="8" y="108" width="20" height="124" rx="10" ${dn || `fill="#9ED39B"`} ${glow("channel")}/></g>`;
+  s += `<g transform="translate(${mx(PX.channel + pw)} 0)${jig}"><rect x="-15" y="${my(108)}" width="11" height="${my(232) - my(108)}" rx="6" ${dn || `fill="#9ED39B"`} ${glow("channel")}/><rect x="4" y="${my(108)}" width="11" height="${my(232) - my(108)}" rx="6" ${dn || `fill="#9ED39B"`} ${glow("channel")}/></g>`;
   const open = st.busy > .45 ? "top" : st.busy > 0 ? "bottom" : "top";
-  s += `<g transform="translate(${PX.carrier - pw} 0)${jig}"><path d="${open === "top" ? "M-26 108 L-8 128 L8 128 L26 108 L28 222 Q0 238 -28 222Z" : "M-28 110 Q0 96 28 110 L26 232 L8 212 L-8 212 L-26 232Z"}" ${dn || `fill="#F7B267"`} ${glow("carrier")}/>
-    ${st.busy > 0 ? `<circle cx="0" cy="${open === "top" ? 150 : 196}" r="7" fill="${MEM_MOVE[st.cargo] ? MEM_MOVE[st.cargo].c : "#999"}" stroke="${CO}" stroke-width="1.5"/>` : ""}
-    ${st.atp > 0 ? `<g opacity="${st.atp}"><circle cx="0" cy="250" r="${22 - st.atp * 8}" fill="#FFE27A" stroke="#E0B44A" stroke-width="2"/><text x="0" y="254" text-anchor="middle" font-size="11" font-weight="900" fill="${CO}" font-family="system-ui, sans-serif">ATP</text></g>` : ""}</g>`;
-  s += `<g transform="translate(${PX.glyco + pw * .7} 0)${jig}"><rect x="-20" y="110" width="40" height="120" rx="18" ${dn || `fill="#C9A0FF"`} ${glow("glyco")}/><path d="M0 110 V88 M0 96 l-12 -10 M0 88 l10 -12 M-12 86 l-6 -10" stroke="#3FA06B" stroke-width="3.5" stroke-linecap="round"/>${[[0, 88], [-12, 86], [10, 76], [-18, 76]].map(([x, y]) => `<polygon points="${x - 5},${y} ${x - 2.5},${y - 4.3} ${x + 2.5},${y - 4.3} ${x + 5},${y} ${x + 2.5},${y + 4.3} ${x - 2.5},${y + 4.3}" fill="#B9F3C9" stroke="${CO}" stroke-width="1.2"/>`).join("")}</g>`;
-  if (hot) s += [60, 260, 440].map(x => `<ellipse cx="${x}" cy="170" rx="10" ry="40" fill="#EAF6FF" opacity=".85"/>`).join("");
+  s += `<g transform="translate(${mx(PX.carrier - pw)} 0)${jig}"><path d="${open === "top" ? `M-16 ${my(108)} L-5 ${my(128)} L5 ${my(128)} L16 ${my(108)} L17 ${my(222)} Q0 ${my(238)} -17 ${my(222)}Z` : `M-17 ${my(110)} Q0 ${my(96)} 17 ${my(110)} L16 ${my(232)} L5 ${my(212)} L-5 ${my(212)} L-16 ${my(232)}Z`}" ${dn || `fill="#F7B267"`} ${glow("carrier")}/>
+    ${st.busy > 0 ? `<circle cx="0" cy="${my(open === "top" ? 150 : 196)}" r="5.5" fill="${MEM_MOVE[st.cargo] ? MEM_MOVE[st.cargo].c : "#999"}" stroke="${CO}" stroke-width="1.2"/>` : ""}
+    ${st.atp > 0 ? `<g opacity="${st.atp}"><circle cx="0" cy="${my(250)}" r="${18 - st.atp * 7}" fill="#FFE27A" stroke="#E0B44A" stroke-width="2"/><text x="0" y="${my(250) + 4}" text-anchor="middle" font-size="10" font-weight="900" fill="${CO}" font-family="system-ui, sans-serif">ATP</text></g>` : ""}</g>`;
+  s += `<g transform="translate(${mx(PX.glyco + pw * .7)} 0)${jig}"><rect x="-12" y="${my(110)}" width="24" height="${my(230) - my(110)}" rx="12" ${dn || `fill="#C9A0FF"`} ${glow("glyco")}/><path d="M0 ${my(110)} V${my(88)} M0 ${my(96)} l-10 -8 M0 ${my(88)} l8 -10 M-10 ${my(88)} l-6 -10" stroke="#3FA06B" stroke-width="2.4" stroke-linecap="round"/>${[[0, my(88)], [-10, my(88)], [8, my(78)], [-16, my(78)]].map(([x, y]) => `<polygon points="${x - 4},${y} ${x - 2},${y - 3.5} ${x + 2},${y - 3.5} ${x + 4},${y} ${x + 2},${y + 3.5} ${x - 2},${y + 3.5}" fill="#B9F3C9" stroke="${CO}" stroke-width="1"/>`).join("")}</g>`;
+  if (hot) s += [60, 260, 440].map(x => `<ellipse cx="${mx(x)}" cy="${my(170)}" rx="7" ry="34" fill="#EAF6FF" opacity=".85"/>`).join("");
   st.parts.forEach(p => {
     if (p.d > 0) return;
-    const c = MEM_MOVE[p.k].c;
-    s += p.k === "big" ? `<circle cx="${p.x}" cy="${p.y}" r="13" fill="${c}" stroke="${CO}" stroke-width="2"/><path d="M${p.x - 7} ${p.y} q7 -6 14 0" stroke="#fff" stroke-width="2" fill="none"/>`
-      : p.k === "glucose" ? `<polygon points="${[0, 1, 2, 3, 4, 5].map(i => `${(p.x + 7 * Math.cos(i * Math.PI / 3)).toFixed(1)},${(p.y + 7 * Math.sin(i * Math.PI / 3)).toFixed(1)}`).join(" ")}" fill="${c}" stroke="${CO}" stroke-width="1.5"/>`
-      : `<circle cx="${p.x}" cy="${p.y}" r="${p.k === "water" ? 4.5 : 5.5}" fill="${c}" stroke="${CO}" stroke-width="1.2"/>${p.k === "ion" || p.k === "active" ? `<text x="${p.x}" y="${p.y + 3}" text-anchor="middle" font-size="8" font-weight="900" fill="#fff">+</text>` : ""}`;
+    const c = MEM_MOVE[p.k].c, x = mx(p.x), y = my(p.y);
+    s += p.k === "big" ? `<circle cx="${x}" cy="${y}" r="9" fill="${c}" stroke="${CO}" stroke-width="1.6"/><path d="M${x - 5} ${y} q5 -5 10 0" stroke="#fff" stroke-width="1.8" fill="none"/>`
+      : p.k === "glucose" ? `<polygon points="${[0, 1, 2, 3, 4, 5].map(i => `${(x + 5.6 * Math.cos(i * Math.PI / 3)).toFixed(1)},${(y + 5.6 * Math.sin(i * Math.PI / 3)).toFixed(1)}`).join(" ")}" fill="${c}" stroke="${CO}" stroke-width="1.2"/>`
+      : `<circle cx="${x}" cy="${y}" r="${p.k === "water" ? 3.8 : 5}" fill="${c}" stroke="${CO}" stroke-width="1"/>${p.k === "ion" || p.k === "active" ? `<path d="M${x - 2.8} ${y} H${x + 2.8} M${x} ${y - 2.8} V${y + 2.8}" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>` : ""}`;
   });
-  if (st.labels) s += `<g font-size="11" font-weight="800" fill="${CO}" font-family="system-ui, sans-serif">
-    <text x="${PX.channel}" y="102" text-anchor="middle">channel protein</text><text x="${PX.carrier}" y="102" text-anchor="middle">carrier protein</text>
-    <text x="${PX.glyco + 22}" y="70">glycoprotein</text><text x="628" y="150" text-anchor="end">phospholipid</text><text x="628" y="164" text-anchor="end">bilayer</text><path d="M100 200 V236" stroke="${CO}" stroke-width="1.5"/><text x="100" y="248" text-anchor="middle">cholesterol</text></g>`;
-  return `<svg viewBox="0 0 640 310" role="img" aria-label="Fluid mosaic model of the cell membrane">${s}</svg>`;
+  if (st.labels) s += `<g font-size="10.5" font-weight="900" fill="${CO}" font-family="system-ui, sans-serif">
+    <path d="M${mx(PX.channel)} ${my(108) - 6} L40 183" stroke="${CO}" stroke-width="1.4"/><text x="44" y="184">channel protein</text>
+    <path d="M${mx(PX.carrier)} ${my(118)} L${mx(PX.carrier) + 32} 184" stroke="${CO}" stroke-width="1.4"/><text x="${mx(PX.carrier) + 36}" y="186">carrier protein</text>
+    <path d="M${mx(PX.glyco)} ${my(80)} L278 202" stroke="${CO}" stroke-width="1.4"/><text x="274" y="204" text-anchor="end">glycoprotein</text>
+    <text x="332" y="${my(152)}" text-anchor="end">phospholipid bilayer</text>
+    <path d="M${mx(100)} ${my(200)} V${my(236)}" stroke="${CO}" stroke-width="1.4"/><text x="${mx(100)}" y="${my(248)}" text-anchor="middle">cholesterol</text></g>`;
+  return `<svg viewBox="0 0 360 430" role="img" aria-label="Root hair cell membrane with soil particles, water films, carrier proteins, cell wall, vacuole and nucleus">${s}</svg>`;
 }

@@ -3,38 +3,64 @@
 This guide explains how the Lab tab works, so anyone (a teacher, a co-editor or another AI tool) can add or improve a simulation and its 🎯 challenge. Read it before you change `src/sims*.js` or `src/simchal.js`.
 
 - **Who it is for:** Hong Kong S4–S6 Biology students who learn in English as a second language, mostly on phones.
-- **Scope:** HKDSE Biology compulsory part **"Organisms and Environment"**, sections **a–f**.
+- **Scope:** the whole HKDSE Biology compulsory part: **I. Cells and Molecules of Life** (a–e), **II. Genetics and Evolution** (a–c), **III. Organisms and Environment** (a–f), **IV. Health and Diseases** (a–c).
 - **Promise to students:** every simulation shows something you cannot see in real life. Every challenge takes about **15 minutes**, and you can only finish it by **using the simulation**.
 
 ---
 
 ## 1. Curriculum map
 
+The Lab has three levels: **4 part tabs** (I–IV, with a progress bar) → **section chips** (the HKDSE sub-topics) → **simulation tabs**. The **🗺️ All labs** button opens a map of every lab with challenge progress. Section keys in code are part number + letter (`"1a"` … `"4c"`, see `SIM_SECS` in `src/sims.js`).
+
 | Sec | Section | Simulation (`id`) | The abstract idea it makes visible | File |
 |---|---|---|---|---|
-| a | Essential life processes in plants | 🫧 Root-hair membrane (`membrane`) | How water (osmosis) and mineral ions (active transport, needs ATP) cross a membrane | `sims.js` |
-| a | | 💧 Osmosis tubing (`dialysis`) | Water potential gradient → net water movement; rate vs final level; fair tests | `sims2.js` |
-| a | | 🍃 Leaf gas exchange (`leafgas`) | Photosynthesis vs respiration in a leaf; hydrogencarbonate indicator; compensation point | `sims_a.js` |
-| a | | 💨 Transpiration (`transp`) | Potometer bubble; how light, humidity, wind and temperature change the rate of water loss | `sims_a.js` |
-| b | Essential life processes in animals | 🍙 Digestion (`digest`) | Where each food is digested, by which enzyme, at which pH; absorption in the small intestine | `sims_b.js` |
-| b | | 🫁 Breathing (`lung`) | Volume ↑ → pressure ↓ → air in (live pressure graph) | `sims.js` |
-| b | | ❤️ Heart (`heart`) | Cardiac cycle: pressure in atrium / ventricle / aorta decides which valve opens | `sims_b.js` |
-| c | Reproduction, growth and development | 🩸 Menstrual cycle (`cycle`) | FSH, LH, oestrogen and progesterone over 28 days; the uterus lining; pregnancy | `sims_c.js` |
-| c | | 🌱 Germination & growth (`grow`) | Fresh mass vs dry mass; why dry mass falls first; growth curves | `sims_c.js` |
-| d | Coordination and response | 👁️ Pupil reflex (`pupil`) | Reflex arc; antagonistic iris muscles | `sims.js` |
-| d | | 🔍 Focusing & glasses (`lens`) | Accommodation; short/long sight; corrective lenses (ray diagram) | `sims.js` |
-| d | | 👂 Hearing (`ear`) | Pathway of sound; frequency mapped along the cochlea; hair-cell damage | `sims.js` |
-| d | | ⚡ Reflex arc (`reflex`) | Receptor → sensory → relay → motor → effector; synapse; reflex vs voluntary | `sims_d.js` |
-| d | | 💪 Arm muscles (`muscle`) | Antagonistic muscles, the elbow as a lever, tendons and the joint | `sims_d.js` |
-| d | | 🌱 Phototropism (`tropism`) | Classic coleoptile experiments; uneven auxin → uneven elongation | `sims2.js` |
-| e | Homeostasis | 🍬 Blood glucose (`glucose`) | Negative feedback with insulin and glucagon; diabetes | `sims_e.js` |
-| e | | 🏔️ Breathing control (`co2`) | CO₂ in blood → chemoreceptors → breathing rate (negative feedback) | `sims_e.js` |
-| f | Ecosystems | 🦊 Food web (`foodweb`) | Energy flow and 10% transfer; pyramids; what happens when one population changes | `sims_f.js` |
-| f | | 🔲 Quadrat sampling (`quadrat`) | Random sampling, estimating population size, frequency and % cover; line transects | `sims_f.js` |
+| **I** | **Cells and Molecules of Life** | | | |
+| 1a | Molecules of life | 🧪 Food tests (`foodtest`) | Benedict's, iodine, biuret, ethanol emulsion tests; identify unknowns; semi-quantitative Benedict's | `sims_p1a.js` |
+| 1a | | 🔗 Build biomolecules (`molbuild`) | Condensation vs hydrolysis; glycosidic, peptide, ester bonds; n monomers → n−1 waters | `sims_p1a.js` |
+| 1b | Cellular organisation | 🔬 Cell explorer (`cellview`) | Light vs electron microscope; organelles and functions; plant / animal / bacterial cells; magnification | `sims_p1a.js` |
+| 1c | Movement of substances across membrane | 🧊 Diffusion & size (`diffuse`) | Agar cubes: surface area : volume ratio and diffusion time; factors affecting diffusion | `sims_p1b.js` |
+| 1c | | 💧 Osmosis tubing (`dialysis`) | Water potential gradient → net water movement; rate vs final level; fair tests | `sims2.js` |
+| 1c | | 🥔 Osmosis in cells (`plasmo`) | Potato strips % mass change; plasmolysis; red blood cells in different solutions | `sims_p1b.js` |
+| 1d | Cell cycle and division | 🧬 Mitosis & meiosis (`celldiv`) | Chromosome behaviour stage by stage; crossing over; independent assortment; mitotic index | `sims_p1b.js` |
+| 1e | Cellular energetics | 🔑 Enzyme lab (`enzyme`) | Active site; temperature, pH, substrate and enzyme concentration; competitive vs non-competitive inhibitors | `sims_p1c.js` |
+| 1e | | 🌿 Photosynthesis lab (`photo`) | Pondweed bubbles; limiting factors; light-dependent reactions and Calvin cycle in the chloroplast | `sims_p1c.js` |
+| 1e | | 🔋 Respiration lab (`resp`) | Respirometer; yeast fermentation; glycolysis → Krebs cycle → oxidative phosphorylation; aerobic vs anaerobic | `sims_p1c.js` |
+| **II** | **Genetics and Evolution** | | | |
+| 2a | Basic genetics | 🫛 Genetic crosses (`cross`) | Punnett squares; random fertilisation → 3 : 1; test cross; ABO codominance; sex linkage | `sims_p2a.js` |
+| 2a | | 🌳 Pedigree detective (`pedigree`) | Reading family trees: dominant / recessive, autosomal / X-linked, genotypes, probabilities | `sims_p2a.js` |
+| 2b | Molecular genetics | 🔠 DNA to protein (`protein`) | Transcription and translation; the genetic code; substitution and frameshift mutations | `sims_p2a.js` |
+| 2b | | 🧫 DNA fingerprinting (`gel`) | PCR and gel electrophoresis; matching band patterns; recombinant DNA (insulin) | `sims_p2b.js` |
+| 2c | Biodiversity and evolution | 🗂️ Classify & key (`classify`) | Using and building dichotomous keys; classification hierarchy; binomial names | `sims_p2b.js` |
+| 2c | | 🦋 Natural selection (`evolve`) | Peppered moths: variation → selection → allele frequency change over generations | `sims_p2b.js` |
+| **III** | **Organisms and Environment** | | | |
+| 3a | Essential life processes in plants | 🫧 Root-hair membrane (`membrane`) | How water (osmosis) and mineral ions (active transport, needs ATP) cross a membrane | `sims.js` |
+| 3a | | 🍃 Leaf gas exchange (`leafgas`) | Photosynthesis vs respiration in a leaf; hydrogencarbonate indicator; compensation point | `sims_a.js` |
+| 3a | | 💨 Transpiration (potometer) (`transp`) | Potometer bubble; how light, humidity, wind and temperature change the rate of water loss | `sims_a.js` |
+| 3b | Essential life processes in animals | 🍙 Digestion lab (`digest`) | Where each food is digested, by which enzyme, at which pH; absorption in the small intestine | `sims_b.js` |
+| 3b | | 🫁 Breathing (`lung`) | Volume ↑ → pressure ↓ → air in (live pressure graph) | `sims.js` |
+| 3b | | ❤️ Heart & cardiac cycle (`heart`) | Cardiac cycle: pressure in atrium / ventricle / aorta decides which valve opens | `sims_b.js` |
+| 3c | Reproduction, growth and development | 🌸 Menstrual cycle hormones (`cycle`) | FSH, LH, oestrogen and progesterone over 28 days; the uterus lining; pregnancy | `sims_c.js` |
+| 3c | | 🌱 Germination & growth (`grow`) | Fresh mass vs dry mass; why dry mass falls first; growth curves | `sims_c.js` |
+| 3d | Coordination and response | 👁️ Pupil reflex (`pupil`) | Reflex arc; antagonistic iris muscles | `sims.js` |
+| 3d | | 🔍 Focusing & glasses (`lens`) | Accommodation; short/long sight; corrective lenses (ray diagram) | `sims.js` |
+| 3d | | 👂 Hearing (`ear`) | Pathway of sound; frequency mapped along the cochlea; hair-cell damage | `sims.js` |
+| 3d | | ⚡ Reflex arc (`reflex`) | Receptor → sensory → relay → motor → effector; synapse; reflex vs voluntary | `sims_d.js` |
+| 3d | | 💪 Arm muscles & joints (`muscle`) | Antagonistic muscles, the elbow as a lever, tendons and the joint | `sims_d.js` |
+| 3d | | 🌻 Phototropism (`tropism`) | Classic coleoptile experiments; uneven auxin → uneven elongation | `sims2.js` |
+| 3e | Homeostasis | 🍬 Blood glucose control (`glucose`) | Negative feedback with insulin and glucagon; diabetes | `sims_e.js` |
+| 3e | | 🏔️ Breathing control (CO₂) (`co2`) | CO₂ in blood → chemoreceptors → breathing rate (negative feedback) | `sims_e.js` |
+| 3f | Ecosystems | 🕸️ Food web & energy (`foodweb`) | Energy flow and 10% transfer; pyramids; what happens when one population changes | `sims_f.js` |
+| 3f | | 🟩 Quadrat sampling (`quadrat`) | Random sampling, estimating population size, frequency and % cover; line transects | `sims_f.js` |
+| **IV** | **Health and Diseases** | | | |
+| 4a | Personal health | 🚭 Smoking & health (`smoke`) | Smoking machine (tar, heat, acidic gases); cilia, emphysema, CO and nicotine effects | `sims_p4a.js` |
+| 4a | | 🫀 Heart health (`heartrisk`) | Atherosclerosis in a coronary artery; lifestyle risk factors → narrowing → heart attack | `sims_p4a.js` |
+| 4b | Diseases | 🦠 Disease spread (`spread`) | Transmission routes; epidemic curve; prevention measures; vaccination and herd immunity | `sims_p4a.js` |
+| 4b | | 💊 Antibiotics test (`antibio`) | Zones of inhibition; aseptic technique; antibiotics vs viruses; antibiotic resistance | `sims_p4b.js` |
+| 4c | Body defence mechanisms | 🛡️ Immune response (`immune`) | Lines of defence; phagocytosis; B and T cells, antibodies; primary vs secondary response; vaccination | `sims_p4b.js` |
 
-The Lab groups sims by section (the six round chips at the top). The tab order inside a section comes from `ord`.
+The tab order inside a section comes from `ord`.
 
-**Backlog (good next simulations):** tissue-fluid formation at a capillary; nitrogen and carbon cycles; flower pollination (insect vs wind); hormone vs nerve comparison race; predator–prey population graph; succession on a bare rock; seed dispersal.
+**Backlog (good next simulations):** tissue-fluid formation at a capillary; nitrogen and carbon cycles; flower pollination (insect vs wind); hormone vs nerve comparison race; predator–prey population graph; succession on a bare rock; seed dispersal; DNA extraction; blood clotting.
 
 ---
 
@@ -119,7 +145,8 @@ Follow this arc. Each mission is 3–5 tasks; the whole challenge is **15–20 t
 |---|---|
 | `src/sims.js` | Lab core (`simReg`, `renderSims`, `simLoop`, `simProbe`, `simStyle`, word bank, predict-first, `SIM_Q`, `SIM_P`) + breathing, pupil, focusing, hearing, membrane |
 | `src/sims2.js` | Osmosis tubing, phototropism |
-| `src/sims_a.js` … `src/sims_f.js` | One file per section: new simulations + `SIM_CH` challenges for every sim in that section |
+| `src/sims_a.js` … `src/sims_f.js` | Part III, one file per section: new simulations + `SIM_CH` challenges for every sim in that section |
+| `src/sims_p1a.js` … `src/sims_p1c.js`, `sims_p2a.js`, `sims_p2b.js`, `sims_p4a.js`, `sims_p4b.js` | Parts I, II and IV: simulations + their `SIM_CH` challenges |
 | `src/simch_d.js` | Challenges for the older section-d sims (pupil, lens, ear, tropism) |
 | `src/simchal.js` | The challenge engine (do not put content here) |
 | `src/head.html` | Shared Lab CSS (search for "🔬 Lab:") |
@@ -127,7 +154,7 @@ Follow this arc. Each mission is 3–5 tasks; the whole challenge is **15–20 t
 
 ### Register a simulation
 ```js
-simReg({ id: "transp", ic: "💨", name: "Transpiration", sec: "a", ord: 40, topic: "t12", fn: transpSim,
+simReg({ id: "transp", ic: "💨", name: "Transpiration", sec: "3a", ord: 40, topic: "t12", fn: transpSim,
   words: [["stomata", "👄", "tiny holes in the leaf; water vapour leaves here"], …] });
 function transpSim(root) {
   const st = { … };                                   // all state is local
@@ -137,7 +164,7 @@ function transpSim(root) {
   simLoop(root, dt => { /* update st, redraw SVG */ });
 }
 ```
-- `sec`: `"a"`–`"f"`. `ord`: position in the section. `topic`: a `TOPICS` id (`t12` plants, `t8` nutrition, `t13` gas exchange, `t14` transport, `t15` reproduction, `t16` coordination, `t17` homeostasis, `t18` ecosystems).
+- `sec`: a `SIM_SECS` key, `"1a"`–`"4c"` (part number + section letter). `ord`: position in the section. `topic`: a `TOPICS` id (`t1` molecules, `t2` cells, `t3` membranes, `t4` cell division, `t5` enzymes, `t6` photosynthesis, `t7` respiration, `t9` basic genetics, `t10` molecular genetics, `t11` biodiversity & evolution, `t12` plants, `t8` nutrition, `t13` gas exchange, `t14` transport, `t15` reproduction, `t16` coordination, `t17` homeostasis, `t18` ecosystems, `t19` health & diseases).
 - `simLoop(root, step)` runs `step(dt)` every frame (dt ≤ 0.05 s) and stops itself when the page changes.
 - Wrap the main content in `.simgrid` (the predict-first card locks `.simgrid` and `.simchal` until a guess is made).
 - `SIM_P[id] = [question, [right, wrong, wrong, wrong], why, "what to try"]` adds a predict-first card.
@@ -189,8 +216,16 @@ The **right answer is always written first**; the engine shuffles. `p` is the cu
 python3 tools/build.py              # rebuild index.html
 node tools/check_content.js         # question banks
 NODE_PATH=$(npm root -g) node tools/check_lab.js   # every sim renders; every challenge is valid and can be completed
+NODE_PATH=$(npm root -g) node tools/check_layout.js # every lab at 360/390 px phones, iPad portrait/landscape, desktop
 NODE_PATH=$(npm root -g) node tools/smoke.js       # whole-game smoke test
 ```
+`tools/check_layout.js [simId …]` reports sideways page scroll (error), and as warnings: clipped HTML text, elements sticking out of their card, diagrams that need a sideways swipe, SVG labels cut off by the diagram edge, overlapping SVG labels, labels smaller than 8.5 px on screen, and small tap targets. Aim for zero warnings on a new simulation (`--strict` makes warnings fail).
+
+**Layout rules (phone, iPad, desktop):**
+- Draw diagrams to **fit the card width** (`.simsvg.nozoom`): design the `viewBox` for a ~320 px wide phone card (taller, narrower viewBoxes; stack panels vertically). Use the sideways-swipe `.simsvg` only for a diagram that truly cannot fit.
+- SVG label text must be ≥ 9 px on a 360 px phone: font-size (viewBox units) ≥ 9 × viewBox width ÷ 320.
+- Keep every label inside the `viewBox`, give labels over drawings a white halo, and move long or secondary labels into an HTML legend under the diagram.
+- Diagrams should look like a good textbook / exam diagram (correct structures and proportions, leader-line labels), not cartoons.
 `tools/check_lab.js` opens each simulation at 390 px, checks for errors and sideways scroll, validates every `SIM_CH` task (types, fields, answers), and plays every challenge to the end (non-goal tasks are answered through the UI; goal tasks are checked to have a working `check` function).
 
 Before you finish, also try every `goal` task by hand: it must be reachable with the controls on screen.

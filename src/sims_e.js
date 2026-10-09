@@ -16,7 +16,7 @@ Object.assign(SIM_P, {
 
 simReg({ id: "glucose", ic: "🍬", name: "Blood glucose control", sec: "3e", ord: 10, topic: "t17", fn: glucoseSim,
   words: [["homeostasis", "⚖️", "keeping internal conditions steady"], ["negative feedback", "🔁", "a response reverses a change"], ["insulin", "🔵", "hormone that lowers blood glucose"], ["glucagon", "🟠", "hormone that raises blood glucose"], ["pancreas", "🟡", "organ with islets that make hormones"], ["glycogen", "📦", "stored glucose in liver and muscles"], ["diabetes", "⚠️", "blood glucose control problem"]] });
-simReg({ id: "co2", ic: "🫁", name: "Breathing control (CO₂)", sec: "3e", ord: 20, topic: "t17", fn: co2Sim,
+simReg({ id: "co2", ic: "🏔️", name: "Breathing control (CO₂)", sec: "3e", ord: 20, topic: "t17", fn: co2Sim,
   words: [["homeostasis", "⚖️", "keeping internal conditions steady"], ["negative feedback", "🔁", "a response reverses a change"], ["carbon dioxide", "CO₂", "waste gas from respiration"], ["chemoreceptor", "📡", "sensor for chemicals in blood"], ["medulla oblongata", "🧠", "brain part controlling breathing"], ["diaphragm", "⌒", "muscle below the lungs"], ["intercostal muscles", "🦴", "muscles between the ribs"], ["pH", "🧪", "how acidic or alkaline blood is"]] });
 
 simStyle(`
@@ -30,7 +30,7 @@ simStyle(`
 .homo-events .btn { min-height:48px; width:100%; }
 .homo-check { display:flex; align-items:center; gap:8px; min-height:44px; font-weight:800; }
 .homo-check input { width:22px; height:22px; flex:none; }
-.homo-loop { display:grid; grid-template-columns:repeat(5,minmax(78px,1fr)); gap:8px; align-items:center; }
+.homo-loop { display:grid; grid-template-columns:1fr; gap:8px; align-items:center; }
 .homo-node { border:2px solid #E6DCD2; background:#fff; border-radius:15px; padding:8px 6px; min-height:68px; display:grid; place-items:center; text-align:center; font-weight:900; font-size:.78rem; line-height:1.2; position:relative; }
 .homo-node.on { background:#E6F8EC; border-color:#3FA06B; box-shadow:0 0 0 3px rgba(63,160,107,.18); }
 .homo-node.warn { background:#FFF0EC; border-color:#E9573F; }
@@ -38,6 +38,8 @@ simStyle(`
 .homo-arrow.on { color:#3FA06B; animation:homoPulse 1s ease-in-out infinite; }
 .homo-chiprow { display:flex; flex-wrap:wrap; gap:6px; }
 .homo-chip { display:inline-flex; align-items:center; gap:4px; border-radius:999px; padding:4px 9px; background:#F4EEE8; font-size:.78rem; font-weight:850; }
+.homo-node small{display:block;overflow-wrap:anywhere;}
+.homo-arrow { transform:rotate(90deg); }
 @keyframes homoPulse { 50% { transform:scale(1.08); filter:brightness(1.1); } }
 @media (max-width:560px) { .homo-loop { grid-template-columns:1fr 22px 1fr; } .homo-loop .homo-node:nth-of-type(4), .homo-loop .homo-node:nth-of-type(5) { grid-column:auto; } .homo-arrow { font-size:1rem; } }
 @media (prefers-reduced-motion: reduce) { .homo-arrow.on { animation:none; } }
@@ -45,10 +47,11 @@ simStyle(`
 
 const GLU_NORM = [4, 7];
 function glucoseSim(root) {
+  if (typeof tourEnd === "function" && typeof tourAt !== "undefined" && tourAt >= 0) tourEnd();
   const st = { h: 7, g: 5.2, run: false, fast: false, type1: false, shot: 0, meal: 0, exercise: 0, sleep: 0, hist: [], t: 0, mealEvents: 0, exerciseEvents: 0, sleepEvents: 0, injections: 0 };
   const snap = () => { const m = glucoseModel(st); return Object.assign(m, { hour: st.h, glucose: st.g, running: st.run, fast: st.fast, type1: st.type1, meal: st.meal > 0, exercise: st.exercise > 0, sleep: st.sleep > 0, mealEvents: st.mealEvents, exerciseEvents: st.exerciseEvents, sleepEvents: st.sleepEvents, injections: st.injections, shot: st.shot, normal: st.g >= GLU_NORM[0] && st.g <= GLU_NORM[1] }); };
   root.innerHTML = `<div class="simgrid wide">
-    <section class="card"><div id="gluScene" class="simsvg"></div>
+    <section class="card"><div id="gluScene" class="simsvg nozoom"></div>
       <div class="row simbtns"><button class="btn" id="gluRun">▶ Run day</button><button class="btn plain" id="gluFast">⏩ Fast</button><button class="btn plain" id="gluReset">↺ Reset</button></div>
       <div class="homo-events"><button class="btn yellow" data-ge="meal">🍚 Eat meal</button><button class="btn blue" data-ge="exercise">🏃 Exercise</button><button class="btn plain" data-ge="sleep">😴 Fast / sleep</button><button class="btn pink" id="gluShot">💉 Insulin injection</button></div>
       <label class="homo-check small"><input type="checkbox" id="gluType1"> ⚠️ Type 1 diabetes: β cells make no insulin</label>
@@ -101,23 +104,17 @@ function glucoseReadHtml(m) {
   return tile("🍬", "Blood glucose", `${m.glucose.toFixed(1)} mmol/L`, m.glucose / 12 * 100, m.normal ? "#3FA06B" : m.glucose > 7 ? "#E9573F" : "#5B8FE0") + tile("🔵", "Insulin", m.insulin.toFixed(1), m.insulin / 1.7 * 100, "#4A90E2") + tile("🟠", "Glucagon", m.glucagon.toFixed(1), m.glucagon / 1.25 * 100, "#F2A23A") + tile("🕘", "Time", `${String(Math.floor(m.hour)).padStart(2, "0")}:00`, m.hour / 24 * 100, "#8E5BD6");
 }
 function glucoseSceneSvg(st, m) {
-  const insN = Math.round(m.insulin * 10), gluN = Math.round(m.glucagon * 9), phase = st.t * 50;
-  const part = (n, c, y, from, to) => Array.from({ length: n }, (_, i) => { const p = (st.t * (.18 + i * .01) + i / Math.max(1, n)) % 1, x = from + (to - from) * p; return `<circle cx="${x.toFixed(1)}" cy="${(y + Math.sin(p * 6.28 + i) * 12).toFixed(1)}" r="4" fill="${c}" stroke="#fff" stroke-width="1.5"/>`; }).join("");
-  return `<svg viewBox="0 0 680 420" role="img" aria-label="Blood glucose homeostasis with pancreas, liver, muscles and body cells">
-    <defs><marker id="gArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#3FA06B"/></marker></defs>
-    <rect width="680" height="420" rx="18" fill="#FFF8EC"/><path d="M0 310 C140 286 270 340 420 310 S620 282 680 314 V420 H0Z" fill="#F3E3C8"/>
-    <g transform="translate(66 58)"><rect x="0" y="0" width="198" height="128" rx="34" fill="#FFD46B" stroke="${CO}" stroke-width="4"/><text x="99" y="26" text-anchor="middle" font-size="18" font-weight="950" fill="${CO}">Pancreas islets</text>
-      ${Array.from({ length: 13 }, (_, i) => `<circle cx="${28 + (i % 5) * 34}" cy="${48 + Math.floor(i / 5) * 27}" r="10" fill="${st.type1 ? "#C9C1B8" : (i % 2 ? "#A6D8FF" : "#8EC7FF")}" stroke="${m.pancreas === "β cells" ? "#2D7ACB" : CO}" stroke-width="${m.pancreas === "β cells" ? 3 : 1.5}"/>`).join("")}
-      ${Array.from({ length: 8 }, (_, i) => `<circle cx="${46 + (i % 4) * 34}" cy="${60 + Math.floor(i / 4) * 30}" r="7" fill="#FFC66D" stroke="${m.pancreas === "α cells" ? "#D07600" : CO}" stroke-width="${m.pancreas === "α cells" ? 3 : 1.5}"/>`).join("")}
-      <text x="20" y="116" font-size="12" font-weight="900" fill="${CO}">β 🔵 insulin · α 🟠 glucagon</text></g>
-    <g transform="translate(402 50)"><path d="M64 8 C124 8 164 38 160 86 C156 132 108 154 62 144 C24 136 0 108 8 72 C14 36 28 10 64 8Z" fill="#B56AA0" stroke="${CO}" stroke-width="4"/><text x="84" y="83" text-anchor="middle" font-size="23" font-weight="950" fill="#fff">Liver</text><text x="84" y="118" text-anchor="middle" font-size="13" font-weight="900" fill="#fff">${m.liverMode}</text></g>
-    <g transform="translate(402 246)"><path d="M14 58 C42 4 128 4 158 58 C127 96 42 96 14 58Z" fill="#E8876A" stroke="${CO}" stroke-width="4"/><text x="86" y="56" text-anchor="middle" font-size="18" font-weight="950" fill="#fff">Muscles</text><text x="86" y="78" text-anchor="middle" font-size="12" font-weight="900" fill="#fff">glycogen store</text></g>
-    <g transform="translate(116 266)">${[0, 1, 2, 3].map(i => `<g transform="translate(${i * 54} ${i % 2 * 18})"><rect x="0" y="0" width="42" height="42" rx="14" fill="${m.cellsMode === "doors closed" ? "#DDD3CA" : "#BDEBD0"}" stroke="${CO}" stroke-width="3"/><path d="M11 21 h20" stroke="${m.insulin > .35 ? "#3FA06B" : "#B9A99A"}" stroke-width="5" stroke-linecap="round"/><text x="21" y="64" text-anchor="middle" font-size="11" font-weight="900" fill="${CO}">cell</text></g>`).join("")}</g>
-    ${part(insN, "#4A90E2", 210, 220, 500)}${part(gluN, "#F2A23A", 172, 232, 480)}
-    ${Array.from({ length: Math.round(st.g * 2.1) }, (_, i) => `<polygon points="${70 + (i * 43 + phase) % 540},${226 + (i * 31) % 70} ${76 + (i * 43 + phase) % 540},${222 + (i * 31) % 70} ${82 + (i * 43 + phase) % 540},${226 + (i * 31) % 70} ${82 + (i * 43 + phase) % 540},${234 + (i * 31) % 70} ${76 + (i * 43 + phase) % 540},${238 + (i * 31) % 70} ${70 + (i * 43 + phase) % 540},${234 + (i * 31) % 70}" fill="#F3BC38" stroke="${CO}" stroke-width="1" opacity=".85"/>`).join("")}
-    <path d="M62 226 H620" stroke="#C84747" stroke-width="24" stroke-linecap="round" opacity=".18"/><path d="M62 226 H620" stroke="#C84747" stroke-width="5" stroke-linecap="round" stroke-dasharray="10 10"/>
-    <text x="340" y="30" text-anchor="middle" font-size="22" font-weight="950" fill="${CO}">${m.state === "high" ? "Glucose high → insulin should lower it" : m.state === "low" ? "Glucose low → glucagon raises it" : "Glucose in normal range"}</text>
-    ${st.type1 && m.glucose > 7 ? `<g transform="translate(32 366)"><rect width="616" height="38" rx="18" fill="#FFF0EC" stroke="#E9573F" stroke-width="3"/><text x="308" y="25" text-anchor="middle" font-size="15" font-weight="950" fill="#8B2E20">Type 1: no insulin from β cells. Injection can replace it.</text></g>` : ""}
+  const insN = Math.round(m.insulin * 8), gluN = Math.round(m.glucagon * 7), phase = st.t * 42;
+  const part = (n, c, y, from, to) => Array.from({ length: n }, (_, i) => { const p = (st.t * (.18 + i * .01) + i / Math.max(1, n)) % 1, x = from + (to - from) * p; return `<circle cx="${x.toFixed(1)}" cy="${(y + Math.sin(p * 6.28 + i) * 7).toFixed(1)}" r="3.2" fill="${c}" stroke="#fff" stroke-width="1"/>`; }).join("");
+  return `<svg viewBox="0 0 380 430" role="img" aria-label="Blood glucose homeostasis with pancreas islets, liver glycogen store and blood vessel">
+    <rect width="380" height="430" rx="18" fill="#FFF8EC"/><text x="190" y="24" text-anchor="middle" font-size="16" font-weight="950" fill="${CO}">${m.state === "high" ? "High glucose → insulin lowers it" : m.state === "low" ? "Low glucose → glucagon raises it" : "Glucose in normal range"}</text>
+    <g transform="translate(20 52)"><rect x="0" y="0" width="138" height="104" rx="28" fill="#FFD46B" stroke="${CO}" stroke-width="3"/><text x="69" y="20" text-anchor="middle" font-size="13" font-weight="950" fill="${CO}">Pancreas islets</text>${Array.from({ length: 12 }, (_, i) => `<circle cx="${24 + (i % 4) * 28}" cy="${42 + Math.floor(i / 4) * 21}" r="8" fill="${st.type1 ? "#C9C1B8" : "#8EC7FF"}" stroke="${m.pancreas === "β cells" ? "#2D7ACB" : CO}" stroke-width="${m.pancreas === "β cells" ? 2.5 : 1}"/>`).join("")}${Array.from({ length: 6 }, (_, i) => `<circle cx="${38 + (i % 3) * 30}" cy="${52 + Math.floor(i / 3) * 22}" r="5.5" fill="#FFC66D" stroke="${m.pancreas === "α cells" ? "#D07600" : CO}" stroke-width="${m.pancreas === "α cells" ? 2.5 : 1}"/>`).join("")}<text x="69" y="94" text-anchor="middle" font-size="12" font-weight="900" fill="${CO}">β insulin · α glucagon</text></g>
+    <g transform="translate(218 54)"><path d="M52 6 C98 6 134 30 130 70 C126 112 86 132 48 124 C18 118 0 94 8 62 C12 30 24 8 52 6Z" fill="#B56AA0" stroke="${CO}" stroke-width="3"/><text x="66" y="55" text-anchor="middle" font-size="17" font-weight="950" fill="#fff">Liver</text><text x="66" y="82" text-anchor="middle" font-size="11" font-weight="900" fill="#fff">${m.liverMode}</text><g opacity="${m.liverMode === "store glycogen" ? 1 : .45}">${[0,1,2,3,4].map(i=>`<circle cx="${34+i*14}" cy="104" r="5" fill="#F3BC38" stroke="#fff"/>`).join("")}</g><text x="66" y="124" text-anchor="middle" font-size="12" font-weight="900" fill="${CO}">glycogen store</text></g>
+    <path d="M28 224 H352" stroke="#C84747" stroke-width="26" stroke-linecap="round" opacity=".18"/><path d="M28 224 H352" stroke="#C84747" stroke-width="5" stroke-linecap="round" stroke-dasharray="9 8"/><text x="190" y="254" text-anchor="middle" font-size="12" font-weight="900" fill="${CO}">blood vessel: glucose + hormones travel in blood</text>
+    ${Array.from({ length: Math.round(st.g * 1.5) }, (_, i) => `<polygon points="${40 + (i * 29 + phase) % 300},${207 + (i * 19) % 36} ${45 + (i * 29 + phase) % 300},${204 + (i * 19) % 36} ${50 + (i * 29 + phase) % 300},${207 + (i * 19) % 36} ${50 + (i * 29 + phase) % 300},${214 + (i * 19) % 36} ${45 + (i * 29 + phase) % 300},${217 + (i * 19) % 36} ${40 + (i * 29 + phase) % 300},${214 + (i * 19) % 36}" fill="#F3BC38" stroke="${CO}" stroke-width=".8" opacity=".86"/>`).join("")}
+    ${part(insN, "#4A90E2", 190, 112, 286)}${part(gluN, "#F2A23A", 174, 118, 282)}
+    <g transform="translate(54 300)">${[0,1,2,3].map(i=>`<g transform="translate(${i*62} ${i%2*14})"><rect x="0" y="0" width="46" height="38" rx="14" fill="${m.cellsMode === "doors closed" ? "#DDD3CA" : "#BDEBD0"}" stroke="${CO}" stroke-width="2.5"/><path d="M12 19 h22" stroke="${m.insulin > .35 ? "#3FA06B" : "#B9A99A"}" stroke-width="5" stroke-linecap="round"/><text x="23" y="56" text-anchor="middle" font-size="12" font-weight="900" fill="${CO}">cell</text></g>`).join("")}</g>
+    ${st.type1 && m.glucose > 7 ? `<g transform="translate(24 382)"><rect width="332" height="32" rx="16" fill="#FFF0EC" stroke="#E9573F" stroke-width="2.5"/><text x="166" y="21" text-anchor="middle" font-size="12" font-weight="950" fill="#8B2E20">Type 1: no insulin from β cells; injection replaces it.</text></g>` : ""}
   </svg>`;
 }
 function glucoseGraphSvg(st, m) {
@@ -137,10 +134,11 @@ function glucoseLoopHtml(m) {
 }
 
 function co2Sim(root) {
+  if (typeof tourEnd === "function" && typeof tourAt !== "undefined" && tourAt >= 0) tourEnd();
   const st = { co2: 5.3, o2: 97, act: "rest", run: false, fast: false, hist: [], t: 0, tries: { rest: 0, exercise: 0, hold: 0, extra: 0 } };
   const snap = () => { const m = co2Model(st); return Object.assign(m, { co2: st.co2, o2: st.o2, activity: st.act, running: st.run, fast: st.fast, triedExercise: st.tries.exercise, triedHold: st.tries.hold, triedExtra: st.tries.extra, normal: st.co2 >= 4.7 && st.co2 <= 5.9 }); };
   root.innerHTML = `<div class="simgrid wide">
-    <section class="card"><div id="co2Scene" class="simsvg"></div>
+    <section class="card"><div id="co2Scene" class="simsvg nozoom"></div>
       <div class="row simbtns"><button class="btn" id="co2Run">▶ Run</button><button class="btn plain" id="co2Fast">⏩ Fast</button><button class="btn plain" id="co2Reset">↺ Reset</button></div>
       <div class="homo-events">${[["rest", "🧘 Rest"], ["exercise", "🏃 Exercise"], ["hold", "🤐 Hold breath"], ["extra", "CO₂ Extra CO₂ air"]].map(([k, l]) => `<button class="btn plain" data-ca="${k}">${l}</button>`).join("")}</div>
       <div id="co2Read" class="homo-readouts"></div></section>
@@ -183,19 +181,17 @@ function co2ReadHtml(m) {
   return tile("CO₂", "Blood CO₂", `${m.co2.toFixed(1)} kPa`, m.co2 / 10 * 100, m.normal ? "#3FA06B" : "#E9573F") + tile("🫁", "Rate", `${m.rate.toFixed(0)}/min`, m.rate / 46 * 100, "#4A90E2") + tile("↕️", "Depth", `${m.depth.toFixed(1)}×`, m.depth / 2.6 * 100, "#8E5BD6") + tile("🧪", "Blood pH", m.pH.toFixed(2), (m.pH - 7.05) / .5 * 100, m.pH < 7.35 ? "#E9573F" : "#3FA06B");
 }
 function co2SceneSvg(st, m) {
-  const breath = m.rate ? Math.sin(st.t * m.rate / 9) : -1, lung = 1 + m.depth * .11 * Math.max(0, breath), recOn = m.receptors, impN = m.impulses;
-  const impulses = Array.from({ length: impN }, (_, i) => { const p = (st.t * .7 + i / Math.max(1, impN)) % 1, x = 326 + 220 * p, y = 230 + Math.sin(p * Math.PI) * -55; return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="#FFD23F" stroke="${CO}" stroke-width="1"/>`; }).join("");
-  return `<svg viewBox="0 0 680 420" role="img" aria-label="Breathing control by carbon dioxide with chemoreceptors and breathing muscles">
-    <defs><marker id="cArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#FFD23F"/></marker></defs>
-    <rect width="680" height="420" rx="18" fill="#F2FAFF"/><rect y="290" width="680" height="130" fill="#E8F1FF"/>
-    <g transform="translate(70 44)"><path d="M88 12 C42 20 24 58 36 98 C48 138 88 154 128 136 C166 118 168 62 136 30 C124 18 108 10 88 12Z" fill="#D5C7F2" stroke="${CO}" stroke-width="4"/><text x="88" y="70" text-anchor="middle" font-size="25" font-weight="950" fill="${CO}">🧠</text><text x="88" y="96" text-anchor="middle" font-size="14" font-weight="950" fill="${CO}">medulla</text>
-      <circle cx="78" cy="124" r="13" fill="${recOn ? "#FFE27A" : "#fff"}" stroke="${recOn ? "#E0A800" : CO}" stroke-width="3"/><text x="78" y="128" text-anchor="middle" font-size="11" font-weight="900" fill="${CO}">CO₂</text></g>
-    <g transform="translate(270 70)"><path d="M70 70 C20 40 10 152 64 172 C84 140 92 102 70 70Z" fill="#FFB1C8" stroke="${CO}" stroke-width="4" transform="scale(${lung} 1) translate(${(1 - lung) * 70} 0)"/><path d="M116 70 C166 40 176 152 122 172 C102 140 94 102 116 70Z" fill="#FFB1C8" stroke="${CO}" stroke-width="4" transform="scale(${lung} 1) translate(${(1 - lung) * 116} 0)"/><path d="M93 42 V198" stroke="${CO}" stroke-width="8" stroke-linecap="round"/><path d="M34 207 Q94 ${226 + 18 * breath} 152 207" fill="none" stroke="#8E5BD6" stroke-width="9" stroke-linecap="round"/><text x="94" y="28" text-anchor="middle" font-size="17" font-weight="950" fill="${CO}">Lungs</text><text x="94" y="252" text-anchor="middle" font-size="13" font-weight="900" fill="${CO}">diaphragm + intercostal muscles</text></g>
-    <path d="M210 150 C270 150 286 188 324 200" stroke="${recOn ? "#FFD23F" : "#B9A99A"}" stroke-width="5" fill="none" marker-end="url(#cArr)"/>${impulses}
-    <g transform="translate(34 236)"><rect x="0" y="0" width="214" height="92" rx="18" fill="#fff" stroke="${CO}" stroke-width="3"/><text x="107" y="22" text-anchor="middle" font-size="15" font-weight="950" fill="${CO}">Chemoreceptors</text>
-      ${[[50, 56, "carotid"], [108, 62, "aortic"], [166, 52, "medulla"]].map(([x, y, l]) => `<circle cx="${x}" cy="${y}" r="18" fill="${recOn ? "#FFE27A" : "#EAF6FF"}" stroke="${recOn ? "#E0A800" : CO}" stroke-width="3"/><text x="${x}" y="${y + 32}" text-anchor="middle" font-size="10" font-weight="900" fill="${CO}">${l}</text>`).join("")}</g>
-    <g transform="translate(512 54)"><rect x="0" y="0" width="126" height="122" rx="18" fill="${m.high ? "#FFF0EC" : "#E6F8EC"}" stroke="${m.high ? "#E9573F" : "#3FA06B"}" stroke-width="3"/><text x="63" y="34" text-anchor="middle" font-size="22" font-weight="950" fill="${CO}">CO₂ ${m.co2.toFixed(1)}</text><text x="63" y="62" text-anchor="middle" font-size="15" font-weight="900" fill="${CO}">pH ${m.pH.toFixed(2)}</text><text x="63" y="94" text-anchor="middle" font-size="12" font-weight="900" fill="#7A6A66">CO₂ is main stimulus</text></g>
-    <text x="340" y="392" text-anchor="middle" font-size="20" font-weight="950" fill="${CO}">${st.act === "exercise" ? "Exercise: muscles respire → CO₂ rises" : st.act === "hold" ? "Hold breath: CO₂ builds up fast" : st.act === "extra" ? "Extra CO₂ air: chemoreceptors fire" : "Rest: gases near normal"}</text>
+  const breath = m.rate ? Math.sin(st.t * m.rate / 9) : -1, lung = 1 + m.depth * .08 * Math.max(0, breath), recOn = m.receptors, impN = m.impulses;
+  const impulses = Array.from({ length: impN }, (_, i) => { const p = (st.t * .7 + i / Math.max(1, impN)) % 1, x = 112 + 150 * p, y = 166 + Math.sin(p * Math.PI) * -34; return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.2" fill="#FFD23F" stroke="${CO}" stroke-width=".8"/>`; }).join("");
+  return `<svg viewBox="0 0 380 430" role="img" aria-label="Breathing control by carbon dioxide: medulla, carotid and aortic chemoreceptors, intercostal muscles and diaphragm">
+    <defs><marker id="cArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#FFD23F"/></marker></defs>
+    <rect width="380" height="430" rx="18" fill="#F2FAFF"/><rect y="286" width="380" height="144" fill="#E8F1FF"/>
+    <g transform="translate(22 46)"><path d="M62 10 C26 16 12 48 22 80 C32 114 64 128 96 112 C126 96 128 50 104 24 C94 14 78 8 62 10Z" fill="#D5C7F2" stroke="${CO}" stroke-width="3"/><text x="62" y="58" text-anchor="middle" font-size="24" font-weight="950" fill="${CO}">🧠</text><text x="62" y="82" text-anchor="middle" font-size="13" font-weight="950" fill="${CO}">medulla</text><circle cx="58" cy="110" r="11" fill="${recOn ? "#FFE27A" : "#fff"}" stroke="${recOn ? "#E0A800" : CO}" stroke-width="2.5"/><text x="58" y="114" text-anchor="middle" font-size="12" font-weight="900" fill="${CO}">CO₂</text></g>
+    <g transform="translate(188 62)"><path d="M50 68 C8 40 0 148 46 166 C64 130 68 94 50 68Z" fill="#FFB1C8" stroke="${CO}" stroke-width="3" transform="scale(${lung} 1) translate(${(1 - lung) * 50} 0)"/><path d="M106 68 C148 40 156 148 110 166 C92 130 88 94 106 68Z" fill="#FFB1C8" stroke="${CO}" stroke-width="3" transform="scale(${lung} 1) translate(${(1 - lung) * 106} 0)"/><path d="M78 36 V196" stroke="${CO}" stroke-width="7" stroke-linecap="round"/><path d="M26 202 Q78 ${220 + 16 * breath} 132 202" fill="none" stroke="#8E5BD6" stroke-width="8" stroke-linecap="round"/><g stroke="#9EC3E8" stroke-width="4" opacity=".9">${[0,1,2,3].map(i=>`<path d="M${18+i*12} ${114+i*12} H${138-i*12}"/>`).join("")}</g><text x="78" y="25" text-anchor="middle" font-size="14" font-weight="950" fill="${CO}">lungs</text><text x="78" y="232" text-anchor="middle" font-size="12" font-weight="900" fill="${CO}">diaphragm + intercostals</text></g>
+    <path d="M112 150 C156 148 184 176 214 190" stroke="${recOn ? "#FFD23F" : "#B9A99A"}" stroke-width="4" fill="none" marker-end="url(#cArr)"/>${impulses}
+    <g transform="translate(24 236)"><rect x="0" y="0" width="164" height="88" rx="16" fill="#fff" stroke="${CO}" stroke-width="2.5"/><text x="82" y="20" text-anchor="middle" font-size="13" font-weight="950" fill="${CO}">Chemoreceptors</text>${[[38,52,"carotid"],[82,60,"aortic"],[128,50,"medulla"]].map(([x,y,l])=>`<circle cx="${x}" cy="${y}" r="14" fill="${recOn ? "#FFE27A" : "#EAF6FF"}" stroke="${recOn ? "#E0A800" : CO}" stroke-width="2.4"/><text x="${x}" y="${y+27}" text-anchor="middle" font-size="12" font-weight="900" fill="${CO}">${l}</text>`).join("")}</g>
+    <g transform="translate(246 42)"><rect x="0" y="0" width="108" height="88" rx="16" fill="${m.high ? "#FFF0EC" : "#E6F8EC"}" stroke="${m.high ? "#E9573F" : "#3FA06B"}" stroke-width="2.5"/><text x="54" y="29" text-anchor="middle" font-size="17" font-weight="950" fill="${CO}">CO₂ ${m.co2.toFixed(1)}</text><text x="54" y="54" text-anchor="middle" font-size="13" font-weight="900" fill="${CO}">pH ${m.pH.toFixed(2)}</text><text x="54" y="76" text-anchor="middle" font-size="12" font-weight="900" fill="#7A6A66">main stimulus</text></g>
+    <text x="190" y="396" text-anchor="middle" font-size="15" font-weight="950" fill="${CO}">${st.act === "exercise" ? "Exercise: respiration makes CO₂ rise" : st.act === "hold" ? "Hold breath: CO₂ builds up" : st.act === "extra" ? "Extra CO₂: receptors fire" : "Rest: gases near normal"}</text>
   </svg>`;
 }
 function co2GraphSvg(st, m) {

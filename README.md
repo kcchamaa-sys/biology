@@ -71,14 +71,20 @@ Every topic is open, so students can jump to the one their class is on (the map 
 
 ## 🔬 Simulation Lab (🔬 Lab tab in the bottom bar)
 
-Interactive models for the whole HKDSE Compulsory Part **"Organisms and Environment"**, grouped into six section chips: 🌿 a. Plants · 🍙 b. Animals · 🌸 c. Growth · 🧠 d. Senses (coordination) · ⚖️ e. Balance (homeostasis) · 🌍 f. Ecosystems. Each simulation page has the same picture-first layout for second-language learners:
+Interactive models for the whole HKDSE Biology **compulsory part**, grouped like the curriculum: four part tabs → section chips → simulation tabs, plus a **🗺️ All labs** map with challenge progress.
+- **I. Cells and Molecules of Life:** 🧪 a. Molecules (food tests, building biomolecules) · 🔬 b. Cells (cell explorer & microscope) · 🫧 c. Membranes (diffusion & SA:V, osmosis tubing, osmosis in cells) · 🧬 d. Division (mitosis & meiosis) · ⚡ e. Energy (enzymes, photosynthesis, respiration)
+- **II. Genetics and Evolution:** 🫛 a. Inheritance (genetic crosses, pedigrees) · 🧫 b. DNA (DNA to protein, DNA fingerprinting & genetic engineering) · 🦋 c. Evolution (classification & keys, natural selection)
+- **III. Organisms and Environment:** 🌿 a. Plants · 🍙 b. Animals · 🌸 c. Growth · 🧠 d. Senses (coordination) · ⚖️ e. Balance (homeostasis) · 🌍 f. Ecosystems
+- **IV. Health and Diseases:** 🥗 a. Health (smoking, heart health) · 🦠 b. Diseases (disease spread, antibiotics) · 🛡️ c. Defence (immune response)
+
+Each simulation page has the same picture-first layout for second-language learners:
 
 1. **🔮 Predict first** (one question, then the model unlocks).
 2. **The model**: picture + controls + live readings + "🧠 What's happening?" cause → effect chain.
 3. **📖 Key words**: picture chips with a one-line meaning and 🔊.
 4. **🎯 Challenge (about 15 min)**: 4–5 missions (Explore → Measure → Investigate → Explain → Apply → 🧠 Exam check). Most tasks can only be done by *using* the model: "get the reading into the green zone" goals with a live gauge, "read it off the graph" numbers, and 🔒 tasks that open after the student tries something. Keyword chips speak and explain the word. A sticky task bar keeps the current task in view while students work on the model. Rewards: +2 🌰 per task, +5 per mission, +20 for finishing; stars for few mistakes and few hints. Progress is saved per student (`S.simc`).
 
-How to add or extend a simulation (design logic, API, task types, visual-aid rules, checklist): **[`docs/SIM_LAB_GUIDE.md`](docs/SIM_LAB_GUIDE.md)**. Check with `NODE_PATH=$(npm root -g) node tools/check_lab.js` (Playwright: every model renders at phone width, every challenge is valid and can be finished).
+How to add or extend a simulation (design logic, API, task types, visual-aid rules, checklist): **[`docs/SIM_LAB_GUIDE.md`](docs/SIM_LAB_GUIDE.md)**. Check with `NODE_PATH=$(npm root -g) node tools/check_lab.js` (Playwright: every model renders at phone width, every challenge is valid and can be finished) and `NODE_PATH=$(npm root -g) node tools/check_layout.js` (every lab at phone, iPad and desktop sizes: no sideways scroll, no cut-off, overlapping or tiny labels).
 
 - **🫁 Breathing:** an animated chest (ribs, intercostal muscles, diaphragm, lungs, trachea) with auto or hand-controlled breathing and an exercise mode. A live graph plots **pressure in the lungs against time** (relative to atmospheric, with lung volume as an option), and the steps of inhalation/exhalation update as they happen.
 - **👁️ Pupil reflex:** a light slider (dark room → bright sun, plus a torch flash). The pupil changes size after a short reflex delay; circular vs radial muscles light up, the reflex arc animates, and a bar shows how much light reaches the retina.
