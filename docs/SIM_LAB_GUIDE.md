@@ -170,7 +170,7 @@ The **right answer is always written first**; the engine shuffles. `p` is the cu
 
 **Rewards and saving** (automatic): +2 🌰 per task, +5 per mission, +20 for the whole challenge (all × streak bonus). Finishing a mission counts as studying today (streak). Progress is in `S.simc[id] = { d: { "mission.task": 1 }, w, h, secs, fin }`. Stars: ⭐⭐⭐ ≤ 2 wrong, ⭐⭐ ≤ 6 wrong.
 
-**The task dock:** while the current task is off-screen, a sticky bar above the bottom nav shows it (with a live 🟢 light for `goal`/`need`), so students can scroll up, use the simulation, and still see what to do.
+**The task dock:** while the current task is off-screen, a sticky bar above the bottom nav shows it (with a live 🟢 light for `goal`/`need`), so students can scroll up, use the simulation, and still see what to do. When a task is done there, the dock shows ✅ + the short "why" and a **Next ›** button, so the student can keep working at the model without scrolling.
 
 ### Coding conventions
 - Inline SVG only, drawn in code, with a `viewBox` and `role="img"` + `aria-label`. No images, fonts or libraries from the web.

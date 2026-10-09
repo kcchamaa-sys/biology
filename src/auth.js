@@ -256,7 +256,7 @@ function renderLogin() {
     </section>
     <div class="teasers"><div class="teaser"><span aria-hidden="true">📚</span><b>${ROOMS.length} stages</b><span class="small">across ${TOPICS.length} topics</span></div>
       <div class="teaser"><span aria-hidden="true">🐾</span><b>${PETS.length} rare pets</b><span class="small">with real biology stories</span></div>
-      <div class="teaser"><span aria-hidden="true">🔬</span><b>${SIMS.length} simulations</b><span class="small">cells, osmosis, lungs, eyes, ears, plants</span></div></div>
+      <div class="teaser"><span aria-hidden="true">🔬</span><b>${SIMS.length} simulations</b><span class="small">plants, animals, growth, senses, balance, ecosystems + 🎯 challenges</span></div></div>
   </section>`;
   document.getElementById("lgGuest").onclick = playAsGuest;
   if (on) renderGBtn("gbtn");

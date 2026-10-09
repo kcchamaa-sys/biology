@@ -33,7 +33,7 @@ Every topic is open, so students can jump to the one their class is on (the map 
 
 ## 🏠 Layout, art and dress-up
 
-- **Mochi-style home with a bottom tab bar** (🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🐾 Pets · 🏆 Rewards · 🔬 Lab), so each screen is short and students rarely scroll. Home leads with the Lucky Capsule and the **one next step**; everything else (streak, daily mission, class board, featured pal, tips) sits in **fold bars**: an icon, a short title and one peek number, remembered open or closed per student. Pals are grouped into rarity folds, and the Lab's Quick check and Practice's mastery chart fold away too.
+- **Mochi-style home with a bottom tab bar** (🏠 Home · 🗺️ Stages · 🎮 Practice · 👗 Dress up · 🐾 Pets · 🏆 Rewards · 🔬 Lab), so each screen is short and students rarely scroll. Home leads with the Lucky Capsule and the **one next step**; everything else (streak, daily mission, class board, featured pal, tips) sits in **fold bars**: an icon, a short title and one peek number, remembered open or closed per student. Pals are grouped into rarity folds, and Practice's mastery chart folds away too.
 - **Art style:** characters are soft, squishy one-piece blobs with thin warm-brown outlines, big blush, nub arms and sparkles (in the style of the Mochi Science Pals game).
 - **👗 Dress up:** a fitting room with 7 slots (hats, wigs, glasses, outfits, accessories, hand items, frames). Tap to try on for free, tap again to buy with 🌰. 35 items, including 🔥 trend / meme items (Pop-Star Swoop wig, Moonwalk jacket + fedora + sparkly glove, Six-seven signs, Deal-with-it shades, Blind-box monster hood, Dubai chocolate, Aura +1000 chain, idol twin-tails, wolf cut, ballerina cappuccino tutu…) and 🇭🇰 Hong Kong items (pineapple-bun hat, milk tea, ding-ding tram tee, lucky mahjong tile).
 - **⏱️ Escape or 📖 Study mode:** a switch on Home and Stages. Study mode skips the escape room: students answer the stage's 15 questions as a calm series with no time limit. Every answer shows the explanation; wrong ones come back once as a second chance at the end. Finishing the series completes the stage (stars come from first-try answers), and mistakes go to the Mistake Notebook.
@@ -71,7 +71,14 @@ Every topic is open, so students can jump to the one their class is on (the map 
 
 ## 🔬 Simulation Lab (🔬 Lab tab in the bottom bar)
 
-Seven interactive models, each with a 2-question quick check (+3 🌰 the first time). The Lab tabs follow the **topic order of the question mode** (Cell membrane → Osmosis tubing → Breathing → Pupil → Focusing → Hearing → Phototropism).
+Interactive models for the whole HKDSE Compulsory Part **"Organisms and Environment"**, grouped into six section chips: 🌿 a. Plants · 🍙 b. Animals · 🌸 c. Growth · 🧠 d. Senses (coordination) · ⚖️ e. Balance (homeostasis) · 🌍 f. Ecosystems. Each simulation page has the same picture-first layout for second-language learners:
+
+1. **🔮 Predict first** (one question, then the model unlocks).
+2. **The model**: picture + controls + live readings + "🧠 What's happening?" cause → effect chain.
+3. **📖 Key words**: picture chips with a one-line meaning and 🔊.
+4. **🎯 Challenge (about 15 min)**: 4–5 missions (Explore → Measure → Investigate → Explain → Apply → 🧠 Exam check). Most tasks can only be done by *using* the model: "get the reading into the green zone" goals with a live gauge, "read it off the graph" numbers, and 🔒 tasks that open after the student tries something. Keyword chips speak and explain the word. A sticky task bar keeps the current task in view while students work on the model. Rewards: +2 🌰 per task, +5 per mission, +20 for finishing; stars for few mistakes and few hints. Progress is saved per student (`S.simc`).
+
+How to add or extend a simulation (design logic, API, task types, visual-aid rules, checklist): **[`docs/SIM_LAB_GUIDE.md`](docs/SIM_LAB_GUIDE.md)**. Check with `NODE_PATH=$(npm root -g) node tools/check_lab.js` (Playwright: every model renders at phone width, every challenge is valid and can be finished).
 
 - **🫁 Breathing:** an animated chest (ribs, intercostal muscles, diaphragm, lungs, trachea) with auto or hand-controlled breathing and an exercise mode. A live graph plots **pressure in the lungs against time** (relative to atmospheric, with lung volume as an option), and the steps of inhalation/exhalation update as they happen.
 - **👁️ Pupil reflex:** a light slider (dark room → bright sun, plus a torch flash). The pupil changes size after a short reflex delay; circular vs radial muscles light up, the reflex arc animates, and a bar shows how much light reaches the retina.
