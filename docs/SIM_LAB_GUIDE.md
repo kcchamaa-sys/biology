@@ -195,6 +195,8 @@ NODE_PATH=$(npm root -g) node tools/smoke.js       # whole-game smoke test
 
 Before you finish, also try every `goal` task by hand: it must be reachable with the controls on screen.
 
+Avoid a first `goal` that the model already meets when it opens (e.g. "play the heart" when it starts playing): it ticks itself off before the student does anything. Ask for a real change instead (🐢 slow motion, a preset, a slider into a zone). If a `read` answer changes while the model runs, add a `need` that pauses it (or a wide `tol` + `readTip`).
+
 ## 6. Checklist for a new simulation
 - [ ] One abstract idea, written as a cause → effect sentence (top-of-function comment).
 - [ ] `simReg` with `sec`, `ord`, `topic` and 5–8 `words`.
