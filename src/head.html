@@ -1556,6 +1556,9 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
 @media (max-width: 560px) { .ctiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; } .ctile { min-height: 70px; } .ctile .cti { width: 38px; height: 38px; font-size: 1.3rem; } .ctile b { font-size: .7rem; }
   .actpal { grid-template-columns: 96px minmax(0, 1fr); } .apfig svg { width: 96px; } .homeroom .petroom { height: 250px; } }
 @media (prefers-reduced-motion: reduce) { .qsteps li.next .qdot, .helpbtn.glow, .gpoint, .gquest span.next, .ctile.busy .cti { animation: none; } }
+.rplist { display: grid; gap: 6px; max-height: 50vh; overflow: auto; } .rprow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 10px; padding: 8px 10px; border-radius: 12px; background: #F8F2F9; }
+.rprow .small { grid-column: 1 / -1; } .rpchg { font-variant-numeric: tabular-nums; }
+.guestbar { background: #EAF4FF; border-color: #8FC0F2; }
 </style>
 </head>
 <body>

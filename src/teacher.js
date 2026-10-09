@@ -78,7 +78,7 @@ function statsHtml() {
   return `<section class="card stathead"><div class="row" style="justify-content:space-between"><h2 style="margin:0">📊 Class statistics</h2><span class="small muted">🕒 ${new Date(TS.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span></div>
       <div class="row stfilters"><label class="small"><select id="stCls" class="name" aria-label="Class">${["all", ...C.classes].map(c => `<option value="${esc(c)}" ${c === TS.cls ? "selected" : ""}>${c === "all" ? "All classes" : `Class ${esc(c)}`}</option>`).join("")}</select></label>
         <div class="slottabs" role="tablist" aria-label="Period">${["7", "30", "90", "all"].map(p => `<button role="tab" aria-selected="${p === TS.period}" data-per="${p}">${{ 7: "7 d", 30: "30 d", 90: "90 d", all: "All" }[p]}</button>`).join("")}</div>
-        <button class="btn plain sm" id="stRefresh" aria-label="Refresh">🔄</button><button class="btn yellow sm" id="stCsv">⬇️ CSV</button><button class="btn plain sm" id="stCode">📋 Server code</button></div>
+        <button class="btn plain sm" id="stRefresh" aria-label="Refresh">🔄</button><button class="btn yellow sm" id="stCsv">⬇️ CSV</button><button class="btn plain sm" id="stCode">📋 Server code</button><button class="btn plain sm" id="stRepair">🔧 Check streaks</button></div>
       ${chips ? `<div class="gchips">${chips}</div>` : ""}</section>
     <div class="kpis">${tile("👥", `${C.active.length}<small>/${C.rows.length}</small>`, "active", ring(C.active.length, C.rows.length))}${tile("✏️", C.ans.toLocaleString(), "questions")}${tile("🎯", C.acc == null ? "–" : `${C.acc}%`, "right")}${tile("🔥", avgStreak, "avg streak")}</div>
     <div class="statgrid">
@@ -121,6 +121,7 @@ function wireStats() {
   g("stRefresh").onclick = () => { SFX.tap(); TS.data = null; loadStats(true); renderMap(); };
   g("stCsv").onclick = () => { SFX.tap(); downloadStatsCsv(); };
   g("stCode").onclick = () => { SFX.tap(); openServerCode(); };
+  g("stRepair").onclick = () => { SFX.tap(); openRepair(); };
 }
 function downloadStatsCsv() {
   const C = computeStats(), q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
@@ -158,4 +159,26 @@ function openServerCode() {
   b.onclick = () => { SFX.tap(); copyText(SERVER_CODE).then(ok => {
     if (ok) { SFX.item(); b.textContent = "✅ Copied! Now paste it into Apps Script"; b.classList.remove("yellow"); toast("📋 Server code copied"); }
     else { const t = document.getElementById("scText"); t.closest("details").open = true; t.focus(); t.select(); toast("Press Ctrl / ⌘ + C to copy the selected code"); } }); };
+}
+
+/* ----- 🔧 Streak check & restore (teacher): rebuild streaks from the activity records on the server -----
+   First a dry run lists who would change (before → after); "Restore" writes it. Nothing is ever lowered. */
+function openRepair() {
+  openModal(`<span class="kicker">🔧 Streak check</span><h2>Checking every student…</h2><p class="muted">Reading the activity records ⏳</p>`);
+  api("repair", { dry: true }).then(j => {
+    if (!j || !j.ok) { openModal(`<span class="kicker">🔧 Streak check</span><h2>Couldn't check</h2>${j && j.error === "unknown_action" ? say("chiikawa", "The class server needs the latest code first. Tap 📋, then follow the 4 steps.", "normal", "hint") + `<button class="btn yellow" id="rpCode">📋 Copy server code</button>` : `<p class="bad">${esc(errText(j ? j.error : "network"))}</p>`}`);
+      const c = document.getElementById("rpCode"); if (c) c.onclick = () => { SFX.tap(); openServerCode(); }; return; }
+    const info = {}; ((TS.data && TS.data.students) || []).forEach(s => { info[s.email] = s; });
+    const nm = em => { const s = info[em]; return s ? `${esc(s.cls)}${s.no ? `-${esc(s.no)}` : ""} ${esc(s.en || s.zh)}` : esc(em.split("@")[0]); };
+    const list = j.fixed || [];
+    openModal(`<span class="kicker">🔧 Streak check · ${j.checked} students</span>
+      <h2>${list.length ? `${list.length} streak${list.length > 1 ? "s" : ""} to restore` : "✅ All streaks are right"}</h2>
+      ${list.length ? `<div class="rplist">${list.map(x => `<div class="rprow"><b>${nm(x.email)}</b><span class="rpchg">🔥 ${x.before.streak} → <b>${x.after.streak}</b></span><span class="small muted">best ${x.before.best} → ${x.after.best} · last ${x.before.last ? fmtDay(x.before.last) : "–"} → ${fmtDay(x.after.last)}</span></div>`).join("")}</div>
+        <p class="small muted" style="margin:0">Rebuilt from the finished activities in the Records tab. Streaks only go up, never down. Students see it the next time they sign in.</p>
+        <div class="row"><button class="btn big" id="rpGo">✅ Restore ${list.length}</button><button class="btn plain" id="rpNo">Not now</button></div>`
+      : `<p class="small muted">Every student's saved streak already matches (or beats) their activity records.</p><button class="btn" id="rpNo">OK</button>`}`, { wide: true });
+    const no = document.getElementById("rpNo"); if (no) no.onclick = () => { SFX.tap(); closeModal(); };
+    const go = document.getElementById("rpGo"); if (go) go.onclick = () => { SFX.tap(); go.disabled = true; go.textContent = "Restoring… ⏳";
+      api("repair", {}).then(k => { if (k && k.ok) { SFX.item(); closeModal(); toast(`✅ Restored ${k.fixed.length} streak${k.fixed.length === 1 ? "" : "s"}`); TS.data = null; loadStats(true); renderMap(); } else { go.disabled = false; go.textContent = "Try again"; toast("Couldn't restore: " + errText(k ? k.error : "network")); } }); };
+  });
 }

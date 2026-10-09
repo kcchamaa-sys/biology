@@ -1,7 +1,10 @@
 // Cloud-sync and streak checks: NODE_PATH=$(npm root -g) node tools/check_sync.js (from the repo root, after python3 tools/build.py)
 // Sync + streak tests against a fake class server that behaves like server/Code.gs (one cell, 49,000-character cap)
 const { chromium } = require("playwright");
-const DB = {}; let failNext = 0, saves = 0, rejects = 0;
+const DB = {}, RECS = []; let failNext = 0, saves = 0, rejects = 0;
+const vm = require("vm"), fs = require("fs"), GS = { PropertiesService: { getScriptProperties: () => ({ getProperty: () => "" }) } };
+vm.createContext(GS); vm.runInContext(fs.readFileSync(require("path").join(__dirname, "../server/Code.gs"), "utf8"), GS);
+const ymdLocal = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const res = o => ({ status: 200, contentType: "application/json", body: JSON.stringify(o) });
 function server(route) {
   const body = JSON.parse(route.request().postData() || "{}"), em = "stu@school.hk";
@@ -11,7 +14,12 @@ function server(route) {
     if (failNext) { failNext--; return route.fulfill(res({ ok: false, error: "server: busy" })); }
     if (String(body.state).length > 49000) { rejects++; return route.fulfill(res({ ok: false, error: "server: progress too large" })); }
     DB[em] = { state: body.state, summary: body.summary }; return route.fulfill(res({ ok: true })); }
-  if (body.action === "record") return route.fulfill(res({ ok: true, saved: (body.records || []).length }));
+  if (body.action === "record") { (body.records || []).forEach(r => RECS.push(r)); return route.fulfill(res({ ok: true, saved: (body.records || []).length })); }
+  if (body.action === "repair") { // same rule as Code.gs repairStreaks: finished activities with answers, dated by their end time
+    const days = RECS.filter(r => r.status === "done" && r.ans > 0).map(r => ymdLocal(new Date(r.end))), today = ymdLocal(new Date(NOW)), fixed = [];
+    if (DB[em]) { let st = JSON.parse(DB[em].state); const out = GS.rebuildStreak(st, days, today);
+      if (out.changed) { fixed.push({ email: em, before: out.before, after: out.after }); if (!body.dry) { DB[em].state = JSON.stringify(out.state); DB[em].summary.streak = out.after.streak; } } }
+    return route.fulfill(res({ ok: true, checked: 1, fixed, dry: !!body.dry })); }
   if (body.action === "board") return route.fulfill(res({ ok: true, cats: { xp: { top: [], me: null }, streak: { top: [], me: null }, col: { top: [], me: null } } }));
   if (body.action === "friends") return route.fulfill(res({ ok: true, code: "ABC123", friends: [], cheers: [] }));
   return route.fulfill(res({ ok: false, error: "unknown_action" }));
@@ -101,6 +109,41 @@ const DAY = (d, h = 16) => new Date(2026, 9, d, h, 0, 0);
   check(B.coins === coinsA && B.streak === 1 && B.mp === mpA && B.mk === 480 && B.rooms === 60, `device B loads the cloud save (${JSON.stringify(B)})`);
   await p.evaluate(() => { activityDone({ mode: "study", room: ROOMS[1], ans: 5, cor: 5 }); gainCoins(3); cloudSave(); }); await p.waitForTimeout(600);
   check(DB["stu@school.hk"].summary.coins === coinsA + 3 + 0 || DB["stu@school.hk"].summary.coins >= coinsA + 3, "device B's new chestnuts reach the server");
+  await ctx.close();
+  // ---------- Merge: an old copy can never wipe newer progress ----------
+  ({ ctx, p } = await device(9));
+  const mg = await p.evaluate(() => {
+    const A = normalise({ upd: 200, coins: 50, current_streak: 2, longest_streak: 4, last_study_day: "2026-10-05", completed_rooms: [ROOMS[0].id], room_stars: { [ROOMS[0].id]: 1 }, mastered_puzzles: ["a:1"] });
+    const B = normalise({ upd: 100, coins: 900, current_streak: 6, longest_streak: 6, last_study_day: "2026-10-08", completed_rooms: [ROOMS[0].id, ROOMS[1].id], room_stars: { [ROOMS[0].id]: 3 }, mastered_puzzles: ["b:2"] });
+    const m = mergeSaves(A, B);
+    return { coins: m.coins, st: m.current_streak, best: m.longest_streak, last: m.last_study_day, rooms: m.completed_rooms.length, stars: m.room_stars[ROOMS[0].id], mp: m.mastered_puzzles.length };
+  });
+  check(mg.coins === 50 && mg.st === 6 && mg.best === 6 && mg.last === "2026-10-08" && mg.rooms === 2 && mg.stars === 3 && mg.mp === 2, `merge keeps the newer coins but the later streak and all earned progress ${JSON.stringify(mg)}`);
+  await ctx.close();
+  // ---------- Guest mode on a class device: a clear warning, and guest progress can join the account ----------
+  ({ ctx, p } = await device(9));
+  await p.click("#lgGuest"); await p.fill("#nm", "G"); await p.click("#go"); await p.waitForTimeout(700);
+  await p.evaluate(() => { if (typeof tourEnd === "function") tourEnd(); S.tourV = 2; activityDone({ mode: "study", room: ROOMS[5], ans: 5, cor: 5 }); S.longest_streak = 50; save(); renderMap(); });
+  check(!!(await p.$(".guestbar")), "guest mode shows the 'Playing as guest' bar");
+  await p.evaluate(() => { authPref(""); }); await signIn(p);
+  await p.waitForTimeout(2200); const gm = await p.evaluate(() => !!document.getElementById("gmYes"));
+  check(gm, "signing in offers to add the guest progress");
+  if (gm) { await p.click("#gmYes"); await p.waitForTimeout(300); }
+  check(await p.evaluate(() => S.longest_streak) === 50, "the guest's best streak is now in the account");
+  await ctx.close();
+  // ---------- Repair: records uploaded late are dated by when they happened; the teacher's restore raises the streak ----------
+  const em = "stu@school.hk", st0 = JSON.parse(DB[em].state); st0.current_streak = 1; st0.longest_streak = Math.max(1, st0.longest_streak); st0.last_study_day = "2026-10-06"; DB[em].state = JSON.stringify(st0);
+  RECS.length = 0; [6, 7, 8, 9].forEach(d => RECS.push({ mode: "study", ans: 10, cor: 8, status: "done", end: DAY(d).toISOString() }));
+  ({ ctx, p } = await device(9));
+  await signIn(p);
+  const dryFixed = await p.evaluate(() => api("repair", { dry: true }).then(j => j.fixed.length));
+  check(dryFixed === 1 && JSON.parse(DB[em].state).current_streak === 1, "dry run lists the student without changing anything");
+  await p.evaluate(() => api("repair", {}));
+  check(JSON.parse(DB[em].state).current_streak === 4 && DB[em].summary.streak === 4, "restore rebuilds a 4-day streak from the records");
+  await ctx.close();
+  ({ ctx, p } = await device(9));
+  await signIn(p);
+  check(await p.evaluate(() => S.current_streak) === 4, "the student sees the restored streak on the next sign-in");
   await ctx.close();
   console.log(`\nsaves ${saves}, rejected ${rejects}`); console.log("page errors:", errs.length ? errs : "none");
   console.log(fails ? `${fails} FAILED` : "ALL PASSED"); await b.close(); process.exit(fails ? 1 : 0);

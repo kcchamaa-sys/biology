@@ -5,7 +5,7 @@ Part of a **three-repo family** that shares knowledge. Read [`docs/SHARED_KNOWLE
 Siblings: `kcchamaa-sys/biology` (hub), `kcchamaa-sys/s1science`, `kcchamaa-sys/s3science`. If a task would benefit from a sibling and it isn't in the session, attach it with `add_repo`.
 
 ## This repo
-- Hub repo. Sec 4–6 Biology escape rooms. Source is in `src/`; run `python3 tools/build.py` to regenerate `index.html` (never hand-edit it). Checks: `node tools/check_content.js`, `node tools/check_bodypal.js` (Body Pal engine), `node tools/smoke.js`, `node tools/check_sync.js` (cloud save + streaks; Playwright, like smoke).
+- Hub repo. Sec 4–6 Biology escape rooms. Source is in `src/`; run `python3 tools/build.py` to regenerate `index.html` (never hand-edit it). Checks: `node tools/check_content.js`, `node tools/check_bodypal.js` (Body Pal engine), `node tools/smoke.js`, `node tools/check_sync.js` (cloud save + streaks; Playwright, like smoke), `node tools/check_server.js` (server streak repair).
 - Deploy is automatic: pushes to `claude/wonderful-turing-8ehr7a` run `.github/workflows/deploy.yml` (build + checks → `gh-pages`). Don't push to `gh-pages` by hand.
 
 ## Working agreements

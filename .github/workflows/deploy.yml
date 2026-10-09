@@ -29,6 +29,9 @@ jobs:
       - name: Body Pal checks
         run: node tools/check_bodypal.js
 
+      - name: Server logic checks
+        run: node tools/check_server.js
+
       - name: Publish to gh-pages
         env:
           SRC_SHA: ${{ github.sha }}

@@ -38,8 +38,14 @@ function markStale() {
   AUTH.stale = true; renderTools(); toast("⚠️ Sign-in timed out. Sign in again so your streak and chestnuts reach your class.");
   if (cloudOn()) withGIS(() => { try { google.accounts.id.prompt(); } catch (e) {} });
 }
-const staleBarHtml = () => signedIn() && AUTH.stale ? `<section class="card stalebar" role="alert"><span aria-hidden="true">☁️</span><div><b>Not saving to your class</b><div class="small">Sign-in timed out. Your progress is safe on this device and uploads as soon as you sign in again.</div></div><button class="btn sm blue" id="staleGo">🔄 Sign in again</button></section>` : "";
-function wireStaleBar() { const b = document.getElementById("staleGo"); if (b) b.onclick = () => { SFX.tap(); openAccount(); }; }
+// Playing as guest on a class device: nothing reaches the teacher, so say so (once a day it can be hidden)
+const guestBarHtml = () => cloudOn() && AUTH.mode === "guest" && S && S.guestBarDay !== today() ? `<section class="card stalebar guestbar" role="note"><span aria-hidden="true">🎒</span><div><b>Playing as guest</b><div class="small">Your streak and chestnuts stay on this device. Your class and teacher can't see them.</div></div><button class="btn sm blue" id="guestIn">🎓 Sign in</button><button class="btn sm plain" id="guestHide" aria-label="Hide for today">✕</button></section>` : "";
+const staleBarHtml = () => guestBarHtml() + (signedIn() && AUTH.stale ? `<section class="card stalebar" role="alert"><span aria-hidden="true">☁️</span><div><b>Not saving to your class</b><div class="small">Sign-in timed out. Your progress is safe on this device and uploads as soon as you sign in again.</div></div><button class="btn sm blue" id="staleGo">🔄 Sign in again</button></section>` : "");
+function wireStaleBar() {
+  const b = document.getElementById("staleGo"); if (b) b.onclick = () => { SFX.tap(); openAccount(); };
+  const gi = document.getElementById("guestIn"); if (gi) gi.onclick = () => { SFX.tap(); save(); authPref(""); renderLogin(); };
+  const gh = document.getElementById("guestHide"); if (gh) gh.onclick = () => { SFX.tap(); S.guestBarDay = today(); save(); gh.closest(".guestbar").remove(); };
+}
 function errText(e) {
   return ({ not_listed: "This Google account isn't on the class list. Use your school account, or tap Play as guest.", bad_client: "Sign-in is set up for a different website. Please tell your teacher.",
     unverified: "This Google account's email isn't verified.", expired: "Sign-in timed out. Please try again.", network: "Can't reach the class server. Check your internet, or play as guest.",
@@ -78,16 +84,59 @@ function onCredential(resp) {
     AUTH.mode = "google"; AUTH.user = j.user; AUTH.stale = false; AUTH.lastSync = Date.now(); authPref("google");
     let remote = null; try { remote = j.progress ? JSON.parse(j.progress) : null; } catch (e) {}
     const local = load();
-    const chosen = remote && (!local || (remote.upd || 0) > (local.upd || 0)) ? normalise(remote) : local;
+    // Two copies (this device and the class sheet): start from the newer one, then keep everything the other one earned
+    const R0 = remote ? normalise(remote) : null;
+    const chosen = R0 && local ? ((R0.upd || 0) > (local.upd || 0) ? mergeSaves(R0, local) : mergeSaves(local, R0)) : R0 || local;
     const guest = load(SAVE_KEY);
     toast(`👋 Hi ${userName()}${AUTH.user.cls ? ` (${AUTH.user.cls}${AUTH.user.no ? "-" + AUTH.user.no : ""})` : ""}! Progress will sync to your class.`);
     flushQueue();
-    if (chosen) { S = chosen; enterGame(); }
+    if (chosen) { S = chosen; enterGame(); if (guestWorthMerging(guest, chosen)) setTimeout(() => offerGuestMerge(guest), 1500); }
     else if (guest && (guest.completed_rooms.length || guest.coins > 0)) offerGuestImport(guest);
     else { S = null; renderWelcome(); prefillName(); }
   }, () => { AUTH.token = null; loginMsg(errText("network"), true); });
 }
 function prefillName() { const n = document.getElementById("nm"); if (n && signedIn()) n.value = (AUTH.user.en || "").split(/\s+/)[0] || ""; }
+/* ----- Merging two saves without losing earned progress -----
+   a = the newer save (its coins, settings, mistakes and pal care win), b = the other one.
+   Streaks follow the copy that studied most recently; everything earned (stages, stars, mastered questions, trophies,
+   pals, outfits, cards, best streak, counters) is kept from both. */
+function mergeSaves(a, b) {
+  if (!a) return b; if (!b) return a;
+  const m = normalise(JSON.parse(JSON.stringify(a))), o = normalise(JSON.parse(JSON.stringify(b)));
+  const uni = (x, y) => [...new Set([...(x || []), ...(y || [])])];
+  if ((o.last_study_day || "") > (m.last_study_day || "")) { m.current_streak = o.current_streak; m.last_study_day = o.last_study_day; }
+  else if (o.last_study_day && o.last_study_day === m.last_study_day) m.current_streak = Math.max(m.current_streak || 0, o.current_streak || 0);
+  m.longest_streak = Math.max(m.longest_streak || 0, o.longest_streak || 0, m.current_streak || 0);
+  m.study_days = uni(m.study_days, o.study_days).sort(); m.frozen_days = uni(m.frozen_days, o.frozen_days).sort();
+  m.completed_rooms = uni(m.completed_rooms, o.completed_rooms); m.mastered_puzzles = uni(m.mastered_puzzles, o.mastered_puzzles);
+  m.owned = uni(m.owned, o.owned); m.chiikawa_badges = uni(m.chiikawa_badges, o.chiikawa_badges); m.inventory = uni(m.inventory, o.inventory);
+  Object.entries(o.room_stars || {}).forEach(([k, v]) => { m.room_stars[k] = Math.max(m.room_stars[k] || 0, v || 0); });
+  Object.entries(o.trophies || {}).forEach(([k, v]) => { if (!m.trophies[k]) m.trophies[k] = v; });
+  Object.entries(o.stats || {}).forEach(([k, v]) => { if (typeof v === "number") m.stats[k] = Math.max(m.stats[k] || 0, v); });
+  Object.entries(o.bio_mastery || {}).forEach(([k, v]) => { m.bio_mastery[k] = Math.max(m.bio_mastery[k] || 0, v || 0); });
+  Object.entries(o.pets || {}).forEach(([k, v]) => { if (!m.pets[k]) m.pets[k] = v; });
+  Object.entries(o.pals || {}).forEach(([k, v]) => { if (!m.pals[k] || (v.xp || 0) > (m.pals[k].xp || 0)) m.pals[k] = Object.assign({}, v, m.pals[k] && m.pals[k].body ? { body: m.pals[k].body } : {}); });
+  Object.entries((o.coll && o.coll.owned) || {}).forEach(([k, v]) => { m.coll.owned[k] = Math.max(m.coll.owned[k] || 0, v || 0); });
+  m.mistakes_cleared = Math.max(m.mistakes_cleared || 0, o.mistakes_cleared || 0);
+  m.rush.best = Math.max(m.rush.best || 0, (o.rush && o.rush.best) || 0); m.dict.best = Math.max(m.dict.best || 0, (o.dict && o.dict.best) || 0);
+  if (o.bookmarks) m.bookmarks = Object.assign({}, o.bookmarks, m.bookmarks || {});
+  if (o.palLearn && !m.palLearn) m.palLearn = o.palLearn;
+  m.upd = Math.max(a.upd || 0, b.upd || 0);
+  return m;
+}
+// Guest progress on this device that the account doesn't have yet (asked once per guest save)
+function guestWorthMerging(g, acc) {
+  if (!g || !acc || g.player_id === acc.player_id || acc.guestMerged === g.player_id) return false;
+  return g.completed_rooms.some(r => !acc.completed_rooms.includes(r)) || (g.last_study_day || "") > (acc.last_study_day || "") || (g.longest_streak || 0) > (acc.longest_streak || 0);
+}
+function offerGuestMerge(guest) {
+  if ($modal.innerHTML) { setTimeout(() => offerGuestMerge(guest), 2500); return; }
+  openModal(`<span class="kicker">🎒 Guest progress found</span><h2>Add it to your account?</h2>
+    ${say("chiikawa", `This device also has <b>guest</b> progress: <b>${guest.completed_rooms.length}</b> stage${guest.completed_rooms.length === 1 ? "" : "s"}, a <b>${guest.current_streak}-day</b> streak. Only add it if it's <b>yours</b>.`, "normal", "hint")}
+    <div class="row"><button class="btn big" id="gmYes">✅ Yes, it's mine</button><button class="btn plain" id="gmNo">No</button></div>`, { closable: false });
+  document.getElementById("gmYes").onclick = () => { SFX.tap(); closeModal(); S = mergeSaves(S, guest); S.guestMerged = guest.player_id; save(true); cloudSaveSoon(true); renderMap(); toast("✅ Guest progress added to your account."); };
+  document.getElementById("gmNo").onclick = () => { SFX.tap(); closeModal(); S.guestMerged = guest.player_id; save(); };
+}
 function offerGuestImport(guest) {
   openModal(`<span class="kicker">🎒 Guest progress found</span><h2>Move it into your account?</h2>
     ${say("chiikawa", `This device has guest progress: <b>${guest.completed_rooms.length}</b> stage${guest.completed_rooms.length === 1 ? "" : "s"} and <b>${guest.coins}</b> 🌰. Only move it if it's <b>yours</b>.`, "normal", "hint")}
