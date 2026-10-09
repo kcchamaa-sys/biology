@@ -262,7 +262,16 @@ Students said they got lost: Home and the Pals tab both showed the pal, and Rewa
   - Google sign-in only lasts about an hour. When it runs out, a **"Not saving to your class"** bar appears on every page, with a one-tap way to sign in again. Progress waits safely on the device until then.
   - A **new day while the game stays open** now runs the daily check (streak freezes, missed days) straight away.
   - Server (needs a redeploy of `server/Code.gs`): an oversized save still updates the summary columns, and the "last study day" is read correctly even when Sheets has turned it into a date.
-  - **Streak restore (2026-10-09):** 📊 Stats → **🔧 Check streaks** lists every student whose saved streak is lower than their activity records show (before → after). Tap **✅ Restore** to write it. Streaks only go up, never down. Records uploaded late are now dated by when the activity ended, not when they reached the sheet.
+  - **🔧 Check & restore (teacher, 📊 Stats):** a dry run first shows tiles and one line per student, then **✅ Restore** writes it. It never takes anything away. It covers:
+    - **Records:** removes duplicate rows (an activity sent twice) and empty rounds; re-dates rows that were uploaded late (the upload time moves to a new "Uploaded" column); sorts rows by time.
+    - **Students:** rebuilds streak, best streak and last study day; adds stages cleared and stars from Escape stages and full study sections; rebuilds a save for students who have records but no saved progress; refreshes the summary columns.
+    - **Not covered:** chestnuts (they aren't in the records). They come back from each student's own device on the next sign-in.
+  - **Activity records, fixed going forward:**
+    - each row is dated when the activity ended and carries a Record ID, so a second upload is skipped;
+    - empty rounds and Lab visits aren't logged; pal questions are ("Pal questions");
+    - full stages are marked "Stage cleared", and a mixed series keeps its own label;
+    - escape rows list only that run's wrong answers and have a start time; dictation has a start time and duration;
+    - time is capped at 3 h per activity.
   - **No more lost progress between copies:** signing in merges the device copy and the class copy. The newer copy's chestnuts and settings win. The streak follows the copy that studied last, and everything earned (stages, stars, mastered questions, trophies, pals, cards, best streak) is kept from both.
   - **Guest mode on a class device** shows a blue "Playing as guest" bar with 🎓 Sign in. After signing in, guest progress found on the device can be added to the account (asked once).
   - Checks: `NODE_PATH=$(npm root -g) node tools/check_sync.js` (a fake class server with the same limit, two devices, a mocked clock).

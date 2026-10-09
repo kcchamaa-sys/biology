@@ -195,8 +195,12 @@ function activityDone(ev) {
   if (ev.done !== false && (ev.ans || 0) > 0) { markStudied(); luckyCount(ev.ans); }
   palGain(ev);
   missionProgress(ev);
-  if (ev.mode !== "sim") logRec({ mode: ev.mode, topic: ev.room ? String(TOPICS[ev.room.t].no) : ev.topic || "", stage: ev.room ? `${ev.room.id} ${ev.room.name}` : ev.stage || "",
-    ans: ev.ans || 0, cor: ev.cor || 0, stars: ev.stars || 0, secs: ev.secs || 0, status: ev.done === false ? "quit" : "done", start: ev.start || "", ids: ev.ids || "", wrong: ev.wrong || "" });
+  // One row per activity in the class sheet. Lab visits (no questions) and empty rounds are not recorded;
+  // the pal's own questions are ("pal"). A full stage cleared is marked so the teacher's restore can rebuild stages.
+  const mode = ev.mode === "sim" ? (ev.sim === "bodypal" ? "pal" : null) : ev.mode;
+  if (mode && (ev.ans || 0) > 0) logRec({ mode, topic: ev.room ? String(TOPICS[ev.room.t].no) : ev.topic || "", stage: ev.stage || (ev.room ? `${ev.room.id} ${ev.room.name}` : ""),
+    ans: ev.ans || 0, cor: ev.cor || 0, stars: ev.stars || 0, secs: Math.min(Math.max(0, Math.round(ev.secs || 0)), 3 * 3600),
+    status: ev.done === false ? "quit" : ev.cleared ? "clear" : "done", start: ev.start || "", ids: ev.ids || "", wrong: ev.wrong || "" });
   save(); cloudSaveSoon();
 }
 

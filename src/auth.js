@@ -164,7 +164,7 @@ function getQ() { try { return JSON.parse(localStorage.getItem(qKey()) || "[]");
 function setQ(a) { try { localStorage.setItem(qKey(), JSON.stringify(a.slice(-300))); } catch (e) {} }
 function logRec(r) {
   if (!signedIn()) return;
-  r.session = SESSION_ID; r.end = new Date().toISOString();
+  r.session = SESSION_ID; r.end = new Date().toISOString(); r.rid = SESSION_ID + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);   // the server skips a record it already has
   const a = getQ(); a.push(r); setQ(a); flushQueue();
 }
 let flushing = false;
@@ -172,7 +172,7 @@ function flushQueue() {
   if (flushing || !signedIn()) return;
   const a = getQ(); if (!a.length) return;
   flushing = true;
-  api("record", { records: a }).then(j => { flushing = false; if (j.ok) { setQ(getQ().slice(a.length)); AUTH.lastSync = Date.now(); } });
+  api("record", { records: a }).then(j => { flushing = false; if (j.ok) { setQ(getQ().slice(a.length)); AUTH.lastSync = Date.now(); if (getQ().length) setTimeout(flushQueue, 50); } });   // records logged during the upload go next
 }
 let cloudTimer = null;
 function cloudSaveSoon(now) { if (!signedIn()) return; clearTimeout(cloudTimer); cloudTimer = setTimeout(cloudSave, now ? 50 : 6000); }

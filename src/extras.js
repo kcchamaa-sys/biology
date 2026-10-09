@@ -112,7 +112,7 @@ function renderDictation(pre) {
   const miss = missedWords(), ni = nextRoomIndex();
   const sel = pre || (DT && DT.src) || (miss.length ? "missed" : String(ni === -1 ? 0 : ROOMS[ni].t));
   const mode = (DT && DT.mode) || (TTS.ok ? "listen" : "meaning");
-  DT = { src: sel, mode };
+  DT = { src: sel, mode, start: new Date().toISOString(), t0: Date.now() };
   const list = () => DT.src === "missed" ? missedWords() : topicWords(Number(DT.src));
   $app.innerHTML = `
     <section class="hero dict-hero">${starsBg()}
@@ -218,7 +218,7 @@ function dictEnd() {
   const coins = Math.round(withStreak(DT.right * 2) * perk("dict")); gainCoins(coins);
   if (perfect) { S.stats.dictPerfect += 1; S.coll.pending += 1; }
   save(true); checkTrophies();
-  activityDone({ mode: "dict", topic: DT.src === "missed" ? "missed" : "", stage: "Dictation", ans: n, cor: DT.right, wrong: DT.missed.map(x => x.w).join(", ") });
+  activityDone({ mode: "dict", topic: DT.src === "missed" ? "missed" : "", stage: "Dictation", ans: n, cor: DT.right, wrong: DT.missed.map(x => x.w).join(", "), start: DT.start, secs: DT.t0 ? Math.round((Date.now() - DT.t0) / 1000) : 0 });
   if (DT.right) { SFX.fanfare(); confetti(perfect ? 160 : 60); }
   $app.innerHTML = `
     <section class="hero dict-hero">${starsBg()}

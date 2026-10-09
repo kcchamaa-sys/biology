@@ -196,7 +196,7 @@ function finishStudy(ST) {
   S.room_run[room.id] = freshRun(); S.room_progress[room.id] = [];
   const ni = nextRoomIndex(); S.current_room = ni === -1 ? room.id : ROOMS[ni].id; const nxt = ni === -1 ? null : ROOMS[ni];
   recomputeMastery(); save(true); SFX.fanfare(); confetti(topicDone ? 240 : 150);
-  activityDone({ mode: "study", room, done: true, fresh: first, ans: ST.total, cor: ST.firsts, stars, secs: Math.round((Date.now() - ST.t0) / 1000), start: ST.start, ids: ST.queue.map(x => x.p.id).join(" "), wrong: ST.wrongIds.join(" ") });
+  activityDone({ mode: "study", room, done: true, cleared: true, fresh: first, ans: ST.total, cor: ST.firsts, stars, secs: Math.round((Date.now() - ST.t0) / 1000), start: ST.start, ids: ST.queue.map(x => x.p.id).join(" "), wrong: ST.wrongIds.join(" ") });
   renderNav(false);
   $app.innerHTML = `<section class="card">
     <span class="kicker">📖 Study complete · ${esc(stageLabel(room))}</span>

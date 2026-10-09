@@ -15,13 +15,13 @@ function server(route) {
     if (String(body.state).length > 49000) { rejects++; return route.fulfill(res({ ok: false, error: "server: progress too large" })); }
     DB[em] = { state: body.state, summary: body.summary }; return route.fulfill(res({ ok: true })); }
   if (body.action === "record") { (body.records || []).forEach(r => RECS.push(r)); return route.fulfill(res({ ok: true, saved: (body.records || []).length })); }
-  if (body.action === "repair") { // same rule as Code.gs repairStreaks: finished activities with answers, dated by their end time
-    const days = RECS.filter(r => r.status === "done" && r.ans > 0).map(r => ymdLocal(new Date(r.end))), today = ymdLocal(new Date(NOW)), fixed = [];
-    if (DB[em]) { let st = JSON.parse(DB[em].state); const out = GS.rebuildStreak(st, days, today);
-      if (out.changed) { fixed.push({ email: em, before: out.before, after: out.after }); if (!body.dry) { DB[em].state = JSON.stringify(out.state); DB[em].summary.streak = out.after.streak; } } }
-    return route.fulfill(res({ ok: true, checked: 1, fixed, dry: !!body.dry })); }
-  if (body.action === "board") return route.fulfill(res({ ok: true, cats: { xp: { top: [], me: null }, streak: { top: [], me: null }, col: { top: [], me: null } } }));
-  if (body.action === "friends") return route.fulfill(res({ ok: true, code: "ABC123", friends: [], cheers: [] }));
+  if (body.action === "repair") { // the real pure functions from Code.gs: cleanRecords → recordFacts → repairState
+    const rows = RECS.map(r => { const x = new Array(23).fill(""); x[0] = new Date(r.end); x[1] = r.session || ""; x[2] = em; x[8] = { study: "Study series", escape: "Escape stage", rush: "Cell Rush", pal: "Pal questions" }[r.mode] || r.mode;
+      x[10] = r.stage || ""; x[11] = r.ans; x[12] = r.cor; x[14] = r.stars || 0; x[16] = { done: "Finished", quit: "Stopped early", clear: "Stage cleared" }[r.status] || r.status; x[18] = new Date(r.end); x[22] = r.rid || ""; return x; });
+    const cr = GS.cleanRecords(rows), today = ymdLocal(new Date(NOW)), students = [];
+    if (DB[em]) { const st = JSON.parse(DB[em].state), out = GS.repairState(st, GS.recordFacts(cr.rows, ymdLocal, body.rooms || null), today);
+      if (out.items.length) { students.push({ email: em, items: out.items }); if (!body.dry) { DB[em].state = JSON.stringify(out.state); DB[em].summary.streak = out.state.current_streak; } } }
+    return route.fulfill(res({ ok: true, checked: 1, records: cr.counts, students, dry: !!body.dry })); }
   return route.fulfill(res({ ok: false, error: "unknown_action" }));
 }
 let NOW = 0; const jwt = () => "h." + Buffer.from(JSON.stringify({ email: "stu@school.hk", exp: Math.floor(NOW / 1000) + 3600 })).toString("base64url") + ".s";
@@ -110,6 +110,18 @@ const DAY = (d, h = 16) => new Date(2026, 9, d, h, 0, 0);
   await p.evaluate(() => { activityDone({ mode: "study", room: ROOMS[1], ans: 5, cor: 5 }); gainCoins(3); cloudSave(); }); await p.waitForTimeout(600);
   check(DB["stu@school.hk"].summary.coins === coinsA + 3 + 0 || DB["stu@school.hk"].summary.coins >= coinsA + 3, "device B's new chestnuts reach the server");
   await ctx.close();
+  // ---------- What the game sends to the class sheet ----------
+  RECS.length = 0;
+  ({ ctx, p } = await device(9)); await signIn(p);
+  await p.evaluate(() => { activityDone({ mode: "notebook", topic: "all", stage: "Mistake Notebook", ans: 0, cor: 0, done: false });   // empty round
+    activityDone({ mode: "study", room: ROOMS[2], stage: `${ROOMS[2].id} Mixed · Hard`, ans: 12, cor: 9, stars: 2, secs: 99999, done: true });
+    activityDone({ mode: "sim", sim: "bodypal", ans: 4, cor: 3 }); activityDone({ mode: "sim", sim: "lung", ans: 0 }); flushQueue(); });
+  await p.waitForTimeout(700);
+  check(RECS.length === 2 && RECS.every(r => r.rid && r.ans > 0), "empty rounds and Lab visits are not recorded; every record has an ID " + RECS.map(r => r.mode).join(","));
+  const fs1 = RECS.find(r => r.mode === "study"), pal = RECS.find(r => r.mode === "pal");
+  check(fs1 && /Mixed · Hard/.test(fs1.stage) && fs1.status === "done" && fs1.secs === 10800, "a mixed series keeps its own label, is not a stage clear, and its time is capped at 3 h");
+  check(!!pal, "pal questions are recorded");
+  await ctx.close();
   // ---------- Merge: an old copy can never wipe newer progress ----------
   ({ ctx, p } = await device(9));
   const mg = await p.evaluate(() => {
@@ -136,7 +148,7 @@ const DAY = (d, h = 16) => new Date(2026, 9, d, h, 0, 0);
   RECS.length = 0; [6, 7, 8, 9].forEach(d => RECS.push({ mode: "study", ans: 10, cor: 8, status: "done", end: DAY(d).toISOString() }));
   ({ ctx, p } = await device(9));
   await signIn(p);
-  const dryFixed = await p.evaluate(() => api("repair", { dry: true }).then(j => j.fixed.length));
+  const dryFixed = await p.evaluate(() => api("repair", { dry: true }).then(j => j.students.length));
   check(dryFixed === 1 && JSON.parse(DB[em].state).current_streak === 1, "dry run lists the student without changing anything");
   await p.evaluate(() => api("repair", {}));
   check(JSON.parse(DB[em].state).current_streak === 4 && DB[em].summary.streak === 4, "restore rebuilds a 4-day streak from the records");

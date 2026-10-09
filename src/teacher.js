@@ -6,7 +6,7 @@
    ============================================================ */
 const isTeacher = () => signedIn() && !!(AUTH.user && AUTH.user.teacher);
 const TS = { data: null, loading: false, err: "", cls: "all", period: "30", sort: "no", dir: 1, at: 0 };
-const MODE_LABEL = { escape: "Escape stages", study: "Study series", rush: "Cell Rush", dict: "Dictation", notebook: "Mistake Notebook" };
+const MODE_LABEL = { escape: "Escape stages", study: "Study series", rush: "Cell Rush", dict: "Dictation", notebook: "Mistake Notebook", bookmark: "Bookmarks", pal: "Pal questions" };
 function loadStats(force) {
   if (TS.loading || (!force && TS.data && Date.now() - TS.at < 120000)) return;
   TS.loading = true; TS.err = "";
@@ -53,7 +53,7 @@ function statsHtml() {
   if (!isTeacher()) return `<section class="card"><h2>📊 Statistics</h2><p>This page is for teacher accounts only.</p></section>`;
   if (!TS.data) {
     loadStats();
-    return `<section class="card"><h2>📊 Class statistics</h2>${TS.err === "update" ? say("chiikawa", "The class server needs the latest code to show statistics. Tap the button, then follow the 4 steps.", "normal", "hint") + `<button class="btn yellow" id="stCode2">📋 Copy server code</button>`
+    return `<section class="card"><h2>📊 Class statistics</h2>${TS.err === "update" ? say("chiikawa", "The class server needs the latest code to show statistics. Open your <b>Class Server Code</b> page, tap 📋 Copy, then redeploy.", "normal", "hint")
       : TS.err ? `<p class="bad">${esc(TS.err)}</p><button class="btn" id="stRetry">Try again</button>` : `<p class="muted">Loading class data… ⏳</p>`}</section>`;
   }
   const C = computeStats(), per = { 7: "7 days", 30: "30 days", 90: "90 days", all: "all time" }[TS.period], nDays = TS.period === "7" ? 7 : TS.period === "90" ? 90 : 30;
@@ -78,7 +78,7 @@ function statsHtml() {
   return `<section class="card stathead"><div class="row" style="justify-content:space-between"><h2 style="margin:0">📊 Class statistics</h2><span class="small muted">🕒 ${new Date(TS.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span></div>
       <div class="row stfilters"><label class="small"><select id="stCls" class="name" aria-label="Class">${["all", ...C.classes].map(c => `<option value="${esc(c)}" ${c === TS.cls ? "selected" : ""}>${c === "all" ? "All classes" : `Class ${esc(c)}`}</option>`).join("")}</select></label>
         <div class="slottabs" role="tablist" aria-label="Period">${["7", "30", "90", "all"].map(p => `<button role="tab" aria-selected="${p === TS.period}" data-per="${p}">${{ 7: "7 d", 30: "30 d", 90: "90 d", all: "All" }[p]}</button>`).join("")}</div>
-        <button class="btn plain sm" id="stRefresh" aria-label="Refresh">🔄</button><button class="btn yellow sm" id="stCsv">⬇️ CSV</button><button class="btn plain sm" id="stCode">📋 Server code</button><button class="btn plain sm" id="stRepair">🔧 Check streaks</button></div>
+        <button class="btn plain sm" id="stRefresh" aria-label="Refresh">🔄</button><button class="btn yellow sm" id="stCsv">⬇️ CSV</button><button class="btn plain sm" id="stRepair">🔧 Check & restore</button></div>
       ${chips ? `<div class="gchips">${chips}</div>` : ""}</section>
     <div class="kpis">${tile("👥", `${C.active.length}<small>/${C.rows.length}</small>`, "active", ring(C.active.length, C.rows.length))}${tile("✏️", C.ans.toLocaleString(), "questions")}${tile("🎯", C.acc == null ? "–" : `${C.acc}%`, "right")}${tile("🔥", avgStreak, "avg streak")}</div>
     <div class="statgrid">
@@ -113,14 +113,12 @@ function missedHtml(list) {
 function wireStats() {
   const g = id => document.getElementById(id);
   if (g("stRetry")) g("stRetry").onclick = () => { SFX.tap(); loadStats(true); renderMap(); };
-  if (g("stCode2")) g("stCode2").onclick = () => { SFX.tap(); openServerCode(); };
   if (!TS.data) return;
   g("stCls").onchange = e => { TS.cls = e.target.value; renderMap(); };
   $app.querySelectorAll("[data-per]").forEach(b => b.onclick = () => { SFX.tap(); TS.period = b.dataset.per; renderMap(); });
   $app.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { SFX.tap(); const k = b.dataset.sort; TS.dir = TS.sort === k ? -TS.dir : (k === "no" || k === "name" ? 1 : -1); TS.sort = k; renderMap(); });
   g("stRefresh").onclick = () => { SFX.tap(); TS.data = null; loadStats(true); renderMap(); };
   g("stCsv").onclick = () => { SFX.tap(); downloadStatsCsv(); };
-  g("stCode").onclick = () => { SFX.tap(); openServerCode(); };
   g("stRepair").onclick = () => { SFX.tap(); openRepair(); };
 }
 function downloadStatsCsv() {
@@ -161,24 +159,31 @@ function openServerCode() {
     else { const t = document.getElementById("scText"); t.closest("details").open = true; t.focus(); t.select(); toast("Press Ctrl / ⌘ + C to copy the selected code"); } }); };
 }
 
-/* ----- 🔧 Streak check & restore (teacher): rebuild streaks from the activity records on the server -----
-   First a dry run lists who would change (before → after); "Restore" writes it. Nothing is ever lowered. */
+/* ----- 🔧 Check & restore (teacher): the server repairs the activity records and rebuilds what students lost -----
+   A dry run lists everything first (record clean-up counts + one line per student); "Restore" writes it.
+   Progress is only ever added or raised, never taken away. */
 function openRepair() {
-  openModal(`<span class="kicker">🔧 Streak check</span><h2>Checking every student…</h2><p class="muted">Reading the activity records ⏳</p>`);
-  api("repair", { dry: true }).then(j => {
-    if (!j || !j.ok) { openModal(`<span class="kicker">🔧 Streak check</span><h2>Couldn't check</h2>${j && j.error === "unknown_action" ? say("chiikawa", "The class server needs the latest code first. Tap 📋, then follow the 4 steps.", "normal", "hint") + `<button class="btn yellow" id="rpCode">📋 Copy server code</button>` : `<p class="bad">${esc(errText(j ? j.error : "network"))}</p>`}`);
-      const c = document.getElementById("rpCode"); if (c) c.onclick = () => { SFX.tap(); openServerCode(); }; return; }
+  const rooms = {}; ROOMS.forEach(r => rooms[r.id] = r.pool.length);
+  openModal(`<span class="kicker">🔧 Check & restore</span><h2>Checking every student…</h2><p class="muted">Reading the activity records ⏳</p>`);
+  api("repair", { dry: true, rooms }).then(j => {
+    if (!j || !j.ok) { openModal(`<span class="kicker">🔧 Check & restore</span><h2>Couldn't check</h2>${j && j.error === "unknown_action" ? say("chiikawa", "The class server needs the latest code first. Open your <b>Class Server Code</b> page, tap 📋 Copy, then redeploy.", "normal", "hint") : `<p class="bad">${esc(errText(j ? j.error : "network"))}</p>`}`); return; }
     const info = {}; ((TS.data && TS.data.students) || []).forEach(s => { info[s.email] = s; });
-    const nm = em => { const s = info[em]; return s ? `${esc(s.cls)}${s.no ? `-${esc(s.no)}` : ""} ${esc(s.en || s.zh)}` : esc(em.split("@")[0]); };
-    const list = j.fixed || [];
-    openModal(`<span class="kicker">🔧 Streak check · ${j.checked} students</span>
-      <h2>${list.length ? `${list.length} streak${list.length > 1 ? "s" : ""} to restore` : "✅ All streaks are right"}</h2>
-      ${list.length ? `<div class="rplist">${list.map(x => `<div class="rprow"><b>${nm(x.email)}</b><span class="rpchg">🔥 ${x.before.streak} → <b>${x.after.streak}</b></span><span class="small muted">best ${x.before.best} → ${x.after.best} · last ${x.before.last ? fmtDay(x.before.last) : "–"} → ${fmtDay(x.after.last)}</span></div>`).join("")}</div>
-        <p class="small muted" style="margin:0">Rebuilt from the finished activities in the Records tab. Streaks only go up, never down. Students see it the next time they sign in.</p>
-        <div class="row"><button class="btn big" id="rpGo">✅ Restore ${list.length}</button><button class="btn plain" id="rpNo">Not now</button></div>`
-      : `<p class="small muted">Every student's saved streak already matches (or beats) their activity records.</p><button class="btn" id="rpNo">OK</button>`}`, { wide: true });
+    const nm = em => { const s = info[em]; return s ? `<span class="rpno">${esc(s.cls)}${s.no ? `-${esc(s.no)}` : ""}</span> ${esc(s.en || s.zh)}` : esc(em.split("@")[0]); };
+    const rc = j.records || {}, list = (j.students || []).slice().sort((a, b) => b.items.length - a.items.length);
+    const fixRows = (rc.empty || 0) + (rc.duplicate || 0) + (rc.redated || 0), any = fixRows || list.length;
+    const tile = (ic, n, l) => `<div class="rptile ${n ? "on" : ""}"><span aria-hidden="true">${ic}</span><b>${n}</b><small>${l}</small></div>`;
+    const cnt = k => list.filter(x => x.items.some(i => i.k === k)).length;
+    openModal(`<span class="kicker">🔧 Check & restore · ${rc.total || 0} records · ${j.checked} students</span>
+      <h2>${any ? "Here's what can be fixed" : "✅ Everything looks right"}</h2>
+      <div class="rptiles">${tile("🧹", rc.duplicate || 0, "duplicate rows")}${tile("🗑️", rc.empty || 0, "empty rounds")}${tile("🕒", rc.redated || 0, "re-dated")}
+        ${tile("🔥", cnt("streak"), "streaks")}${tile("🚪", cnt("stages"), "stages")}${tile("⭐", cnt("stars"), "stars")}${tile("🆕", cnt("save"), "saves rebuilt")}</div>
+      ${list.length ? `<div class="rplist">${list.map(x => `<div class="rprow"><b>${nm(x.email)}</b><span class="rpchips">${x.items.map(i => `<span class="rpchip k-${i.k}">${esc(i.t)}</span>`).join("")}</span></div>`).join("")}</div>` : ""}
+      ${any ? `<p class="small muted" style="margin:0">Progress only goes up, never down. Students see it the next time they sign in. Chestnuts can't be rebuilt (they aren't in the records); they come back from each student's own device when they sign in.</p>
+        <div class="row"><button class="btn big" id="rpGo">✅ Restore</button><button class="btn plain" id="rpNo">Not now</button></div>`
+      : `<p class="small muted">Records are clean and every student's progress matches (or beats) what the records show.</p><button class="btn" id="rpNo">OK</button>`}`, { wide: true });
     const no = document.getElementById("rpNo"); if (no) no.onclick = () => { SFX.tap(); closeModal(); };
     const go = document.getElementById("rpGo"); if (go) go.onclick = () => { SFX.tap(); go.disabled = true; go.textContent = "Restoring… ⏳";
-      api("repair", {}).then(k => { if (k && k.ok) { SFX.item(); closeModal(); toast(`✅ Restored ${k.fixed.length} streak${k.fixed.length === 1 ? "" : "s"}`); TS.data = null; loadStats(true); renderMap(); } else { go.disabled = false; go.textContent = "Try again"; toast("Couldn't restore: " + errText(k ? k.error : "network")); } }); };
+      api("repair", { rooms }).then(k => { if (k && k.ok) { SFX.item(); closeModal(); toast(`✅ Restored: ${k.students.length} student${k.students.length === 1 ? "" : "s"}, ${(k.records.duplicate || 0) + (k.records.empty || 0)} rows cleaned`); TS.data = null; loadStats(true); renderMap(); }
+        else { go.disabled = false; go.textContent = "Try again"; toast("Couldn't restore: " + errText(k ? k.error : "network")); } }); };
   });
 }

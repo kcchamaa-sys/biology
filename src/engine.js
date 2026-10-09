@@ -1187,7 +1187,7 @@ function enterRoom(id) {
   S.current_room = room.id; save(); MUSIC.setMode(S.playMode === "study" ? "calm" : room.boss ? "boss" : SCENE_SONG[room.scene] || "room");
   if (R) clearTimeout(R.introT);
   if (R) clearTimeout(R.incT);
-  R = { room, replay, study: S.playMode === "study", mood: "normal", att: {}, hinted: {}, jam: {}, lastWrongAt: 0, qs: runQs(room), incidents: 0, used: [], stolen: null, hiddenHs: null };
+  R = { room, replay, study: S.playMode === "study", mood: "normal", start: new Date().toISOString(), wrongIds: [], att: {}, hinted: {}, jam: {}, lastWrongAt: 0, qs: runQs(room), incidents: 0, used: [], stolen: null, hiddenHs: null };
   const me = R; if (!R.study) R.incT = setTimeout(() => tryIncident(me), (replay ? 25 : 40) * 1000 + Math.random() * 40000);
   closeModal(); renderRoom();
   window.scrollTo({ top: 0 });
@@ -1489,7 +1489,7 @@ function wireAnswer(p, box) {
 }
 function miss(box) {
   const i = R.cur, id = R.room.id, now = Date.now(), p = curQ(i), k = akey(i), run = S.room_run[id];
-  R.att[k] = (R.att[k] || 0) + 1; S.stats.run = 0; noteMistake(id, p.id);
+  R.att[k] = (R.att[k] || 0) + 1; S.stats.run = 0; noteMistake(id, p.id); if (R.wrongIds && !R.wrongIds.includes(p.id)) R.wrongIds.push(p.id);
   box.classList.remove("shake"); void box.offsetWidth; box.classList.add("shake");
   // Guard charm: blocks every penalty for this one wrong answer
   if (R.guard) {
@@ -1672,8 +1672,8 @@ function escapeRoom() {
   const ni = nextRoomIndex(); S.current_room = ni === -1 ? room.id : ROOMS[ni].id;
   const nxt = ni === -1 ? null : ROOMS[ni];
   recomputeMastery(); save(true);
-  activityDone({ mode: R.study ? "study" : "escape", room, done: true, fresh: first, ans: run.qids ? run.qids.length : 5 * LOCK_Q, cor: n, stars, secs: Math.max(0, used),
-    ids: (run.qids || []).join(" "), wrong: Object.keys(S.mistakes).filter(k => k.startsWith(room.id + ":")).map(k => k.split(":")[1]).join(" ") });
+  activityDone({ mode: R.study ? "study" : "escape", room, done: true, cleared: true, fresh: first, ans: run.qids ? run.qids.length : 5 * LOCK_Q, cor: n, stars, secs: Math.max(0, used), start: R.start,
+    ids: (run.qids || []).join(" "), wrong: (R.wrongIds || []).join(" ") });
   SFX.door();
   document.getElementById("doorG").classList.add("door-open");
   setMood("sparkle"); setLine("chiikawa", "WAHOO!!! The door is opening!!! 🎊", "happy");

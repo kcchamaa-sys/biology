@@ -1558,6 +1558,8 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
 @media (prefers-reduced-motion: reduce) { .qsteps li.next .qdot, .helpbtn.glow, .gpoint, .gquest span.next, .ctile.busy .cti { animation: none; } }
 .rplist { display: grid; gap: 6px; max-height: 50vh; overflow: auto; } .rprow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 10px; padding: 8px 10px; border-radius: 12px; background: #F8F2F9; }
 .rprow .small { grid-column: 1 / -1; } .rpchg { font-variant-numeric: tabular-nums; }
+.rptiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; } .rptile { display: grid; justify-items: center; padding: 8px 4px; border-radius: 14px; background: #F4EEF6; opacity: .55; } .rptile.on { opacity: 1; background: #FFF1D6; } .rptile span { font-size: 1.3rem; } .rptile b { font-size: 1.3rem; font-variant-numeric: tabular-nums; } .rptile small { font-size: .72rem; font-weight: 700; text-align: center; }
+.rpchips { display: flex; flex-wrap: wrap; gap: 4px; grid-column: 1 / -1; } .rpchip { font-size: .78rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #fff; } .rpno { color: #A0789A; font-size: .8rem; }
 .guestbar { background: #EAF4FF; border-color: #8FC0F2; }
 </style>
 </head>

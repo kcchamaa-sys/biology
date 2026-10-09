@@ -30,13 +30,13 @@ var FRIEND_MAX = 5;
 var CHEER_MSGS = ['🔥 Keep your flame going!', '👏 Great work today!', '💪 You can do it!', '🌱 Study with me today?'];
 var REC_HEAD = ['Timestamp', 'Session ID', 'Email', 'Role', 'Class', 'Class No.', 'Chinese Name', 'English Name',
   'Mode', 'Topic', 'Stage', 'Answered', 'Correct', 'Accuracy %', 'Stars', 'Seconds', 'Status', 'Start', 'End',
-  'Question IDs', 'Wrong IDs'];
+  'Question IDs', 'Wrong IDs', 'Uploaded', 'Record ID'];
 var PROG_HEAD = ['Email', 'Updated', 'Streak', 'Best streak', 'Stars', 'Stages cleared', 'Chestnuts', 'Active pet',
   'Pets', 'Mistakes waiting', 'Mistakes cleared', 'Trophies', 'Last study day', 'Data (do not edit)',
   'Dedication points', 'Collection', 'Active pal'];
 var DATA_COL = 14; // column N holds the saved game data
-var MODES = { escape: 'Escape stage', study: 'Study series', rush: 'Cell Rush', dict: 'Dictation', notebook: 'Mistake Notebook', bookmark: 'Bookmarks' };
-var STATUS = { done: 'Finished', quit: 'Stopped early' };
+var MODES = { escape: 'Escape stage', study: 'Study series', rush: 'Cell Rush', dict: 'Dictation', notebook: 'Mistake Notebook', bookmark: 'Bookmarks', pal: 'Pal questions' };
+var STATUS = { done: 'Finished', quit: 'Stopped early', clear: 'Stage cleared' };
 
 function doGet() {
   return out({ ok: true, app: 'Mochi Bio Escape', time: new Date().toISOString() });
@@ -63,7 +63,7 @@ function doPost(e) {
         return out(stats());
       case 'repair':
         if (!user.teacher) return out({ ok: false, error: 'forbidden' });
-        return out(repairStreaks(!!body.dry));
+        return out(repairAll(!!body.dry, body.rooms && typeof body.rooms === 'object' ? body.rooms : null));
       default: return out({ ok: false, error: 'unknown_action' });
     }
   } catch (err) {
@@ -129,18 +129,38 @@ function findUser(email) {
   return null;
 }
 
+// Activity rows. Timestamp = when the activity ended on the student's device (late uploads keep their real day);
+// 'Uploaded' = when it reached the sheet; 'Record ID' lets the server skip a record it already has (a record can be sent
+// twice: once as the page closes and again on the next visit).
+function recSheet() {
+  var sh = sheet(REC, REC_HEAD);
+  if (sh.getLastColumn() < REC_HEAD.length || sh.getRange(1, REC_HEAD.length).getValue() !== REC_HEAD[REC_HEAD.length - 1]) sh.getRange(1, 1, 1, REC_HEAD.length).setValues([REC_HEAD]);
+  return sh;
+}
+function activityTime(end, now) {
+  var t = end ? new Date(end) : null;
+  return t && !isNaN(t) && t.getTime() <= now.getTime() + 3600e3 && t.getTime() >= now.getTime() - 60 * 864e5 ? t : now;
+}
 function appendRecords(u, recs) {
   if (!recs.length) return 0;
   var lock = LockService.getScriptLock(); lock.waitLock(20000);
   try {
-    var sh = sheet(REC, REC_HEAD);
-    var rows = recs.slice(0, 300).map(function (r) {
+    var sh = recSheet(), now = new Date(), cache = CacheService.getScriptCache(), seen = {};
+    var last = sh.getLastRow();
+    if (last > 1) { var from = Math.max(2, last - 3000); sh.getRange(from, REC_HEAD.length, last - from + 1, 1).getValues().forEach(function (r) { if (r[0]) seen[String(r[0])] = 1; }); }
+    var rows = [];
+    recs.slice(0, 300).forEach(function (r) {
+      var rid = clean(r.rid, 60);
+      if (rid && (seen[rid] || cache.get('rid_' + rid))) return;
+      if (rid) { seen[rid] = 1; cache.put('rid_' + rid, '1', 21600); }
       var ans = num(r.ans), cor = Math.min(num(r.cor), ans || num(r.cor));
-      return [new Date(), clean(r.session, 40), u.email, u.role, u.cls, u.no, u.zh, u.en,
+      if (!ans) return;   // empty rounds are not activity
+      rows.push([activityTime(r.end, now), clean(r.session, 40), u.email, u.role, u.cls, u.no, u.zh, u.en,
         MODES[r.mode] || clean(r.mode, 30), clean(r.topic, 10), clean(r.stage, 60), ans, cor,
-        ans ? Math.round(cor / ans * 100) : '', num(r.stars), num(r.secs), STATUS[r.status] || clean(r.status, 20),
-        when(r.start), when(r.end), clean(r.ids, 600), clean(r.wrong, 600)];
+        ans ? Math.round(cor / ans * 100) : '', num(r.stars), Math.min(num(r.secs), 3 * 3600), STATUS[r.status] || clean(r.status, 20),
+        when(r.start), when(r.end), clean(r.ids, 600), clean(r.wrong, 600), now, rid]);
     });
+    if (!rows.length) return 0;
     var start = sh.getLastRow() + 1;
     sh.getRange(start, 10, rows.length, 2).setNumberFormat('@'); // keep "1" and "t1s2" as text
     sh.getRange(start, 1, rows.length, REC_HEAD.length).setValues(rows);
@@ -157,7 +177,7 @@ function findRow(sh, email) {
 }
 // A day as yyyy-MM-dd, even when Sheets has turned the text into a Date (otherwise "Thu Oct 08…" >= "2026-…" is always true)
 function dayStr(v) {
-  if (v instanceof Date) return isNaN(v) ? '' : Utilities.formatDate(v, Session.getScriptTimeZone() || 'Asia/Hong_Kong', 'yyyy-MM-dd');
+  if (v && typeof v.getTime === 'function') return isNaN(v) ? '' : Utilities.formatDate(v, Session.getScriptTimeZone() || 'Asia/Hong_Kong', 'yyyy-MM-dd');
   return String(v || '').slice(0, 10);
 }
 function saveProgress(u, state, s) {
@@ -364,23 +384,27 @@ function cheer(user, code, msg) {
 
 
 /** ---------------------------------------------------------------------------
- *  🔧 Streak repair (teacher only: 📊 Stats → 🔧 Check streaks, or run repairStreaks() in the Apps Script editor).
- *  Older versions lost streak updates (oversized saves were refused; activities uploaded late were dated by upload
- *  time). Every finished activity is still in the Records tab with its real end time, so the study days can be
- *  rebuilt. The repair only ever RAISES a streak, best streak or last study day; it never lowers anything.
+ *  🔧 Check & restore (teacher only: 📊 Stats → 🔧 Check & restore, or run repairAll() in the Apps Script editor).
+ *  Fixes what older versions got wrong, using the Records tab (every finished activity, with its real end time):
+ *   Records: removes duplicate rows and empty rounds; re-dates rows that were uploaded late; sorts by time.
+ *   Students: rebuilds streak / best streak / last study day, stages cleared and stars, rebuilds a save for students
+ *             who have records but no saved progress, and refreshes the summary columns.
+ *  It only ever ADDS or RAISES progress; it never takes anything away. A dry run shows everything first.
  *  --------------------------------------------------------------------------- */
-// When the activity really happened: the End column (the device clock) unless it is missing or implausible
+function isD(x) { return !!x && typeof x.getTime === 'function'; }
+// When the activity really happened: the End column (device clock) unless missing or implausible
 function recTime(r) {
-  var ts = r[0] instanceof Date ? r[0] : new Date(r[0]), end = r[18] instanceof Date ? r[18] : (r[18] ? new Date(r[18]) : null);
-  if (end && !isNaN(end) && !isNaN(ts) && end.getTime() <= ts.getTime() + 3600e3 && end.getTime() >= ts.getTime() - 60 * 864e5) return end;
+  var ts = isD(r[0]) ? r[0] : new Date(r[0]), end = isD(r[18]) ? r[18] : (r[18] ? new Date(r[18]) : null);
+  var up = isD(r[21]) ? r[21] : (r[21] ? new Date(r[21]) : ts);
+  if (isNaN(up)) up = ts;
+  if (end && !isNaN(end) && !isNaN(up) && end.getTime() <= up.getTime() + 3600e3 && end.getTime() >= up.getTime() - 60 * 864e5) return end;
   return ts;
 }
 function shiftYmd(d, n) { var p = d.split('-'), x = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] + n)); return x.toISOString().slice(0, 10); }
-// Longest run of consecutive days ending exactly at `last`
 function chainEnding(set, last) { var n = 0, d = last; while (set[d]) { n++; d = shiftYmd(d, -1); } return n; }
-function longestChain(set) { var best = 0; Object.keys(set).forEach(function (d) { if (!set[shiftYmd(d, -1)]) best = Math.max(best, chainEnding2(set, d)); }); return best; }
-function chainEnding2(set, first) { var n = 0, d = first; while (set[d]) { n++; d = shiftYmd(d, 1); } return n; }
-/** Pure: merge the recorded study days into a saved game state. Returns { state, changed, before, after }. */
+function chainFrom(set, first) { var n = 0, d = first; while (set[d]) { n++; d = shiftYmd(d, 1); } return n; }
+function longestChain(set) { var best = 0; Object.keys(set).forEach(function (d) { if (!set[shiftYmd(d, -1)]) best = Math.max(best, chainFrom(set, d)); }); return best; }
+/** Pure: merge recorded study days into a saved state (raises only). Returns { state, changed, before, after }. */
 function rebuildStreak(state, recDays, today) {
   state = state || {};
   var set = {}, add = function (d) { d = String(d || '').slice(0, 10); if (/^\d{4}-\d\d-\d\d$/.test(d) && d <= today) set[d] = 1; };
@@ -389,7 +413,7 @@ function rebuildStreak(state, recDays, today) {
   if (!days.length) return { state: state, changed: false, before: before, after: before };
   var last = days[days.length - 1], chain = chainEnding(set, last);
   var cur = Math.max(chain, state.last_study_day === last ? (state.current_streak || 0) : 0);
-  if (last < (state.last_study_day || '')) { last = state.last_study_day; cur = state.current_streak || 0; }   // never move backwards
+  if (last < (state.last_study_day || '')) { last = state.last_study_day; cur = state.current_streak || 0; }
   var best = Math.max(state.longest_streak || 0, cur, longestChain(set));
   var keep = shiftYmd(today, -13), recent = days.filter(function (d) { return d >= keep; });
   var after = { streak: cur, best: best, last: last };
@@ -398,37 +422,116 @@ function rebuildStreak(state, recDays, today) {
     state.current_streak = cur; state.longest_streak = best; state.last_study_day = last;
     var sd = {}; (state.study_days || []).concat(recent.filter(function (d) { return (state.frozen_days || []).indexOf(d) < 0; })).forEach(function (d) { if (d >= keep) sd[d] = 1; });
     state.study_days = Object.keys(sd).sort();
-    state.streak_repaired = today;
   }
   return { state: state, changed: changed, before: before, after: after };
 }
-function repairStreaks(dry) {
-  var ss = book(), tz = Session.getScriptTimeZone() || 'Asia/Hong_Kong', today = Utilities.formatDate(new Date(), tz, 'yyyy-MM-dd');
-  var byEmail = {}, rs = ss.getSheetByName(REC);
-  if (rs && rs.getLastRow() > 1) rs.getRange(2, 1, rs.getLastRow() - 1, REC_HEAD.length).getValues().forEach(function (r) {
-    if (r[16] !== STATUS.done || !(Number(r[11]) > 0)) return;   // finished activities with answers, like the game's own streak rule
-    var em = String(r[2]).toLowerCase(), t = recTime(r); if (!em || isNaN(t)) return;
-    (byEmail[em] = byEmail[em] || []).push(Utilities.formatDate(t, tz, 'yyyy-MM-dd'));
+/** Pure: clean the Records rows. Drops empty rounds and duplicates, re-dates late uploads, sorts by time. */
+function cleanRecords(rows) {
+  var seen = {}, out = [], n = { total: rows.length, empty: 0, duplicate: 0, redated: 0 };
+  rows.forEach(function (r0) {
+    var r = r0.slice(); while (r.length < REC_HEAD.length) r.push('');
+    if (!String(r[2] || '').trim()) { out.push(r); return; }
+    if (!(Number(r[11]) > 0)) { n.empty++; return; }
+    var t = recTime(r), end = isD(r[18]) ? r[18].getTime() : String(r[18] || '');
+    var key = r[22] ? 'id:' + r[22] : [String(r[2]).toLowerCase(), end, r[8], r[10], r[11], r[12], r[14]].join('|');
+    if (!r[22] && !end) key += '|' + (isD(r[0]) ? r[0].getTime() : String(r[0])) + '|' + r[1];   // too little to compare: only exact copies
+    if (seen[key]) { n.duplicate++; return; }
+    seen[key] = 1;
+    var ts = isD(r[0]) ? r[0] : new Date(r[0]);
+    if (!isNaN(t) && !isNaN(ts) && Math.abs(t.getTime() - ts.getTime()) > 3600e3) { if (!r[21]) r[21] = ts; r[0] = t; n.redated++; }
+    out.push(r);
   });
-  var ps = ss.getSheetByName(PROG), report = [], lock = LockService.getScriptLock();
-  if (!ps || ps.getLastRow() < 2) return { ok: true, today: today, checked: 0, fixed: [] };
-  lock.waitLock(20000);
+  out.sort(function (a, b) { var x = isD(a[0]) ? a[0].getTime() : 0, y = isD(b[0]) ? b[0].getTime() : 0; return x - y; });
+  return { rows: out, counts: n };
+}
+/** Pure: what one student's records prove: study days, stages cleared and the best stars per stage.
+ *  rooms = { id: questionCount } from the game (old study rows only count as a cleared stage with 26+ questions: a full section has 34+, mixes at most 20). */
+function recordFacts(rows, ymd, rooms) {
+  var f = { days: [], cleared: {}, stars: {} };
+  rows.forEach(function (r) {
+    var ok = r[16] === STATUS.done || r[16] === STATUS.clear, ans = Number(r[11]) || 0;
+    if (!ok || !ans) return;
+    f.days.push(ymd(isD(r[0]) ? r[0] : new Date(r[0])));
+    var id = String(r[10] || '').split(' ')[0];
+    if (!/^t\d+s\d+$/.test(id) || (rooms && !(id in rooms))) return;
+    var full = r[16] === STATUS.clear || r[8] === MODES.escape || (r[8] === MODES.study && ans > 25);
+    if (!full) return;
+    f.cleared[id] = 1;
+    var st = Number(r[14]) || 0; if (st) f.stars[id] = Math.max(f.stars[id] || 0, Math.min(3, st));
+  });
+  return f;
+}
+/** Pure: apply a student's facts to their saved state (adds/raises only). Returns { state, items[] } (items = what changed, for the report). */
+function repairState(state, facts, today) {
+  var items = [], s = state;
+  var st = rebuildStreak(s, facts.days, today);
+  if (st.changed) items.push({ k: 'streak', t: '🔥 ' + st.before.streak + ' → ' + st.after.streak + (st.after.best > st.before.best ? ' (best ' + st.after.best + ')' : '') });
+  s = st.state;
+  var rooms = s.completed_rooms || [], add = Object.keys(facts.cleared).filter(function (id) { return rooms.indexOf(id) < 0; });
+  if (add.length) { s.completed_rooms = rooms.concat(add); items.push({ k: 'stages', t: '🚪 +' + add.length + ' stage' + (add.length > 1 ? 's' : '') }); }
+  var stars = s.room_stars || {}, up = 0;
+  Object.keys(facts.stars).forEach(function (id) { if (facts.stars[id] > (stars[id] || 0)) { up += facts.stars[id] - (stars[id] || 0); stars[id] = facts.stars[id]; } });
+  if (up) { s.room_stars = stars; items.push({ k: 'stars', t: '⭐ +' + up + ' star' + (up > 1 ? 's' : '') }); }
+  if (items.length) s.restored = today;
+  return { state: s, items: items };
+}
+function summaryOf(s) {
+  var stars = 0; Object.keys(s.room_stars || {}).forEach(function (k) { stars += Number(s.room_stars[k]) || 0; });
+  return { streak: s.current_streak || 0, best: s.longest_streak || 0, stars: stars, stages: (s.completed_rooms || []).length, lastDay: s.last_study_day || '' };
+}
+function repairAll(dry, rooms) {
+  var ss = book(), tz = Session.getScriptTimeZone() || 'Asia/Hong_Kong', today = Utilities.formatDate(new Date(), tz, 'yyyy-MM-dd');
+  var ymd = function (d) { return isNaN(d) ? '' : Utilities.formatDate(d, tz, 'yyyy-MM-dd'); };
+  var lock = LockService.getScriptLock(); lock.waitLock(25000);
   try {
-    var n = ps.getLastRow() - 1, rows = ps.getRange(2, 1, n, PROG_HEAD.length).getValues(), checked = 0;
+    // 1) Records tab
+    var rs = ss.getSheetByName(REC), clean0 = { rows: [], counts: { total: 0, empty: 0, duplicate: 0, redated: 0 } };
+    if (rs && rs.getLastRow() > 1) {
+      if (!dry) recSheet();
+      var raw = rs.getRange(2, 1, rs.getLastRow() - 1, Math.min(rs.getLastColumn(), REC_HEAD.length)).getValues();
+      clean0 = cleanRecords(raw);
+      var c = clean0.counts;
+      if (!dry && (c.empty || c.duplicate || c.redated)) {
+        var n0 = raw.length, n1 = clean0.rows.length;
+        if (n1) { rs.getRange(2, 10, n1, 2).setNumberFormat('@'); rs.getRange(2, 1, n1, REC_HEAD.length).setValues(clean0.rows); }
+        if (n0 > n1) rs.deleteRows(2 + n1, n0 - n1);
+      }
+    }
+    var byEmail = {};
+    clean0.rows.forEach(function (r) { var em = String(r[2] || '').toLowerCase(); if (em) (byEmail[em] = byEmail[em] || []).push(r); });
+    // 2) Students (Progress tab)
+    var ps = sheet(PROG, PROG_HEAD), last = ps.getLastRow(), rows = last > 1 ? ps.getRange(2, 1, last - 1, PROG_HEAD.length).getValues() : [];
+    var users = {}; ss.getSheetByName(PROPS.getProperty('USERS_SHEET') || USERS_DEFAULT).getDataRange().getValues().slice(1).forEach(function (u) { if (u[0]) users[String(u[0]).trim().toLowerCase()] = u; });
+    var report = [], done = {};
     rows.forEach(function (r, i) {
-      var em = String(r[0]).toLowerCase(); if (!em) return; checked++;
+      var em = String(r[0]).toLowerCase(); if (!em) return; done[em] = 1;
       var st = null; try { st = JSON.parse(String(r[DATA_COL - 1] || '')); } catch (e) { st = null; }
-      var base = st || { current_streak: Number(r[2]) || 0, longest_streak: Number(r[3]) || 0, last_study_day: dayStr(r[12]) };
-      var res = rebuildStreak(base, byEmail[em] || [], today);
-      if (!res.changed) return;
-      report.push({ email: em, before: res.before, after: res.after, days: (byEmail[em] || []).length });
+      var fresh = !st;
+      if (!st) { if (!byEmail[em]) return; st = { player_name: String((users[em] || [])[3] || 'Student').split(/\s+/)[0], completed_rooms: [], room_stars: {}, current_streak: Number(r[2]) || 0, longest_streak: Number(r[3]) || 0, last_study_day: dayStr(r[12]), upd: 0 }; }
+      var res = repairState(st, recordFacts(byEmail[em] || [], ymd, rooms), today), sum = summaryOf(res.state);
+      var stale = sum.streak !== (Number(r[2]) || 0) || sum.best !== (Number(r[3]) || 0) || sum.stars !== (Number(r[4]) || 0) || sum.stages !== (Number(r[5]) || 0) || sum.lastDay !== dayStr(r[12]);
+      if (fresh) res.items.unshift({ k: 'save', t: '🆕 save rebuilt from records' });
+      if (!res.items.length && !stale) return;
+      report.push({ email: em, items: res.items.length ? res.items : [{ k: 'summary', t: '📋 summary refreshed' }] });
       if (dry) return;
       var row = i + 2;
-      ps.getRange(row, 3, 1, 2).setValues([[res.after.streak, res.after.best]]);
-      ps.getRange(row, 13).setNumberFormat('@').setValue(res.after.last);
-      if (st) { var txt = JSON.stringify(res.state); if (txt.length <= 49000) ps.getRange(row, DATA_COL).setValue(txt); }
+      ps.getRange(row, 3, 1, 4).setValues([[sum.streak, sum.best, sum.stars, sum.stages]]);
+      ps.getRange(row, 13).setNumberFormat('@').setValue(sum.lastDay);
+      if (res.items.length) { var txt = JSON.stringify(res.state); if (txt.length <= 49000) ps.getRange(row, DATA_COL).setValue(txt); }
+    });
+    // students with records but no Progress row at all
+    Object.keys(byEmail).forEach(function (em) {
+      if (done[em] || !users[em]) return;
+      var st = { player_name: String(users[em][3] || 'Student').split(/\s+/)[0], completed_rooms: [], room_stars: {}, current_streak: 0, longest_streak: 0, last_study_day: null, upd: 0 };
+      var res = repairState(st, recordFacts(byEmail[em], ymd, rooms), today), sum = summaryOf(res.state);
+      report.push({ email: em, items: [{ k: 'save', t: '🆕 save rebuilt from records' }].concat(res.items) });
+      if (dry) return;
+      ps.appendRow([em, new Date(), sum.streak, sum.best, sum.stars, sum.stages, 0, '', 0, 0, 0, 0, '', JSON.stringify(res.state), 0, 0, '']);
+      ps.getRange(ps.getLastRow(), 13).setNumberFormat('@').setValue(sum.lastDay);
     });
     if (!dry) CacheService.getScriptCache().remove('bio_board2');
-    return { ok: true, today: today, checked: checked, fixed: report, dry: !!dry };
+    return { ok: true, today: today, dry: !!dry, records: clean0.counts, checked: rows.length, students: report };
   } finally { lock.releaseLock(); }
 }
+// Kept for the Apps Script editor's Run menu
+function repairStreaks() { return repairAll(false, null); }
