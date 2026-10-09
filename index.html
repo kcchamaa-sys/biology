@@ -524,6 +524,24 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .bpord { min-width: 1.2em; }
 .bplook { margin-bottom: 6px; }
 @media (max-width: 420px) { .bpbody { grid-template-columns: 84px minmax(0, 1fr); } .bpfig svg { width: 84px; height: 84px; } .bpbar { grid-template-columns: 20px 86px minmax(0, 1fr); } }
+/* 📊 Class statistics, picture-first */
+.kpi { grid-template-columns: auto 1fr; align-items: center; column-gap: 10px; position: relative; }
+.kpi .kic { grid-row: span 2; font-size: 1.7rem; } .kpi b small { font-size: 1rem; color: #7E6378; } .kpi > span:not(.kic) { font-size: .85rem; }
+.kring { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; }
+.gchips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.gchip { border-radius: 999px; padding: 5px 12px; font-size: .85rem; font-weight: 700; background: #F4EEF6; color: #4B3350; }
+.gchip.bad { background: #FFE1E1; color: #8E2222; } .gchip.warn { background: #FFF1C2; color: #6E4800; } .gchip.good { background: #DDF7C8; color: #2A6400; }
+.tbars { display: grid; gap: 7px; }
+.tbar { display: grid; grid-template-columns: minmax(0, 12em) minmax(0, 1fr) 4.6em; gap: 8px; align-items: center; font-size: .82rem; }
+.tbl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .tbt { height: 12px; background: #F1EAF2; border-radius: 999px; overflow: hidden; }
+.tbt i { display: block; height: 100%; border-radius: 999px; } .tbar.hi i { background: #58A700; } .tbar.mid i { background: #E0A100; } .tbar.lo i { background: #D64545; }
+.tbv { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.spark { display: inline-block; width: 56px; height: 8px; background: #F1EAF2; border-radius: 999px; overflow: hidden; vertical-align: middle; } .spark i { display: block; height: 100%; background: #2a78d6; border-radius: 999px; }
+.idlechips { display: flex; flex-wrap: wrap; gap: 6px; } .idlechip { background: #F4EEF6; border-radius: 999px; padding: 4px 10px; font-size: .82rem; }
+.missed li { line-height: 1.35; } .mchip { background: #E8F1FF; color: #1F4E8C; border-radius: 8px; padding: 0 6px; font-weight: 800; font-size: .78rem; } .mn { color: #B42D2D; }
+@media (max-width: 560px) { .tbar { grid-template-columns: minmax(0, 7.5em) minmax(0, 1fr) 4.4em; } .kring { display: none; } }
+.stalebar { display: flex; gap: 10px; align-items: center; background: #FFF4D6; border: 2px solid #F4B740; }
+.stalebar > span { font-size: 1.6rem; } .stalebar > div { flex: 1; min-width: 0; }
 /* 🫀 The living Study Pal: touch zones, pal time, night room */
 .lproom::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: rgba(46,36,92,.34); opacity: 0; transition: opacity 1.2s; pointer-events: none; z-index: 1; }
 .lproom.night::before { opacity: .55; } .lproom.asleep::before { opacity: 1; }
@@ -1461,6 +1479,20 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
 .simq .choices { margin: 8px 0; } .simqcard .simq + .simq { margin-top: 18px; }
 .simctl { gap: 18px; } .simbtns { gap: 10px; }
 .musc { gap: 10px; margin: 10px 0; } .lensres { margin: 12px 0; }
+/* 📊 statistics: late overrides (win over the older table rules) */
+.statgrid { align-items: start; } .kpi { column-gap: 10px; }
+@media (max-width: 760px) {
+  .sttable tr { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 8px 12px; }
+  .sttable td { display: inline-flex; width: auto; padding: 0; align-items: center; gap: 4px; font-size: .85rem; }
+  .sttable td::before { content: none; }
+  .sttable td[data-l="No."] { font-size: .75rem; font-weight: 800; color: #A0789A; min-width: 3.4em; }
+  .sttable td[data-l="Name"] { flex: 1 1 calc(100% - 11em); min-width: 0; }
+  .sttable td[data-l="No."] { order: 0; } .sttable td[data-l="Name"] { order: 1; } .sttable td[data-l="Right"] { order: 2; margin-left: auto; }
+  .sttable td[data-l="Activity"] { order: 3; } .sttable td[data-l="Streak"] { order: 4; } .sttable td[data-l="Stages"] { order: 5; } .sttable td[data-l="Last"] { order: 6; }
+  .sttable td[data-l="Activity"] { margin-left: 3.4em; }
+  .sttable td[data-l="Stages"]::before { content: "🚪"; font-size: .8rem; } .sttable td[data-l="Last"]::before { content: "🕒"; font-size: .8rem; }
+  .sttable td[data-l="Last"] { margin-left: auto; color: #7E6378; } .sttable .spark { width: 40px; }
+}
 </style>
 </head>
 <body>
@@ -8338,7 +8370,7 @@ function bpRecordAnswer(learner, q, correct, epochMin) {
   s.seen++; if (correct) { s.correct++; s.box = Math.min(4, s.box + 1); s.streak++; } else { s.box = Math.max(0, s.box - 1); s.streak = 0; }
   s.dueEpochMin = epochMin + BP_BOX_DAYS[s.box] * 1440;
   learner.history.push({ questionId: q.id, lo: q.lo, templateId: q.templateId, correct, epochMin });
-  if (learner.history.length > 300) learner.history.splice(0, learner.history.length - 300);
+  if (learner.history.length > 120) learner.history.splice(0, learner.history.length - 120);
   return s;
 }
 const bpMastered = s => s.box >= 3 && s.streak >= 2;
@@ -8977,7 +9009,7 @@ function lpStep() {
   const n = Math.floor(LP.acc); LP.acc -= n;
   for (let i = 0; i < n; i++) if (lpMinute()) break;
   if (n) lpDraw();
-  if (Date.now() - LP.lastSave > 30000) lpPersist(true);
+  if (Date.now() - LP.lastSave > 30000) { lpPersist(false); saveLocal(); }   // device only: the class sheet gets it with the next real save
 }
 // one pal minute; true = something worth stopping for
 function lpMinute() {
@@ -8999,7 +9031,7 @@ function lpNews() {
   }
   if (w.nights.length > LP.seen.n) { SFX.item(); stop = true; const n = w.nights[w.nights.length - 1]; toast(`🌙 ${palName()} woke up: sleep quality ${Math.round(n.report.score * 100)}/100`); }
   LP.seen = { f: w.fired.length, n: w.nights.length };
-  if (stop) { lpPersist(true); lpDrawSlow(true); }
+  if (stop) { lpPersist(false); saveLocal(); lpDrawSlow(true); }
   return stop;
 }
 function lpAdvance(m) { for (let i = 0; i < m; i++) if (lpMinute()) break; lpAfter(); }
@@ -10666,16 +10698,16 @@ function greeting0() {
 
 function renderMap() {
   stopRush(); MUSIC.setMode("map"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; recomputeMastery(); save(); renderTools();
-  palTick();
+  newDayCheck(); palTick();
   if (!NAV_TABS.some(t => t[0] === homeTab) && !PAL_TABS.includes(homeTab) && !(homeTab === "stats" && isTeacher())) homeTab = "home";
   if (homeTab === "lab") return renderSims();
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni];
   if (mapPart === null) mapPart = nr ? TOPICS[nr.t].p : 0;
-  $app.innerHTML = { home: homeHtml, stages: () => isStudy() ? studyPlannerHtml() : stagesHtml(), play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml, stats: statsHtml }[homeTab]();
+  $app.innerHTML = staleBarHtml() + { home: homeHtml, stages: () => isStudy() ? studyPlannerHtml() : stagesHtml(), play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml, stats: statsHtml }[homeTab]();
   renderNav(homeTab);
   ({ home: wireHome, stages: () => isStudy() ? wireStudyPlanner() : wireStages(), play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards, stats: wireStats })[homeTab]();
   $app.querySelectorAll(".subnav [data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });
-  wireFolds($app);
+  wireFolds($app); wireStaleBar();
 }
 
 /* ----- 🏠 Home ----- */
@@ -11070,6 +11102,7 @@ const answerCoins = (pid, firstTry) => !firstTry ? 0 : Math.round((S.mastered_pu
 /* ----- One hook for every finished activity: streak, mission and class records ----- */
 function activityDone(ev) {
   if (!S) return;
+  newDayCheck();
   if (ev.done !== false && (ev.ans || 0) > 0) { markStudied(); luckyCount(ev.ans); }
   palGain(ev);
   missionProgress(ev);
@@ -11209,7 +11242,7 @@ const BIO_CONFIG = {
   API_URL: "https://script.google.com/macros/s/AKfycbzKyxde4QsX5WywsTF0xu3ISLN_VWMlK2WNqHgqe3aM1ztsmNQgNl4tyP-nFGS5U-n_oA/exec" // paste the Apps Script /exec URL here (see server/SETUP.md) to switch class sign-in on
 };
 const AUTH_KEY = "escapeGame_biology_auth";
-const AUTH = { mode: null, user: null, token: null, exp: 0, stale: false, lastSync: 0 };
+const AUTH = { mode: null, user: null, token: null, exp: 0, stale: false, lastSync: 0, syncErr: "" };
 const SESSION_ID = Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
 const cloudOn = () => !!(BIO_CONFIG.GOOGLE_CLIENT_ID && BIO_CONFIG.API_URL) && window.top === window.self;
 const signedIn = () => AUTH.mode === "google" && !!AUTH.user;
@@ -11229,7 +11262,15 @@ function api(action, data) {
   if (!tokenOk()) { markStale(); return Promise.resolve({ ok: false, error: "expired" }); }
   return post(action, data).then(j => { if (!j.ok && j.error === "expired") markStale(); return j; }, () => ({ ok: false, error: "network" }));
 }
-function markStale() { if (!AUTH.stale) { AUTH.stale = true; renderTools(); toast("⚠️ Sign-in expired. Tap 👤 to sign in again and keep syncing."); } }
+/* Google sign-in tokens last about an hour. After that nothing reaches the class sheet until the student signs in again,
+   so say it clearly (a bar on every page, not just a toast) and offer Google's one-tap "Continue as …" straight away. */
+function markStale() {
+  if (AUTH.stale) return;
+  AUTH.stale = true; renderTools(); toast("⚠️ Sign-in timed out. Sign in again so your streak and chestnuts reach your class.");
+  if (cloudOn()) withGIS(() => { try { google.accounts.id.prompt(); } catch (e) {} });
+}
+const staleBarHtml = () => signedIn() && AUTH.stale ? `<section class="card stalebar" role="alert"><span aria-hidden="true">☁️</span><div><b>Not saving to your class</b><div class="small">Sign-in timed out. Your progress is safe on this device and uploads as soon as you sign in again.</div></div><button class="btn sm blue" id="staleGo">🔄 Sign in again</button></section>` : "";
+function wireStaleBar() { const b = document.getElementById("staleGo"); if (b) b.onclick = () => { SFX.tap(); openAccount(); }; }
 function errText(e) {
   return ({ not_listed: "This Google account isn't on the class list. Use your school account, or tap Play as guest.", bad_client: "Sign-in is set up for a different website. Please tell your teacher.",
     unverified: "This Google account's email isn't verified.", expired: "Sign-in timed out. Please try again.", network: "Can't reach the class server. Check your internet, or play as guest.",
@@ -11318,15 +11359,55 @@ function flushQueue() {
 let cloudTimer = null;
 function cloudSaveSoon(now) { if (!signedIn()) return; clearTimeout(cloudTimer); cloudTimer = setTimeout(cloudSave, now ? 50 : 6000); }
 const collectionCount = () => PETS.filter(p => S.pets[p.id]).length + collOwned();
+/* The class sheet keeps each save in one cell (50,000 characters at most; the server refuses more than 49,000).
+   Busy students' saves grew past that, so every cloud save failed and streaks and chestnuts stopped updating.
+   packCloud() makes the cloud copy fit: it drops what can be rebuilt, and packs the big lists without losing anything.
+   unpackCloud() (called by normalise) turns the packed lists back into the normal ones. */
+const CLOUD_MAX = 44000;
+function packCloud(S0) {
+  const c = JSON.parse(JSON.stringify(S0)), size = () => JSON.stringify(c).length;
+  c.seen = {}; c.room_progress = {};   // "recently seen" and half-finished locks: safe to rebuild
+  const mp = {};   // mastered question ids grouped by stage: { t1s1: "q1,q4,…" }
+  (c.mastered_puzzles || []).forEach(id => { const i = id.indexOf(":"); if (i > 0) (mp[id.slice(0, i)] = mp[id.slice(0, i)] || []).push(id.slice(i + 1)); });
+  c.mp = {}; Object.keys(mp).forEach(r => c.mp[r] = mp[r].join(",")); c.mastered_puzzles = [];
+  const mk = {};   // mistakes grouped by stage: "qid,n,ok,yyyymmdd;…"
+  Object.entries(c.mistakes || {}).forEach(([k, m]) => { const i = k.indexOf(":"); if (i < 1) return; const r = k.slice(0, i);
+    mk[r] = (mk[r] ? mk[r] + ";" : "") + [k.slice(i + 1), m.n || 0, m.ok || 0, String(m.d || "").replace(/-/g, "")].join(","); });
+  c.mk = mk; c.mistakes = {};
+  if (c.palLearn && c.palLearn.history) c.palLearn.history = c.palLearn.history.slice(-40);
+  // still too big: give up rebuildable extras, smallest loss first
+  const steps = [() => { if (c.palLearn) c.palLearn.history = []; },
+    () => Object.keys(c.pals || {}).forEach(id => { if (id !== c.activePal && c.pals[id].body) delete c.pals[id].body; }),
+    () => { const b = c.pals && c.pals[c.activePal]; if (b && b.body && b.body.opts && b.body.opts.snap) b.body.opts.snap.hist = {}; },
+    () => { c.dict = { missed: {}, best: (c.dict && c.dict.best) || 0 }; },
+    () => Object.keys(c.pals || {}).forEach(id => delete c.pals[id].body)];
+  for (const f of steps) { if (size() <= CLOUD_MAX) break; f(); }
+  return c;
+}
+function unpackCloud(s) {
+  if (s.mp) { const set = new Set(s.mastered_puzzles || []); Object.entries(s.mp).forEach(([r, q]) => String(q).split(",").filter(Boolean).forEach(x => set.add(`${r}:${x}`))); s.mastered_puzzles = [...set]; delete s.mp; }
+  if (s.mk) { s.mistakes = s.mistakes || {}; Object.entries(s.mk).forEach(([r, str]) => String(str).split(";").filter(Boolean).forEach(e => { const [q, n, ok, d] = e.split(",");
+    const k = `${r}:${q}`; if (!s.mistakes[k]) s.mistakes[k] = { n: Number(n) || 0, ok: Number(ok) || 0, d: d && d.length === 8 ? `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6)}` : today() }; })); delete s.mk; }
+  return s;
+}
 function cloudPayload() {
-  let st = JSON.stringify(S);
-  if (st.length > 45000) { const c = JSON.parse(st); c.seen = {}; c.room_progress = {}; st = JSON.stringify(c); }
+  const st = JSON.stringify(packCloud(S));
   const ap = S.activePet && petById(S.activePet);
   return { state: st, summary: { streak: S.current_streak, best: S.longest_streak, stars: ROOMS.reduce((a, r) => a + roomStars(r), 0), stages: S.completed_rooms.length,
     coins: S.coins, pet: ap ? ap.name : "", pets: PETS.filter(p => S.pets[p.id]).length, mistakes: mistakeKeys().length, cleared: S.mistakes_cleared || 0,
     trophies: Object.keys(S.trophies || {}).length, lastDay: S.last_study_day || "", xp: dedication(), col: collectionCount(), pal: activePalId() } };
 }
-function cloudSave() { if (!signedIn() || !S) return; if (!tokenOk()) { markStale(); return; } api("save", cloudPayload()).then(j => { if (j.ok) { AUTH.lastSync = Date.now(); } }); }
+let syncRetry = null;
+function cloudSave() {
+  if (!signedIn() || !S) return; if (!tokenOk()) { markStale(); return; }
+  api("save", cloudPayload()).then(j => {
+    if (j.ok) { AUTH.lastSync = Date.now(); AUTH.syncErr = ""; return; }
+    if (j.error === "expired" || j.error === "guest") return;
+    // never fail silently: tell the student once, keep the progress on this device, try again in a minute
+    if (!AUTH.syncErr) toast("⚠️ Couldn't save to the class sheet just now. Your progress is safe on this device; I'll try again.");
+    AUTH.syncErr = String(j.error || "network"); clearTimeout(syncRetry); syncRetry = setTimeout(cloudSave, 60000);
+  });
+}
 window.addEventListener("pagehide", () => {
   if (signedIn() && tokenOk() && S && navigator.sendBeacon) {
     try { navigator.sendBeacon(BIO_CONFIG.API_URL, JSON.stringify(Object.assign({ action: "save", token: AUTH.token }, cloudPayload())));
@@ -11370,7 +11451,7 @@ function openAccount() {
   if (signedIn()) {
     openModal(`<span class="kicker">👤 Account</span><h2>${esc(userName())}</h2>
       <p class="small muted" style="margin:0">${u.cls ? `Class ${esc(u.cls)}${u.no ? ` · No. ${esc(u.no)}` : ""} · ` : ""}${esc(u.email)}</p>
-      <div class="preview small">${AUTH.stale ? "⚠️ Sign-in expired. Sign in again to keep syncing (your progress is safe on this device)." : `☁️ Synced to your class${AUTH.lastSync ? ` at ${new Date(AUTH.lastSync).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : ""}${q ? ` · ${q} record${q > 1 ? "s" : ""} waiting to upload` : ""}`}</div>
+      <div class="preview small">${AUTH.stale ? "⚠️ Sign-in expired. Sign in again to keep syncing (your progress is safe on this device)." : AUTH.syncErr ? `⚠️ Last save to the class sheet failed (${esc(AUTH.syncErr)}). Your progress is safe on this device and will upload on the next try.` : `☁️ Synced to your class${AUTH.lastSync ? ` at ${new Date(AUTH.lastSync).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : ""}${q ? ` · ${q} record${q > 1 ? "s" : ""} waiting to upload` : ""}`}</div>
       ${AUTH.stale ? `<div id="gbtn2" class="gbtn"></div>` : `<div class="row"><button class="btn blue" id="acSync">☁️ Sync now</button><button class="btn yellow" id="acLb">🏆 Class leaderboard</button></div>`}
       <div class="row"><button class="btn plain" id="acOut">🚪 Sign out</button></div>`);
     if (AUTH.stale) renderGBtn("gbtn2");
@@ -11541,6 +11622,8 @@ function loadStats(force) {
 const pctOf = (c, a) => (a ? Math.round(100 * c / a) : null);
 const fmtDay = iso => { const d = new Date(iso); return isNaN(d) ? "–" : `${d.getDate()}/${d.getMonth() + 1}`; };
 const yesterday = () => shiftDay(today(), -1);
+// Older servers can send the last study day as a Date string ("Thu Oct 08 2026 …"): turn it back into yyyy-mm-dd
+const ymd = v => { v = String(v || ""); if (/^\d{4}-\d\d-\d\d/.test(v)) return v.slice(0, 10); const d = new Date(v); return isNaN(d) ? "" : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 function computeStats() {
   const D = TS.data, since = TS.period === "all" ? 0 : Date.now() - Number(TS.period) * 864e5;
   const studs = D.students.filter(s => TS.cls === "all" || s.cls === TS.cls).sort((a, b) => a.cls < b.cls ? -1 : a.cls > b.cls ? 1 : (Number(a.no) || 0) - (Number(b.no) || 0));
@@ -11555,7 +11638,7 @@ function computeStats() {
     if ((r.mode === "escape" || r.mode === "study") && r.wrong) { const rid = String(r.stage).split(" ")[0]; r.wrong.split(/\s+/).filter(Boolean).forEach(q => { const k = `${rid}:${q}`; missed[k] = (missed[k] || 0) + 1; }); }
   });
   const rows = studs.map(s => { const b = by[s.email], pr = D.progress[s.email] || {}; return { s, sess: b.sess, ans: b.ans, cor: b.cor, acc: pctOf(b.cor, b.ans), mins: Math.round(b.secs / 60), last: b.last,
-    streak: pr.lastDay >= yesterday() ? pr.streak || 0 : 0, best: pr.best || 0, stages: pr.stages || 0, stars: pr.stars || 0, xp: pr.xp || 0, mistakes: pr.mistakes || 0, trophies: pr.trophies || 0, signed: !!D.progress[s.email] }; });
+    streak: ymd(pr.lastDay) >= yesterday() ? pr.streak || 0 : 0, lastDay: ymd(pr.lastDay), best: pr.best || 0, stages: pr.stages || 0, stars: pr.stars || 0, xp: pr.xp || 0, mistakes: pr.mistakes || 0, trophies: pr.trophies || 0, signed: !!D.progress[s.email] }; });
   const active = rows.filter(r => r.sess > 0), ans = rows.reduce((a, r) => a + r.ans, 0), cor = rows.reduce((a, r) => a + r.cor, 0);
   return { rows, active, recs, ans, acc: pctOf(cor, ans), topic, day, modes, missed, classes: [...new Set(D.students.map(s => s.cls).filter(Boolean))].sort() };
 }
@@ -11580,39 +11663,59 @@ function statsHtml() {
     return `<section class="card"><h2>📊 Class statistics</h2>${TS.err === "update" ? say("chiikawa", "The class server needs the latest <b>server/Code.gs</b> to show statistics. In Apps Script: paste the new code, then <b>Deploy → Manage deployments → ✏️ → New version</b>. The web address stays the same.", "normal", "hint")
       : TS.err ? `<p class="bad">${esc(TS.err)}</p><button class="btn" id="stRetry">Try again</button>` : `<p class="muted">Loading class data… ⏳</p>`}</section>`;
   }
-  const C = computeStats(), per = { 7: "7 days", 30: "30 days", 90: "90 days", all: "All time" }[TS.period];
-  const tile = (v, l, sub) => `<div class="kpi"><b>${v}</b><span>${l}</span>${sub ? `<small>${sub}</small>` : ""}</div>`;
+  const C = computeStats(), per = { 7: "7 days", 30: "30 days", 90: "90 days", all: "all time" }[TS.period], nDays = TS.period === "7" ? 7 : TS.period === "90" ? 90 : 30;
   const avgStreak = C.rows.length ? (C.rows.reduce((a, r) => a + r.streak, 0) / C.rows.length).toFixed(1) : "0";
-  const tItems = TOPICS.map(T => { const t = C.topic[String(T.no)]; return t && t.a ? [`T${T.no} ${T.name}`, pctOf(t.c, t.a), `Topic ${T.no} ${T.name}: ${pctOf(t.c, t.a)}% of ${t.a} answers right`] : null; }).filter(Boolean);
+  const tile = (ic, v, l, extra) => `<div class="kpi"><span class="kic" aria-hidden="true">${ic}</span><b>${v}</b><span>${l}</span>${extra || ""}</div>`;
+  const ring = (n, d) => { const f = d ? n / d : 0; return `<svg class="kring" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="#EFE7F0" stroke-width="5"/><circle cx="18" cy="18" r="15" fill="none" stroke="${VIZ}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(94.2 * f).toFixed(1)} 94.2" transform="rotate(-90 18 18)"/></svg>`; };
+  const tItems = TOPICS.map(T => { const t = C.topic[String(T.no)]; return t && t.a ? { no: T.no, name: T.name, v: pctOf(t.c, t.a), a: t.a } : null; }).filter(Boolean).sort((x, y) => x.v - y.v);
   const mItems = Object.keys(MODE_LABEL).map(k => [MODE_LABEL[k], C.modes[k] || 0]).filter(x => x[1]).sort((a, b) => b[1] - a[1]);
   const clsItems = TS.cls === "all" && C.classes.length > 1 ? C.classes.map(c => { const rs = C.rows.filter(r => r.s.cls === c), a = rs.reduce((x, r) => x + r.ans, 0), k = rs.reduce((x, r) => x + r.cor, 0); return a ? [`Class ${c}`, pctOf(k, a), `Class ${c}: ${pctOf(k, a)}% right (${rs.filter(r => r.sess).length}/${rs.length} active)`] : null; }).filter(Boolean) : [];
-  const weak = tItems.slice().sort((a, b) => a[1] - b[1])[0];
   const missed = Object.entries(C.missed).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k, n]) => { const [rid, qid] = k.split(":"), r = ROOMS[roomIndex(rid)], p = r && r.pool.find(x => x.id === qid); return p ? { r, p, n } : null; }).filter(Boolean);
   const sortKey = { no: r => `${r.s.cls}${String(r.s.no).padStart(3, "0")}`, name: r => (r.s.en || r.s.zh).toLowerCase(), sess: r => r.sess, acc: r => r.acc == null ? -1 : r.acc, streak: r => r.streak, stages: r => r.stages, last: r => r.last || "" }[TS.sort];
   const rows = C.rows.slice().sort((a, b) => { const x = sortKey(a), y = sortKey(b); return (x < y ? -1 : x > y ? 1 : 0) * TS.dir; });
-  const inactive = C.rows.filter(r => !r.sess);
+  const inactive = C.rows.filter(r => !r.sess), maxSess = Math.max(1, ...C.rows.map(r => r.sess));
+  const topStreak = C.rows.slice().sort((a, b) => b.streak - a.streak)[0];
+  const weak = tItems[0], nm = r => esc((r.s.en || r.s.zh || "").split(/\s+/)[0]);
+  // one-glance chips: what needs attention, what is going well
+  const chips = [weak && weak.v < 70 ? `<span class="gchip bad">🔻 Weakest: <b>T${weak.no}</b> ${weak.v}%</span>` : weak ? `<span class="gchip good">✅ Every topic ≥ ${weak.v}%</span>` : "",
+    inactive.length ? `<span class="gchip warn">😴 <b>${inactive.length}</b> not active</span>` : C.rows.length ? `<span class="gchip good">🙌 Everyone active</span>` : "",
+    topStreak && topStreak.streak ? `<span class="gchip">🔥 Top streak: <b>${nm(topStreak)}</b> ${topStreak.streak} d</span>` : "",
+    missed[0] ? `<span class="gchip warn">❓ Most missed: T${missed[0].r.topicNo} (${missed[0].n}×)</span>` : ""].filter(Boolean).join("");
   const th = (k, l) => `<th><button class="sortb ${TS.sort === k ? "on" : ""}" data-sort="${k}">${l}${TS.sort === k ? (TS.dir > 0 ? " ▲" : " ▼") : ""}</button></th>`;
-  return `<section class="card stathead"><div class="row" style="justify-content:space-between"><h2 style="margin:0">📊 Class statistics</h2><span class="small muted">Updated ${new Date(TS.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span></div>
-      <div class="row stfilters"><label class="small"><b>Class</b> <select id="stCls" class="name">${["all", ...C.classes].map(c => `<option value="${esc(c)}" ${c === TS.cls ? "selected" : ""}>${c === "all" ? "All classes" : `Class ${esc(c)}`}</option>`).join("")}</select></label>
-        <div class="slottabs" role="tablist">${["7", "30", "90", "all"].map(p => `<button role="tab" aria-selected="${p === TS.period}" data-per="${p}">${{ 7: "7 days", 30: "30 days", 90: "90 days", all: "All" }[p]}</button>`).join("")}</div>
-        <button class="btn plain sm" id="stRefresh">🔄 Refresh</button><button class="btn yellow sm" id="stCsv">⬇️ Download CSV</button></div></section>
-    <div class="kpis">${tile(`${C.active.length}/${C.rows.length}`, "students active", per)}${tile(C.recs, "activities finished", per)}${tile(C.ans, "questions answered", per)}${tile(C.acc == null ? "–" : `${C.acc}%`, "answered right", "first-try and retries")}${tile(avgStreak, "average streak", "days, today")}</div>
+  return `<section class="card stathead"><div class="row" style="justify-content:space-between"><h2 style="margin:0">📊 Class statistics</h2><span class="small muted">🕒 ${new Date(TS.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span></div>
+      <div class="row stfilters"><label class="small"><select id="stCls" class="name" aria-label="Class">${["all", ...C.classes].map(c => `<option value="${esc(c)}" ${c === TS.cls ? "selected" : ""}>${c === "all" ? "All classes" : `Class ${esc(c)}`}</option>`).join("")}</select></label>
+        <div class="slottabs" role="tablist" aria-label="Period">${["7", "30", "90", "all"].map(p => `<button role="tab" aria-selected="${p === TS.period}" data-per="${p}">${{ 7: "7 d", 30: "30 d", 90: "90 d", all: "All" }[p]}</button>`).join("")}</div>
+        <button class="btn plain sm" id="stRefresh" aria-label="Refresh">🔄</button><button class="btn yellow sm" id="stCsv">⬇️ CSV</button></div>
+      ${chips ? `<div class="gchips">${chips}</div>` : ""}</section>
+    <div class="kpis">${tile("👥", `${C.active.length}<small>/${C.rows.length}</small>`, "active", ring(C.active.length, C.rows.length))}${tile("✏️", C.ans.toLocaleString(), "questions")}${tile("🎯", C.acc == null ? "–" : `${C.acc}%`, "right")}${tile("🔥", avgStreak, "avg streak")}</div>
     <div class="statgrid">
-      <section class="card"><h3>Accuracy by topic</h3><p class="small muted" style="margin:0">${weak ? `💡 Weakest topic: <b>${esc(weak[0])}</b> (${weak[1]}%).` : ""}</p>${hbars(tItems, 100, v => `${v}%`)}</section>
-      <section class="card"><h3>Activities per day</h3><p class="small muted" style="margin:0">Last ${TS.period === "7" ? 7 : TS.period === "90" ? 90 : 30} days, all finished activities.</p>${dayBars(C.day, TS.period === "7" ? 7 : TS.period === "90" ? 90 : 30)}</section>
-      <section class="card"><h3>How students practise</h3>${hbars(mItems, Math.max(1, ...mItems.map(x => x[1])), v => `${v}`)}</section>
-      ${clsItems.length ? `<section class="card"><h3>Accuracy by class</h3>${hbars(clsItems, 100, v => `${v}%`)}</section>` : `<section class="card"><h3>Most-missed questions</h3>${missedHtml(missed)}</section>`}
+      <section class="card"><h3>🧭 Topics <span class="small muted">weakest first</span></h3>${topicBars(tItems)}</section>
+      <section class="card"><h3>📅 Activity <span class="small muted">per day, last ${nDays} d</span></h3>${dayBars(C.day, nDays)}</section>
+      ${clsItems.length ? `<section class="card"><h3>🏫 Classes <span class="small muted">% right</span></h3>${hbars(clsItems, 100, v => `${v}%`)}</section>` : ""}
     </div>
-    ${clsItems.length ? `<section class="card"><h3>Most-missed questions</h3>${missedHtml(missed)}</section>` : ""}
-    <section class="card"><h3>Students (${rows.length})</h3><div class="sttable-wrap"><table class="sttable"><thead><tr>${th("no", "Class · No.")}${th("name", "Name")}${th("sess", "Activities")}${th("acc", "Accuracy")}${th("streak", "Streak")}${th("stages", "Stages")}${th("last", "Last active")}<th>Mistakes</th></tr></thead>
-      <tbody>${rows.map(r => `<tr class="${r.sess ? "" : "idle"}"><td data-l="Class · No.">${esc(r.s.cls)}${r.s.no ? ` · ${esc(r.s.no)}` : ""}</td><td data-l="Name"><b>${esc(r.s.en || r.s.zh)}</b>${r.s.en && r.s.zh ? ` <span class="small muted">${esc(r.s.zh)}</span>` : ""}${r.signed ? "" : ` <span class="tagx">never signed in</span>`}</td><td data-l="Activities">${r.sess}</td><td data-l="Accuracy">${accChip(r.acc)}</td><td data-l="Streak">🔥 ${r.streak}</td><td data-l="Stages">${r.stages}</td><td data-l="Last active">${r.last ? fmtDay(r.last) : "–"}</td><td data-l="Mistakes">${r.mistakes}</td></tr>`).join("")}</tbody></table></div></section>
-    ${inactive.length ? `<section class="card"><h3>Not active in this period (${inactive.length})</h3><p class="small">${inactive.map(r => `${esc(r.s.cls)}${r.s.no ? `-${esc(r.s.no)}` : ""} ${esc(r.s.en || r.s.zh)}`).join(" · ")}</p></section>` : ""}
-    <p class="small muted">Only teacher accounts can see this page. Data comes from your private Google Sheet and is not stored on this device.</p>`;
+    <section class="card"><h3>👩‍🎓 Students <span class="small muted">${rows.length} · ${per}</span></h3><div class="sttable-wrap"><table class="sttable"><thead><tr>${th("no", "No.")}${th("name", "Name")}${th("sess", "Activity")}${th("acc", "Right")}${th("streak", "🔥")}${th("stages", "Stages")}${th("last", "Last")}</tr></thead>
+      <tbody>${rows.map(r => `<tr class="${r.sess ? "" : "idle"}"><td data-l="No.">${esc(r.s.cls)}${r.s.no ? `-${esc(r.s.no)}` : ""}</td><td data-l="Name"><b>${esc(r.s.en || r.s.zh)}</b>${r.signed ? "" : ` <span class="tagx">never signed in</span>`}</td>
+        <td data-l="Activity"><span class="spark" title="${r.sess} activities, ${r.ans} questions, ${r.mins} min"><i style="width:${Math.round(100 * r.sess / maxSess)}%"></i></span> <b>${r.sess}</b></td><td data-l="Right">${accChip(r.acc)}</td>
+        <td data-l="Streak">${r.streak ? `🔥 ${r.streak}` : `<span class="muted">–</span>`}</td><td data-l="Stages">${r.stages}</td><td data-l="Last">${ago(r.last)}</td></tr>`).join("")}</tbody></table></div></section>
+    <section class="card folds">
+      ${foldHtml("st-missed", { icon: "❓", title: "Most-missed questions", peek: missed.length ? `${missed.length}` : "" }, missedHtml(missed))}
+      ${foldHtml("st-modes", { icon: "🎮", title: "How they practise", peek: mItems[0] ? mItems[0][0] : "" }, hbars(mItems, Math.max(1, ...mItems.map(x => x[1])), v => `${v}`))}
+      ${inactive.length ? foldHtml("st-idle", { icon: "😴", title: "Not active", peek: `${inactive.length}` }, `<div class="idlechips">${inactive.map(r => `<span class="idlechip"><b>${esc(r.s.cls)}${r.s.no ? `-${esc(r.s.no)}` : ""}</b> ${esc(r.s.en || r.s.zh)}</span>`).join("")}</div>`) : ""}
+    </section>
+    <p class="small muted">🔒 Teachers only · data from your private Google Sheet, not stored on this device.</p>`;
 }
-const accChip = p => p == null ? `<span class="muted">–</span>` : `<span class="acc ${p >= 80 ? "hi" : p >= 60 ? "mid" : "lo"}">${p}%</span>`;
+/* Topic accuracy: weakest first, colour AND icon carry the band (never colour alone) */
+function topicBars(items) {
+  if (!items.length) return `<p class="small muted">No answers in this period yet.</p>`;
+  const band = v => v >= 80 ? ["hi", "✅"] : v >= 60 ? ["mid", "⚠️"] : ["lo", "🔻"];
+  return `<div class="tbars">${items.map(t => { const [c, ic] = band(t.v); return `<div class="tbar ${c}" title="Topic ${t.no} ${esc(t.name)}: ${t.v}% of ${t.a} answers right">
+    <span class="tbl"><b>T${t.no}</b> ${esc(t.name)}</span><span class="tbt"><i style="width:${Math.max(3, t.v)}%"></i></span><b class="tbv">${ic} ${t.v}%</b></div>`; }).join("")}</div>`;
+}
+const ago = iso => { if (!iso) return `<span class="muted">–</span>`; const d = dayNum(today()) - dayNum(ymd(iso)); return d <= 0 ? "today" : d === 1 ? "yesterday" : `${d} d ago`; };
+const accChip = p => p == null ? `<span class="muted">–</span>` : `<span class="acc ${p >= 80 ? "hi" : p >= 60 ? "mid" : "lo"}">${p >= 80 ? "✅" : p >= 60 ? "⚠️" : "🔻"} ${p}%</span>`;
 function missedHtml(list) {
   if (!list.length) return `<p class="small muted">No missed questions recorded in this period.</p>`;
-  return `<ol class="missed">${list.map(x => `<li><span class="small muted">T${x.r.topicNo} · ${esc(x.r.name)} · <b>${x.n}×</b> wrong</span><br>${esc(x.p.q)}</li>`).join("")}</ol>`;
+  return `<ol class="missed">${list.map(x => `<li><span class="mchip">T${x.r.topicNo}</span> <b class="mn">${x.n}×</b> <span title="${esc(x.p.q)}">${esc(x.p.q.length > 90 ? x.p.q.slice(0, 88) + "…" : x.p.q)}</span></li>`).join("")}</ol>`;
 }
 function wireStats() {
   const g = id => document.getElementById(id);
@@ -12227,6 +12330,7 @@ function freshState() {
   };
 }
 function normalise(obj) {
+  if (obj && (obj.mp || obj.mk) && typeof unpackCloud === "function") obj = unpackCloud(obj);   // a packed cloud save (auth.js)
   const s = Object.assign(freshState(), obj || {});
   s.bio_mastery = Object.assign(freshMastery(), (obj && obj.bio_mastery) || {});
   s.stats = Object.assign(freshStats(), (obj && obj.stats) || {});
@@ -12256,6 +12360,10 @@ function load(key) {
   return null;
 }
 let savedFlash = 0;
+// Save on this device only (frequent background saves, e.g. the living pal's clock); the next real save uploads it.
+function saveLocal() { if (!S) return; S.upd = Date.now(); try { localStorage.setItem(storeKey(), JSON.stringify(S)); } catch (e) {} }
+// A new calendar day while the game stays open: run the daily check-in now (streak freezes, missed days, sickness)
+function newDayCheck() { if (S && S.last_login_date && S.last_login_date !== today()) checkIn(); }
 function save(flash) {
   if (!S) return;
   S.upd = Date.now();
