@@ -13,7 +13,7 @@ Object.assign(SIM_Q, {
     ["In Went's investigation, an agar block with MORE chemical on its right half is put on a cut coleoptile in darkness. What happens?", ["The right side grows faster, so it bends to the left", "The left side grows faster, so it bends to the right", "It grows straight up", "It does not grow, because there is no light"], "More auxin → those cells elongate more. The faster-growing right side pushes the shoot over to the left. No light is needed: the chemical alone causes bending."]]
 });
 
-simReg({ id: "tropism", ic: "🌱", name: "Phototropism", sec: "d", ord: 60, topic: "t16", fn: tropismSim,
+simReg({ id: "tropism", ic: "🌱", name: "Phototropism", sec: "3d", ord: 60, topic: "t16", fn: tropismSim,
   words: [["phototropism", "🌱", "a plant grows towards (or away from) light"], ["coleoptile", "🌾", "the sheath that covers a young grass shoot"], ["auxin", "🔴", "plant hormone that makes cells get longer"], ["unilateral light", "➡️", "light from one side only"], ["elongation", "↕️", "cells get longer"], ["mica", "🪟", "thin sheet that chemicals cannot pass through"], ["agar block", "🧊", "jelly that chemicals can soak into and out of"]] });
 
 /* ---------------- 6. 💧 Osmosis with dialysis tubing ---------------- */

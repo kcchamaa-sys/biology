@@ -1563,14 +1563,38 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
 .guestbar { background: #EAF4FF; border-color: #8FC0F2; }
 /* ---------- 🔬 Lab: curriculum sections, picture word bank, 🎯 challenges (sims.js, simchal.js) ---------- */
 .simtop { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-.simsecs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; margin: 10px 0 4px; }
-@media (max-width: 620px) { .simsecs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.simtopr { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.simmapb { font: inherit; font-weight: 800; border: 0; cursor: pointer; min-height: 40px; background: #EAF4FF; color: #2D5F99; box-shadow: 0 0 0 1.5px #BBD8F5; }
+/* HKDSE parts I–IV: four big tabs with a progress bar */
+.simparts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 10px 0 2px; }
+.simparts button { --pc: #3D8BD9; border: 0; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1.5px rgba(107,74,107,.12), 0 2px 0 #EADFEA; font: inherit; color: var(--ink); padding: 8px 4px 7px; min-height: 76px; display: grid; justify-items: center; align-content: start; gap: 2px; cursor: pointer; min-width: 0; }
+.simparts button[aria-selected="true"] { background: color-mix(in srgb, var(--pc) 14%, #fff); box-shadow: 0 0 0 2.5px var(--pc), 0 3px 0 var(--pc); }
+.simparts .spic { font-size: 1.45rem; line-height: 1.1; }
+.simparts .spno { font-size: .7rem; font-weight: 900; color: var(--pc); letter-spacing: .04em; line-height: 1; }
+.simparts .spnm { font-size: .74rem; font-weight: 800; line-height: 1.15; text-align: center; overflow-wrap: anywhere; hyphens: auto; }
+.simparts .spbar { width: 80%; height: 5px; border-radius: 3px; background: #EFE7DD; overflow: hidden; margin-top: 2px; }
+.simparts .spbar i { display: block; height: 100%; background: #3FA06B; }
+.simpartname { margin: 6px 0 0; font-size: .82rem; color: var(--pc, #3D8BD9); }
+.simsecs { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 6px; margin: 6px 0 4px; }
 .simsecs button { border: 0; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1.5px rgba(107,74,107,.12), 0 2px 0 #EADFEA; font: inherit; color: var(--ink); padding: 8px 4px 6px; min-height: 64px; display: grid; justify-items: center; gap: 1px; cursor: pointer; min-width: 0; }
 .simsecs button[aria-selected="true"] { background: linear-gradient(180deg, #E3F7FF, #BDE6FF); box-shadow: 0 0 0 2.5px #3D8BD9, 0 3px 0 #3D8BD9; }
 .simsecs .ssic { font-size: 1.5rem; line-height: 1.1; }
 .simsecs .ssnm { font-size: .78rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .simsecs .ssdots { font-size: .6rem; letter-spacing: 1px; color: #3FA06B; line-height: 1; }
-.simsecname { margin: 6px 0 2px; font-size: .9rem; }
+.simtabs button { max-width: 100%; text-align: left; }
+.simtabs .simtabnm { min-width: 0; overflow-wrap: anywhere; }
+.simnow { margin: 0; } .simgo { font-weight: 800; color: #B07A00; white-space: nowrap; }
+@media (max-width: 400px) { .simparts { gap: 4px; } .simparts .spnm { font-size: .66rem; } .simparts button { padding: 6px 2px; } }
+/* 🗺️ Lab map (modal) */
+.simmap { display: grid; gap: 12px; }
+.simmappart { --pc: #3D8BD9; border-radius: 16px; padding: 10px; background: color-mix(in srgb, var(--pc) 7%, #fff); box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--pc) 35%, #fff); }
+.simmappart h3 { margin: 0 0 6px; font-size: 1rem; color: var(--pc); }
+.simmapsec p { margin: 6px 0 4px; font-size: .85rem; }
+.simmaprow { display: flex; flex-wrap: wrap; gap: 6px; }
+.simmapb2 { font: inherit; font-weight: 800; font-size: .85rem; border: 0; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1.5px #E6D6BF; padding: 6px 10px; min-height: 44px; display: inline-flex; gap: 6px; align-items: center; cursor: pointer; max-width: 100%; text-align: left; }
+.simmapb2.on { box-shadow: 0 0 0 2.5px var(--pc); }
+.simmapb2 small { font-weight: 900; color: var(--ink-soft); }
+.simsecname { margin: 6px 0 4px; font-size: .9rem; }
 .simtabst { font-size: .72rem; font-weight: 900; background: #F4EEE8; border-radius: 999px; padding: 1px 7px; margin-left: 2px; }
 .simtabst:empty { display: none; }
 .simwords { padding: 10px; } .simwords > .fold-flat { margin-top: 0; border: 0; }

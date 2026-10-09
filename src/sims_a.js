@@ -168,9 +168,9 @@ function transpGraphSvg(st, rate) {
   return `<svg viewBox="0 0 320 170" role="img" aria-label="Bar graph of transpiration rate in student runs"><rect width="320" height="170" rx="12" fill="#fff"/><path d="M34 14 V140 H306" stroke="#3B2F2B" stroke-width="2"/><text x="14" y="92" transform="rotate(-90 14 92)" font-size="10" font-weight="800" fill="#7A6A66">rate (mm/min)</text>${rows.slice(0, 7).map((r, i) => `<rect x="${X(i)}" y="${140 - H(r)}" width="24" height="${H(r)}" rx="5" fill="${i ? "#B9A6D9" : "#3E8FDF"}"/><text x="${X(i) + 12}" y="${136 - H(r)}" text-anchor="middle" font-size="9" font-weight="900" fill="#3B2F2B">${r.rate.toFixed(1)}</text>`).join("")}<text x="170" y="162" text-anchor="middle" font-size="10" font-weight="800" fill="#7A6A66">current + saved runs</text></svg>`;
 }
 
-simReg({ id: "leafgas", ic: "🍃", name: "Leaf gas exchange", sec: "a", ord: 30, topic: "t12", fn: leafgasSim,
+simReg({ id: "leafgas", ic: "🍃", name: "Leaf gas exchange", sec: "3a", ord: 30, topic: "t12", fn: leafgasSim,
   words: [["photosynthesis", "☀️", "making food using light"], ["respiration", "🔥", "releasing energy from food"], ["stomata", "👄", "tiny pores in a leaf"], ["guard cells", "🟢", "cells that open and close stomata"], ["hydrogencarbonate indicator", "🧪", "shows carbon dioxide level"], ["compensation point", "⚖️", "photosynthesis equals respiration"], ["control", "⚖️", "comparison set-up kept the same"]] });
-simReg({ id: "transp", ic: "💧", name: "Transpiration (potometer)", sec: "a", ord: 40, topic: "t12", fn: transpSim,
+simReg({ id: "transp", ic: "💧", name: "Transpiration (potometer)", sec: "3a", ord: 40, topic: "t12", fn: transpSim,
   words: [["transpiration", "💧", "water vapour loss from leaves"], ["potometer", "🧪", "measures water uptake by a shoot"], ["stomata", "👄", "tiny pores in a leaf"], ["xylem", "🟦", "tubes carrying water upwards"], ["humidity", "💧", "how much water vapour is in air"], ["transpiration pull", "⬆️", "water column pulled upwards"], ["fair test", "⚖️", "change one variable only"]] });
 
 Object.assign(SIM_P, {

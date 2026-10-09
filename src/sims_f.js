@@ -42,7 +42,7 @@ const FW_CHAINS = [
 const fwChainKey = c => c.join(">");
 const fwLabel = id => FW[id].name;
 
-simReg({ id: "foodweb", ic: "🕸️", name: "Food web & energy", sec: "f", ord: 10, topic: "t18", fn: foodwebSim,
+simReg({ id: "foodweb", ic: "🕸️", name: "Food web & energy", sec: "3f", ord: 10, topic: "t18", fn: foodwebSim,
   words: [["producer", "🌿", "makes food by photosynthesis"], ["consumer", "🐟", "gets energy by feeding"], ["decomposer", "🍄", "breaks down dead matter"], ["trophic level", "🔺", "feeding position in a food chain"], ["biomass", "⚖️", "total mass of living material"], ["energy transfer", "🔥", "energy passed to the next level"], ["respiration", "💨", "releases energy; heat is lost"]] });
 
 function foodwebSim(root) {
@@ -187,7 +187,7 @@ const QUAD_SPEC = [
 ];
 const QUAD_PLANTS = quadMakePlants();
 
-simReg({ id: "quadrat", ic: "🟩", name: "Quadrat sampling", sec: "f", ord: 20, topic: "t18", fn: quadratSim,
+simReg({ id: "quadrat", ic: "🟩", name: "Quadrat sampling", sec: "3f", ord: 20, topic: "t18", fn: quadratSim,
   words: [["quadrat", "🟩", "square frame used for sampling"], ["random sampling", "🎲", "choosing positions without bias"], ["population estimate", "≈", "calculated total, not counted one by one"], ["frequency", "%", "percentage of quadrats with a species"], ["percentage cover", "▧", "area covered by the species"], ["transect", "📏", "line used to sample a gradient"], ["abiotic factor", "☀️", "non-living condition, like light or moisture"]] });
 
 function quadratSim(root) {

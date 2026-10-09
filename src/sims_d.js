@@ -19,9 +19,9 @@ Object.assign(SIM_P, {
     "Muscles only pull. The biceps shortens, its tendon pulls the radius, and the elbow bends.", "press 💪 Biceps impulse and watch the muscle shape."]
 });
 
-simReg({ id: "reflex", ic: "⚡", name: "Reflex arc", sec: "d", ord: 40, topic: "t16", fn: reflexSim,
+simReg({ id: "reflex", ic: "⚡", name: "Reflex arc", sec: "3d", ord: 40, topic: "t16", fn: reflexSim,
   words: [["stimulus", "🔥", "a change that is detected"], ["receptor", "🖐️", "detects a stimulus"], ["sensory neurone", "➡️", "carries impulses to the spinal cord"], ["relay neurone", "🔁", "links neurones in the spinal cord"], ["motor neurone", "⬅️", "carries impulses to an effector"], ["effector", "💪", "muscle or gland that responds"], ["synapse", "🌉", "gap where chemicals carry a signal"], ["reflex", "⚡", "fast automatic response"]] });
-simReg({ id: "muscle", ic: "💪", name: "Arm muscles & joints", sec: "d", ord: 50, topic: "t16", fn: muscleSim,
+simReg({ id: "muscle", ic: "💪", name: "Arm muscles & joints", sec: "3d", ord: 50, topic: "t16", fn: muscleSim,
   words: [["antagonistic", "↔️", "working in opposite ways"], ["biceps", "💪", "front arm muscle; bends elbow"], ["triceps", "🦾", "back arm muscle; straightens elbow"], ["tendon", "🧵", "joins muscle to bone"], ["hinge joint", "🚪", "joint moving in one plane"], ["cartilage", "🟦", "smooth cushion on bone ends"], ["synovial fluid", "💧", "slippery liquid in a joint"], ["lever", "⚖️", "bone moved by a force"]] });
 
 simStyle(`

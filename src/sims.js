@@ -11,16 +11,35 @@
    sims2.js: osmosis tubing, phototropism. sims_a–f.js: one file per curriculum section.
    ============================================================ */
 let simTab = null, SIM = null, SIM_PROBE = null;
+// The four parts of the HKDSE Biology compulsory part: [key, icon, short name, full name, colour]
+const SIM_PARTS = [
+  ["1", "🧪", "Cells & Molecules", "I. Cells and Molecules of Life", "#3D8BD9"],
+  ["2", "🧬", "Genetics & Evolution", "II. Genetics and Evolution", "#8E5BD6"],
+  ["3", "🌿", "Organisms & Environment", "III. Organisms and Environment", "#2F9E5B"],
+  ["4", "🩺", "Health & Diseases", "IV. Health and Diseases", "#D2455F"]
+];
+// Curriculum sections (HKDSE sub-topics): [key, icon, short name, full name, part key]. key = part + letter, e.g. "3a"
 const SIM_SECS = [
-  ["a", "🌿", "Plants", "Essential life processes in plants"],
-  ["b", "🍙", "Animals", "Essential life processes in animals"],
-  ["c", "🌸", "Growth", "Reproduction, growth and development"],
-  ["d", "🧠", "Senses", "Coordination and response"],
-  ["e", "⚖️", "Balance", "Homeostasis"],
-  ["f", "🌍", "Ecosystems", "Ecosystems"]
+  ["1a", "🧪", "Molecules", "Molecules of life", "1"],
+  ["1b", "🔬", "Cells", "Cellular organisation", "1"],
+  ["1c", "🫧", "Membranes", "Movement of substances across membrane", "1"],
+  ["1d", "🧬", "Division", "Cell cycle and division", "1"],
+  ["1e", "⚡", "Energy", "Cellular energetics", "1"],
+  ["2a", "🫛", "Inheritance", "Basic genetics", "2"],
+  ["2b", "🧫", "DNA", "Molecular genetics", "2"],
+  ["2c", "🦋", "Evolution", "Biodiversity and evolution", "2"],
+  ["3a", "🌿", "Plants", "Essential life processes in plants", "3"],
+  ["3b", "🍙", "Animals", "Essential life processes in animals", "3"],
+  ["3c", "🌸", "Growth", "Reproduction, growth and development", "3"],
+  ["3d", "🧠", "Senses", "Coordination and response", "3"],
+  ["3e", "⚖️", "Balance", "Homeostasis", "3"],
+  ["3f", "🌍", "Ecosystems", "Ecosystems", "3"],
+  ["4a", "🥗", "Health", "Personal health", "4"],
+  ["4b", "🦠", "Diseases", "Diseases", "4"],
+  ["4c", "🛡️", "Defence", "Body defence mechanisms", "4"]
 ];
 const SIMS = [], SIM_CH = {};
-// Register a simulation. sec = "a"–"f"; ord sorts inside the section; topic = TOPICS id; words = [[term, emoji, simple meaning]]
+// Register a simulation. sec = a SIM_SECS key ("1a"–"4c"); ord sorts inside the section; topic = TOPICS id; words = [[term, emoji, simple meaning]]
 function simReg(o) {
   SIMS.push(Object.assign({ ord: 50, words: [] }, o));
   const si = s => SIM_SECS.findIndex(x => x[0] === s.sec);
@@ -35,17 +54,17 @@ const segBtns = (name, opts, cur) => `<div class="simseg" role="radiogroup">${op
 // "Done" state of a simulation's challenge, for the tabs: [tasks done, total, finished?]
 function simChalState(id) { const c = (S.simc || {})[id], n = typeof chalTasks === "function" && SIM_CH[id] ? chalTasks(id).length : 0; return [c ? Object.keys(c.d || {}).length : 0, n, !!(c && c.fin)]; }
 
-simReg({ id: "membrane", ic: "🫧", name: "Root-hair membrane", sec: "a", ord: 10, topic: "t12", fn: membraneSim,
+simReg({ id: "membrane", ic: "🫧", name: "Root-hair membrane", sec: "3a", ord: 10, topic: "t12", fn: membraneSim,
   words: [["cell membrane", "🫧", "thin layer around a cell; controls what goes in and out"], ["osmosis", "💧", "water moves across a membrane to where there is less water"], ["active transport", "🔋", "moving particles from LOW to HIGH concentration, using energy"], ["mineral ion", "⚡", "small charged particle a plant needs, e.g. nitrate"], ["carrier protein", "🚪", "a protein that carries one kind of particle across"], ["respiration", "🔥", "releases energy (ATP) from food, using oxygen"]] });
-simReg({ id: "dialysis", ic: "💧", name: "Osmosis tubing", sec: "a", ord: 20, topic: "t12", fn: dialysisSim,
+simReg({ id: "dialysis", ic: "💧", name: "Osmosis tubing", sec: "1c", ord: 20, topic: "t3", fn: dialysisSim,
   words: [["osmosis", "💧", "water moves across a membrane to where there is less water"], ["water potential", "📶", "how free the water is to move; pure water is highest"], ["partially permeable", "🥅", "lets small particles (water) through but not big ones (sucrose)"], ["sucrose", "🍬", "a sugar; too big to pass the pores"], ["rate", "⏱️", "how fast something happens"], ["control", "⚖️", "a set-up kept the same, to compare with"]] });
-simReg({ id: "lung", ic: "🫁", name: "Breathing", sec: "b", ord: 20, topic: "t13", fn: lungSim,
+simReg({ id: "lung", ic: "🫁", name: "Breathing", sec: "3b", ord: 20, topic: "t13", fn: lungSim,
   words: [["diaphragm", "⌒", "sheet of muscle under the lungs"], ["intercostal muscles", "🦴", "muscles between the ribs"], ["inhale", "⬇️", "breathe in"], ["exhale", "⬆️", "breathe out"], ["volume", "📦", "how much space"], ["pressure", "🎈", "how hard the air pushes"], ["atmospheric pressure", "🌍", "the pressure of the air outside the body"]] });
-simReg({ id: "pupil", ic: "👁️", name: "Pupil reflex", sec: "d", ord: 10, topic: "t16", fn: pupilSim,
+simReg({ id: "pupil", ic: "👁️", name: "Pupil reflex", sec: "3d", ord: 10, topic: "t16", fn: pupilSim,
   words: [["pupil", "⚫", "the hole in the middle of the iris; light enters here"], ["iris", "🟦", "coloured ring of muscle around the pupil"], ["circular muscles", "⭕", "ring-shaped iris muscles; contract → smaller pupil"], ["radial muscles", "✳️", "spoke-shaped iris muscles; contract → bigger pupil"], ["retina", "🎞️", "back of the eye; has light-sensitive cells (receptors)"], ["reflex", "⚡", "a fast, automatic response; no thinking"], ["effector", "💪", "the muscle or gland that responds"]] });
-simReg({ id: "lens", ic: "🔍", name: "Focusing & glasses", sec: "d", ord: 20, topic: "t16", fn: lensSim,
+simReg({ id: "lens", ic: "🔍", name: "Focusing & glasses", sec: "3d", ord: 20, topic: "t16", fn: lensSim,
   words: [["accommodation", "🔍", "changing the lens shape to focus near or far"], ["ciliary muscles", "⭕", "ring of muscle that changes the lens shape"], ["suspensory ligaments", "🧵", "threads that hold the lens"], ["convex", "()", "thicker in the middle; bends light more"], ["concave", ")(", "thinner in the middle; spreads light out"], ["short sight", "👓", "can see near things but not far things"], ["long sight", "🔭", "can see far things but not near things"]] });
-simReg({ id: "ear", ic: "👂", name: "Hearing", sec: "d", ord: 30, topic: "t16", fn: earSim,
+simReg({ id: "ear", ic: "👂", name: "Hearing", sec: "3d", ord: 30, topic: "t16", fn: earSim,
   words: [["eardrum", "🥁", "thin skin that vibrates when sound hits it"], ["ossicles", "🦴", "three tiny bones that make vibrations bigger"], ["cochlea", "🐌", "snail-shaped tube with hair cells (receptors)"], ["hair cells", "〰️", "receptors that change vibrations into nerve impulses"], ["frequency", "🎵", "pitch: how many vibrations per second (Hz)"], ["auditory nerve", "⚡", "carries impulses from the cochlea to the brain"]] });
 
 function renderSims(tab) {
@@ -54,24 +73,33 @@ function renderSims(tab) {
   if (!SIMS.some(x => x.id === simTab)) simTab = SIMS.some(x => x.id === S.simLast) ? S.simLast : SIMS[0].id;
   S.simLast = simTab; SIM_PROBE = null;
   S.sims = S.sims || {}; if (!S.sims[simTab]) { S.sims[simTab] = today(); save(); checkTrophies(); } activityDone({ mode: "sim", sim: simTab, ans: 0 });
-  const info = SIMS.find(x => x.id === simTab), sec = SIM_SECS.find(x => x[0] === info.sec), topic = TOPICS.find(T => T.id === info.topic);
-  const secDone = s => SIMS.filter(x => x.sec === s).map(x => simChalState(x.id)[2]);
-  const allDone = SIMS.filter(x => simChalState(x.id)[2]).length;
+  const info = SIMS.find(x => x.id === simTab), sec = SIM_SECS.find(x => x[0] === info.sec), part = SIM_PARTS.find(x => x[0] === sec[4]), topic = TOPICS.find(T => T.id === info.topic);
+  const fins = list => list.filter(x => simChalState(x.id)[2]).length;
+  const inSec = k => SIMS.filter(x => x.sec === k), inPart = k => SIMS.filter(x => (SIM_SECS.find(y => y[0] === x.sec) || [])[4] === k);
+  const secs = SIM_SECS.filter(x => x[4] === part[0] && inSec(x[0]).length);
+  const roman = k => ["I", "II", "III", "IV"][+k - 1];
   $app.innerHTML = `
-    <section class="card simhead">
-      <div class="simtop"><h2 style="margin:0">🔬 Simulation Lab</h2><span class="pill" title="Challenges finished">🏆 ${allDone}/${SIMS.length}</span></div>
-      <div class="simsecs" role="tablist" aria-label="Curriculum sections">${SIM_SECS.map(([k, ic, nm, full]) => { const d = secDone(k); return `<button role="tab" aria-selected="${k === info.sec}" data-simsec="${k}" title="${esc(k + ". " + full)}"><span class="ssic" aria-hidden="true">${ic}</span><span class="ssnm"><b>${k}.</b> ${nm}</span><span class="ssdots" aria-label="${d.filter(Boolean).length} of ${d.length} challenges done">${d.map(x => x ? "●" : "○").join("")}</span></button>`; }).join("")}</div>
-      <p class="simsecname"><b>${sec[0]}. ${esc(sec[3])}</b></p>
-      <div class="slottabs" role="tablist">${SIMS.filter(x => x.sec === info.sec).map(x => { const [d, n, fin] = simChalState(x.id); return `<button role="tab" aria-selected="${x.id === simTab}" data-sim="${x.id}"><span aria-hidden="true">${x.ic}</span>${esc(x.name)}<span class="simtabst" aria-label="challenge ${fin ? "finished" : d + " of " + n}">${fin ? "🏆" : n ? `${d}/${n}` : ""}</span></button>`; }).join("")}</div>
-      <p class="small muted" style="margin:0">${info.ic} ${esc(info.name)}${topic ? ` · Topic ${topic.no} ${esc(topic.name)}` : ""} · 🎯 challenge below</p>
+    <section class="card simhead" style="--pc:${part[4]}">
+      <div class="simtop"><h2 style="margin:0">🔬 Simulation Lab</h2><span class="simtopr"><button class="pill simmapb" id="simMap" aria-haspopup="dialog">🗺️ All labs</button><span class="pill" title="Challenges finished">🏆 ${fins(SIMS)}/${SIMS.length}</span></span></div>
+      <div class="simparts" role="tablist" aria-label="HKDSE compulsory parts">${SIM_PARTS.filter(x => inPart(x[0]).length).map(([k, ic, nm, full, col]) => { const L = inPart(k), f = fins(L); return `<button role="tab" aria-selected="${k === part[0]}" data-simpart="${k}" style="--pc:${col}" title="${esc(full)}"><span class="spic" aria-hidden="true">${ic}</span><span class="spno">${roman(k)}</span><span class="spnm">${esc(nm)}</span><span class="spbar" aria-label="${f} of ${L.length} challenges done"><i style="width:${Math.round(100 * f / L.length)}%"></i></span></button>`; }).join("")}</div>
+      <p class="simpartname"><b>${esc(part[3])}</b></p>
+      <div class="simsecs" role="tablist" aria-label="Sections of ${esc(part[3])}">${secs.map(([k, ic, nm, full]) => { const L = inSec(k), f = fins(L); return `<button role="tab" aria-selected="${k === info.sec}" data-simsec="${k}" title="${esc(roman(k[0]) + "(" + k[1] + ") " + full)}"><span class="ssic" aria-hidden="true">${ic}</span><span class="ssnm"><b>${k[1]}.</b> ${nm}</span><span class="ssdots" aria-label="${f} of ${L.length} challenges done">${L.map(x => simChalState(x.id)[2] ? "●" : "○").join("")}</span></button>`; }).join("")}</div>
+      <p class="simsecname"><b>${roman(sec[0][0])}(${sec[0][1]}) ${esc(sec[3])}</b></p>
+      <div class="slottabs simtabs" role="tablist" aria-label="Simulations">${inSec(info.sec).map(x => { const [d, n, fin] = simChalState(x.id); return `<button role="tab" aria-selected="${x.id === simTab}" data-sim="${x.id}"><span aria-hidden="true">${x.ic}</span><span class="simtabnm">${esc(x.name)}</span><span class="simtabst" aria-label="challenge ${fin ? "finished" : d + " of " + n}">${fin ? "🏆" : n ? `${d}/${n}` : ""}</span></button>`; }).join("")}</div>
+      <p class="small muted simnow">${info.ic} <b>${esc(info.name)}</b>${topic ? ` · Topic ${topic.no} ${esc(topic.name)}` : ""} · <a href="#simChal" class="simgo">🎯 Challenge ↓</a></p>
     </section>
     <div id="simBody"></div>`;
   $app.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { SFX.tap(); renderSims(b.dataset.sim); });
-  $app.querySelectorAll("[data-simsec]").forEach(b => b.onclick = () => {
-    SFX.tap(); const k = b.dataset.simsec, list = SIMS.filter(x => x.sec === k);
-    S.simSec = S.simSec || {}; renderSims((list.find(x => x.id === S.simSec[k]) || list[0]).id);
+  S.simSec = S.simSec || {}; S.simPart = S.simPart || {};
+  const openSec = k => { const list = inSec(k); renderSims((list.find(x => x.id === S.simSec[k]) || list[0]).id); };
+  $app.querySelectorAll("[data-simsec]").forEach(b => b.onclick = () => { SFX.tap(); openSec(b.dataset.simsec); });
+  $app.querySelectorAll("[data-simpart]").forEach(b => b.onclick = () => {
+    SFX.tap(); const k = b.dataset.simpart, first = SIM_SECS.find(x => x[4] === k && inSec(x[0]).length);
+    openSec(S.simPart[k] && inSec(S.simPart[k]).length ? S.simPart[k] : first[0]);
   });
-  S.simSec = S.simSec || {}; S.simSec[info.sec] = simTab;
+  const go = $app.querySelector(".simgo"); if (go) go.onclick = e => { e.preventDefault(); const c = document.getElementById("simChal"); if (c) c.scrollIntoView({ behavior: "smooth", block: "start" }); };
+  $app.querySelector("#simMap").onclick = () => { SFX.tap(); simMap(); };
+  S.simSec[info.sec] = simTab; S.simPart[part[0]] = info.sec;
   const body = document.getElementById("simBody");
   info.fn(body);
   simPredict(body, simTab);
@@ -81,6 +109,13 @@ function renderSims(tab) {
   // Phones: wide diagrams scroll inside their card; start them centred on the interesting middle
   setTimeout(() => $app.querySelectorAll(".simsvg:not(.nozoom)").forEach(e => { if (e.scrollWidth > e.clientWidth) e.scrollLeft = (e.scrollWidth - e.clientWidth) / 2; }), 120);
   window.scrollTo({ top: 0 });
+}
+/* 🗺️ Lab map: every simulation, grouped by HKDSE part and section, with challenge progress (one tap to open) */
+function simMap() {
+  const roman = k => ["I", "II", "III", "IV"][+k - 1];
+  openModal(`<h2 style="margin:0 0 4px">🗺️ All labs</h2><p class="small muted" style="margin:0 0 10px">HKDSE Biology compulsory part · tap a lab to open it</p>
+    <div class="simmap">${SIM_PARTS.map(([pk, pic, , pfull, col]) => { const secs = SIM_SECS.filter(x => x[4] === pk && SIMS.some(y => y.sec === x[0])); return secs.length ? `<section class="simmappart" style="--pc:${col}"><h3><span aria-hidden="true">${pic}</span> ${esc(pfull)}</h3>${secs.map(([k, ic, , full]) => `<div class="simmapsec"><p><span aria-hidden="true">${ic}</span> <b>${roman(k[0])}(${k[1]})</b> ${esc(full)}</p><div class="simmaprow">${SIMS.filter(y => y.sec === k).map(y => { const [d, n, fin] = simChalState(y.id); return `<button class="simmapb2${y.id === simTab ? " on" : ""}" data-mapsim="${y.id}"><span aria-hidden="true">${y.ic}</span><span>${esc(y.name)}</span><small>${fin ? "🏆" : n ? `${d}/${n}` : ""}</small></button>`; }).join("")}</div></div>`).join("")}</section>` : ""; }).join("")}</div>`, { wide: true });
+  document.querySelectorAll("[data-mapsim]").forEach(b => b.onclick = () => { SFX.tap(); closeModal(); renderSims(b.dataset.mapsim); });
 }
 /* 📖 Picture word bank: each key word = emoji + word + 🔊 + a short, simple meaning (for students learning in English) */
 function simWords(root, info) {

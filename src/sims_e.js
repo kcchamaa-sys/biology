@@ -14,9 +14,9 @@ Object.assign(SIM_P, {
   co2: ["You start running. What happens to breathing control?", ["CO₂ rises, chemoreceptors light up, and breathing becomes faster and deeper", "O₂ rises and switches breathing off", "CO₂ falls, so breathing stops", "Only the heart is involved; breathing does not change"], "Working muscles produce more CO₂. Negative feedback increases ventilation to remove it.", "tap 🏃 Exercise and press ▶ Run."]
 });
 
-simReg({ id: "glucose", ic: "🍬", name: "Blood glucose control", sec: "e", ord: 10, topic: "t17", fn: glucoseSim,
+simReg({ id: "glucose", ic: "🍬", name: "Blood glucose control", sec: "3e", ord: 10, topic: "t17", fn: glucoseSim,
   words: [["homeostasis", "⚖️", "keeping internal conditions steady"], ["negative feedback", "🔁", "a response reverses a change"], ["insulin", "🔵", "hormone that lowers blood glucose"], ["glucagon", "🟠", "hormone that raises blood glucose"], ["pancreas", "🟡", "organ with islets that make hormones"], ["glycogen", "📦", "stored glucose in liver and muscles"], ["diabetes", "⚠️", "blood glucose control problem"]] });
-simReg({ id: "co2", ic: "🫁", name: "Breathing control (CO₂)", sec: "e", ord: 20, topic: "t17", fn: co2Sim,
+simReg({ id: "co2", ic: "🫁", name: "Breathing control (CO₂)", sec: "3e", ord: 20, topic: "t17", fn: co2Sim,
   words: [["homeostasis", "⚖️", "keeping internal conditions steady"], ["negative feedback", "🔁", "a response reverses a change"], ["carbon dioxide", "CO₂", "waste gas from respiration"], ["chemoreceptor", "📡", "sensor for chemicals in blood"], ["medulla oblongata", "🧠", "brain part controlling breathing"], ["diaphragm", "⌒", "muscle below the lungs"], ["intercostal muscles", "🦴", "muscles between the ribs"], ["pH", "🧪", "how acidic or alkaline blood is"]] });
 
 simStyle(`
