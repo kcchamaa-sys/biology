@@ -238,6 +238,13 @@ Card capsules are opened from the Lucky Capsule banner on Home, the 🎁 button 
 
 ## Saving
 
+- **Cloud save fix (2026-10-09).** Busy students' saves had grown past the 49,000-character limit of one sheet cell. The server refused every save, so their streak, chestnuts and progress stopped updating for the class (leaderboard, friends, teacher stats, other devices). Fixed:
+  - The cloud copy is now packed. Mastered questions and mistakes are grouped by stage; "recently seen" and half-finished locks are left out; the pal's learner history is trimmed. A very busy save drops from about 95,000 to about 30,000 characters, and nothing that matters is lost.
+  - A failed save now shows a message, is retried after a minute, and is listed in 👤 Account.
+  - Google sign-in only lasts about an hour. When it runs out, a **"Not saving to your class"** bar appears on every page, with a one-tap way to sign in again. Progress waits safely on the device until then.
+  - A **new day while the game stays open** now runs the daily check (streak freezes, missed days) straight away.
+  - Server (needs a redeploy of `server/Code.gs`): an oversized save still updates the summary columns, and the "last study day" is read correctly even when Sheets has turned it into a date.
+  - Checks: `NODE_PATH=$(npm root -g) node tools/check_sync.js` (a fake class server with the same limit, two devices, a mocked clock).
 - Auto-save to `localStorage` key `escapeGame_biology` (separate from the physics game), with a Resume prompt. Signed-in students save under their own key on the device **and** to the class sheet, so they can continue on any device.
 - 🔑 **12-character save code** (e.g. `ABCD-EFGH-JKLM`) or a link ending `#ABCDEFGHJKLM`. It stores stages escaped per topic, the average star rating, locks open in the current stage, streak (up to 31) and Streak Freezes. The Mistake Notebook, trophies, collectibles and chestnuts stay on the device.
 

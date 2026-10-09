@@ -151,7 +151,7 @@ function lpStep() {
   const n = Math.floor(LP.acc); LP.acc -= n;
   for (let i = 0; i < n; i++) if (lpMinute()) break;
   if (n) lpDraw();
-  if (Date.now() - LP.lastSave > 30000) lpPersist(true);
+  if (Date.now() - LP.lastSave > 30000) { lpPersist(false); saveLocal(); }   // device only: the class sheet gets it with the next real save
 }
 // one pal minute; true = something worth stopping for
 function lpMinute() {
@@ -173,7 +173,7 @@ function lpNews() {
   }
   if (w.nights.length > LP.seen.n) { SFX.item(); stop = true; const n = w.nights[w.nights.length - 1]; toast(`🌙 ${palName()} woke up: sleep quality ${Math.round(n.report.score * 100)}/100`); }
   LP.seen = { f: w.fired.length, n: w.nights.length };
-  if (stop) { lpPersist(true); lpDrawSlow(true); }
+  if (stop) { lpPersist(false); saveLocal(); lpDrawSlow(true); }
   return stop;
 }
 function lpAdvance(m) { for (let i = 0; i < m; i++) if (lpMinute()) break; lpAfter(); }

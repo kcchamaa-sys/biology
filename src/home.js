@@ -75,16 +75,16 @@ function greeting0() {
 
 function renderMap() {
   stopRush(); MUSIC.setMode("map"); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; recomputeMastery(); save(); renderTools();
-  palTick();
+  newDayCheck(); palTick();
   if (!NAV_TABS.some(t => t[0] === homeTab) && !PAL_TABS.includes(homeTab) && !(homeTab === "stats" && isTeacher())) homeTab = "home";
   if (homeTab === "lab") return renderSims();
   const ni = nextRoomIndex(), nr = ni === -1 ? null : ROOMS[ni];
   if (mapPart === null) mapPart = nr ? TOPICS[nr.t].p : 0;
-  $app.innerHTML = { home: homeHtml, stages: () => isStudy() ? studyPlannerHtml() : stagesHtml(), play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml, stats: statsHtml }[homeTab]();
+  $app.innerHTML = staleBarHtml() + { home: homeHtml, stages: () => isStudy() ? studyPlannerHtml() : stagesHtml(), play: playHtml, pals: palsHtml, dress: dressHtml, pets: petsHtml, rewards: rewardsHtml, stats: statsHtml }[homeTab]();
   renderNav(homeTab);
   ({ home: wireHome, stages: () => isStudy() ? wireStudyPlanner() : wireStages(), play: wirePlay, pals: wirePals, dress: wireDress, pets: wirePets, rewards: wireRewards, stats: wireStats })[homeTab]();
   $app.querySelectorAll(".subnav [data-go]").forEach(b => b.onclick = () => { SFX.tap(); goTab(b.dataset.go); });
-  wireFolds($app);
+  wireFolds($app); wireStaleBar();
 }
 
 /* ----- 🏠 Home ----- */

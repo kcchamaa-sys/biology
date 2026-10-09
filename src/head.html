@@ -524,6 +524,24 @@ button.sitem { font: inherit; color: inherit; cursor: pointer; position: relativ
 .bpord { min-width: 1.2em; }
 .bplook { margin-bottom: 6px; }
 @media (max-width: 420px) { .bpbody { grid-template-columns: 84px minmax(0, 1fr); } .bpfig svg { width: 84px; height: 84px; } .bpbar { grid-template-columns: 20px 86px minmax(0, 1fr); } }
+/* 📊 Class statistics, picture-first */
+.kpi { grid-template-columns: auto 1fr; align-items: center; column-gap: 10px; position: relative; }
+.kpi .kic { grid-row: span 2; font-size: 1.7rem; } .kpi b small { font-size: 1rem; color: #7E6378; } .kpi > span:not(.kic) { font-size: .85rem; }
+.kring { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; }
+.gchips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.gchip { border-radius: 999px; padding: 5px 12px; font-size: .85rem; font-weight: 700; background: #F4EEF6; color: #4B3350; }
+.gchip.bad { background: #FFE1E1; color: #8E2222; } .gchip.warn { background: #FFF1C2; color: #6E4800; } .gchip.good { background: #DDF7C8; color: #2A6400; }
+.tbars { display: grid; gap: 7px; }
+.tbar { display: grid; grid-template-columns: minmax(0, 12em) minmax(0, 1fr) 4.6em; gap: 8px; align-items: center; font-size: .82rem; }
+.tbl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .tbt { height: 12px; background: #F1EAF2; border-radius: 999px; overflow: hidden; }
+.tbt i { display: block; height: 100%; border-radius: 999px; } .tbar.hi i { background: #58A700; } .tbar.mid i { background: #E0A100; } .tbar.lo i { background: #D64545; }
+.tbv { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.spark { display: inline-block; width: 56px; height: 8px; background: #F1EAF2; border-radius: 999px; overflow: hidden; vertical-align: middle; } .spark i { display: block; height: 100%; background: #2a78d6; border-radius: 999px; }
+.idlechips { display: flex; flex-wrap: wrap; gap: 6px; } .idlechip { background: #F4EEF6; border-radius: 999px; padding: 4px 10px; font-size: .82rem; }
+.missed li { line-height: 1.35; } .mchip { background: #E8F1FF; color: #1F4E8C; border-radius: 8px; padding: 0 6px; font-weight: 800; font-size: .78rem; } .mn { color: #B42D2D; }
+@media (max-width: 560px) { .tbar { grid-template-columns: minmax(0, 7.5em) minmax(0, 1fr) 4.4em; } .kring { display: none; } }
+.stalebar { display: flex; gap: 10px; align-items: center; background: #FFF4D6; border: 2px solid #F4B740; }
+.stalebar > span { font-size: 1.6rem; } .stalebar > div { flex: 1; min-width: 0; }
 /* 🫀 The living Study Pal: touch zones, pal time, night room */
 .lproom::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: rgba(46,36,92,.34); opacity: 0; transition: opacity 1.2s; pointer-events: none; z-index: 1; }
 .lproom.night::before { opacity: .55; } .lproom.asleep::before { opacity: 1; }
@@ -1461,6 +1479,20 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
 .simq .choices { margin: 8px 0; } .simqcard .simq + .simq { margin-top: 18px; }
 .simctl { gap: 18px; } .simbtns { gap: 10px; }
 .musc { gap: 10px; margin: 10px 0; } .lensres { margin: 12px 0; }
+/* 📊 statistics: late overrides (win over the older table rules) */
+.statgrid { align-items: start; } .kpi { column-gap: 10px; }
+@media (max-width: 760px) {
+  .sttable tr { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 8px 12px; }
+  .sttable td { display: inline-flex; width: auto; padding: 0; align-items: center; gap: 4px; font-size: .85rem; }
+  .sttable td::before { content: none; }
+  .sttable td[data-l="No."] { font-size: .75rem; font-weight: 800; color: #A0789A; min-width: 3.4em; }
+  .sttable td[data-l="Name"] { flex: 1 1 calc(100% - 11em); min-width: 0; }
+  .sttable td[data-l="No."] { order: 0; } .sttable td[data-l="Name"] { order: 1; } .sttable td[data-l="Right"] { order: 2; margin-left: auto; }
+  .sttable td[data-l="Activity"] { order: 3; } .sttable td[data-l="Streak"] { order: 4; } .sttable td[data-l="Stages"] { order: 5; } .sttable td[data-l="Last"] { order: 6; }
+  .sttable td[data-l="Activity"] { margin-left: 3.4em; }
+  .sttable td[data-l="Stages"]::before { content: "🚪"; font-size: .8rem; } .sttable td[data-l="Last"]::before { content: "🕒"; font-size: .8rem; }
+  .sttable td[data-l="Last"] { margin-left: auto; color: #7E6378; } .sttable .spark { width: 40px; }
+}
 </style>
 </head>
 <body>

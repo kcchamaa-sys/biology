@@ -838,7 +838,7 @@ function bpRecordAnswer(learner, q, correct, epochMin) {
   s.seen++; if (correct) { s.correct++; s.box = Math.min(4, s.box + 1); s.streak++; } else { s.box = Math.max(0, s.box - 1); s.streak = 0; }
   s.dueEpochMin = epochMin + BP_BOX_DAYS[s.box] * 1440;
   learner.history.push({ questionId: q.id, lo: q.lo, templateId: q.templateId, correct, epochMin });
-  if (learner.history.length > 300) learner.history.splice(0, learner.history.length - 300);
+  if (learner.history.length > 120) learner.history.splice(0, learner.history.length - 120);
   return s;
 }
 const bpMastered = s => s.box >= 3 && s.streak >= 2;

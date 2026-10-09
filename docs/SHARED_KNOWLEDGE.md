@@ -166,3 +166,11 @@ Live sites follow `https://kcchamaa-sys.github.io/<repo>/`.
 
 - 2026-10-07 (biology): **Auto-deploy to GitHub Pages** (`.github/workflows/deploy.yml`). On every push to the main branch it runs `tools/build.py` and the Node checks, then copies `index.html` (+ `.nojekyll`) into a `gh-pages` worktree and pushes only if it changed (`permissions: contents: write`, no third-party actions). Merged work goes live without a manual deploy. Reusable as-is for s1science/s3science: change the branch name and the check commands.
 - 2026-10-08 (biology): **🫀 Living Study Pal**: the Body Pal engine moved out of the Lab and into the pal itself. Reusable patterns: (1) *pal time* that runs only while the pal is on screen (1 min/s, pauses when away, so no neglect guilt); (2) *learn by touching*: transparent hotspot buttons over the character SVG (`LP_ZONES`, % of the figure box) whose bubble shows a live reading plus the mechanism (`bpPeek`, DOM-free and voice-linted); (3) `bpRebase(save, now, keep)` snapshots an action-log save so a never-ending simulation replays fast and stays small; (4) CSS vars `--breath` / `--beat` driven by the simulated breathing and heart rate make the pal visibly alive. Files: `src/livepal.js`, `src/bodypal_engine.js`; checks in `tools/check_bodypal.js`.
+- 2026-10-09 (biology): **Cloud-save size bug** (likely in the siblings too if they save the whole state into one Google Sheet cell). One cell holds 50,000 characters, so big saves were refused and summaries (streak, coins) silently stopped updating. Fix pattern:
+  - `packCloud`/`unpackCloud` in `src/auth.js`: group id lists by stage, drop rebuildable caches, then step down until the save fits;
+  - never ignore a failed save (toast, retry, Account status);
+  - a 'Not saving to your class' bar when the 1-hour Google token expires;
+  - `newDayCheck()` for tabs left open past midnight;
+  - the server's `dayStr()` for Sheet cells that turned into Dates.
+
+  Test harness: `tools/check_sync.js` (Playwright route as a fake Apps Script, `page.clock.setFixedTime` for multi-day streaks).

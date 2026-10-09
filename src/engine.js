@@ -83,6 +83,7 @@ function freshState() {
   };
 }
 function normalise(obj) {
+  if (obj && (obj.mp || obj.mk) && typeof unpackCloud === "function") obj = unpackCloud(obj);   // a packed cloud save (auth.js)
   const s = Object.assign(freshState(), obj || {});
   s.bio_mastery = Object.assign(freshMastery(), (obj && obj.bio_mastery) || {});
   s.stats = Object.assign(freshStats(), (obj && obj.stats) || {});
@@ -112,6 +113,10 @@ function load(key) {
   return null;
 }
 let savedFlash = 0;
+// Save on this device only (frequent background saves, e.g. the living pal's clock); the next real save uploads it.
+function saveLocal() { if (!S) return; S.upd = Date.now(); try { localStorage.setItem(storeKey(), JSON.stringify(S)); } catch (e) {} }
+// A new calendar day while the game stays open: run the daily check-in now (streak freezes, missed days, sickness)
+function newDayCheck() { if (S && S.last_login_date && S.last_login_date !== today()) checkIn(); }
 function save(flash) {
   if (!S) return;
   S.upd = Date.now();

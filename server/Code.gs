@@ -152,9 +152,16 @@ function findRow(sh, email) {
   for (var i = 0; i < col.length; i++) if (String(col[i][0]).toLowerCase() === email) return i + 2;
   return -1;
 }
+// A day as yyyy-MM-dd, even when Sheets has turned the text into a Date (otherwise "Thu Oct 08…" >= "2026-…" is always true)
+function dayStr(v) {
+  if (v instanceof Date) return isNaN(v) ? '' : Utilities.formatDate(v, Session.getScriptTimeZone() || 'Asia/Hong_Kong', 'yyyy-MM-dd');
+  return String(v || '').slice(0, 10);
+}
 function saveProgress(u, state, s) {
   state = String(state || '');
-  if (state.length > 49000) throw 'progress too large';
+  // Too big for one cell: still update the summary (streak, chestnuts…) and keep the last data that fitted.
+  // (New game versions pack the save so this should not happen; this is the safety net.)
+  var keepOld = state.length > 49000;
   var lock = LockService.getScriptLock(); lock.waitLock(20000);
   try {
     var sh = sheet(PROG, PROG_HEAD);
@@ -162,6 +169,7 @@ function saveProgress(u, state, s) {
     var row = [u.email, new Date(), num(s.streak), num(s.best), num(s.stars), num(s.stages), num(s.coins), clean(s.pet, 30),
       num(s.pets), num(s.mistakes), num(s.cleared), num(s.trophies), clean(s.lastDay, 12), state, num(s.xp), num(s.col), clean(s.pal, 20)];
     var r = findRow(sh, u.email);
+    if (keepOld) row[DATA_COL - 1] = r < 0 ? '' : sh.getRange(r, DATA_COL).getValue();
     if (r < 0) r = sh.getLastRow() + 1;
     sh.getRange(r, 13).setNumberFormat('@');
     sh.getRange(r, 1, 1, row.length).setValues([row]);
@@ -199,13 +207,13 @@ function boardRows() {
     a.forEach(function (r) {
       var em = String(r[0]).toLowerCase(), u = info[em];
       if (!u) return;
-      var last = String(r[12] || '');
+      var last = dayStr(r[12]);
       rows.push({ e: em, n: u.n, en: u.en, c: u.c, p: String(r[7] || ''), xp: Number(r[14]) || 0,
         st: last >= yest ? Number(r[2]) || 0 : 0, col: Number(r[15]) || 0, s: Number(r[5]) || 0, stars: Number(r[4]) || 0,
         last: last, pal: String(r[16] || '') });
     });
   }
-  cache.put('bio_board2', JSON.stringify(rows), 300);
+  cache.put('bio_board2', JSON.stringify(rows), 120);
   return rows;
 }
 function board(user, scope) {
@@ -246,7 +254,7 @@ function stats() {
     ps.getRange(2, 1, ps.getLastRow() - 1, PROG_HEAD.length).getValues().forEach(function (r) {
       progress[String(r[0]).toLowerCase()] = { upd: r[1] instanceof Date ? r[1].toISOString() : '', streak: Number(r[2]) || 0, best: Number(r[3]) || 0,
         stars: Number(r[4]) || 0, stages: Number(r[5]) || 0, coins: Number(r[6]) || 0, pet: String(r[7] || ''), pets: Number(r[8]) || 0,
-        mistakes: Number(r[9]) || 0, cleared: Number(r[10]) || 0, trophies: Number(r[11]) || 0, lastDay: String(r[12] || ''), xp: Number(r[14]) || 0, col: Number(r[15]) || 0 };
+        mistakes: Number(r[9]) || 0, cleared: Number(r[10]) || 0, trophies: Number(r[11]) || 0, lastDay: dayStr(r[12]), xp: Number(r[14]) || 0, col: Number(r[15]) || 0 };
     });
   }
   return { ok: true, students: students, records: records, progress: progress };

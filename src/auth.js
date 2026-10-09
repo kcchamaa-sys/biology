@@ -11,7 +11,7 @@ const BIO_CONFIG = {
   API_URL: "https://script.google.com/macros/s/AKfycbzKyxde4QsX5WywsTF0xu3ISLN_VWMlK2WNqHgqe3aM1ztsmNQgNl4tyP-nFGS5U-n_oA/exec" // paste the Apps Script /exec URL here (see server/SETUP.md) to switch class sign-in on
 };
 const AUTH_KEY = "escapeGame_biology_auth";
-const AUTH = { mode: null, user: null, token: null, exp: 0, stale: false, lastSync: 0 };
+const AUTH = { mode: null, user: null, token: null, exp: 0, stale: false, lastSync: 0, syncErr: "" };
 const SESSION_ID = Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
 const cloudOn = () => !!(BIO_CONFIG.GOOGLE_CLIENT_ID && BIO_CONFIG.API_URL) && window.top === window.self;
 const signedIn = () => AUTH.mode === "google" && !!AUTH.user;
@@ -31,7 +31,15 @@ function api(action, data) {
   if (!tokenOk()) { markStale(); return Promise.resolve({ ok: false, error: "expired" }); }
   return post(action, data).then(j => { if (!j.ok && j.error === "expired") markStale(); return j; }, () => ({ ok: false, error: "network" }));
 }
-function markStale() { if (!AUTH.stale) { AUTH.stale = true; renderTools(); toast("⚠️ Sign-in expired. Tap 👤 to sign in again and keep syncing."); } }
+/* Google sign-in tokens last about an hour. After that nothing reaches the class sheet until the student signs in again,
+   so say it clearly (a bar on every page, not just a toast) and offer Google's one-tap "Continue as …" straight away. */
+function markStale() {
+  if (AUTH.stale) return;
+  AUTH.stale = true; renderTools(); toast("⚠️ Sign-in timed out. Sign in again so your streak and chestnuts reach your class.");
+  if (cloudOn()) withGIS(() => { try { google.accounts.id.prompt(); } catch (e) {} });
+}
+const staleBarHtml = () => signedIn() && AUTH.stale ? `<section class="card stalebar" role="alert"><span aria-hidden="true">☁️</span><div><b>Not saving to your class</b><div class="small">Sign-in timed out. Your progress is safe on this device and uploads as soon as you sign in again.</div></div><button class="btn sm blue" id="staleGo">🔄 Sign in again</button></section>` : "";
+function wireStaleBar() { const b = document.getElementById("staleGo"); if (b) b.onclick = () => { SFX.tap(); openAccount(); }; }
 function errText(e) {
   return ({ not_listed: "This Google account isn't on the class list. Use your school account, or tap Play as guest.", bad_client: "Sign-in is set up for a different website. Please tell your teacher.",
     unverified: "This Google account's email isn't verified.", expired: "Sign-in timed out. Please try again.", network: "Can't reach the class server. Check your internet, or play as guest.",
@@ -120,15 +128,55 @@ function flushQueue() {
 let cloudTimer = null;
 function cloudSaveSoon(now) { if (!signedIn()) return; clearTimeout(cloudTimer); cloudTimer = setTimeout(cloudSave, now ? 50 : 6000); }
 const collectionCount = () => PETS.filter(p => S.pets[p.id]).length + collOwned();
+/* The class sheet keeps each save in one cell (50,000 characters at most; the server refuses more than 49,000).
+   Busy students' saves grew past that, so every cloud save failed and streaks and chestnuts stopped updating.
+   packCloud() makes the cloud copy fit: it drops what can be rebuilt, and packs the big lists without losing anything.
+   unpackCloud() (called by normalise) turns the packed lists back into the normal ones. */
+const CLOUD_MAX = 44000;
+function packCloud(S0) {
+  const c = JSON.parse(JSON.stringify(S0)), size = () => JSON.stringify(c).length;
+  c.seen = {}; c.room_progress = {};   // "recently seen" and half-finished locks: safe to rebuild
+  const mp = {};   // mastered question ids grouped by stage: { t1s1: "q1,q4,…" }
+  (c.mastered_puzzles || []).forEach(id => { const i = id.indexOf(":"); if (i > 0) (mp[id.slice(0, i)] = mp[id.slice(0, i)] || []).push(id.slice(i + 1)); });
+  c.mp = {}; Object.keys(mp).forEach(r => c.mp[r] = mp[r].join(",")); c.mastered_puzzles = [];
+  const mk = {};   // mistakes grouped by stage: "qid,n,ok,yyyymmdd;…"
+  Object.entries(c.mistakes || {}).forEach(([k, m]) => { const i = k.indexOf(":"); if (i < 1) return; const r = k.slice(0, i);
+    mk[r] = (mk[r] ? mk[r] + ";" : "") + [k.slice(i + 1), m.n || 0, m.ok || 0, String(m.d || "").replace(/-/g, "")].join(","); });
+  c.mk = mk; c.mistakes = {};
+  if (c.palLearn && c.palLearn.history) c.palLearn.history = c.palLearn.history.slice(-40);
+  // still too big: give up rebuildable extras, smallest loss first
+  const steps = [() => { if (c.palLearn) c.palLearn.history = []; },
+    () => Object.keys(c.pals || {}).forEach(id => { if (id !== c.activePal && c.pals[id].body) delete c.pals[id].body; }),
+    () => { const b = c.pals && c.pals[c.activePal]; if (b && b.body && b.body.opts && b.body.opts.snap) b.body.opts.snap.hist = {}; },
+    () => { c.dict = { missed: {}, best: (c.dict && c.dict.best) || 0 }; },
+    () => Object.keys(c.pals || {}).forEach(id => delete c.pals[id].body)];
+  for (const f of steps) { if (size() <= CLOUD_MAX) break; f(); }
+  return c;
+}
+function unpackCloud(s) {
+  if (s.mp) { const set = new Set(s.mastered_puzzles || []); Object.entries(s.mp).forEach(([r, q]) => String(q).split(",").filter(Boolean).forEach(x => set.add(`${r}:${x}`))); s.mastered_puzzles = [...set]; delete s.mp; }
+  if (s.mk) { s.mistakes = s.mistakes || {}; Object.entries(s.mk).forEach(([r, str]) => String(str).split(";").filter(Boolean).forEach(e => { const [q, n, ok, d] = e.split(",");
+    const k = `${r}:${q}`; if (!s.mistakes[k]) s.mistakes[k] = { n: Number(n) || 0, ok: Number(ok) || 0, d: d && d.length === 8 ? `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6)}` : today() }; })); delete s.mk; }
+  return s;
+}
 function cloudPayload() {
-  let st = JSON.stringify(S);
-  if (st.length > 45000) { const c = JSON.parse(st); c.seen = {}; c.room_progress = {}; st = JSON.stringify(c); }
+  const st = JSON.stringify(packCloud(S));
   const ap = S.activePet && petById(S.activePet);
   return { state: st, summary: { streak: S.current_streak, best: S.longest_streak, stars: ROOMS.reduce((a, r) => a + roomStars(r), 0), stages: S.completed_rooms.length,
     coins: S.coins, pet: ap ? ap.name : "", pets: PETS.filter(p => S.pets[p.id]).length, mistakes: mistakeKeys().length, cleared: S.mistakes_cleared || 0,
     trophies: Object.keys(S.trophies || {}).length, lastDay: S.last_study_day || "", xp: dedication(), col: collectionCount(), pal: activePalId() } };
 }
-function cloudSave() { if (!signedIn() || !S) return; if (!tokenOk()) { markStale(); return; } api("save", cloudPayload()).then(j => { if (j.ok) { AUTH.lastSync = Date.now(); } }); }
+let syncRetry = null;
+function cloudSave() {
+  if (!signedIn() || !S) return; if (!tokenOk()) { markStale(); return; }
+  api("save", cloudPayload()).then(j => {
+    if (j.ok) { AUTH.lastSync = Date.now(); AUTH.syncErr = ""; return; }
+    if (j.error === "expired" || j.error === "guest") return;
+    // never fail silently: tell the student once, keep the progress on this device, try again in a minute
+    if (!AUTH.syncErr) toast("⚠️ Couldn't save to the class sheet just now. Your progress is safe on this device; I'll try again.");
+    AUTH.syncErr = String(j.error || "network"); clearTimeout(syncRetry); syncRetry = setTimeout(cloudSave, 60000);
+  });
+}
 window.addEventListener("pagehide", () => {
   if (signedIn() && tokenOk() && S && navigator.sendBeacon) {
     try { navigator.sendBeacon(BIO_CONFIG.API_URL, JSON.stringify(Object.assign({ action: "save", token: AUTH.token }, cloudPayload())));
@@ -172,7 +220,7 @@ function openAccount() {
   if (signedIn()) {
     openModal(`<span class="kicker">👤 Account</span><h2>${esc(userName())}</h2>
       <p class="small muted" style="margin:0">${u.cls ? `Class ${esc(u.cls)}${u.no ? ` · No. ${esc(u.no)}` : ""} · ` : ""}${esc(u.email)}</p>
-      <div class="preview small">${AUTH.stale ? "⚠️ Sign-in expired. Sign in again to keep syncing (your progress is safe on this device)." : `☁️ Synced to your class${AUTH.lastSync ? ` at ${new Date(AUTH.lastSync).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : ""}${q ? ` · ${q} record${q > 1 ? "s" : ""} waiting to upload` : ""}`}</div>
+      <div class="preview small">${AUTH.stale ? "⚠️ Sign-in expired. Sign in again to keep syncing (your progress is safe on this device)." : AUTH.syncErr ? `⚠️ Last save to the class sheet failed (${esc(AUTH.syncErr)}). Your progress is safe on this device and will upload on the next try.` : `☁️ Synced to your class${AUTH.lastSync ? ` at ${new Date(AUTH.lastSync).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : ""}${q ? ` · ${q} record${q > 1 ? "s" : ""} waiting to upload` : ""}`}</div>
       ${AUTH.stale ? `<div id="gbtn2" class="gbtn"></div>` : `<div class="row"><button class="btn blue" id="acSync">☁️ Sync now</button><button class="btn yellow" id="acLb">🏆 Class leaderboard</button></div>`}
       <div class="row"><button class="btn plain" id="acOut">🚪 Sign out</button></div>`);
     if (AUTH.stale) renderGBtn("gbtn2");

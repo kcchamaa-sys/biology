@@ -191,6 +191,7 @@ const answerCoins = (pid, firstTry) => !firstTry ? 0 : Math.round((S.mastered_pu
 /* ----- One hook for every finished activity: streak, mission and class records ----- */
 function activityDone(ev) {
   if (!S) return;
+  newDayCheck();
   if (ev.done !== false && (ev.ans || 0) > 0) { markStudied(); luckyCount(ev.ans); }
   palGain(ev);
   missionProgress(ev);
