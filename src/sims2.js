@@ -13,6 +13,9 @@ Object.assign(SIM_Q, {
     ["In Went's investigation, an agar block with MORE chemical on its right half is put on a cut coleoptile in darkness. What happens?", ["The right side grows faster, so it bends to the left", "The left side grows faster, so it bends to the right", "It grows straight up", "It does not grow, because there is no light"], "More auxin → those cells elongate more. The faster-growing right side pushes the shoot over to the left. No light is needed: the chemical alone causes bending."]]
 });
 
+simReg({ id: "tropism", ic: "🌱", name: "Phototropism", sec: "d", ord: 60, topic: "t16", fn: tropismSim,
+  words: [["phototropism", "🌱", "a plant grows towards (or away from) light"], ["coleoptile", "🌾", "the sheath that covers a young grass shoot"], ["auxin", "🔴", "plant hormone that makes cells get longer"], ["unilateral light", "➡️", "light from one side only"], ["elongation", "↕️", "cells get longer"], ["mica", "🪟", "thin sheet that chemicals cannot pass through"], ["agar block", "🧊", "jelly that chemicals can soak into and out of"]] });
+
 /* ---------------- 6. 💧 Osmosis with dialysis tubing ---------------- */
 const DIA_STD = { conc: 20, len: "short", temp: 25, vol: "normal", water: "normal" };
 const DIA_OPTS = {
@@ -48,8 +51,7 @@ function dialysisSim(root) {
     <section class="card"><h3 style="margin:0">🔎 Zoom in on the tubing wall</h3><div id="diaZoom" class="simsvg nozoom"></div><div id="diaCross" class="small"></div>
       <h3 style="margin:10px 0 0">📈 Liquid level vs time</h3><div id="diaGraph" class="simsvg nozoom"></div></section></div>
     <section class="card"><h3 style="margin:0">🧠 Why does the level rise?</h3>${diaStepsHtml()}</section>
-    <section class="card"><h3 style="margin:0">🧪 Fair-test table</h3><p class="small muted" style="margin:4px 0">Change <b>one</b> thing, press Start, and compare with the standard set-up (20%, 15 cm, 25 °C). Which changes affect the <b>rate</b>? Which affect the <b>final level</b>?</p><div id="diaTable"></div></section>
-    ${simQuiz("dialysis")}`;
+    <section class="card"><h3 style="margin:0">🧪 Fair-test table</h3><p class="small muted" style="margin:4px 0">Change <b>one</b> thing, press Start, and compare with the standard set-up (20%, 15 cm, 25 °C). Which changes affect the <b>rate</b>? Which affect the <b>final level</b>?</p><div id="diaTable"></div></section>`;
   const runBtn = root.querySelector("#dRun");
   const reset = () => { st.t = 0; st.run = false; runBtn.textContent = "▶ Start (30 min)"; zoomReset(); };
   runBtn.onclick = () => { SFX.click(); if (st.t >= 30) reset(); st.run = !st.run; runBtn.textContent = st.run ? "⏸ Pause" : "▶ Continue"; };
@@ -65,8 +67,9 @@ function dialysisSim(root) {
     return `<div class="tscroll"><table class="tterms small diatable"><tbody><tr><th>What changed</th><th>Rate of rise</th><th>Final level</th></tr>${st.rows.map(r => `<tr><td>${r.label}</td><td>${arrow(r.m.slope, std.slope)}</td><td>${arrow(r.m.H, std.H)}</td></tr>`).join("")}</tbody></table></div>`;
   };
   const changedLabel = v => { const ch = Object.keys(DIA_STD).filter(k => v[k] !== DIA_STD[k]); return ch.length ? ch.map(k => `${DIA_OPTS[k][0].split(" ").slice(1).join(" ")}: <b>${DIA_OPTS[k][1].find(o => o[0] === v[k])[1]}</b>`).join(" + ") : "<b>Standard set-up</b>"; };
-  wireSimQuiz(root); wireFolds(root);
+  wireFolds(root);
   let lastTable = "";
+  simProbe(() => { const m = diaModel(st.v); return Object.assign({}, st.v, { t: +st.t.toFixed(1), level: +m.h(st.t).toFixed(1), running: st.run, finished: st.t >= 30, runs: st.rows.length, rowLabels: st.rows.map(r => r.label.replace(/<[^>]+>/g, "")), netIn: st.cross.in - st.cross.out }); });
   simLoop(root, dt => {
     const m = diaModel(st.v), tf = { 10: .6, 25: 1, 40: 1.45 }[st.v.temp];
     if (st.run) {
@@ -230,8 +233,7 @@ function tropismSim(root) {
         <div id="trPred" class="trpred"></div>
         <div class="row simbtns"><button class="btn" id="trRun">💡 Run the experiment</button><button class="btn plain" id="trReset">↺ Reset</button></div></section>
       <section class="card"><h3 style="margin:0">📋 What it shows</h3><div id="trConc"></div>
-        ${foldHtml("lab-trwhy", { icon: "🔎", title: "Zoom in: why does it bend?", open: true, cls: "fold-flat" }, tropWhySvg())}</section></div>
-    ${simQuiz("tropism")}`;
+        ${foldHtml("lab-trwhy", { icon: "🔎", title: "Zoom in: why does it bend?", open: true, cls: "fold-flat" }, tropWhySvg())}</section></div>`;
   const draw = () => {
     const I = TROP[st.inv];
     root.querySelectorAll("[data-ti]").forEach(b => b.setAttribute("aria-selected", b.dataset.ti === st.inv ? "true" : "false"));
@@ -255,7 +257,9 @@ function tropismSim(root) {
   };
   root.querySelector("#trReset").onclick = () => { SFX.tap(); st.nudged = null; st.p = 0; st.run = false; TROP[st.inv].set.forEach((_, i) => delete st.pred[st.inv + i]); draw(); };
   root.querySelectorAll("[data-ti]").forEach(b => b.onclick = () => { SFX.tap(); st.inv = b.dataset.ti; st.p = st.done[st.inv] ? 1 : 0; st.run = false; draw(); });
-  wireSimQuiz(root); wireFolds(root); draw();
+  wireFolds(root); draw();
+  simProbe(() => { const I = TROP[st.inv]; return { inv: st.inv, ran: st.p >= 1, running: st.run, done: Object.keys(st.done), predicted: I.set.filter((_, i) => st.pred[st.inv + i]).length, setups: I.set.length,
+    rightPreds: st.p >= 1 ? I.set.filter((S, i) => st.pred[st.inv + i] === S.r).length : 0 }; });
   simLoop(root, dt => {
     st.t += dt;
     if (st.run) { st.p = Math.min(1, st.p + dt / 4); if (st.p >= 1) { st.run = false; st.done[st.inv] = 1; SFX.item(); draw();

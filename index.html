@@ -1561,6 +1561,100 @@ select.name.sel-hidden { position: absolute; opacity: 0; pointer-events: none; w
 .rptiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; } .rptile { display: grid; justify-items: center; padding: 8px 4px; border-radius: 14px; background: #F4EEF6; opacity: .55; } .rptile.on { opacity: 1; background: #FFF1D6; } .rptile span { font-size: 1.3rem; } .rptile b { font-size: 1.3rem; font-variant-numeric: tabular-nums; } .rptile small { font-size: .72rem; font-weight: 700; text-align: center; }
 .rpchips { display: flex; flex-wrap: wrap; gap: 4px; grid-column: 1 / -1; } .rpchip { font-size: .78rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #fff; } .rpno { color: #A0789A; font-size: .8rem; }
 .guestbar { background: #EAF4FF; border-color: #8FC0F2; }
+/* ---------- 🔬 Lab: curriculum sections, picture word bank, 🎯 challenges (sims.js, simchal.js) ---------- */
+.simtop { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.simsecs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; margin: 10px 0 4px; }
+@media (max-width: 620px) { .simsecs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.simsecs button { border: 0; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1.5px rgba(107,74,107,.12), 0 2px 0 #EADFEA; font: inherit; color: var(--ink); padding: 8px 4px 6px; min-height: 64px; display: grid; justify-items: center; gap: 1px; cursor: pointer; min-width: 0; }
+.simsecs button[aria-selected="true"] { background: linear-gradient(180deg, #E3F7FF, #BDE6FF); box-shadow: 0 0 0 2.5px #3D8BD9, 0 3px 0 #3D8BD9; }
+.simsecs .ssic { font-size: 1.5rem; line-height: 1.1; }
+.simsecs .ssnm { font-size: .78rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.simsecs .ssdots { font-size: .6rem; letter-spacing: 1px; color: #3FA06B; line-height: 1; }
+.simsecname { margin: 6px 0 2px; font-size: .9rem; }
+.simtabst { font-size: .72rem; font-weight: 900; background: #F4EEE8; border-radius: 999px; padding: 1px 7px; margin-left: 2px; }
+.simtabst:empty { display: none; }
+.simwords { padding: 10px; } .simwords > .fold-flat { margin-top: 0; border: 0; }
+.swrow { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.swchip { font: inherit; font-weight: 800; font-size: .85rem; border: 0; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1.5px #E6D6BF; padding: 6px 10px; min-height: 40px; display: inline-flex; gap: 5px; align-items: center; cursor: pointer; color: var(--ink); }
+.swchip[aria-selected="true"] { background: #F3ECFF; box-shadow: 0 0 0 2.5px #8E5BD6; }
+.swcard { display: flex; gap: 10px; align-items: flex-start; background: #FFFBF2; border-radius: 14px; padding: 8px 10px; box-shadow: 0 0 0 1.5px #F1E4CF; min-width: 0; }
+.swic { font-size: 2rem; line-height: 1; flex: 0 0 52px; height: 52px; display: grid; place-items: center; background: #fff; border-radius: 12px; box-shadow: 0 0 0 1.5px #F1E4CF; }
+.swt { display: grid; gap: 1px; min-width: 0; } .swt b { font-size: .95rem; } .swt small { color: var(--ink-soft); line-height: 1.3; }
+.swt .saybtns { display: inline-flex; margin-left: 4px; }
+.simchal { border: 3px solid #F2A900; background: linear-gradient(180deg, #FFF9E6, #FFFDF6 160px); scroll-margin-top: 70px; }
+.chhead h3 { margin: 2px 0 4px; font-size: 1.2rem; }
+.chstory { margin: 0 0 8px; }
+.chmeta { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0; }
+.chbar { list-style: none; display: flex; gap: 0; padding: 0; margin: 10px 0 6px; overflow-x: auto; }
+.chbar li { flex: 1 1 0; min-width: 52px; display: grid; justify-items: center; gap: 3px; position: relative; text-align: center; }
+.chbar li + li::before { content: ""; position: absolute; top: 19px; right: 50%; width: 100%; height: 4px; background: #E6DCD2; z-index: 0; }
+.chbar li.done + li::before, .chbar li.done::before { background: #3FA06B; }
+.chdot { position: relative; z-index: 1; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-size: 1.2rem; background: #fff; box-shadow: 0 0 0 2.5px #E6DCD2; }
+.chbar li.done .chdot { background: #3FA06B; color: #fff; font-weight: 900; box-shadow: 0 0 0 2.5px #2F7D52; }
+.chbar li.now .chdot { box-shadow: 0 0 0 3px #F2A900; animation: chpulse 1.6s ease-in-out infinite; }
+.chmn { font-size: .68rem; font-weight: 800; line-height: 1.15; color: var(--ink-soft); max-width: 88px; }
+@keyframes chpulse { 50% { transform: scale(1.12); } }
+.chmission h4 { margin: 10px 0 8px; font-size: 1.05rem; } .chmission h4 small { color: var(--ink-soft); font-weight: 800; }
+.chtasks { display: grid; gap: 8px; }
+.cht { border-radius: 16px; padding: 8px 12px; display: flex; gap: 8px; align-items: center; background: #fff; box-shadow: 0 0 0 1.5px #EADFD2; font-size: .9rem; }
+.cht.done { background: #EDF9F0; color: #2F6B47; } .cht.locked { color: var(--ink-soft); background: #FAF7F2; }
+.cht.cur { display: grid; gap: 10px; padding: 12px; box-shadow: 0 0 0 3px #F2A900, 0 4px 0 #E3C46F; font-size: 1rem; scroll-margin: 90px; }
+.cht.cur.isok { box-shadow: 0 0 0 3px #3FA06B, 0 4px 0 #9ED7B2; }
+.chtop { display: flex; gap: 10px; align-items: flex-start; }
+.chic { font-size: 1.7rem; line-height: 1; flex: 0 0 44px; height: 44px; display: grid; place-items: center; background: #FFF3C4; border-radius: 14px; }
+.chtxt { min-width: 0; display: grid; gap: 4px; }
+.chtype { font-size: .72rem; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; color: #B07A00; }
+.chdo { margin: 0; font-weight: 700; line-height: 1.45; }
+.chlook { justify-self: start; font-size: .8rem; font-weight: 800; background: #E8F3FF; color: #2D5F99; border-radius: 999px; padding: 2px 10px; }
+.chkw { font: inherit; font-weight: 800; color: #6A3FB5; background: #F3ECFF; border: 0; border-radius: 8px; padding: 0 4px; cursor: pointer; display: inline; line-height: inherit; }
+.chkw span { font-size: .85em; margin-right: 2px; }
+.chneed { display: flex; gap: 8px; align-items: center; background: #FFF0F0; border-radius: 12px; padding: 8px 10px; font-size: .9rem; }
+.chneed.ok { background: #E3F9E9; }
+.chlight { flex: 0 0 18px; width: 18px; height: 18px; border-radius: 50%; background: #E0D6CC; box-shadow: inset 0 0 0 2px rgba(0,0,0,.12); }
+.chlight.on { background: #3FC36B; box-shadow: 0 0 0 4px rgba(63,195,107,.25); }
+.chwait { opacity: .45; filter: grayscale(.4); }
+.chgoal { display: flex; gap: 10px; align-items: center; font-weight: 800; background: #F6F2FF; border-radius: 12px; padding: 10px; }
+.chgauge { position: relative; height: 18px; border-radius: 999px; background: #EFE7DD; margin: 4px 6px 2px; }
+.chzone { position: absolute; top: 0; bottom: 0; background: #A8E6BC; border-radius: 999px; }
+.chneedle { position: absolute; top: -5px; width: 6px; height: 28px; margin-left: -3px; border-radius: 3px; background: #D2455F; transition: left .25s; }
+.chneedle.in { background: #2F9E5B; }
+.chglab { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: .82rem; }
+.chread { display: grid; gap: 8px; }
+.chfield { display: grid; grid-template-columns: minmax(0, 1fr) auto 24px; gap: 8px; align-items: center; font-weight: 700; font-size: .92rem; }
+.chin { display: inline-flex; align-items: center; gap: 4px; }
+.chin input { width: 96px; font: inherit; font-weight: 800; padding: 8px 10px; border-radius: 10px; border: 2px solid #D9CCBE; min-height: 44px; }
+.chpick .choice { width: 100%; } .chpic { font-size: 1.2rem; margin-right: 6px; }
+.chfill { line-height: 2.3; margin: 0; font-weight: 600; }
+.chfill select { font: inherit; font-weight: 800; border-radius: 10px; border: 2px solid #C9B6F0; background: #F7F2FF; padding: 4px 6px; min-height: 40px; max-width: 100%; }
+.chfill select.good { border-color: #3FA06B; background: #E3F9E9; } .chfill select.bad { border-color: #D2455F; background: #FFF0F0; }
+.chorder { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.chslot { border: 2px dashed #D9CCBE; border-radius: 12px; padding: 8px 10px; color: var(--ink-soft); font-size: .85rem; font-weight: 700; }
+.chopool { display: flex; flex-wrap: wrap; gap: 6px; }
+.chochip { font: inherit; text-align: left; border: 0; border-radius: 12px; background: #fff; box-shadow: 0 0 0 2px #D9CCBE, 0 2px 0 #D9CCBE; padding: 8px 10px; min-height: 44px; cursor: pointer; font-weight: 700; font-size: .9rem; display: flex; gap: 8px; align-items: center; width: 100%; }
+.chochip.on { background: #F3ECFF; box-shadow: 0 0 0 2px #8E5BD6; } .chochip.on b { background: #8E5BD6; color: #fff; border-radius: 50%; width: 24px; height: 24px; flex: 0 0 24px; display: grid; place-items: center; font-size: .8rem; }
+.chochip.on span { margin-left: auto; color: var(--ink-soft); }
+.chochip.good { box-shadow: 0 0 0 2.5px #3FA06B; background: #E3F9E9; } .chochip.bad { box-shadow: 0 0 0 2.5px #D2455F; background: #FFF0F0; }
+.chopool .chochip { width: auto; flex: 1 1 200px; }
+.chfoot { display: grid; gap: 6px; }
+.chhintb { justify-self: start; min-height: 40px; }
+.chhint { background: #FFFBE0; border-radius: 12px; padding: 8px 10px; font-size: .92rem; box-shadow: 0 0 0 1.5px #F2E2A0; }
+.chgood { background: #E3F9E9; border-radius: 12px; padding: 8px 10px; margin: 0; line-height: 1.45; }
+.chbad { background: #FFF0F0; border-radius: 12px; padding: 8px 10px; margin: 0; line-height: 1.45; }
+.chfb { display: grid; gap: 8px; } .chfb:empty { display: none; } .chfb .btn { justify-self: start; }
+.chfin { text-align: center; display: grid; gap: 6px; justify-items: center; padding: 8px 0; }
+.chfin h4 { margin: 0; font-size: 1.3rem; } .chtrophy { font-size: 3.4rem; animation: chpulse 1.8s ease-in-out infinite; }
+.chstars { font-size: 1.8rem; margin: 0; letter-spacing: 4px; }
+.chdock { position: fixed; left: 8px; right: 8px; bottom: calc(66px + env(safe-area-inset-bottom, 0px)); z-index: 55; max-width: 700px; margin: 0 auto; }
+.chdockb { width: 100%; display: flex; gap: 10px; align-items: center; text-align: left; font: inherit; color: var(--ink); background: #FFF6D6; border: 0; border-radius: 18px; padding: 8px 12px; box-shadow: 0 0 0 2.5px #F2A900, 0 6px 18px rgba(74,62,61,.22); cursor: pointer; }
+.chdockb button.chdt { font: inherit; text-align: left; background: none; border: 0; padding: 0; color: inherit; cursor: pointer; -webkit-line-clamp: 3; }
+.chdockb .btn { flex: 0 0 auto; min-height: 44px; }
+.chdockb.ok { background: #E3F9E9; box-shadow: 0 0 0 2.5px #3FA06B, 0 6px 18px rgba(74,62,61,.22); }
+.chdockb .chic { flex-basis: 36px; height: 36px; font-size: 1.3rem; }
+.chdt { min-width: 0; flex: 1; font-weight: 700; font-size: .88rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.chdt small { display: block; font-weight: 900; color: #B07A00; font-size: .7rem; }
+.chgo { font-size: 1.2rem; font-weight: 900; }
+.tab-lab #simBody { padding-bottom: 76px; }
+@media (prefers-reduced-motion: reduce) { .chbar li.now .chdot, .chtrophy { animation: none; } }
 </style>
 </head>
 <body>
@@ -9322,48 +9416,103 @@ function lpQuizShow(box) {
     box.querySelector("#bpOrdReset").onclick = () => { picked.length = 0; paint(); };
   }
 }
-
 /* ============================================================
-   5f. 🔬 Simulation Lab: interactive biology models
-   1. Breathing: lung ventilation with a live lung-pressure graph
-   2. Pupil reflex: bright vs dark light
-   3. Accommodation: lens thickness, ray diagram, short/long sight and glasses
-   4. Hearing · 5. Cell membrane · 6–7 (sims2.js): osmosis with dialysis tubing, phototropism (coleoptiles)
-   The Lab tabs follow the topic order of the question mode.
+   5f. 🔬 Simulation Lab: interactive models for "Organisms and Environment"
+   (HKDSE Biology compulsory part: a. Plants · b. Animals · c. Reproduction, growth and development ·
+   d. Coordination and response · e. Homeostasis · f. Ecosystems)
+   How it fits together (read docs/SIM_LAB_GUIDE.md before adding a simulation):
+   - simReg({ id, ic, name, sec, ord, topic, fn, words }) registers a simulation; the Lab groups them by section.
+   - Each simulation function draws into root and starts simLoop(); it calls simProbe(() => ({ ...live values }))
+     so the challenge engine (simchal.js) can check what the student has set up.
+   - SIM_P[id] = predict-first question · SIM_Q[id] = exam-style checks · SIM_CH[id] = the ~15-minute challenge.
+   This file: core + 1. Breathing · 2. Pupil reflex · 3. Focusing & glasses · 4. Hearing · 5. Cell membrane (root hair).
+   sims2.js: osmosis tubing, phototropism. sims_a–f.js: one file per curriculum section.
    ============================================================ */
-let simTab = "membrane", SIM = null;
-// In the same order as the topics in the question mode (Topic 2 → 19)
-const SIMS = [
-  ["membrane", "🫧", "Cell membrane", "Topics 2–3 · Cells and movement across membranes"],
-  ["dialysis", "💧", "Osmosis tubing", "Topic 3 · Movement of substances across membranes"],
-  ["lung", "🫁", "Breathing", "Topic 13 · Gas exchange in humans"],
-  ["pupil", "👁️", "Pupil reflex", "Topic 16 · Coordination and response"],
-  ["lens", "🔍", "Focusing & glasses", "Topic 16 · Coordination and response"],
-  ["ear", "👂", "Hearing", "Topic 16 · Coordination and response"],
-  ["tropism", "🌱", "Phototropism", "Topic 16 · Coordination and response (plants)"]
+let simTab = null, SIM = null, SIM_PROBE = null;
+const SIM_SECS = [
+  ["a", "🌿", "Plants", "Essential life processes in plants"],
+  ["b", "🍙", "Animals", "Essential life processes in animals"],
+  ["c", "🌸", "Growth", "Reproduction, growth and development"],
+  ["d", "🧠", "Senses", "Coordination and response"],
+  ["e", "⚖️", "Balance", "Homeostasis"],
+  ["f", "🌍", "Ecosystems", "Ecosystems"]
 ];
+const SIMS = [], SIM_CH = {};
+// Register a simulation. sec = "a"–"f"; ord sorts inside the section; topic = TOPICS id; words = [[term, emoji, simple meaning]]
+function simReg(o) {
+  SIMS.push(Object.assign({ ord: 50, words: [] }, o));
+  const si = s => SIM_SECS.findIndex(x => x[0] === s.sec);
+  SIMS.sort((a, b) => si(a) - si(b) || a.ord - b.ord);
+}
+// The open simulation shares its live state with the challenge engine (a plain object of numbers/strings/booleans)
+function simProbe(fn) { SIM_PROBE = fn; }
+// Extra CSS for one simulation file (prefix every class with the sim id)
+function simStyle(css) { const e = document.createElement("style"); e.textContent = css; document.head.appendChild(e); }
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const segBtns = (name, opts, cur) => `<div class="simseg" role="radiogroup">${opts.map(([v, l]) => `<button role="radio" aria-checked="${v === cur}" data-${name}="${v}">${l}</button>`).join("")}</div>`;
+// "Done" state of a simulation's challenge, for the tabs: [tasks done, total, finished?]
+function simChalState(id) { const c = (S.simc || {})[id], n = typeof chalTasks === "function" && SIM_CH[id] ? chalTasks(id).length : 0; return [c ? Object.keys(c.d || {}).length : 0, n, !!(c && c.fin)]; }
+
+simReg({ id: "membrane", ic: "🫧", name: "Root-hair membrane", sec: "a", ord: 10, topic: "t12", fn: membraneSim,
+  words: [["cell membrane", "🫧", "thin layer around a cell; controls what goes in and out"], ["osmosis", "💧", "water moves across a membrane to where there is less water"], ["active transport", "🔋", "moving particles from LOW to HIGH concentration, using energy"], ["mineral ion", "⚡", "small charged particle a plant needs, e.g. nitrate"], ["carrier protein", "🚪", "a protein that carries one kind of particle across"], ["respiration", "🔥", "releases energy (ATP) from food, using oxygen"]] });
+simReg({ id: "dialysis", ic: "💧", name: "Osmosis tubing", sec: "a", ord: 20, topic: "t12", fn: dialysisSim,
+  words: [["osmosis", "💧", "water moves across a membrane to where there is less water"], ["water potential", "📶", "how free the water is to move; pure water is highest"], ["partially permeable", "🥅", "lets small particles (water) through but not big ones (sucrose)"], ["sucrose", "🍬", "a sugar; too big to pass the pores"], ["rate", "⏱️", "how fast something happens"], ["control", "⚖️", "a set-up kept the same, to compare with"]] });
+simReg({ id: "lung", ic: "🫁", name: "Breathing", sec: "b", ord: 20, topic: "t13", fn: lungSim,
+  words: [["diaphragm", "⌒", "sheet of muscle under the lungs"], ["intercostal muscles", "🦴", "muscles between the ribs"], ["inhale", "⬇️", "breathe in"], ["exhale", "⬆️", "breathe out"], ["volume", "📦", "how much space"], ["pressure", "🎈", "how hard the air pushes"], ["atmospheric pressure", "🌍", "the pressure of the air outside the body"]] });
+simReg({ id: "pupil", ic: "👁️", name: "Pupil reflex", sec: "d", ord: 10, topic: "t16", fn: pupilSim,
+  words: [["pupil", "⚫", "the hole in the middle of the iris; light enters here"], ["iris", "🟦", "coloured ring of muscle around the pupil"], ["circular muscles", "⭕", "ring-shaped iris muscles; contract → smaller pupil"], ["radial muscles", "✳️", "spoke-shaped iris muscles; contract → bigger pupil"], ["retina", "🎞️", "back of the eye; has light-sensitive cells (receptors)"], ["reflex", "⚡", "a fast, automatic response; no thinking"], ["effector", "💪", "the muscle or gland that responds"]] });
+simReg({ id: "lens", ic: "🔍", name: "Focusing & glasses", sec: "d", ord: 20, topic: "t16", fn: lensSim,
+  words: [["accommodation", "🔍", "changing the lens shape to focus near or far"], ["ciliary muscles", "⭕", "ring of muscle that changes the lens shape"], ["suspensory ligaments", "🧵", "threads that hold the lens"], ["convex", "()", "thicker in the middle; bends light more"], ["concave", ")(", "thinner in the middle; spreads light out"], ["short sight", "👓", "can see near things but not far things"], ["long sight", "🔭", "can see far things but not near things"]] });
+simReg({ id: "ear", ic: "👂", name: "Hearing", sec: "d", ord: 30, topic: "t16", fn: earSim,
+  words: [["eardrum", "🥁", "thin skin that vibrates when sound hits it"], ["ossicles", "🦴", "three tiny bones that make vibrations bigger"], ["cochlea", "🐌", "snail-shaped tube with hair cells (receptors)"], ["hair cells", "〰️", "receptors that change vibrations into nerve impulses"], ["frequency", "🎵", "pitch: how many vibrations per second (Hz)"], ["auditory nerve", "⚡", "carries impulses from the cochlea to the brain"]] });
 
 function renderSims(tab) {
   if (tab) simTab = tab;
   stopRush(); stopTimer(); if (R) { clearTimeout(R.introT); clearTimeout(R.incT); } R = null; MUSIC.setMode("calm"); renderTools(); homeTab = "lab"; renderNav("lab");
+  if (!SIMS.some(x => x.id === simTab)) simTab = SIMS.some(x => x.id === S.simLast) ? S.simLast : SIMS[0].id;
+  S.simLast = simTab; SIM_PROBE = null;
   S.sims = S.sims || {}; if (!S.sims[simTab]) { S.sims[simTab] = today(); save(); checkTrophies(); } activityDone({ mode: "sim", sim: simTab, ans: 0 });
-  const info = SIMS.find(x => x[0] === simTab);
+  const info = SIMS.find(x => x.id === simTab), sec = SIM_SECS.find(x => x[0] === info.sec), topic = TOPICS.find(T => T.id === info.topic);
+  const secDone = s => SIMS.filter(x => x.sec === s).map(x => simChalState(x.id)[2]);
+  const allDone = SIMS.filter(x => simChalState(x.id)[2]).length;
   $app.innerHTML = `
     <section class="card simhead">
-      <h2 style="margin:0">🔬 Simulation Lab</h2>
-      <div class="slottabs" role="tablist">${SIMS.map(([id, ic, nm]) => `<button role="tab" aria-selected="${id === simTab}" data-sim="${id}"><span aria-hidden="true">${ic}</span>${nm}</button>`).join("")}</div>
-      <p class="small muted" style="margin:0">${info[1]} ${info[2]} · ${info[3]}</p>
+      <div class="simtop"><h2 style="margin:0">🔬 Simulation Lab</h2><span class="pill" title="Challenges finished">🏆 ${allDone}/${SIMS.length}</span></div>
+      <div class="simsecs" role="tablist" aria-label="Curriculum sections">${SIM_SECS.map(([k, ic, nm, full]) => { const d = secDone(k); return `<button role="tab" aria-selected="${k === info.sec}" data-simsec="${k}" title="${esc(k + ". " + full)}"><span class="ssic" aria-hidden="true">${ic}</span><span class="ssnm"><b>${k}.</b> ${nm}</span><span class="ssdots" aria-label="${d.filter(Boolean).length} of ${d.length} challenges done">${d.map(x => x ? "●" : "○").join("")}</span></button>`; }).join("")}</div>
+      <p class="simsecname"><b>${sec[0]}. ${esc(sec[3])}</b></p>
+      <div class="slottabs" role="tablist">${SIMS.filter(x => x.sec === info.sec).map(x => { const [d, n, fin] = simChalState(x.id); return `<button role="tab" aria-selected="${x.id === simTab}" data-sim="${x.id}"><span aria-hidden="true">${x.ic}</span>${esc(x.name)}<span class="simtabst" aria-label="challenge ${fin ? "finished" : d + " of " + n}">${fin ? "🏆" : n ? `${d}/${n}` : ""}</span></button>`; }).join("")}</div>
+      <p class="small muted" style="margin:0">${info.ic} ${esc(info.name)}${topic ? ` · Topic ${topic.no} ${esc(topic.name)}` : ""} · 🎯 challenge below</p>
     </section>
     <div id="simBody"></div>`;
   $app.querySelectorAll("[data-sim]").forEach(b => b.onclick = () => { SFX.tap(); renderSims(b.dataset.sim); });
-  ({ lung: lungSim, pupil: pupilSim, lens: lensSim, ear: earSim, membrane: membraneSim, dialysis: dialysisSim, tropism: tropismSim })[simTab](document.getElementById("simBody"));
-  simPredict(document.getElementById("simBody"), simTab);
+  $app.querySelectorAll("[data-simsec]").forEach(b => b.onclick = () => {
+    SFX.tap(); const k = b.dataset.simsec, list = SIMS.filter(x => x.sec === k);
+    S.simSec = S.simSec || {}; renderSims((list.find(x => x.id === S.simSec[k]) || list[0]).id);
+  });
+  S.simSec = S.simSec || {}; S.simSec[info.sec] = simTab;
+  const body = document.getElementById("simBody");
+  info.fn(body);
+  simPredict(body, simTab);
+  simWords(body, info);
+  if (typeof simChallenge === "function") simChallenge(body, simTab);
   wireFolds($app);
   // Phones: wide diagrams scroll inside their card; start them centred on the interesting middle
   setTimeout(() => $app.querySelectorAll(".simsvg:not(.nozoom)").forEach(e => { if (e.scrollWidth > e.clientWidth) e.scrollLeft = (e.scrollWidth - e.clientWidth) / 2; }), 120);
   window.scrollTo({ top: 0 });
+}
+/* 📖 Picture word bank: each key word = emoji + word + 🔊 + a short, simple meaning (for students learning in English) */
+function simWords(root, info) {
+  if (!info.words || !info.words.length) return;
+  const W = info.words, card = document.createElement("section"); card.className = "card simwords";
+  const mean = i => { const [w, ic, m] = W[i]; return `<span class="swic" aria-hidden="true">${ic}</span><span class="swt"><b>${esc(w)}</b>${typeof sayBtns === "function" ? sayBtns(w) : ""}<small>${esc(m)}</small></span>`; };
+  card.innerHTML = foldHtml("lab-words", { icon: "📖", title: "Key words", peek: `${W.length} words · tap one`, cls: "fold-flat", open: true },
+    `<div class="swrow" role="tablist" aria-label="Key words">${W.map(([w, ic], i) => `<button role="tab" class="swchip" aria-selected="${i === 0}" data-sw="${i}"><span aria-hidden="true">${ic}</span>${esc(w)}</button>`).join("")}</div>
+    <div class="swcard" aria-live="polite">${mean(0)}</div>`);
+  card.querySelectorAll("[data-sw]").forEach(b => b.onclick = () => {
+    SFX.tap(); card.querySelectorAll("[data-sw]").forEach(x => x.setAttribute("aria-selected", x === b ? "true" : "false"));
+    card.querySelector(".swcard").innerHTML = mean(Number(b.dataset.sw)); if (typeof speak === "function") speak(W[Number(b.dataset.sw)][0]);
+  });
+  root.insertBefore(card, root.firstChild);
 }
 /* One animation loop per open simulation; it stops itself when the page changes */
 function simLoop(root, step) {
@@ -9376,7 +9525,7 @@ function simLoop(root, step) {
   };
   requestAnimationFrame(f);
 }
-/* Quick check: 2 questions per simulation, no penalties, a few chestnuts the first time */
+/* Exam-style checks: 2 per simulation. They become the last mission ("🧠 Exam check") of each challenge (simchal.js). */
 const SIM_Q = {
   lung: [["During inhalation, what happens to the air pressure inside the lungs?", ["It falls below atmospheric pressure, so air flows in", "It rises above atmospheric pressure, so air flows in", "It stays equal to atmospheric pressure", "It falls to zero"], "Volume ↑ → pressure ↓ below atmospheric → air moves in down the pressure gradient."],
     ["Which change happens when you breathe out at rest?", ["The diaphragm relaxes and domes upwards", "The diaphragm contracts and flattens", "The external intercostal muscles contract", "The ribs move upwards and outwards"], "At rest, breathing out is mostly passive: the muscles relax, the chest volume falls and pressure rises."]],
@@ -9385,22 +9534,6 @@ const SIM_Q = {
   lens: [["When you look at a near object, what happens?", ["Ciliary muscles contract, suspensory ligaments slacken, the lens becomes thicker", "Ciliary muscles relax, suspensory ligaments tighten, the lens becomes thinner", "Ciliary muscles contract, suspensory ligaments tighten, the lens becomes thinner", "The pupil gets bigger and the lens stays the same"], "A thicker, more convex lens refracts light more, so the image of a near object focuses on the retina."],
     ["A short-sighted person sees distant objects blurred. Which lens corrects this?", ["A concave (diverging) lens", "A convex (converging) lens", "No lens: they should squint", "A thicker eye lens"], "The image forms in front of the retina, so a concave lens spreads the rays out a little before they enter the eye."]]
 };
-function simQuiz(id) {
-  S.simq = S.simq || {};
-  return `<section class="card simqcard">${foldHtml("lab-q", { icon: "🧠", title: "Quick check", peek: `${SIM_Q[id].filter((_, i) => S.simq[id + i]).length}/${SIM_Q[id].length} ✓`, cls: "fold-flat" }, `${SIM_Q[id].map(([q, ch, why], i) => {
-    const order = shuffle(ch.map((_, k) => k)), done = S.simq[id + i];
-    return `<div class="simq" data-q="${i}"><p><b>${i + 1}. ${esc(q)}</b></p><div class="choices">${order.map((k, n) => `<button class="choice" data-sq="${id}|${i}|${k}"><b>${"ABCD"[n]}</b><span>${esc(ch[k])}</span></button>`).join("")}</div><div class="small sqfb" id="sqfb${i}">${done ? "✅ Already answered correctly." : ""}</div></div>`; }).join("")}`)}</section>`;
-}
-function wireSimQuiz(root) {
-  root.querySelectorAll("[data-sq]").forEach(b => b.onclick = () => {
-    const [id, i, k] = b.dataset.sq.split("|"), [, , why] = SIM_Q[id][i], ok = Number(k) === 0, fb = root.querySelector("#sqfb" + i);
-    if (ok) {
-      SFX.right(); b.classList.add("right"); b.parentNode.querySelectorAll("button").forEach(x => x.disabled = true);
-      const first = !S.simq[id + i]; S.simq[id + i] = 1; if (first) { S.coins += 3; S.stats.correct += 1; save(true); renderTools(); }
-      fb.innerHTML = `✅ ${esc(why)}${first ? " <b>+3 🌰</b>" : ""}`;
-    } else { SFX.wrong(); b.classList.add("wrong"); b.disabled = true; fb.innerHTML = "Not quite. Watch the simulation again and think! 🌱"; }
-  });
-}
 
 /* Predict first: students guess before they run each simulation (the Phototropism lab has its own per-set-up predictions).
    A wrong guess costs nothing; the first right guess in a lab earns +2 🌰. Controls unlock once a guess is made (or Skip is pressed). */
@@ -9432,7 +9565,7 @@ function simPredict(root, id) {
     <div class="choices">${order.map((k, n) => `<button class="choice" data-sp="${k}"><b>${"ABCD"[n]}</b><span>${esc(ch[k])}</span></button>`).join("")}</div>
     <div class="spfb small" aria-live="polite"><span class="muted">Pick your best guess to unlock the simulation.</span><button class="btn plain" id="spSkip">Skip</button></div>`;
   root.insertBefore(card, root.firstChild);
-  const lock = on => root.querySelectorAll(".simgrid, .simqcard").forEach(e => { e.inert = on; e.classList.toggle("simlocked", on); });
+  const lock = on => root.querySelectorAll(".simgrid, .simchal").forEach(e => { e.inert = on; e.classList.toggle("simlocked", on); });
   lock(true);
   const fb = card.querySelector(".spfb");
   card.querySelector("#spSkip").onclick = () => { SFX.tap(); lock(false); card.remove(); };
@@ -9460,8 +9593,7 @@ function lungSim(root) {
     <section class="card"><h3 style="margin:0">📈 Pressure in the lungs vs time</h3>
       <div id="lungGraph" class="simsvg"></div>
       <label class="small chk"><input type="checkbox" id="lVol" checked> Show lung volume too</label>
-      <div id="lungSteps" class="simsteps"></div></section></div>
-    ${simQuiz("lung")}`;
+      <div id="lungSteps" class="simsteps"></div></section></div>`;
   const $s = root.querySelector("#lungSvg"), $g = root.querySelector("#lungGraph"), $steps = root.querySelector("#lungSteps");
   root.querySelectorAll("[data-lmode]").forEach(b => b.onclick = () => {
     SFX.tap(); st.auto = b.dataset.lmode === "auto"; st.target = null;
@@ -9473,8 +9605,8 @@ function lungSim(root) {
   root.querySelector("#lOut").onclick = () => go(st.deep ? 0 : .2);
   root.querySelector("#lDeep").onchange = e => { st.deep = e.target.checked; };
   root.querySelector("#lVol").onchange = e => { st.showVol = e.target.checked; };
-  wireSimQuiz(root);
   let lastPhase = "";
+  simProbe(() => { const ps = st.hist.map(h => h[1]); return { volume: Math.round(st.v * 100), pressure: +(st.P || 0).toFixed(2), phase: st.phase || "rest", mode: st.auto ? "auto" : "manual", exercise: st.deep, showVol: st.showVol, breaths: st.nIn || 0, pMax: ps.length ? +Math.max(...ps).toFixed(2) : 0, pMin: ps.length ? +Math.min(...ps).toFixed(2) : 0, t: +st.t.toFixed(1) }; });
   simLoop(root, dt => {
     st.t += dt; st.vPrev = st.v;
     if (st.auto) {
@@ -9489,6 +9621,8 @@ function lungSim(root) {
     const dv = (st.v - st.vPrev) / Math.max(dt, 1e-3), P = clamp(-.5 * dv, -.6, .6);
     st.hist.push([st.t, P, st.v]); while (st.hist.length && st.t - st.hist[0][0] > 10) st.hist.shift();
     const phase = dv > .03 ? "in" : dv < -.03 ? "out" : "rest";
+    if (phase === "in" && st.phase !== "in") st.nIn = (st.nIn || 0) + 1;
+    st.P = P; st.phase = phase;
     $s.innerHTML = thoraxSvg(st.v, dv);
     $g.innerHTML = pressureGraph(st.hist, st.t, st.showVol);
     if (phase !== lastPhase) { lastPhase = phase; $steps.innerHTML = lungSteps(phase); }
@@ -9570,15 +9704,14 @@ function pupilSim(root) {
       <div class="row simbtns"><button class="btn plain" data-pl="3">🌑 Dark room</button><button class="btn plain" data-pl="50">💡 Classroom</button><button class="btn plain" data-pl="100">☀️ Bright sun</button><button class="btn yellow" id="pTorch">🔦 Torch flash</button></div></section>
     <section class="card"><h3 style="margin:0">🧠 What's happening?</h3><div id="pupInfo"></div>
       <div class="arc" id="pupArc">${["👁️ Receptor<br><small>retina (light-sensitive cells)</small>", "⚡ Sensory neurone<br><small>optic nerve</small>", "🧠 Brain<br><small>(involuntary: no thinking)</small>", "⚡ Motor neurone", "💪 Effector<br><small>iris muscles</small>"].map((s, i) => `<span class="arcstep" data-arc="${i}">${s}</span>`).join('<span class="arcgo">→</span>')}</div>
-      <p class="small muted">Try it in real life: cover one eye with your hand for 10 seconds, then uncover it while looking in a mirror. Watch the pupil shrink! 👀</p></section></div>
-    ${simQuiz("pupil")}`;
+      <p class="small muted">Try it in real life: cover one eye with your hand for 10 seconds, then uncover it while looking in a mirror. Watch the pupil shrink! 👀</p></section></div>`;
   const slider = root.querySelector("#pLight");
   const setLight = L => { st.light = L; slider.value = L; st.target = 44 - 32 * Math.pow(L / 100, .7); st.delay = .25; st.pulse = 1.2; };
   slider.oninput = () => setLight(Number(slider.value));
   root.querySelectorAll("[data-pl]").forEach(b => b.onclick = () => { SFX.tap(); setLight(Number(b.dataset.pl)); });
   root.querySelector("#pTorch").onclick = () => { SFX.click(); st.flash = 1.4; st.prevLight = st.light; setLight(100); };
-  wireSimQuiz(root);
   setLight(50); st.r = st.target;
+  simProbe(() => ({ light: st.light, diam: +(st.r / 44 * 8).toFixed(1), circular: st.target < 28 ? "contract" : "relax", radial: st.target < 28 ? "relax" : "contract", torch: st.flash > 0, retina: Math.round(100 * (.08 + .92 * st.light / 100) * (st.r * st.r) / (44 * 44)) }));
   simLoop(root, dt => {
     if (st.flash > 0) { st.flash -= dt; if (st.flash <= 0) setLight(st.prevLight); }
     if (st.delay > 0) st.delay -= dt; else st.r += (st.target - st.r) * Math.min(1, dt / .35);
@@ -9628,11 +9761,10 @@ function lensSim(root) {
       <div class="simctl"><div><b class="small">Look at</b>${segBtns("lo", [["far", "🌳 Distant tree"], ["near", "📖 Book (25 cm)"]], st.obj)}</div>
         <div><b class="small">Eye</b>${segBtns("le", [["normal", "🙂 Normal"], ["short", "👓 Short sight"], ["long", "🔭 Long sight"]], st.eye)}</div>
         <div><b class="small">Glasses</b>${segBtns("lg", [["none", "None"], ["concave", "Concave )("], ["convex", "Convex ()"]], st.gl)}</div></div></section>
-    <section class="card"><h3 style="margin:0">👀 What ${esc(palName())} sees</h3><div id="lensView" class="lensview"></div><div id="lensInfo"></div></section></div>
-    ${simQuiz("lens")}`;
+    <section class="card"><h3 style="margin:0">👀 What ${esc(palName())} sees</h3><div id="lensView" class="lensview"></div><div id="lensInfo"></div></section></div>`;
   const seg = (name, key) => root.querySelectorAll(`[data-${name}]`).forEach(b => b.onclick = () => { SFX.tap(); st[key] = b.dataset[name]; root.querySelectorAll(`[data-${name}]`).forEach(x => x.setAttribute("aria-checked", x === b)); });
   seg("lo", "obj"); seg("le", "eye"); seg("lg", "gl");
-  wireSimQuiz(root);
+  simProbe(() => ({ obj: st.obj, eye: st.eye, glasses: st.gl, sharp: !!st.sharp, focus: st.sharp ? "on" : st.off < 0 ? "front" : "behind", thick: !!st.thick, accom: Math.round(100 * (st.P - P_MIN) / (P_MAX - P_MIN)), maxed: !!st.maxed }));
   let key = "";
   simLoop(root, dt => {
     const D = EYE_D[st.eye], Pg = GLASS[st.gl];
@@ -9652,6 +9784,7 @@ function lensSim(root) {
     const k = [st.obj, st.eye, st.gl, Math.round(st.P * 10), Math.round(off * 20)].join();
     if (k === key) return; key = k;
     const acc = (st.P - P_MIN) / (P_MAX - P_MIN), sharp = Math.abs(off) < .08;
+    st.sharp = sharp; st.off = off; st.thick = acc > .15; st.maxed = (st.P >= P_MAX - .01 && need > P_MAX + .05) || (st.P <= P_MIN + .01 && need < P_MIN - .05);
     root.querySelector("#lensView").innerHTML = viewSvg(st.obj, Math.min(8, blur * 6));
     const thick = acc > .15;
     root.querySelector("#lensInfo").innerHTML = `
@@ -9745,22 +9878,23 @@ function earSim(root) {
       <div class="row simbtns"><button class="btn yellow" id="ePlay">🎵 Hear it</button><button class="btn plain" id="eOn">⏸ Pause sound waves</button></div>
       <label class="small chk"><input type="checkbox" id="eDmg"> 🎧 Hearing damage (years of very loud music)</label>
       <p class="small muted" style="margin:0">Keep your volume low. Humans hear about 20 Hz to 20,000 Hz; the top of the range drops as we get older.</p>
-      <div id="earSteps" class="earsteps"></div><div id="earNote"></div></section></div>
-    ${simQuiz("ear")}`;
+      <div id="earSteps" class="earsteps"></div><div id="earNote"></div></section></div>`;
   const fS = root.querySelector("#eFreq"), lS = root.querySelector("#eLoud");
   const setF = v => { st.fv = v; st.f = Math.round(20 * Math.pow(1000, v / 100)); fS.value = v; root.querySelector("#eF").textContent = st.f >= 1000 ? (st.f / 1000).toFixed(1) + " kHz" : st.f + " Hz"; };
   const setL = v => { st.loud = v; lS.value = v; root.querySelector("#eL").textContent = `${Math.round(20 + v * .8)} dB ${v > 85 ? "⚠️ can damage hair cells!" : ""}`; };
   fS.oninput = () => setF(Number(fS.value)); lS.oninput = () => setL(Number(lS.value));
   root.querySelectorAll("[data-ef]").forEach(b => b.onclick = () => { SFX.tap(); setF(100 * Math.log(Number(b.dataset.ef) / 20) / Math.log(1000)); });
-  root.querySelector("#ePlay").onclick = () => { st.on = true; root.querySelector("#eOn").textContent = "⏸ Pause sound waves"; playTone(st.f, st.loud); };
+  root.querySelector("#ePlay").onclick = () => { st.on = true; st.played = (st.played || 0) + 1; root.querySelector("#eOn").textContent = "⏸ Pause sound waves"; playTone(st.f, st.loud); };
   root.querySelector("#eOn").onclick = () => { SFX.tap(); st.on = !st.on; root.querySelector("#eOn").textContent = st.on ? "⏸ Pause sound waves" : "▶ Start sound waves"; };
   root.querySelector("#eDmg").onchange = e => { st.dmg = e.target.checked; };
-  setF(50); setL(60); wireSimQuiz(root);
+  setF(50); setL(60);
+  simProbe(() => ({ freq: st.f, db: Math.round(20 + st.loud * .8), waves: st.on, damage: st.dmg, heard: !!st.heard, region: st.fv > 68 ? "base" : st.fv < 34 ? "apex" : "middle", played: st.played || 0 }));
   let lastNote = "";
   simLoop(root, dt => {
     const A = st.on ? st.loud / 100 : 0, rate = 1.2 + 2.6 * st.fv / 100;          // visual vibration rate (slowed down to be seen)
     st.ph += dt * rate * Math.PI * 2;
     const pos = 1 - st.fv / 100, dead = st.dmg && pos < .32, heard = A > .02 && !dead;
+    st.heard = heard; st.A = A;
     if (heard && Math.random() < dt * (2 + 14 * A)) st.imp.push(0);
     st.imp = st.imp.map(x => x + dt * .9).filter(x => x < 1);
     if (A > .02) { st.stepT += dt; if (st.stepT > .55) { st.stepT = 0; st.step = (st.step + 1) % (heard ? 8 : 7); } }
@@ -9859,20 +9993,20 @@ function membraneSim(root) {
       <label class="small chk"><input type="checkbox" id="mLab" checked> Show labels</label></section>
     <section class="card"><h3 style="margin:0">🔎 Tap a part</h3>
       <div class="row simbtns">${Object.entries(MEM_PARTS).map(([k, [n]]) => `<button class="btn plain" data-mp="${k}">${n}</button>`).join("")}</div>
-      <div id="memInfo"></div><div id="memCount"></div></section></div>
-    ${simQuiz("membrane")}`;
+      <div id="memInfo"></div><div id="memCount"></div></section></div>`;
   const tS = root.querySelector("#mTemp"), info = root.querySelector("#memInfo");
   const setT = v => { st.T = v; root.querySelector("#mT").textContent = `${v} °C ${v < 10 ? "(cold: less fluid)" : v > 50 ? "(too hot: proteins denature, membrane leaks!)" : v >= 30 && v <= 40 ? "(body temperature)" : ""}`; };
   tS.oninput = () => setT(Number(tS.value)); setT(37);
   const showInfo = html => { info.innerHTML = `<div class="chart" style="margin-top:8px">${html}</div>`; };
   root.querySelectorAll("[data-mp]").forEach(b => b.onclick = () => { SFX.tap(); st.hl = b.dataset.mp; st.hlT = 3; const [n, d] = MEM_PARTS[st.hl]; showInfo(`<b>${n}</b><br>${d}`); });
   root.querySelectorAll("[data-mv]").forEach(b => b.onclick = () => {
-    SFX.click(); const k = b.dataset.mv; st.move = k; showInfo(`<b>${MEM_MOVE[k].l}</b><br>${MEM_MOVE[k].how}`);
+    SFX.click(); const k = b.dataset.mv; st.move = k; st.sent[k] = (st.sent[k] || 0) + 1; showInfo(`<b>${MEM_MOVE[k].l}</b><br>${MEM_MOVE[k].how}`);
     for (let i = 0; i < 5; i++) st.parts.push({ k, x: 40 + Math.random() * 560, y: 20 + Math.random() * 60, ph: "go", d: i * .35, ex: 0 });
   });
   root.querySelector("#mLab").onchange = e => { st.labels = e.target.checked; };
   showInfo(`<b>The fluid mosaic model</b><br>The membrane is a <b>phospholipid bilayer</b> with <b>proteins</b> scattered in it like tiles in a mosaic. Everything can drift sideways: it's <b>fluid</b>. Try sending molecules across with the buttons!`);
-  wireSimQuiz(root);
+  st.sent = {};
+  simProbe(() => { const inside = {}; st.parts.forEach(p => { if (p.y > 220) inside[p.k] = (inside[p.k] || 0) + 1; }); return { temp: st.T, leak: st.T > 50, move: st.move, sent: Object.assign({}, st.sent), inside, atp: st.atp > 0, part: st.hl || "" }; });
   let lastCount = "";
   simLoop(root, dt => {
     st.t += dt; st.hlT = Math.max(0, (st.hlT || 0) - dt); st.atp = Math.max(0, st.atp - dt); st.busy = Math.max(0, st.busy - dt);
@@ -9952,6 +10086,9 @@ Object.assign(SIM_Q, {
     ["In Went's investigation, an agar block with MORE chemical on its right half is put on a cut coleoptile in darkness. What happens?", ["The right side grows faster, so it bends to the left", "The left side grows faster, so it bends to the right", "It grows straight up", "It does not grow, because there is no light"], "More auxin → those cells elongate more. The faster-growing right side pushes the shoot over to the left. No light is needed: the chemical alone causes bending."]]
 });
 
+simReg({ id: "tropism", ic: "🌱", name: "Phototropism", sec: "d", ord: 60, topic: "t16", fn: tropismSim,
+  words: [["phototropism", "🌱", "a plant grows towards (or away from) light"], ["coleoptile", "🌾", "the sheath that covers a young grass shoot"], ["auxin", "🔴", "plant hormone that makes cells get longer"], ["unilateral light", "➡️", "light from one side only"], ["elongation", "↕️", "cells get longer"], ["mica", "🪟", "thin sheet that chemicals cannot pass through"], ["agar block", "🧊", "jelly that chemicals can soak into and out of"]] });
+
 /* ---------------- 6. 💧 Osmosis with dialysis tubing ---------------- */
 const DIA_STD = { conc: 20, len: "short", temp: 25, vol: "normal", water: "normal" };
 const DIA_OPTS = {
@@ -9987,8 +10124,7 @@ function dialysisSim(root) {
     <section class="card"><h3 style="margin:0">🔎 Zoom in on the tubing wall</h3><div id="diaZoom" class="simsvg nozoom"></div><div id="diaCross" class="small"></div>
       <h3 style="margin:10px 0 0">📈 Liquid level vs time</h3><div id="diaGraph" class="simsvg nozoom"></div></section></div>
     <section class="card"><h3 style="margin:0">🧠 Why does the level rise?</h3>${diaStepsHtml()}</section>
-    <section class="card"><h3 style="margin:0">🧪 Fair-test table</h3><p class="small muted" style="margin:4px 0">Change <b>one</b> thing, press Start, and compare with the standard set-up (20%, 15 cm, 25 °C). Which changes affect the <b>rate</b>? Which affect the <b>final level</b>?</p><div id="diaTable"></div></section>
-    ${simQuiz("dialysis")}`;
+    <section class="card"><h3 style="margin:0">🧪 Fair-test table</h3><p class="small muted" style="margin:4px 0">Change <b>one</b> thing, press Start, and compare with the standard set-up (20%, 15 cm, 25 °C). Which changes affect the <b>rate</b>? Which affect the <b>final level</b>?</p><div id="diaTable"></div></section>`;
   const runBtn = root.querySelector("#dRun");
   const reset = () => { st.t = 0; st.run = false; runBtn.textContent = "▶ Start (30 min)"; zoomReset(); };
   runBtn.onclick = () => { SFX.click(); if (st.t >= 30) reset(); st.run = !st.run; runBtn.textContent = st.run ? "⏸ Pause" : "▶ Continue"; };
@@ -10004,8 +10140,9 @@ function dialysisSim(root) {
     return `<div class="tscroll"><table class="tterms small diatable"><tbody><tr><th>What changed</th><th>Rate of rise</th><th>Final level</th></tr>${st.rows.map(r => `<tr><td>${r.label}</td><td>${arrow(r.m.slope, std.slope)}</td><td>${arrow(r.m.H, std.H)}</td></tr>`).join("")}</tbody></table></div>`;
   };
   const changedLabel = v => { const ch = Object.keys(DIA_STD).filter(k => v[k] !== DIA_STD[k]); return ch.length ? ch.map(k => `${DIA_OPTS[k][0].split(" ").slice(1).join(" ")}: <b>${DIA_OPTS[k][1].find(o => o[0] === v[k])[1]}</b>`).join(" + ") : "<b>Standard set-up</b>"; };
-  wireSimQuiz(root); wireFolds(root);
+  wireFolds(root);
   let lastTable = "";
+  simProbe(() => { const m = diaModel(st.v); return Object.assign({}, st.v, { t: +st.t.toFixed(1), level: +m.h(st.t).toFixed(1), running: st.run, finished: st.t >= 30, runs: st.rows.length, rowLabels: st.rows.map(r => r.label.replace(/<[^>]+>/g, "")), netIn: st.cross.in - st.cross.out }); });
   simLoop(root, dt => {
     const m = diaModel(st.v), tf = { 10: .6, 25: 1, 40: 1.45 }[st.v.temp];
     if (st.run) {
@@ -10169,8 +10306,7 @@ function tropismSim(root) {
         <div id="trPred" class="trpred"></div>
         <div class="row simbtns"><button class="btn" id="trRun">💡 Run the experiment</button><button class="btn plain" id="trReset">↺ Reset</button></div></section>
       <section class="card"><h3 style="margin:0">📋 What it shows</h3><div id="trConc"></div>
-        ${foldHtml("lab-trwhy", { icon: "🔎", title: "Zoom in: why does it bend?", open: true, cls: "fold-flat" }, tropWhySvg())}</section></div>
-    ${simQuiz("tropism")}`;
+        ${foldHtml("lab-trwhy", { icon: "🔎", title: "Zoom in: why does it bend?", open: true, cls: "fold-flat" }, tropWhySvg())}</section></div>`;
   const draw = () => {
     const I = TROP[st.inv];
     root.querySelectorAll("[data-ti]").forEach(b => b.setAttribute("aria-selected", b.dataset.ti === st.inv ? "true" : "false"));
@@ -10194,7 +10330,9 @@ function tropismSim(root) {
   };
   root.querySelector("#trReset").onclick = () => { SFX.tap(); st.nudged = null; st.p = 0; st.run = false; TROP[st.inv].set.forEach((_, i) => delete st.pred[st.inv + i]); draw(); };
   root.querySelectorAll("[data-ti]").forEach(b => b.onclick = () => { SFX.tap(); st.inv = b.dataset.ti; st.p = st.done[st.inv] ? 1 : 0; st.run = false; draw(); });
-  wireSimQuiz(root); wireFolds(root); draw();
+  wireFolds(root); draw();
+  simProbe(() => { const I = TROP[st.inv]; return { inv: st.inv, ran: st.p >= 1, running: st.run, done: Object.keys(st.done), predicted: I.set.filter((_, i) => st.pred[st.inv + i]).length, setups: I.set.length,
+    rightPreds: st.p >= 1 ? I.set.filter((S, i) => st.pred[st.inv + i] === S.r).length : 0 }; });
   simLoop(root, dt => {
     st.t += dt;
     if (st.run) { st.p = Math.min(1, st.p + dt / 4); if (st.p >= 1) { st.run = false; st.done[st.inv] = 1; SFX.item(); draw();
@@ -10240,6 +10378,290 @@ function tropWhySvg() {
     <path d="M176 96 h10" stroke="${CO}" stroke-width="2.5"/><path d="M185 91 l7 5 l-7 5z" fill="${CO}"/>
   </svg>
   <p class="small" style="margin:6px 0 0">Shaded-side cells get <b>more auxin</b>, so they <b>elongate more</b>. That side grows faster and pushes the shoot over <b>towards the light</b>.</p>`;
+}
+/* Lab section a (placeholder; filled in by the section build) */
+/* ============================================================
+   5f-b. 🍙 Lab section b: Essential life processes in animals
+   Breathing (lungSim lives in sims.js) — its 🎯 challenge is below and is the REFERENCE EXAMPLE for every
+   other challenge (see docs/SIM_LAB_GUIDE.md).
+   ============================================================ */
+
+/* 🎯 Breathing challenge. Probe (sims.js): volume 0–100 · pressure kPa (−0.6…0.6, relative to atmospheric) ·
+   phase "in"/"out"/"rest" · mode "auto"/"manual" · exercise · breaths · pMax/pMin over the last 10 s */
+SIM_CH.lung = {
+  title: "Breathing Detective", mins: 15,
+  story: "Your mission: prove HOW air gets into the lungs. Use the chest model and the pressure graph as your evidence.",
+  missions: [
+    { ic: "✋", name: "Take control", tasks: [
+      { type: "goal", ic: "✋", do: "Switch the model to <b>✋ I control it</b>.", look: "Buttons under the chest model", target: "Manual mode", check: p => p.mode === "manual", hold: .2,
+        why: "Now YOU move the diaphragm and ribs. Watch the labels change." },
+      { type: "goal", ic: "⬇️", do: "Press <b>⬇️ Breathe in</b>. Fill the lungs to more than 75%.", look: "Chest model + green volume line", target: "Lung volume ≥ 75%",
+        check: p => p.volume >= 75, meter: p => ({ v: p.volume, min: 0, max: 100, lo: 75, hi: 100, unit: "%", label: "Lung volume" }), hold: .3,
+        why: "The diaphragm contracted and flattened, and the ribs moved up and out. The chest volume got bigger." },
+      { type: "pick", ic: "📈", do: "While the lungs were filling, where was the <b>red pressure line</b>?", look: "📈 Pressure graph",
+        opts: [["Below the dashed line: lung pressure was lower than atmospheric", "⬇️"], ["Above the dashed line: lung pressure was higher than atmospheric", "⬆️"], ["On the dashed line: no pressure change", "➖"]],
+        miss: ["", "Look again: press ⬇️ Breathe in and watch which way the red line moves.", "The line moves away from the dashed line while the volume changes. Try it again and watch."],
+        why: "Volume ↑ → pressure ↓ (below atmospheric). Air moves from high pressure (outside) to low pressure (lungs)." },
+      { type: "goal", ic: "⬆️", do: "Now <b>⬆️ Breathe out</b>. Empty the lungs to less than 25%.", look: "Chest model", target: "Lung volume ≤ 25%",
+        check: p => p.mode === "manual" && p.volume <= 25, meter: p => ({ v: p.volume, min: 0, max: 100, lo: 0, hi: 25, unit: "%", label: "Lung volume" }), hold: .3,
+        why: "The muscles relaxed: the diaphragm domed up and the ribs moved down and in. Volume ↓ → pressure ↑ → air flows out." },
+      { type: "goal", ic: "🎈", do: "Make the red line go <b>ABOVE</b> the dashed line (higher than atmospheric pressure).", look: "📈 Pressure graph", hint: "Fill the lungs first (⬇️), then press ⬆️ Breathe out and watch.", target: "Lung pressure above atmospheric",
+        check: p => p.pressure > .12, hold: 0, why: "Breathing out squeezes the lungs: pressure rises above atmospheric, so air is pushed out." }] },
+    { ic: "📈", name: "Read the graph", tasks: [
+      { type: "goal", ic: "▶", do: "Switch back to <b>▶ Auto breathing</b> (no exercise). Watch the graph for 10 seconds.", look: "📈 Pressure graph", target: "Auto, at rest, for 10 s",
+        check: p => p.mode === "auto" && !p.exercise, hold: 10, meter: null, why: "The red line goes up and down once for every breath. The dashed line is atmospheric pressure." },
+      { type: "read", ic: "🔢", do: "Count the <b>breaths</b> on the graph: how many red-line dips (breaths in) are there in the 10 seconds shown?", look: "📈 Pressure graph",
+        need: p => p.mode === "auto" && !p.exercise && p.t > 10, needTxt: "Auto breathing, no exercise.", fields: [["Breaths in 10 s (at rest)", 2.4, 1, "breaths"], ["So breaths per minute (× 6)", 14.4, 4, "/min"]],
+        hint: "Count the dips BELOW the dashed line. Then multiply by 6 (60 s ÷ 10 s = 6).", why: "About 2–3 breaths in 10 s → about 12–18 breaths per minute at rest." },
+      { type: "fill", ic: "✍️", do: "Use your evidence to finish the sentence.",
+        text: "When the chest volume {increases|decreases|stays the same}, the pressure in the lungs {falls below|rises above} atmospheric pressure, so air flows {in|out}.",
+        why: "This is the key exam sentence: volume ↑ → pressure ↓ → air in." }] },
+    { ic: "🏃", name: "Exercise test", tasks: [
+      { type: "goal", ic: "🏃", do: "Tick <b>🏃 Exercise</b> (with auto breathing). Watch for 10 seconds.", look: "Tick box under the chest model", target: "Exercise on, for 10 s",
+        check: p => p.exercise && p.mode === "auto", hold: 10, why: "Deeper and faster breaths: the graph swings more and more often." },
+      { type: "read", ic: "📏", do: "During exercise, read the graph.", look: "📈 Pressure graph · y-axis",
+        need: p => p.exercise && p.mode === "auto", needTxt: "🏃 Exercise ticked, auto breathing.",
+        fields: [["Highest pressure (top of the red line)", p => p.pMax, .1, "kPa"], ["Breaths in 10 s", 3.8, 1, "breaths"]],
+        hint: "The top grid label is +0.6 kPa, the dashed line is 0. Count the dips below the dashed line.",
+        why: "About +0.6 kPa and about 4 breaths in 10 s (≈ 23 per minute). At rest it was only about ±0.2 kPa and 2–3 breaths." },
+      { type: "pick", ic: "🤔", do: "Why are the pressure swings <b>bigger</b> during exercise?", look: "Compare rest vs exercise",
+        opts: ["Deeper, faster breaths change the chest volume more, and more quickly", "The air outside the body has a higher pressure during exercise", "The lungs make their own air during exercise", "The heart pushes air into the lungs"],
+        miss: ["", "The dashed line (atmospheric pressure) did not move. Only the lungs changed.", "Lungs do not make air: all air comes in through the trachea.", "The heart pumps blood, not air."],
+        why: "A bigger, faster volume change makes a bigger pressure difference, so more air moves in each minute (more O₂ for respiration in muscles)." },
+      { type: "pick", ic: "💪", do: "Which muscles work <b>harder</b> during exercise breathing?", look: "Chest model labels",
+        need: p => p.exercise && p.phase === "in", needTxt: "🏃 Exercise on: watch one breath in.",
+        opts: ["Diaphragm and intercostal muscles", "Heart muscle only", "Iris muscles", "Biceps and triceps"],
+        why: "The diaphragm and intercostal muscles contract more strongly, so the chest volume changes more." }] },
+    { ic: "🔢", name: "Explain it", tasks: [
+      { type: "order", ic: "⬇️", do: "Put the steps of <b>inhalation</b> in order.", look: "Steps list next to the graph",
+        items: ["Diaphragm and external intercostal muscles contract", "Diaphragm flattens; ribs move up and out", "Volume of the chest cavity increases", "Pressure in the lungs falls below atmospheric pressure", "Air flows in through the trachea"],
+        why: "Muscles → movement → volume ↑ → pressure ↓ → air in. Exhalation is the reverse." },
+      { type: "pick", ic: "🕵️", do: "A classmate says: “Air rushes into the lungs, and this makes the chest get bigger.” What is wrong?",
+        opts: ["It is the other way round: the chest gets bigger first, then air flows in", "Nothing is wrong", "Air never enters the lungs; only oxygen does", "The chest gets smaller when air comes in"],
+        miss: ["", "Watch the manual model: the volume changes BEFORE the arrow shows air moving in.", "Air (a mixture of gases) enters; oxygen is only part of it.", "Look at the chest model: it gets bigger when air comes in."],
+        why: "Cause → effect: muscles change the volume, the volume changes the pressure, and the pressure difference moves the air." },
+      { type: "fill", ic: "✍️", do: "Finish the sentence about breathing out at rest.",
+        text: "At rest, breathing out is mostly {passive|active}: the diaphragm muscles {relax|contract}, so the diaphragm {domes upwards|flattens}.",
+        why: "Quiet exhalation needs no extra muscle work; the stretched lungs and relaxed muscles spring back." }] }
+  ]
+};
+/* Lab section c (placeholder; filled in by the section build) */
+/* Lab section d (placeholder; filled in by the section build) */
+/* Lab section d: challenges for the existing coordination sims (placeholder) */
+/* Lab section e (placeholder; filled in by the section build) */
+/* Lab section f (placeholder; filled in by the section build) */
+/* ============================================================
+   5f-3. 🎯 Lab challenges: a ~15-minute mission set after every simulation
+   SIM_CH[id] = { title, story, mins: 15, missions: [{ ic, name, tasks: [task, …] }] }   (defined next to each sim)
+   Task types (full reference + examples: docs/SIM_LAB_GUIDE.md):
+     goal  – "Make it happen": check(p) must stay true for `hold` seconds (p = the sim's live probe). Optional meter(p).
+     read  – "Measure": type numbers read from the sim. fields: [[label, answer or () => answer, tolerance, unit]].
+     pick  – "Choose": one right option (always written FIRST; the engine shuffles). miss: notes for wrong options.
+     fill  – "Complete the sentence": text with {right|wrong|wrong} blanks (right option first).
+     order – "Put in order": items in the correct order; the engine shuffles.
+   Any task may have need(p) + needTxt: the answer stays locked until the sim has been set up that way once.
+   The last mission ("🧠 Exam check") is built from SIM_Q[id] automatically.
+   Progress: S.simc[id] = { d: { "m.t": 1 }, w: wrong answers, h: hints, secs, fin }.
+   ============================================================ */
+const CH_TYPE = { goal: ["🎛️", "Do it"], read: ["📏", "Measure"], pick: ["🤔", "Choose"], fill: ["✍️", "Complete the sentence"], order: ["🔢", "Put in order"] };
+let LABCH = null;
+function chalMissions(id) {
+  const def = SIM_CH[id]; if (!def) return [];
+  const ms = def.missions.slice();
+  if (SIM_Q[id] && !def.noExam) ms.push({ ic: "🧠", name: "Exam check", tasks: SIM_Q[id].map(([q, ch, why]) => ({ type: "pick", do: q, opts: ch, why })) });
+  return ms;
+}
+function chalTasks(id) { return chalMissions(id).flatMap((m, mi) => m.tasks.map((t, ti) => Object.assign({ key: mi + "." + ti, mi }, t))); }
+const chalRec = id => { S.simc = S.simc || {}; return S.simc[id] = S.simc[id] || { d: {}, w: 0, h: 0, secs: 0 }; };
+const chalStars = c => c.w <= 2 ? 3 : c.w <= 6 ? 2 : 1;
+const chalClock = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+// Key words from the word bank become tappable (🔊) in task text. Authors may use <b>, <i>, <br> and ↑ ↓ → arrows.
+function chalText(html, words) {
+  let out = String(html); const keep = [];
+  (words || []).slice().sort((a, b) => b[0].length - a[0].length).forEach(([w, ic, m]) => {
+    const re = new RegExp(`(^|[^\\w>="-])(${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}s?)(?![\\w<])`, "i");
+    out = out.replace(re, (_, pre, word) => { keep.push(`<button class="chkw" data-say="${esc(w)}" title="${esc(m)}"><span aria-hidden="true">${ic}</span>${word}</button>`); return `${pre}\u0001${keep.length - 1}\u0002`; });
+  });
+  return out.replace(/\u0001(\d+)\u0002/g, (_, i) => keep[i]);
+}
+function simChallenge(root, id) {
+  if (!SIM_CH[id]) return;
+  const card = document.createElement("section"); card.className = "card simchal"; card.id = "simChal";
+  root.appendChild(card);
+  const dock = document.createElement("div"); dock.className = "chdock"; dock.id = "chDock"; dock.hidden = true;
+  root.appendChild(dock);
+  const old = LABCH; if (old && old.timer) clearInterval(old.timer);
+  LABCH = { id, root, card, dock, def: SIM_CH[id], words: (SIMS.find(x => x.id === id) || {}).words || [], need: {}, hold: {}, picks: {}, order: {}, fb: null, tick: performance.now() };
+  chalRender();
+  const me = LABCH;
+  me.timer = setInterval(() => {
+    if (LABCH !== me || !card.isConnected) { clearInterval(me.timer); if (LABCH === me) LABCH = null; return; }
+    chalPoll();
+  }, 250);
+  if ("IntersectionObserver" in window) {
+    me.io = new IntersectionObserver(es => es.forEach(e => { me.curVisible = e.isIntersecting; chalDock(); }), { threshold: .25 });
+  }
+}
+function chalCurrent() { const c = chalRec(LABCH.id); return chalTasks(LABCH.id).find(t => !c.d[t.key]); }
+function chalRender() {
+  const { id, card, def } = LABCH, c = chalRec(id), ms = chalMissions(id), tasks = chalTasks(id), done = tasks.filter(t => c.d[t.key]).length;
+  const cur = LABCH.fb ? tasks.find(t => t.key === LABCH.fb.key) : chalCurrent();
+  const curM = cur ? cur.mi : ms.length;
+  const missionDone = mi => ms[mi].tasks.every((_, ti) => c.d[mi + "." + ti]);
+  card.innerHTML = `
+    <div class="chhead"><span class="kicker">🎯 Challenge · ⏱ about ${def.mins || 15} min</span>
+      <h3>${esc(def.title)}</h3>${def.story ? `<p class="chstory">${chalText(def.story, LABCH.words)}</p>` : ""}
+      <div class="chmeta"><span class="pill">✅ ${done}/${tasks.length}</span><span class="pill" id="chClock">⏱ ${chalClock(c.secs || 0)}</span>${c.fin ? `<span class="pill">${"⭐".repeat(chalStars(c))}</span>` : ""}</div>
+      <ol class="chbar" aria-label="Missions">${ms.map((m, mi) => `<li class="${missionDone(mi) ? "done" : mi === curM ? "now" : ""}" title="${esc(m.name)}"><span class="chdot" aria-hidden="true">${missionDone(mi) ? "✓" : m.ic}</span><span class="chmn">${esc(m.name)}</span></li>`).join("")}</ol></div>
+    ${!cur ? chalFinishHtml(c, tasks) : `<div class="chmission"><h4>${ms[curM].ic} Mission ${curM + 1}: ${esc(ms[curM].name)} <small>${ms[curM].tasks.filter((_, ti) => c.d[curM + "." + ti]).length}/${ms[curM].tasks.length}</small></h4>
+      <div class="chtasks">${ms[curM].tasks.map((t, ti) => { const T = Object.assign({ key: curM + "." + ti, mi: curM }, t); return T.key === cur.key ? chalTaskHtml(T) : c.d[T.key] ? `<div class="cht done"><span aria-hidden="true">✅</span><span>${chalText(T.do, [])}</span></div>` : `<div class="cht locked"><span aria-hidden="true">🔒</span><span>${CH_TYPE[T.type][0]} ${CH_TYPE[T.type][1]}</span></div>`; }).join("")}</div></div>`}`;
+  chalWire(cur);
+  if (LABCH.io) { LABCH.io.disconnect(); const el = card.querySelector(".cht.cur, .chfin"); if (el) LABCH.io.observe(el); }
+  chalDock(); chalPoll(true);
+}
+function chalFinishHtml(c, tasks) {
+  const st = chalStars(c);
+  return `<div class="chfin"><div class="chtrophy" aria-hidden="true">🏆</div><h4>Challenge complete!</h4>
+    <p class="chstars" aria-label="${st} stars">${"⭐".repeat(st)}${"☆".repeat(3 - st)}</p>
+    <div class="chmeta"><span class="pill">✅ ${tasks.length} tasks</span><span class="pill">⏱ ${chalClock(c.secs || 0)}</span><span class="pill">❌ ${c.w} wrong</span><span class="pill">💡 ${c.h} hints</span></div>
+    <p class="small muted">⭐⭐⭐ = 2 or fewer wrong answers. Replay to practise and beat your stars.</p>
+    <div class="row simbtns"><button class="btn" id="chAgain">🔁 Replay challenge</button>${chalNextSim() ? `<button class="btn yellow" id="chNext">Next simulation ›</button>` : ""}</div></div>`;
+}
+function chalNextSim() { const i = SIMS.findIndex(x => x.id === LABCH.id); return SIMS.slice(i + 1).concat(SIMS.slice(0, i)).find(x => SIM_CH[x.id] && !simChalState(x.id)[2]); }
+function chalTaskHtml(t) {
+  const [tic, tnm] = CH_TYPE[t.type], fb = LABCH.fb && LABCH.fb.key === t.key ? LABCH.fb : null, W = LABCH.words;
+  let body = "";
+  if (t.type === "goal") body = `<div class="chgoal"><span class="chlight" data-light aria-hidden="true"></span><span class="chgt">${esc(t.target || "Waiting for you to set it up…")}</span></div>${t.meter ? `<div class="chmeter" data-meter></div>` : ""}`;
+  else if (t.type === "read") body = `<div class="chread">${(t.fields || [[t.label || "Answer", t.ans, t.tol, t.unit]]).map(([lab, , , unit], i) => `<label class="chfield"><span>${esc(lab)}</span><span class="chin"><input type="text" inputmode="decimal" autocomplete="off" data-rf="${i}" aria-label="${esc(lab)}">${unit ? `<b>${esc(unit)}</b>` : ""}</span><span class="chmark" data-rm="${i}"></span></label>`).join("")}</div><button class="btn" data-chk>✔ Check</button>`;
+  else if (t.type === "pick") {
+    const order = LABCH.picks[t.key] = LABCH.picks[t.key] || shuffle(t.opts.map((_, k) => k));
+    body = `<div class="choices chpick">${order.map((k, n) => { const o = t.opts[k], [txt, ic] = Array.isArray(o) ? o : [o, ""]; return `<button class="choice" data-pk="${k}"><b>${"ABCD"[n]}</b><span>${ic ? `<span class="chpic" aria-hidden="true">${ic}</span>` : ""}${esc(txt)}</span></button>`; }).join("")}</div>`;
+  } else if (t.type === "fill") {
+    let n = 0;
+    body = `<p class="chfill">${esc(t.text).replace(/\{([^}]+)\}/g, (_, g) => { const opts = g.split("|"), i = n++, ord = LABCH.picks[t.key + "f" + i] = LABCH.picks[t.key + "f" + i] || shuffle(opts.map((_, k) => k));
+      return `<select data-fb="${i}" aria-label="Blank ${i + 1}"><option value="">▾ choose</option>${ord.map(k => `<option value="${k}">${opts[k]}</option>`).join("")}</select>`; })}</p><button class="btn" data-chk>✔ Check</button>`;
+  } else if (t.type === "order") {
+    const pool = LABCH.picks[t.key] = LABCH.picks[t.key] || chalShuffleOrder(t.items.length), got = LABCH.order[t.key] = LABCH.order[t.key] || [];
+    body = `<ol class="chorder">${got.map((k, n) => `<li><button class="chochip on" data-oo="${n}" aria-label="Remove: ${esc(t.items[k])}"><b>${n + 1}</b>${esc(t.items[k])}<span aria-hidden="true">✕</span></button></li>`).join("")}${got.length < t.items.length ? `<li class="chslot">${got.length + 1}. tap the next step ↓</li>` : ""}</ol>
+      <div class="chopool">${pool.filter(k => !got.includes(k)).map(k => `<button class="chochip" data-op="${k}">${esc(t.items[k])}</button>`).join("")}</div>
+      <div class="row"><button class="btn" data-chk ${got.length < t.items.length ? "disabled" : ""}>✔ Check</button><button class="btn plain" data-oclr>↺ Clear</button></div>`;
+  }
+  const needOk = !t.need || LABCH.need[t.key];
+  return `<div class="cht cur ${fb ? (fb.ok ? "isok" : "") : ""}" data-ct="${t.key}">
+    <div class="chtop"><span class="chic" aria-hidden="true">${t.ic || tic}</span><div class="chtxt"><span class="chtype">${tic} ${tnm}</span><p class="chdo">${chalText(t.do, W)}</p>
+      ${t.look ? `<span class="chlook">👀 ${esc(t.look)}</span>` : ""}</div></div>
+    ${t.need ? `<div class="chneed ${needOk ? "ok" : ""}" data-need><span class="chlight ${needOk ? "on" : ""}" aria-hidden="true"></span><span><b>${needOk ? "✅ Set up" : "🔒 First, in the simulation:"}</b> ${chalText(t.needTxt || "", W)}</span></div>` : ""}
+    <div class="chbody ${needOk ? "" : "chwait"}" ${needOk ? "" : "inert"}>${fb && fb.ok ? "" : body}</div>
+    <div class="chfoot">${fb && fb.ok ? "" : t.hint ? `<button class="btn plain chhintb" data-hint>💡 Hint</button>` : ""}<div class="chhint" data-hintbox ${LABCH.hintOpen === t.key ? "" : "hidden"}>${t.hint ? chalText(t.hint, W) : ""}</div>
+      <div class="chfb" aria-live="polite">${fb ? fb.html : ""}</div></div></div>`;
+}
+function chalShuffleOrder(n) { let o; do { o = shuffle([...Array(n).keys()]); } while (n > 1 && o.every((k, i) => k === i)); return o; }
+function chalWire(t) {
+  const { card } = LABCH;
+  card.querySelector("#chAgain") && (card.querySelector("#chAgain").onclick = () => { SFX.tap(); const c = chalRec(LABCH.id); c.d = {}; c.w = 0; c.h = 0; c.secs = 0; save(); LABCH.picks = {}; LABCH.order = {}; LABCH.need = {}; chalRender(); card.scrollIntoView({ behavior: "smooth", block: "start" }); });
+  card.querySelector("#chNext") && (card.querySelector("#chNext").onclick = () => { SFX.tap(); renderSims(chalNextSim().id); });
+  card.querySelector("[data-next]") && (card.querySelector("[data-next]").onclick = () => { SFX.tap(); LABCH.fb = null; LABCH.hintOpen = null; chalRender(); const el = card.querySelector(".cht.cur, .chfin"); el && el.scrollIntoView({ behavior: "smooth", block: "center" }); });
+  if (!t) return;
+  const el = card.querySelector(`[data-ct="${t.key}"]`); if (!el || (LABCH.fb && LABCH.fb.key === t.key)) return;
+  const hb = el.querySelector("[data-hint]");
+  if (hb) hb.onclick = () => { SFX.tap(); const box = el.querySelector("[data-hintbox]"); box.hidden = !box.hidden; if (!box.hidden && LABCH.hintOpen !== t.key) { chalRec(LABCH.id).h++; save(); } LABCH.hintOpen = box.hidden ? null : t.key; };
+  if (t.type === "pick") el.querySelectorAll("[data-pk]").forEach(b => b.onclick = () => {
+    const k = Number(b.dataset.pk);
+    if (k === 0) { b.classList.add("right"); chalDone(t, `✅ ${chalText(t.why || "Correct!", LABCH.words)}`); }
+    else { b.classList.add("wrong"); b.disabled = true; chalWrong(t, (t.miss && t.miss[k]) || "Not quite. Use the simulation to test it, then try again."); }
+  });
+  if (t.type === "read") el.querySelector("[data-chk]").onclick = () => {
+    const F = t.fields || [[t.label || "Answer", t.ans, t.tol, t.unit]];
+    let ok = 0;
+    F.forEach(([, ans, tol], i) => {
+      const a = typeof ans === "function" ? ans(SIM_PROBE ? SIM_PROBE() : {}) : ans, v = parseFloat(String(el.querySelector(`[data-rf="${i}"]`).value).replace(/[^\d.\-]/g, ""));
+      const tl = tol != null ? tol : Math.max(1, Math.abs(a) * .05), good = Number.isFinite(v) && Math.abs(v - a) <= tl + 1e-9;
+      el.querySelector(`[data-rm="${i}"]`).textContent = good ? "✅" : "❌"; ok += good;
+    });
+    if (ok === F.length) chalDone(t, `✅ ${chalText(t.why || "Well measured!", LABCH.words)}`);
+    else chalWrong(t, `${ok}/${F.length} correct. ${t.readTip || "Look at the simulation again: check the units and read the value carefully."}`);
+  };
+  if (t.type === "fill") el.querySelector("[data-chk]").onclick = () => {
+    const sel = [...el.querySelectorAll("[data-fb]")];
+    if (sel.some(s => s.value === "")) { SFX.tap(); el.querySelector(".chfb").innerHTML = `<p class="chbad">✍️ Choose a word for every blank first.</p>`; return; }
+    sel.forEach(s => s.classList.toggle("bad", s.value !== "0"));
+    sel.forEach(s => s.classList.toggle("good", s.value === "0"));
+    const bad = sel.filter(s => s.value !== "0").length;
+    if (!bad) chalDone(t, `✅ ${chalText(t.why || "Great sentence!", LABCH.words)}`); else chalWrong(t, `${bad} blank${bad > 1 ? "s are" : " is"} not right yet (marked in red). Check with the simulation.`);
+  };
+  if (t.type === "order") {
+    const got = LABCH.order[t.key];
+    el.querySelectorAll("[data-op]").forEach(b => b.onclick = () => { SFX.tap(); got.push(Number(b.dataset.op)); chalRender(); const nb = LABCH.card.querySelector("[data-op]") || LABCH.card.querySelector("[data-chk]"); nb && nb.focus(); });
+    el.querySelectorAll("[data-oo]").forEach(b => b.onclick = () => { SFX.tap(); got.splice(Number(b.dataset.oo), 1); chalRender(); });
+    el.querySelector("[data-oclr]").onclick = () => { SFX.tap(); got.length = 0; chalRender(); };
+    el.querySelector("[data-chk]").onclick = () => {
+      const right = got.filter((k, i) => k === i).length;
+      if (right === t.items.length) chalDone(t, `✅ ${chalText(t.why || "Perfect order!", LABCH.words)}`);
+      else { el.querySelectorAll("[data-oo]").forEach((b, i) => b.classList.add(got[i] === i ? "good" : "bad")); chalWrong(t, `${right}/${t.items.length} in the right place (green). Tap the red ones to take them out, then try again.`, true); }
+    };
+  }
+}
+function chalWrong(t, msg, keep) {
+  SFX.wrong(); const c = chalRec(LABCH.id); c.w++; save();
+  const el = LABCH.card.querySelector(`[data-ct="${t.key}"] .chfb`); if (el) el.innerHTML = `<p class="chbad">❌ ${chalText(msg, LABCH.words)}</p>`;
+  if (!keep && t.type === "order") LABCH.order[t.key] = [];
+}
+function chalDone(t, html) {
+  const c = chalRec(LABCH.id); if (c.d[t.key]) return;
+  c.d[t.key] = 1; SFX.right();
+  const ms = chalMissions(LABCH.id), mDone = ms[t.mi].tasks.every((_, ti) => c.d[t.mi + "." + ti]), all = chalTasks(LABCH.id).every(x => c.d[x.key]);
+  let gain = 2, extra = "";
+  if (mDone) { gain += 5; extra += `<p class="chgood">🎉 <b>Mission ${t.mi + 1} complete!</b> +5 🌰</p>`; activityDone({ mode: "sim", sim: LABCH.id, ans: ms[t.mi].tasks.length, cor: ms[t.mi].tasks.length }); }
+  if (all) { gain += 20; c.fin = c.fin || today(); extra += `<p class="chgood">🏆 <b>Challenge complete!</b> +20 🌰</p>`; if (typeof confetti === "function") confetti(120); }
+  gain = withStreak(gain); S.coins += gain; S.stats.correct += 1; save(true); renderTools(); if (all) checkTrophies();
+  LABCH.fb = { key: t.key, ok: true, html: `<div class="chgood">${html} <b>+${gain} 🌰</b></div>${extra}<button class="btn" data-next>${all ? "See my result 🏆" : mDone ? "Next mission ›" : "Next task ›"}</button>` };
+  chalRender();
+}
+// Live checks: goal tasks complete themselves; "need" locks open once the sim is set up; meters and the dock follow the sim.
+function chalPoll(first) {
+  if (!LABCH) return;
+  const now = performance.now(), dt = Math.min(1, (now - LABCH.tick) / 1000); LABCH.tick = now;
+  const c = chalRec(LABCH.id), t = LABCH.fb ? null : chalCurrent();
+  if (!c.fin && !document.hidden && !first) { c.secs = (c.secs || 0) + dt; const ck = LABCH.card.querySelector("#chClock"); if (ck) ck.textContent = "⏱ " + chalClock(c.secs); }
+  if (!t) return;
+  let p = {}; try { p = SIM_PROBE ? SIM_PROBE() || {} : {}; } catch (e) { p = {}; }
+  const el = LABCH.card.querySelector(`[data-ct="${t.key}"]`); if (!el) return;
+  const ok = f => { try { return !!f(p); } catch (e) { return false; } };
+  if (t.need && !LABCH.need[t.key] && ok(t.need)) { LABCH.need[t.key] = 1; SFX.tap(); chalRender(); return; }
+  if (t.type === "goal") {
+    const on = ok(t.check), light = el.querySelector("[data-light]");
+    LABCH.hold[t.key] = on ? (LABCH.hold[t.key] || 0) + dt : 0;
+    if (light) light.classList.toggle("on", on);
+    if (t.meter) { const m = el.querySelector("[data-meter]"); if (m) { try { m.innerHTML = chalMeter(t.meter(p)); } catch (e) {} } }
+    if (on && LABCH.hold[t.key] >= (t.hold != null ? t.hold : 1)) { chalDone(t, `✅ ${chalText(t.why || "You did it!", LABCH.words)}`); return; }
+  }
+  chalDock(p);
+}
+// A horizontal gauge with a green target zone: { v, min, max, lo, hi, unit, label }
+function chalMeter(m) {
+  const pc = x => clamp((x - m.min) / (m.max - m.min) * 100, 0, 100), inZone = m.v >= m.lo && m.v <= m.hi;
+  return `<div class="chgauge" role="img" aria-label="${esc(m.label || "Value")}: ${m.v}${m.unit || ""}, target ${m.lo}–${m.hi}"><span class="chzone" style="left:${pc(m.lo)}%;width:${pc(m.hi) - pc(m.lo)}%"></span><span class="chneedle ${inZone ? "in" : ""}" style="left:${pc(m.v)}%"></span></div>
+    <div class="chglab"><span>${esc(m.label || "Now")}: <b>${typeof m.v === "number" ? +m.v.toFixed(1) : m.v}${esc(m.unit || "")}</b></span><span>🎯 ${m.lo}–${m.hi}${esc(m.unit || "")} ${inZone ? "✅" : ""}</span></div>`;
+}
+// Sticky task dock: the current task stays in view while the student scrolls up to use the simulation.
+function chalDock() {
+  if (!LABCH) return;
+  const t = LABCH.fb ? null : chalCurrent(), d = LABCH.dock, all = chalTasks(LABCH.id), c = chalRec(LABCH.id);
+  if (LABCH.fb && !LABCH.curVisible) {
+    const why = LABCH.fb.html.replace(/<button class="btn" data-next[\s\S]*$/, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    const html = `<div class="chdockb ok"><span class="chic" aria-hidden="true">✅</span><button class="chdt" data-dock><small>🎯 Task done! Tap to read more</small>${esc(why)}</button><button class="btn" data-dnext>Next ›</button></div>`;
+    if (d.dataset.h !== html) {
+      d.dataset.h = html; d.innerHTML = html;
+      d.querySelector("[data-dock]").onclick = () => { SFX.tap(); const el = LABCH.card.querySelector(".cht.cur"); el && el.scrollIntoView({ behavior: "smooth", block: "center" }); };
+      d.querySelector("[data-dnext]").onclick = () => { SFX.tap(); LABCH.fb = null; LABCH.hintOpen = null; chalRender(); };
+    }
+    d.hidden = false; return;
+  }
+  if (!t || LABCH.curVisible || c.fin) { d.hidden = true; return; }
+  const n = all.findIndex(x => x.key === t.key) + 1, txt = String(t.do).replace(/<[^>]+>/g, "");
+  const html = `<button class="chdockb" data-dock><span class="chic" aria-hidden="true">${t.ic || CH_TYPE[t.type][0]}</span><span class="chdt"><small>🎯 Task ${n}/${all.length}</small>${esc(txt)}</span>${t.type === "goal" || (t.need && !LABCH.need[t.key]) ? `<span class="chlight ${LABCH.card.querySelector(`[data-ct="${t.key}"] .chlight.on`) ? "on" : ""}" aria-hidden="true"></span>` : ""}<span class="chgo" aria-hidden="true">▾</span></button>`;
+  if (d.dataset.h !== html) { d.dataset.h = html; d.innerHTML = html; d.querySelector("[data-dock]").onclick = () => { SFX.tap(); const el = LABCH.card.querySelector(".cht.cur"); el && el.scrollIntoView({ behavior: "smooth", block: "center" }); }; }
+  d.hidden = false;
 }
 
 /* ============================================================
